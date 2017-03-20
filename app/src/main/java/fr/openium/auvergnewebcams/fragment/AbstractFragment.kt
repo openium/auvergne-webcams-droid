@@ -13,12 +13,15 @@ import android.view.ViewGroup
 import com.github.salomonbrys.kodein.KodeinInjector
 import com.github.salomonbrys.kodein.android.appKodein
 import io.reactivex.disposables.CompositeDisposable
+import io.realm.Realm
 
 abstract class AbstractFragment : Fragment() {
+
     protected var oneTimeSubscriptions: CompositeDisposable = CompositeDisposable() //only subscribe one time and unsubscribe later
     protected var rebindSubscriptions: CompositeDisposable = CompositeDisposable() //Resubscribe in onstart
 
     protected var isAlive: Boolean = false
+    protected val mRealm: Realm = Realm.getDefaultInstance()
 
     open protected val customToolbarFragment: Toolbar? = null
 

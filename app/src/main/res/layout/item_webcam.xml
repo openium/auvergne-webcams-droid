@@ -1,6 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-    android:adjustViewBounds="true"/>
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="5dp">
+
+    <TextView
+        android:id="@+id/mTextViewNameSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="16sp"
+        android:textColor="@color/white"
+        android:textAllCaps="true"
+        android:textStyle="bold"
+        android:padding="10dp"/>
+
+    <TextView
+        android:id="@+id/mTextViewNameWebcam"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="14sp"
+        android:textColor="@color/grey_text"
+        android:paddingBottom="10dp"/>
+
+    <ImageView
+        android:id="@+id/mImageViewWebCam"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/height_image_list"
+        android:layout_gravity="center_horizontal"
+        android:scaleType="centerCrop"/>
+
+</LinearLayout>

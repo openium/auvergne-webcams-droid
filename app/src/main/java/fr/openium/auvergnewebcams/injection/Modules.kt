@@ -1,6 +1,7 @@
 package fr.openium.auvergnewebcams.injection
 
 import com.github.salomonbrys.kodein.Kodein
+import com.github.salomonbrys.kodein.bind
 import com.github.salomonbrys.kodein.singleton
 import com.squareup.leakcanary.RefWatcher
 

@@ -12,9 +12,12 @@ import com.squareup.leakcanary.RefWatcher
 import fr.openium.auvergnewebcams.injection.Modules
 import fr.openium.auvergnewebcams.log.CrashReportingTree
 import io.fabric.sdk.android.Fabric
+import io.realm.Realm
+import io.realm.RealmConfiguration
 import timber.log.Timber
 
 class ApplicationAW : Application(), KodeinAware {
+
     override val kodein by Kodein.lazy {
         import(Modules.configModule)
     }
@@ -34,6 +37,12 @@ class ApplicationAW : Application(), KodeinAware {
         }
 
         initializeCrashlytics()
+        Realm.init(this)
+        val configuration = RealmConfiguration.Builder()
+                .schemaVersion(1)
+//                .migration(DatabaseMigration())
+                .build()
+        Realm.setDefaultConfiguration(configuration)
 //        CalligraphyConfig.initDefault(CalligraphyConfig.Builder().setFontAttrId(R.attr.fontPath).build())
     }
 
