@@ -1,16 +1,16 @@
 package fr.openium.auvergnewebcams.fragment
 
-import android.app.Activity
+import android.content.Context
 import android.content.Intent
-import android.graphics.Point
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import com.github.salomonbrys.kodein.instance
 import com.squareup.picasso.Picasso
 import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
@@ -20,20 +20,18 @@ import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.model.adapter.ItemWebcam
 import io.realm.Sort
 import kotlinx.android.synthetic.main.fragment_list_camera.*
-
+import kotlinx.android.synthetic.main.item_webcam.view.*
 
 
 /**
  * Created by t.coulange on 09/12/2016.
  */
-class FragmentListCamera : AbstractFragment(), OnWebcamClickListener {
-
-
-    companion object {
-        @JvmStatic val TAG = FragmentListCamera::class.java.simpleName
-    }
+class FragmentListCamera : AbstractFragment() {
+    override val layoutId: Int
+        get() = R.layout.fragment_list_camera
 
     protected val mItems = ArrayList<ItemWebcam>()
+    protected val picasso: Picasso by kodeinInjector.instance()
 
     // =================================================================================================================
     // Life cycle
@@ -41,29 +39,17 @@ class FragmentListCamera : AbstractFragment(), OnWebcamClickListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        mRealm.executeTransactionAsync (
-                { realm ->
-                    val sections = realm.where(Section::class.java)
-                            .findAllSorted(Section::order.name, Sort.ASCENDING)
-                    for(section in sections) {
-                        for(webcam in section.webcams) {
-                            val nameSection = if(section.title == null) "" else section.title!!
-                            val item = ItemWebcam(realm.copyFromRealm(webcam), nameSection)
-                            mItems.add(item)
-                        }
-                    }
 
-                },
-                {
-                    initAdapter()
-                },
-                {
-                    error ->
-                    Log.e(TAG, error.message)
-                    initAdapter()
-                })
-
-
+        val sections = realm!!.where(Section::class.java)
+                .findAllSorted(Section::order.name, Sort.ASCENDING)
+        for (section in sections) {
+            for (webcam in section.webcams) {
+                val nameSection = if (section.title == null) "" else section.title!!
+                val item = ItemWebcam(webcam, nameSection)
+                mItems.add(item)
+            }
+        }
+        initAdapter()
     }
 
     // =================================================================================================================
@@ -72,35 +58,26 @@ class FragmentListCamera : AbstractFragment(), OnWebcamClickListener {
 
     private fun initAdapter() {
         recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = AdapterWebcam(activity, this, mItems)
+        recyclerView.adapter = AdapterWebcam(context, picasso, {
+            webcam, _ ->
+            val intent = Intent(context, ActivityWebcam::class.java).apply { putExtra(Constants.KEY_ID, webcam.uid) }
+            startActivity(intent)
+        }, mItems)
     }
 
-    // =================================================================================================================
-    // Overridden methods
-    // =================================================================================================================
-
-    override val layoutId: Int
-        get() = R.layout.fragment_list_camera
-
-
-
-    override fun onWebcamClick(webcam: Webcam, position: Int) {
-        val intent = Intent(context, ActivityWebcam::class.java)
-        intent.putExtra(Constants.KEY_ID, webcam.uid)
-        startActivity(intent)
-    }
-
-    class AdapterWebcam(val context: Activity, val listener: OnWebcamClickListener? = null, val items: List<ItemWebcam>) : RecyclerView.Adapter<AdapterWebcam.WebcamHolder>() {
-
+    class AdapterWebcam(context: Context, val picasso: Picasso, val listener: ((Webcam, Int) -> Unit)? = null, val items: List<ItemWebcam>) : RecyclerView.Adapter<AdapterWebcam.WebcamHolder>() {
         val heightImage: Int
-        val widthImage: Int
 
         init {
             heightImage = context.resources.getDimensionPixelOffset(R.dimen.height_image_list)
-            val display = context.windowManager.getDefaultDisplay()
-            val size = Point()
-            display.getSize(size)
-            widthImage = size.x
+//            val display = context.windowManager.getDefaultDisplay()
+//            val size = Point()
+//            display.getSize(size)
+//            widthImage = size.x
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WebcamHolder {
+            return WebcamHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_webcam, parent, false))
         }
 
         override fun onBindViewHolder(holder: WebcamHolder, position: Int) {
@@ -108,28 +85,23 @@ class FragmentListCamera : AbstractFragment(), OnWebcamClickListener {
 
             val section = item.nameSection
             val hasHeader: Boolean
-            if(position == 0) {
+            if (position == 0) {
                 hasHeader = true
             } else {
                 val prevItem = items.get(position - 1)
-                if(section == prevItem.nameSection) {
-                    hasHeader = false
-                } else {
-                    hasHeader = true
-                }
+                hasHeader = section != prevItem.nameSection
             }
 
-            val webCam = item.webCam
+            val webCam = item.webcam
             val urlWebCam = webCam.imageLD
             val nameWebCam = webCam.title
 
-            Picasso.with(context).load(urlWebCam)
-                    .resize(widthImage, heightImage)
-                    .centerCrop()
+            picasso.load(urlWebCam)
+                    .fit()
                     .into(holder.mImageViewWebCam)
 
             holder.mTextViewNameWebcam.setText(nameWebCam)
-            if(hasHeader) {
+            if (hasHeader) {
                 holder.mTextViewNameSection.setText(section)
                 holder.mTextViewNameSection.visibility = View.VISIBLE
             } else {
@@ -137,12 +109,8 @@ class FragmentListCamera : AbstractFragment(), OnWebcamClickListener {
             }
 
             holder.itemView.setOnClickListener {
-                listener?.onWebcamClick(webCam, position)
+                listener?.invoke(webCam, position)
             }
-        }
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WebcamHolder {
-            return WebcamHolder(View.inflate(parent.context, R.layout.item_webcam, null))
         }
 
         override fun getItemCount(): Int {
@@ -150,20 +118,15 @@ class FragmentListCamera : AbstractFragment(), OnWebcamClickListener {
         }
 
         class WebcamHolder(view: View) : RecyclerView.ViewHolder(view) {
-
             val mTextViewNameSection: TextView
-            val mTextViewNameWebcam : TextView
+            val mTextViewNameWebcam: TextView
             val mImageViewWebCam: ImageView
 
             init {
-                mTextViewNameWebcam = view.findViewById(R.id.mTextViewNameWebcam) as TextView
-                mTextViewNameSection = view.findViewById(R.id.mTextViewNameSection) as TextView
-                mImageViewWebCam = view.findViewById(R.id.mImageViewWebCam) as ImageView
+                mTextViewNameWebcam = view.textViewNameWebcam
+                mTextViewNameSection = view.textViewNameSection
+                mImageViewWebCam = view.imageViewWebCam
             }
         }
     }
-}
-
-interface OnWebcamClickListener {
-    fun onWebcamClick(webcam: Webcam, position: Int)
 }

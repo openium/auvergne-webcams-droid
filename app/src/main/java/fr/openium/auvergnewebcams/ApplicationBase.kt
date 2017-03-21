@@ -1,12 +1,10 @@
 package fr.openium.auvergnewebcams
 
 import android.app.Application
+import android.content.Context
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
-import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.KodeinAware
-import com.github.salomonbrys.kodein.instance
-import com.github.salomonbrys.kodein.lazy
+import com.github.salomonbrys.kodein.*
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
 import fr.openium.auvergnewebcams.injection.Modules
@@ -17,9 +15,10 @@ import io.realm.RealmConfiguration
 import timber.log.Timber
 
 abstract class ApplicationBase : Application(), KodeinAware {
-
     override val kodein by Kodein.lazy {
+        bind<Context>() with singleton { applicationContext }
         import(Modules.configModule)
+        import(Modules.serviceModule)
     }
 
     val refWatcher: RefWatcher by lazy.instance<RefWatcher>()

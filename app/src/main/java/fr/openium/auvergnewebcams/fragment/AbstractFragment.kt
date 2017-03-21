@@ -1,10 +1,8 @@
 package fr.openium.auvergnewebcams.fragment
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v4.view.ViewPropertyAnimatorCompat
 import android.support.v7.view.ContextThemeWrapper
 import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
@@ -16,12 +14,12 @@ import io.reactivex.disposables.CompositeDisposable
 import io.realm.Realm
 
 abstract class AbstractFragment : Fragment() {
-
+    protected abstract val layoutId: Int
     protected var oneTimeSubscriptions: CompositeDisposable = CompositeDisposable() //only subscribe one time and unsubscribe later
     protected var rebindSubscriptions: CompositeDisposable = CompositeDisposable() //Resubscribe in onstart
 
     protected var isAlive: Boolean = false
-    protected val mRealm: Realm = Realm.getDefaultInstance()
+    protected var realm: Realm? = null
 
     open protected val customToolbarFragment: Toolbar? = null
 
@@ -45,6 +43,7 @@ abstract class AbstractFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        realm = Realm.getDefaultInstance()
         isAlive = true
         kodeinInjector.inject(appKodein())
     }
@@ -59,10 +58,10 @@ abstract class AbstractFragment : Fragment() {
         val view: View = layoutInflater.inflate(layoutId, container, false)
         return view
     }
+
     override fun onStart() {
         super.onStart()
         startSubscription(rebindSubscriptions)
-
     }
 
     override fun onStop() {
@@ -89,29 +88,8 @@ abstract class AbstractFragment : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
+        realm?.close()
+        realm = null
         isAlive = false
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-    }
-
-    protected abstract val layoutId: Int
-
-    inline fun ViewPropertyAnimatorCompat.withEndActionSafe(crossinline body: () -> Unit): ViewPropertyAnimatorCompat {
-        return withEndAction {
-            if (view != null) {
-                body()
-            }
-        }
-    }
-
-    inline fun ViewPropertyAnimatorCompat.withStartActionSafe(crossinline body: () -> Unit): ViewPropertyAnimatorCompat {
-        return withStartAction {
-            if (view != null) {
-                body()
-            }
-        }
     }
 }

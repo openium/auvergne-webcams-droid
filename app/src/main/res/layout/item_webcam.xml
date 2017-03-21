@@ -1,35 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="5dp">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:padding="5dp">
 
     <TextView
-        android:id="@+id/mTextViewNameSection"
+        android:id="@+id/textViewNameSection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="16sp"
-        android:textColor="@color/white"
+        android:padding="10dp"
         android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="16sp"
         android:textStyle="bold"
-        android:padding="10dp"/>
+        tools:text="Puy de dome"/>
 
     <TextView
-        android:id="@+id/mTextViewNameWebcam"
+        android:id="@+id/textViewNameWebcam"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="14sp"
+        android:paddingBottom="10dp"
         android:textColor="@color/grey_text"
-        android:paddingBottom="10dp"/>
+        android:textSize="14sp"
+        tools:text="Caméra 1"/>
 
     <ImageView
-        android:id="@+id/mImageViewWebCam"
-        android:layout_width="wrap_content"
+        android:id="@+id/imageViewWebCam"
+        android:layout_width="match_parent"
         android:layout_height="@dimen/height_image_list"
-        android:layout_gravity="center_horizontal"
-        android:scaleType="centerCrop"/>
+        android:layout_gravity="center_horizontal"/>
 
 </LinearLayout>

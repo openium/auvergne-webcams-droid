@@ -13,13 +13,11 @@ data class SectionList(val sections: RealmList<Section>) {
 
     companion object {
 
-        fun getSectionsFromAssets(context: Context) : SectionList? {
-            var sections: SectionList? = null
+        fun getSectionsFromAssets(context: Context): SectionList? {
             val inputStream = context.assets?.open("aw-config.json")
             val gson = GsonBuilder().create()
             val jsonReader = JsonParser().parse(InputStreamReader(inputStream))
-            sections = gson.fromJson(jsonReader, SectionList::class.java)
-            return sections
+            return gson.fromJson(jsonReader, SectionList::class.java)
         }
 
     }
