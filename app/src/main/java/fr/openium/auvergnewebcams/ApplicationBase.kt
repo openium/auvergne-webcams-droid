@@ -16,7 +16,7 @@ import io.realm.Realm
 import io.realm.RealmConfiguration
 import timber.log.Timber
 
-class ApplicationAW : Application(), KodeinAware {
+abstract class ApplicationBase : Application(), KodeinAware {
 
     override val kodein by Kodein.lazy {
         import(Modules.configModule)
@@ -47,7 +47,7 @@ class ApplicationAW : Application(), KodeinAware {
     }
 
     open fun initializeCrashlytics() {
-        val core = CrashlyticsCore.Builder().disabled(!BuildConfig.DEBUG).build()
+        val core = CrashlyticsCore.Builder().build()
         val crashlytics = Crashlytics.Builder().core(core).build()
         Fabric.with(this, crashlytics)
     }
