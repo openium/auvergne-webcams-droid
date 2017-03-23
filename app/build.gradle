@@ -23,10 +23,31 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+    signingConfigs {
+        debug {
+            storeFile file("keys/debug.keystore")
+        }
+        release {
+            storeFile file("keys/release.keystore")
+            storePassword "AWCOpenium"
+            keyAlias "AuvergneWebCamsOpenium"
+            keyPassword "AWCOpenium"
+        }
+    }
+
     buildTypes {
+        debug {
+            minifyEnabled false
+            versionNameSuffix '-debug'
+            applicationIdSuffix '.debug'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules-debug.pro'
+            signingConfig signingConfigs.debug
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     sourceSets {
