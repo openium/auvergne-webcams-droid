@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Auvergne Webcams</string>
+
+    <plurals name="nb_cameras_format">
+        <item quantity="one">%d webcam</item>
+        <item quantity="other">%d webcams</item>
+</plurals>
 </resources>
