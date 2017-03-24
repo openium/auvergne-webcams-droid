@@ -8,4 +8,22 @@
         <item name="colorAccent">@color/white</item>
     </style>
 
+    <style name="font_proxima_bold">
+        <item name="fontPath">fonts/ProximaNova-Bold.otf</item>
+    </style>
+
+    <style name="font_proxima_regular">
+        <item name="fontPath">fonts/ProximaNova-Regular.otf</item>
+    </style>
+
+    <style name="font_proxima_regular_italic">
+        <item name="fontPath">fonts/ProximaNova-RegularItalic.otf</item>
+    </style>
+
+    <style name="font_proxima_semi_bold">
+        <item name="fontPath">fonts/ProximaNova-Sbold.otf</item>
+    </style>
+
+
+
 </resources>

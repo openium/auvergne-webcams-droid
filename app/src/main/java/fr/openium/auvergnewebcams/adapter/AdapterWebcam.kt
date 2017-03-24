@@ -48,6 +48,7 @@ class AdapterWebcam(val context: Context, val picasso: Picasso, val listener: ((
 
         picasso.load(urlWebCam)
                 .fit()
+                .centerCrop()
                 .into(holder.mImageViewWebCam)
 
         holder.mTextViewNameWebcam.setText(nameWebCam)

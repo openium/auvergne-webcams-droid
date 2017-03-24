@@ -13,6 +13,7 @@ import io.fabric.sdk.android.Fabric
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import timber.log.Timber
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig
 
 abstract class ApplicationBase : Application(), KodeinAware {
     override val kodein by Kodein.lazy {
@@ -42,7 +43,9 @@ abstract class ApplicationBase : Application(), KodeinAware {
 //                .migration(DatabaseMigration())
                 .build()
         Realm.setDefaultConfiguration(configuration)
-//        CalligraphyConfig.initDefault(CalligraphyConfig.Builder().setFontAttrId(R.attr.fontPath).build())
+        CalligraphyConfig.initDefault(CalligraphyConfig.Builder()
+                .setDefaultFontPath("fonts/ProximaNova-Sbold.otf")
+                .setFontAttrId(R.attr.fontPath).build())
     }
 
     open fun initializeCrashlytics() {

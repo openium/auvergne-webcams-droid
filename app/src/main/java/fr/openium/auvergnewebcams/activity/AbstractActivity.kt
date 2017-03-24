@@ -1,5 +1,6 @@
 package fr.openium.auvergnewebcams.activity
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
@@ -10,11 +11,19 @@ import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.fragment.OnBackPressedListener
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.toolbar.*
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
+
+
 
 abstract class AbstractActivity : AppCompatActivity() {
     protected val subscriptions: CompositeDisposable = CompositeDisposable()
     protected open val handleFragmentBackPressed: Boolean = true
     protected val kodeinInjector = KodeinInjector()
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase))
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
