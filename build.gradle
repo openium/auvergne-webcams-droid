@@ -21,6 +21,9 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
+        maven {
+            url  "http://dl.bintray.com/piasy/maven"
+        }
 //        maven { url 'http://dl.bintray.com/kotlin/kotlin-eap' }
     }
 }

@@ -1,14 +1,16 @@
 package fr.openium.auvergnewebcams.fragment
 
 import android.graphics.Point
+import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import com.squareup.picasso.Picasso
+import com.github.piasy.biv.BigImageViewer
+import com.github.piasy.biv.loader.fresco.FrescoImageLoader
+import com.github.piasy.biv.view.BigImageView
 import fr.openium.auvergnewebcams.Constants.KEY_ID
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.model.Webcam
 import kotlinx.android.synthetic.main.fragment_webcam.*
-
 
 
 /**
@@ -19,6 +21,12 @@ class FragmentWebcam : AbstractFragment() {
 
     override val layoutId: Int
         get() = R.layout.fragment_webcam
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        BigImageViewer.initialize(FrescoImageLoader.with(activity.applicationContext));
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -37,21 +45,13 @@ class FragmentWebcam : AbstractFragment() {
             val display = activity.getWindowManager().getDefaultDisplay()
             val size = Point()
             display.getSize(size)
-            val width = size.x
-            val height = size.y
+
+            mBigImage.setInitScaleType(BigImageView.INIT_SCALE_TYPE_AUTO)
+
             if (!webcam!!.imageHD.isNullOrBlank()) {
-//                oneTimeSubscriptions.add(Observable.timer(1, TimeUnit.SECONDS).observeOn(AndroidSchedulers.mainThread()).subscribe {
-                Picasso.with(context)
-                        .load(webcam!!.imageHD)
-                        .resize(width, height)
-                        .centerInside()
-                        .into(photoView)
-//                })
+                mBigImage.showImage(Uri.parse( webcam!!.imageLD!!), Uri.parse(webcam!!.imageHD!!))
             } else {
-                Picasso.with(context).load(webcam!!.imageLD)
-                        .resize(width, height)
-                        .centerInside()
-                        .into(photoView)
+                mBigImage.showImage(Uri.parse( webcam!!.imageLD!!))
             }
 
         }
