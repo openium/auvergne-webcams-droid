@@ -4,5 +4,8 @@
     <plurals name="nb_cameras_format">
         <item quantity="one">%d webcam</item>
         <item quantity="other">%d webcams</item>
-</plurals>
+    </plurals>
+
+    <string name="splash_loading_cameras">Chargement des webcams ...</string>
+
 </resources>

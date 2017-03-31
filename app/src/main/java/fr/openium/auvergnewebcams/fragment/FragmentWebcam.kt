@@ -46,11 +46,12 @@ class FragmentWebcam : AbstractFragment() {
             val size = Point()
             display.getSize(size)
 
-            mBigImage.setInitScaleType(BigImageView.INIT_SCALE_TYPE_AUTO)
-
             if (!webcam!!.imageHD.isNullOrBlank()) {
+                mBigImage.setInitScaleType(BigImageView.INIT_SCALE_TYPE_AUTO)
                 mBigImage.showImage(Uri.parse( webcam!!.imageLD!!), Uri.parse(webcam!!.imageHD!!))
             } else {
+
+                mBigImage.setInitScaleType(BigImageView.INIT_SCALE_TYPE_CENTER_INSIDE)
                 mBigImage.showImage(Uri.parse( webcam!!.imageLD!!))
             }
 
