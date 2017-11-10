@@ -5,7 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.github.piasy.biv.BigImageViewer
-import com.github.piasy.biv.loader.fresco.FrescoImageLoader
+import com.github.piasy.biv.loader.glide.GlideImageLoader
 import com.github.piasy.biv.view.BigImageView
 import fr.openium.auvergnewebcams.Constants.KEY_ID
 import fr.openium.auvergnewebcams.R
@@ -25,7 +25,7 @@ class FragmentWebcam : AbstractFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        BigImageViewer.initialize(FrescoImageLoader.with(activity.applicationContext));
+        BigImageViewer.initialize(GlideImageLoader.with(context));
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -42,7 +42,7 @@ class FragmentWebcam : AbstractFragment() {
 
     private fun initWebCam() {
         if (isAlive) {
-            val display = activity.getWindowManager().getDefaultDisplay()
+            val display = activity!!.getWindowManager().getDefaultDisplay()
             val size = Point()
             display.getSize(size)
 

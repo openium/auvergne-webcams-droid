@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import com.squareup.picasso.Picasso
 import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.injection.GlideApp
 import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.model.adapter.ItemWebcam
 import kotlinx.android.synthetic.main.item_webcam.view.*
@@ -18,7 +18,7 @@ import java.util.*
 /**
  * Created by laura on 23/03/2017.
  */
-class AdapterWebcam(val context: Context, val picasso: Picasso, val listener: ((Webcam, Int) -> Unit)? = null, val items: List<ItemWebcam>) : RecyclerView.Adapter<AdapterWebcam.WebcamHolder>() {
+class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)? = null, val items: List<ItemWebcam>) : RecyclerView.Adapter<AdapterWebcam.WebcamHolder>() {
 
     val heightImage: Int
 
@@ -46,8 +46,7 @@ class AdapterWebcam(val context: Context, val picasso: Picasso, val listener: ((
         val urlWebCam = webCam.imageLD
         val nameWebCam = webCam.title
 
-        picasso.load(urlWebCam)
-                .fit()
+        GlideApp.with(context).load(urlWebCam)
                 .centerCrop()
                 .into(holder.mImageViewWebCam)
 
@@ -57,7 +56,7 @@ class AdapterWebcam(val context: Context, val picasso: Picasso, val listener: ((
             holder.mViewSeparator.visibility = View.GONE
             holder.mTextViewNameSection.setText(section)
             val resourceId = context.resources.getIdentifier(item.imageSection, "drawable", context.getPackageName())
-            if(resourceId != -1) {
+            if (resourceId != -1) {
                 holder.mImageViewSection.setImageResource(resourceId)
             } else {
                 holder.mImageViewSection.setImageResource(R.drawable.pdd_landscape)

@@ -3,7 +3,6 @@ package fr.openium.auvergnewebcams.fragment
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.view.ContextThemeWrapper
 import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.View
@@ -29,14 +28,6 @@ abstract class AbstractFragment : Fragment() {
 
     protected val kodeinInjector = KodeinInjector()
 
-    protected val wrappedContext: Context by lazy {
-        if (overrideTheme == 0) {
-            context
-        } else {
-            ContextThemeWrapper(activity, overrideTheme)
-        }
-    }
-
     // =================================================================================================================
     // Life cycle
     // =================================================================================================================
@@ -49,13 +40,8 @@ abstract class AbstractFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        var layoutInflater = inflater
-        if (overrideTheme != 0) {
-            layoutInflater = inflater.cloneInContext(wrappedContext)
-        }
-
         val layoutId = layoutId
-        val view: View = layoutInflater.inflate(layoutId, container, false)
+        val view: View = inflater.inflate(layoutId, container, false)
         return view
     }
 

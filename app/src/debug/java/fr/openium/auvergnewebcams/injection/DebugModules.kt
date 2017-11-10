@@ -6,7 +6,6 @@ import com.github.salomonbrys.kodein.instance
 import com.github.salomonbrys.kodein.singleton
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
-import com.squareup.picasso.Picasso
 
 /**
  * Created by t.coulange on 21/03/2017.
@@ -17,6 +16,6 @@ object DebugModules {
     }
 
     val serviceModule = Kodein.Module {
-        bind<Picasso>(overrides = true) with singleton { Picasso.Builder(instance()).loggingEnabled(true).build() }
+        //        bind<GlideRequests>(overrides = true) with singleton { GlideApp.with(instance<Context>()) }
     }
 }

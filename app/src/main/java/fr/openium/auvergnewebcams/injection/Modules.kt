@@ -2,10 +2,8 @@ package fr.openium.auvergnewebcams.injection
 
 import com.github.salomonbrys.kodein.Kodein
 import com.github.salomonbrys.kodein.bind
-import com.github.salomonbrys.kodein.instance
 import com.github.salomonbrys.kodein.singleton
 import com.squareup.leakcanary.RefWatcher
-import com.squareup.picasso.Picasso
 
 /**
  * Created by t.coulange on 07/12/2016.
@@ -16,6 +14,6 @@ object Modules {
     }
 
     val serviceModule = Kodein.Module {
-        bind<Picasso>() with singleton { Picasso.Builder(instance()).build() }
+        //        bind<Picasso>() with singleton { Picasso.Builder(instance()).build() }
     }
 }

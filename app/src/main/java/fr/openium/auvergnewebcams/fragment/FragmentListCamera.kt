@@ -3,8 +3,6 @@ package fr.openium.auvergnewebcams.fragment
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import com.github.salomonbrys.kodein.instance
-import com.squareup.picasso.Picasso
 import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.activity.ActivityWebcam
@@ -23,7 +21,6 @@ class FragmentListCamera : AbstractFragment() {
         get() = R.layout.fragment_list_camera
 
     protected val mItems = ArrayList<ItemWebcam>()
-    protected val picasso: Picasso by kodeinInjector.instance()
 
     // =================================================================================================================
     // Life cycle
@@ -51,8 +48,7 @@ class FragmentListCamera : AbstractFragment() {
 
     private fun initAdapter() {
         recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = AdapterWebcam(context, picasso, {
-            webcam, _ ->
+        recyclerView.adapter = AdapterWebcam(context!!, { webcam, _ ->
             val intent = Intent(context, ActivityWebcam::class.java).apply { putExtra(Constants.KEY_ID, webcam.uid) }
             startActivity(intent)
         }, mItems)
