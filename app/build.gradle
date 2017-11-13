@@ -4,6 +4,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'realm-android'
+apply plugin: 'fr.openium.version'
 
 android {
     compileSdkVersion 27
@@ -12,7 +13,7 @@ android {
         applicationId "fr.openium.auvergnewebcams"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 2
+        versionCode openiumVersion.versionCode
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
