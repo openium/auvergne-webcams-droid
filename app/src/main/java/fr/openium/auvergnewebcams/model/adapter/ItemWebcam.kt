@@ -5,5 +5,4 @@ import fr.openium.auvergnewebcams.model.Webcam
 /**
  * Created by laura on 20/03/2017.
  */
-class ItemWebcam(val webcam:Webcam, val nameSection: String, val imageSection: String, val nbWebcams: Int) {
-}
+data class ItemWebcam(val nameSection: String, val imageSection: String, val nbWebcams: Int, val webcam: List<Webcam>)

@@ -8,18 +8,19 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.azoft.carousellayoutmanager.CarouselLayoutManager
+import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener
+import com.azoft.carousellayoutmanager.CenterScrollListener
 import fr.openium.auvergnewebcams.R
-import fr.openium.auvergnewebcams.injection.GlideApp
+import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.Webcam
-import fr.openium.auvergnewebcams.model.adapter.ItemWebcam
 import kotlinx.android.synthetic.main.item_webcam.view.*
 import java.util.*
 
 /**
  * Created by laura on 23/03/2017.
  */
-class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)? = null, val items: List<ItemWebcam>) : RecyclerView.Adapter<AdapterWebcam.WebcamHolder>() {
-
+class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)? = null, val items: List<Section>) : RecyclerView.Adapter<AdapterWebcam.WebcamHolder>() {
     val heightImage: Int
 
     init {
@@ -27,49 +28,43 @@ class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)?
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WebcamHolder {
-        return WebcamHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_webcam, parent, false))
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_webcam, parent, false)
+        view.recyclerView.apply {
+            layoutManager = CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL, true).apply {
+                setPostLayoutListener(CarouselZoomPostLayoutListener())
+            }
+            setHasFixedSize(true)
+            addOnScrollListener(CenterScrollListener())
+        }
+        return WebcamHolder(view)
     }
 
     override fun onBindViewHolder(holder: WebcamHolder, position: Int) {
         val item = items.get(position)
 
-        val section = item.nameSection
-        val hasHeader: Boolean
-        if (position == 0) {
-            hasHeader = true
-        } else {
-            val prevItem = items.get(position - 1)
-            hasHeader = section != prevItem.nameSection
-        }
-
-        val webCam = item.webcam
-        val urlWebCam = webCam.imageLD
-        val nameWebCam = webCam.title
-
-        GlideApp.with(context).load(urlWebCam)
-                .centerCrop()
-                .into(holder.mImageViewWebCam)
+        val section = item.title
+        val webCam = item.webcams.first()
+        val nameWebCam = webCam!!.title
 
         holder.mTextViewNameWebcam.setText(nameWebCam)
-        if (hasHeader) {
-            holder.mLinearLayoutSection.visibility = View.VISIBLE
-            holder.mViewSeparator.visibility = View.GONE
-            holder.mTextViewNameSection.setText(section)
-            val resourceId = context.resources.getIdentifier(item.imageSection, "drawable", context.getPackageName())
-            if (resourceId != -1) {
-                holder.mImageViewSection.setImageResource(resourceId)
-            } else {
-                holder.mImageViewSection.setImageResource(R.drawable.pdd_landscape)
-            }
-            val nbWebCams = String.format(Locale.getDefault(), context.resources.getQuantityString(R.plurals.nb_cameras_format, item.nbWebcams, item.nbWebcams))
-            holder.mTextViewNbCameras.text = nbWebCams
+        holder.mLinearLayoutSection.visibility = View.VISIBLE
+        holder.mTextViewNameSection.setText(section)
+        val resourceId = context.resources.getIdentifier(item.imageName, "drawable", context.getPackageName())
+        if (resourceId != -1) {
+            holder.mImageViewSection.setImageResource(resourceId)
         } else {
-            holder.mLinearLayoutSection.visibility = View.GONE
-            holder.mViewSeparator.visibility = View.VISIBLE
+            holder.mImageViewSection.setImageResource(R.drawable.pdd_landscape)
         }
+        val nbWebCams = String.format(Locale.getDefault(), context.resources.getQuantityString(R.plurals.nb_cameras_format, item.webcams.count(), item.webcams.count()))
+        holder.mTextViewNbCameras.text = nbWebCams
 
         holder.itemView.setOnClickListener {
             listener?.invoke(webCam, position)
+        }
+        holder.mRecyclerView.adapter = AdapterWebcamCarousel(context, listener, item.webcams)
+        holder.onSelectedListener = { pos ->
+            val name = item.webcams[pos]!!.title
+            holder.mTextViewNameWebcam.setText(name)
         }
 
     }
@@ -82,19 +77,21 @@ class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)?
         val mTextViewNameSection: TextView
         val mTextViewNameWebcam: TextView
         val mTextViewNbCameras: TextView
-        val mImageViewWebCam: ImageView
         val mImageViewSection: ImageView
         val mLinearLayoutSection: LinearLayout
-        val mViewSeparator: View
+        val mRecyclerView: RecyclerView
+        var onSelectedListener: ((Int) -> Unit)? = null
 
         init {
             mTextViewNameWebcam = view.textViewNameWebcam
             mTextViewNameSection = view.textViewNameSection
             mTextViewNbCameras = view.textViewNbCameras
-            mImageViewWebCam = view.imageViewWebCam
             mImageViewSection = view.imageViewSection
+            mRecyclerView = view.recyclerView
             mLinearLayoutSection = view.linearLayoutSection
-            mViewSeparator = view.viewSeparator
+            (view.recyclerView.layoutManager as CarouselLayoutManager).addOnItemSelectionListener { pos ->
+                onSelectedListener?.invoke(pos)
+            }
         }
     }
 }

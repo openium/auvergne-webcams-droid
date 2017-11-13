@@ -4,7 +4,7 @@
       "uid": 1,
       "order": 1,
       "title": "Puy de Dôme",
-      "imageName": "pdd_landscape",
+      "imageName": "sancy-landscape",
       "latitude": 45.7720912,
       "longitude": 2.9631456,
       "webcams": [
@@ -14,7 +14,7 @@
           "title": "Sommet du Puy de Dôme",
           "imageLD": "http://wwwobs.univ-bpclermont.fr/opgc/webcampdd.jpg",
           "imageHD": null,
-          "type": "image",
+          "lowQualityOnly": true,
           "tags": [
             "puy de dome",
             "auvergne",
@@ -27,7 +27,7 @@
           "title": "Campus des Cézeaux",
           "imageLD": "http://wwwobs.univ-bpclermont.fr/opgc/webcamcez.jpg",
           "imageHD": null,
-          "type": "image",
+          "lowQualityOnly": true,
           "tags": [
             "puy de dome",
             "auvergne",
@@ -40,7 +40,7 @@
       "uid": 2,
       "order": 2,
       "title": "Puy de Sancy",
-      "imageName": "goal_landscape",
+      "imageName": "goal-landscape",
       "latitude": 45.5498761,
       "longitude": 2.7791934,
       "webcams": [
@@ -50,7 +50,6 @@
           "title": "Mont Dore - Bas de la station",
           "imageLD": "http://srv02.trinum.com/ibox/ftpcam/1280_mont-dore_bas-station.jpg",
           "imageHD": "http://srv02.trinum.com/ibox/ftpcam/mega_mont-dore_bas-station.jpg",
-          "type": "image",
           "tags": [
             "sancy",
             "mot dore",
@@ -65,7 +64,6 @@
           "title": "Mont Dore - Sommet",
           "imageLD": "http://www.trinum.com/ibox/ftpcam/1280_mont-dore_sommet.jpg",
           "imageHD": "http://www.trinum.com/ibox/ftpcam/mega_mont-dore_sommet.jpg",
-          "type": "image",
           "tags": [
             "sancy",
             "super besse",
@@ -80,7 +78,6 @@
           "title": "Super Besse - Ecole (Bas)",
           "imageLD": "http://srv14.trinum.com/ibox/ftpcam/1280_superbesse_ecole.jpg",
           "imageHD": "http://srv14.trinum.com/ibox/ftpcam/mega_superbesse_ecole.jpg",
-          "type": "image",
           "tags": [
             "sancy",
             "super besse",
@@ -95,7 +92,6 @@
           "title": "Super Besse - Tyrolienne (Haut)",
           "imageLD": "http://srv06.trinum.com/ibox/ftpcam/1280_superbesse_superbesse-haut.jpg",
           "imageHD": "http://srv06.trinum.com/ibox/ftpcam/mega_superbesse_superbesse-haut.jpg",
-          "type": "image",
           "tags": [
             "sancy",
             "super besse",
@@ -110,7 +106,6 @@
           "title": "Super Besse - Front de neige",
           "imageLD": "http://srv05.trinum.com/ibox/ftpcam/1280_superbesseM.jpg",
           "imageHD": "http://srv05.trinum.com/ibox/ftpcam/mega_superbesseM.jpg",
-          "type": "image",
           "tags": [
             "sancy",
             "super besse",
@@ -125,7 +120,6 @@
           "title": "Sancy - Station Chastreix",
           "imageLD": "http://srv02.trinum.com/ibox/ftpcam/1280_chastreix-sancy_station.jpg",
           "imageHD": "http://srv02.trinum.com/ibox/ftpcam/mega_chastreix-sancy_station.jpg",
-          "type": "image",
           "tags": [
             "sancy",
             "charstreix",
@@ -140,7 +134,6 @@
           "title": "Sancy - Lac Chambon",
           "imageLD": "http://srv14.trinum.com/ibox/ftpcam/1280_chastreix-sancy_lac-chambon.jpg",
           "imageHD": "http://srv14.trinum.com/ibox/ftpcam/mega_chastreix-sancy_lac-chambon.jpg",
-          "type": "image",
           "tags": [
             "sancy",
             "lac chambon",
@@ -155,7 +148,7 @@
       "uid": 3,
       "order": 3,
       "title": "Le Lioran",
-      "imageName": "lioran_landscape",
+      "imageName": "lioran-landscape",
       "latitude": 45.083,
       "longitude": 2.75,
       "webcams": [
@@ -165,7 +158,6 @@
           "title": "Sommet de la station",
           "imageLD": "http://srv02.trinum.com/ibox/ftpcam/1280_lioran_sommet-domaine.jpg",
           "imageHD": "http://srv02.trinum.com/ibox/ftpcam/mega_lioran_sommet-domaine.jpg",
-          "type": "image",
           "tags": [
             "lioran",
             "auvergne",
@@ -180,7 +172,6 @@
           "title": "Font d'Alagnon",
           "imageLD": "http://srv04.trinum.com/ibox/ftpcam/1280_lioran_font-d-alagnon.jpg",
           "imageHD": "http://srv04.trinum.com/ibox/ftpcam/mega_lioran_font-d-alagnon.jpg",
-          "type": "image",
           "tags": [
             "lioran",
             "auvergne",
@@ -194,7 +185,6 @@
           "title": "Centre station",
           "imageLD": "http://srv02.trinum.com/ibox/ftpcam/1280_lioran_station.jpg",
           "imageHD": "http://www.trinum.com/ibox/ftpcam/mega_lioran_station.jpg",
-          "type": "image",
           "tags": [
             "lioran",
             "auvergne",
@@ -206,9 +196,9 @@
     },
     {
       "uid": 4,
-      "order": 5,
+      "order": 4,
       "title": "État du traffic",
-      "imageName": "road_landscape",
+      "imageName": "road-landscape",
       "latitude": null,
       "longitude": null,
       "webcams": [
@@ -218,7 +208,7 @@
           "title": "D149 - Besse et Saint-Anastaise\nAccès à Super-Besse",
           "imageLD": "http://routes.cg63.fr/sig/CAM1.jpg",
           "imageHD": null,
-          "type": "image",
+          "lowQualityOnly": true,
           "tags": [
             "cg63",
             "route"
@@ -230,7 +220,7 @@
           "title": "D942 - Saint-Genès Champanelle\nCol de la Moreno",
           "imageLD": "http://routes.cg63.fr/sig/CAM2.jpg",
           "imageHD": null,
-          "type": "image",
+          "lowQualityOnly": true,
           "tags": [
             "cg63",
             "route"
@@ -242,7 +232,7 @@
           "title": "D941 - Saint-Ours Les roches\nEntrée de Pontgibaud",
           "imageLD": "http://routes.cg63.fr/sig/CAM3.jpg",
           "imageHD": null,
-          "type": "image",
+          "lowQualityOnly": true,
           "tags": [
             "cg63",
             "route"
@@ -254,7 +244,7 @@
           "title": "D996 - Grandrif\nCol des Pradeaux",
           "imageLD": "http://routes.cg63.fr/sig/CAM4.jpg",
           "imageHD": null,
-          "type": "image",
+          "lowQualityOnly": true,
           "tags": [
             "cg63",
             "route"
@@ -266,7 +256,7 @@
           "title": "D2089 - Perpezat\nCôte de Buges",
           "imageLD": "http://routes.cg63.fr/sig/CAM5.jpg",
           "imageHD": null,
-          "type": "image",
+          "lowQualityOnly": true,
           "tags": [
             "cg63",
             "route"
@@ -278,7 +268,7 @@
           "title": "D996 - Cunlhat\nCol de Toutée",
           "imageLD": "http://routes.cg63.fr/sig/CAM6.jpg",
           "imageHD": null,
-          "type": "image",
+          "lowQualityOnly": true,
           "tags": [
             "cg63",
             "route"
@@ -290,7 +280,7 @@
           "title": "D2144 - Menat\nLa Baraque Brûlée",
           "imageLD": "http://routes.cg63.fr/sig/CAM7.jpg",
           "imageHD": null,
-          "type": "image",
+          "lowQualityOnly": true,
           "tags": [
             "cg63",
             "route"
@@ -302,7 +292,6 @@
           "title": "D2009 - Cébazat\nPont de Ladoux",
           "imageLD": "http://routes.cg63.fr/sig/CAM8.jpg",
           "imageHD": null,
-          "type": "image",
           "tags": [
             "cg63",
             "route"
@@ -314,7 +303,7 @@
           "title": "D999 - Saint-Germain l'Herm\nCol de la Dételée",
           "imageLD": "http://routes.cg63.fr/sig/CAM9.jpg",
           "imageHD": null,
-          "type": "image",
+          "lowQualityOnly": true,
           "tags": [
             "cg63",
             "route"
@@ -326,7 +315,7 @@
           "title": "D2089 - Chabreloche\nLe Pas du Pire",
           "imageLD": "http://routes.cg63.fr/sig/CAM10.jpg",
           "imageHD": null,
-          "type": "image",
+          "lowQualityOnly": true,
           "tags": [
             "cg63",
             "route"
@@ -338,7 +327,7 @@
           "title": "D943 - Saint-Ours Les Roches\nLe Vauriat",
           "imageLD": "http://routes.cg63.fr/sig/CAM11.jpg",
           "imageHD": null,
-          "type": "image",
+          "lowQualityOnly": true,
           "tags": [
             "cg63",
             "route"
@@ -350,7 +339,7 @@
           "title": "D922 - Saint-Sauves d'Auvergne\nMéjanesse",
           "imageLD": "http://routes.cg63.fr/sig/CAM12.jpg",
           "imageHD": null,
-          "type": "image",
+          "lowQualityOnly": true,
           "tags": [
             "cg63",
             "route"

@@ -1,86 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical"
-              android:padding="5dp">
-
-    <View
-        android:id="@+id/viewSeparator"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/grey"
-        android:layout_marginBottom="15dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"/>
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="5dp">
 
     <LinearLayout
         android:id="@+id/linearLayoutSection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:orientation="horizontal"
-        android:padding="5dp"
-        android:layout_marginBottom="10dp">
+        android:padding="5dp">
 
         <ImageView
             android:id="@+id/imageViewSection"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="center_vertical"
-            tools:src="@drawable/goal_landscape"/>
+            tools:src="@drawable/goal_landscape" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="10dp">
+            android:layout_marginLeft="10dp"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/textViewNameSection"
+                style="@style/font_proxima_bold"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:textAllCaps="true"
                 android:textColor="@color/white"
                 android:textSize="14sp"
                 android:textStyle="bold"
-                android:layout_marginTop="5dp"
-                style="@style/font_proxima_bold"
-                tools:text="Puy de dome"/>
+                tools:text="Puy de dome" />
 
             <TextView
                 android:id="@+id/textViewNbCameras"
+                style="@style/font_proxima_regular_italic"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:textColor="@color/grey_text"
                 android:textSize="12sp"
                 android:textStyle="italic"
-                android:layout_marginTop="5dp"
-                style="@style/font_proxima_regular_italic"
-                tools:text="2 caméras"/>
+                tools:text="2 caméras" />
 
         </LinearLayout>
 
 
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/imageViewWebCam"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/height_image_list"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_height="@dimen/height_image_list" />
 
     <TextView
         android:id="@+id/textViewNameWebcam"
+        style="@style/font_proxima_regular"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:paddingTop="10dp"
         android:textColor="@color/grey_text"
         android:textSize="14sp"
-        style="@style/font_proxima_regular"
-        tools:text="Caméra 1"/>
-
+        tools:text="Caméra 1" />
 
 </LinearLayout>

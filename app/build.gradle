@@ -74,6 +74,8 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:4.6.0'
     implementation 'com.github.salomonbrys.kodein:kodein:4.1.0'
     implementation 'com.github.salomonbrys.kodein:kodein-android:4.1.0'
+    implementation 'com.azoft.carousellayoutmanager:carousel:1.2.1'
+
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.5.4'
