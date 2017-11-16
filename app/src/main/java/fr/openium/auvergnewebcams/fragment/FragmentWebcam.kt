@@ -4,8 +4,6 @@ import android.graphics.Point
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import com.github.piasy.biv.BigImageViewer
-import com.github.piasy.biv.loader.glide.GlideImageLoader
 import com.github.piasy.biv.view.BigImageView
 import fr.openium.auvergnewebcams.Constants.KEY_ID
 import fr.openium.auvergnewebcams.R
@@ -21,12 +19,6 @@ class FragmentWebcam : AbstractFragment() {
 
     override val layoutId: Int
         get() = R.layout.fragment_webcam
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        BigImageViewer.initialize(GlideImageLoader.with(context));
-    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -48,11 +40,11 @@ class FragmentWebcam : AbstractFragment() {
 
             if (!webcam!!.imageHD.isNullOrBlank()) {
                 mBigImage.setInitScaleType(BigImageView.INIT_SCALE_TYPE_AUTO)
-                mBigImage.showImage(Uri.parse( webcam!!.imageLD!!), Uri.parse(webcam!!.imageHD!!))
+                mBigImage.showImage(Uri.parse(webcam!!.imageLD!!), Uri.parse(webcam!!.imageHD!!))
             } else {
 
                 mBigImage.setInitScaleType(BigImageView.INIT_SCALE_TYPE_CENTER_INSIDE)
-                mBigImage.showImage(Uri.parse( webcam!!.imageLD!!))
+                mBigImage.showImage(Uri.parse(webcam!!.imageLD!!))
             }
 
         }

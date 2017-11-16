@@ -6,6 +6,7 @@ import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.injection.GlideApp
 import fr.openium.auvergnewebcams.model.Webcam
@@ -36,6 +37,7 @@ class AdapterWebcamCarousel(val context: Context, val listener: ((Webcam, Int) -
         val urlWebCam = item.imageLD
 
         GlideApp.with(context).load(urlWebCam)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .centerCrop()
                 .into(holder.itemView as ImageView)
 

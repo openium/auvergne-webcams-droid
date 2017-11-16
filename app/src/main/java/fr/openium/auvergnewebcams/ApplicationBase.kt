@@ -4,11 +4,13 @@ import android.app.Application
 import android.content.Context
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
+import com.github.piasy.biv.BigImageViewer
 import com.github.salomonbrys.kodein.*
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
 import fr.openium.auvergnewebcams.injection.Modules
 import fr.openium.auvergnewebcams.log.CrashReportingTree
+import fr.openium.auvergnewebcams.utils.CustomGlideImageLoader
 import io.fabric.sdk.android.Fabric
 import io.realm.Realm
 import io.realm.RealmConfiguration
@@ -46,6 +48,8 @@ abstract class ApplicationBase : Application(), KodeinAware {
         CalligraphyConfig.initDefault(CalligraphyConfig.Builder()
                 .setDefaultFontPath("fonts/ProximaNova-Sbold.otf")
                 .setFontAttrId(R.attr.fontPath).build())
+
+        BigImageViewer.initialize(CustomGlideImageLoader.with(applicationContext))
     }
 
     open fun initializeCrashlytics() {
