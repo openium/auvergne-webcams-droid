@@ -43,7 +43,11 @@ class FragmentListCamera : AbstractFragment() {
     private fun initAdapter(sections: RealmResults<Section>) {
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = AdapterWebcam(context!!, { webcam, _ ->
-            val intent = Intent(context, ActivityWebcam::class.java).apply { putExtra(Constants.KEY_ID, webcam.uid) }
+
+            val intent: Intent = Intent(context, ActivityWebcam::class.java).apply {
+                putExtra(Constants.KEY_ID, webcam.uid)
+                putExtra(Constants.KEY_TYPE, webcam.type)
+            }
             startActivity(intent)
         }, sections)
         recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.HORIZONTAL))
