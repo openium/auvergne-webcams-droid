@@ -21,6 +21,7 @@ import java.util.*
  * Created by laura on 23/03/2017.
  */
 class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)? = null, val items: List<Section>) : RecyclerView.Adapter<AdapterWebcam.WebcamHolder>() {
+
     val heightImage: Int
 
     init {
@@ -49,8 +50,9 @@ class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)?
         holder.mTextViewNameWebcam.setText(nameWebCam)
         holder.mLinearLayoutSection.visibility = View.VISIBLE
         holder.mTextViewNameSection.setText(section)
-        val resourceId = context.resources.getIdentifier(item.imageName, "drawable", context.getPackageName())
-        if (resourceId != -1) {
+        val imageName = item.imageName?.replace("-", "_") ?: ""
+        val resourceId = context.resources.getIdentifier(imageName, "drawable", context.getPackageName())
+        if (resourceId != -1 && resourceId != 0) {
             holder.mImageViewSection.setImageResource(resourceId)
         } else {
             holder.mImageViewSection.setImageResource(R.drawable.pdd_landscape)

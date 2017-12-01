@@ -15,6 +15,7 @@ import fr.openium.auvergnewebcams.model.Webcam
  * Created by laura on 23/03/2017.
  */
 class AdapterWebcamCarousel(val context: Context, val listener: ((Webcam, Int) -> Unit)? = null, val items: List<Webcam>) : RecyclerView.Adapter<AdapterWebcamCarousel.WebcamHolder>() {
+
     val heightImage: Int
     val padding: Int
 
@@ -33,8 +34,12 @@ class AdapterWebcamCarousel(val context: Context, val listener: ((Webcam, Int) -
 
     override fun onBindViewHolder(holder: WebcamHolder, position: Int) {
         val item = items.get(position)
-
-        val urlWebCam = item.imageLD
+        val urlWebCam: String
+        if (item.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
+            urlWebCam = String.format("%s/%s.jpg", item.viewsurfLD ?: "", item.mediaViewSurfLD ?: "")
+        } else {
+            urlWebCam = item.imageLD ?: ""
+        }
 
         GlideApp.with(context).load(urlWebCam)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)

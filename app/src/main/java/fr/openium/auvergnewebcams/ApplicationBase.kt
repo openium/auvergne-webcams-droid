@@ -43,6 +43,7 @@ abstract class ApplicationBase : Application(), KodeinAware {
         val configuration = RealmConfiguration.Builder()
                 .schemaVersion(1)
 //                .migration(DatabaseMigration())
+                .deleteRealmIfMigrationNeeded()
                 .build()
         Realm.setDefaultConfiguration(configuration)
         CalligraphyConfig.initDefault(CalligraphyConfig.Builder()

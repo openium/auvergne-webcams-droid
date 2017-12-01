@@ -38,13 +38,24 @@ class FragmentWebcam : AbstractFragment() {
             val size = Point()
             display.getSize(size)
 
-            if (!webcam!!.imageHD.isNullOrBlank()) {
-                mBigImage.setInitScaleType(BigImageView.INIT_SCALE_TYPE_AUTO)
-                mBigImage.showImage(Uri.parse(webcam!!.imageLD!!), Uri.parse(webcam!!.imageHD!!))
+            if (webcam?.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
+                if (!webcam?.mediaViewSurfHD.isNullOrEmpty() && !webcam?.viewsurfHD.isNullOrEmpty()) {
+                    val urlWebCam = String.format("%s/%s.jpg", webcam!!.viewsurfHD!!, webcam!!.mediaViewSurfHD!!)
+                    mBigImage.setInitScaleType(BigImageView.INIT_SCALE_TYPE_AUTO)
+                    mBigImage.showImage(Uri.parse(urlWebCam))
+                } else if (!webcam?.mediaViewSurfLD.isNullOrEmpty() && !webcam?.viewsurfLD.isNullOrEmpty()) {
+                    val urlWebCam = String.format("%s/%s.jpg", webcam!!.viewsurfLD!!, webcam!!.mediaViewSurfLD!!)
+                    mBigImage.setInitScaleType(BigImageView.INIT_SCALE_TYPE_AUTO)
+                    mBigImage.showImage(Uri.parse(urlWebCam))
+                }
             } else {
-
-                mBigImage.setInitScaleType(BigImageView.INIT_SCALE_TYPE_CENTER_INSIDE)
-                mBigImage.showImage(Uri.parse(webcam!!.imageLD!!))
+                if (!webcam!!.imageHD.isNullOrBlank()) {
+                    mBigImage.setInitScaleType(BigImageView.INIT_SCALE_TYPE_AUTO)
+                    mBigImage.showImage(Uri.parse(webcam!!.imageLD!!), Uri.parse(webcam!!.imageHD!!))
+                } else if (!webcam!!.imageLD.isNullOrBlank()) {
+                    mBigImage.setInitScaleType(BigImageView.INIT_SCALE_TYPE_CENTER_INSIDE)
+                    mBigImage.showImage(Uri.parse(webcam!!.imageLD!!))
+                }
             }
 
         }

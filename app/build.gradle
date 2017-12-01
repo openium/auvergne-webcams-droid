@@ -50,7 +50,7 @@ android {
 }
 
 ext {
-    supportVersion = "27.0.0"
+    supportVersion = "27.0.2"
     playVersion = "11.6.0"
 }
 
@@ -89,6 +89,8 @@ dependencies {
     }
 
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    compile 'com.squareup.retrofit2:adapter-rxjava:2.3.0'
+
     implementation 'uk.co.chrisjenx:calligraphy:2.3.0'
     implementation 'com.github.piasy:BigImageViewer:1.4.2'
     implementation 'com.github.piasy:GlideImageLoader:1.4.2'
