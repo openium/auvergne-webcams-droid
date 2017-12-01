@@ -3,16 +3,18 @@ package fr.openium.auvergnewebcams.activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.animation.AnimationUtils
+import com.github.salomonbrys.kodein.instance
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.ext.hasNetwork
 import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.SectionList
 import fr.openium.auvergnewebcams.model.Webcam
+import fr.openium.auvergnewebcams.rest.AWApi
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
-import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_splash.*
+import retrofit2.adapter.rxjava2.Result
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URL
@@ -23,6 +25,8 @@ import java.util.concurrent.TimeUnit
  */
 class ActivitySplash : AbstractActivity() {
 
+    protected val api: AWApi by kodeinInjector.instance()
+
     override val layoutId: Int
         get() = R.layout.activity_splash
 
@@ -32,49 +36,53 @@ class ActivitySplash : AbstractActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val getDataObs = Observable
-                .fromCallable {
-                    Realm.getDefaultInstance().use {
-
-                        if (applicationContext.hasNetwork) { // TODO load from url
-                            val sections = SectionList.getSectionsFromAssets(applicationContext)
-                            if (sections != null) {
-                                for (section in sections.sections) {
-                                    for (webcam in section.webcams) {
-                                        if (webcam.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
-                                            // load media ld
-                                            webcam.mediaViewSurfLD = getMediaViewSurf(webcam.viewsurfLD)
-                                            webcam.mediaViewSurfHD = getMediaViewSurf(webcam.viewsurfHD)
-                                        }
+        if (applicationContext.hasNetwork) {
+            disposables.add(Observable.zip(Observable.timer(3, TimeUnit.SECONDS), api.getSections(),
+                    BiFunction
+                    { _: Long, it: Result<SectionList> ->
+                        if (!it.isError && it.response()?.body() != null) {
+                            val sections = it.response()!!.body()!!
+                            for (section in sections.sections) {
+                                for (webcam in section.webcams) {
+                                    if (webcam.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
+                                        // load media ld
+                                        webcam.mediaViewSurfLD = getMediaViewSurf(webcam.viewsurfLD)
+                                        webcam.mediaViewSurfHD = getMediaViewSurf(webcam.viewsurfHD)
                                     }
                                 }
-
-
-                                it.executeTransaction { realm ->
-                                    realm.insertOrUpdate(sections.sections)
+                            }
+                            Realm.getDefaultInstance().use {
+                                it.executeTransaction {
+                                    it.insertOrUpdate(sections.sections)
                                 }
                             }
-
-                        } else if (it.where(Section::class.java).findAll().count() == 0) {
-                            val sections = SectionList.getSectionsFromAssets(applicationContext)
-                            if (sections != null) {
-                                it.executeTransaction { realm ->
-                                    realm.insertOrUpdate(sections.sections)
-                                }
-                            }
+                        } else {
+                            loadFromAssets()
                         }
+                        true
+                    })
+                    .subscribe(
+                            {
+                                startActivityMain()
+                            },
+                            {
+                                startActivityMain()
+                            }))
+
+        } else {
+            val getDataObs = Observable
+                    .fromCallable {
+                        loadFromAssets()
                     }
+            disposables.add(Observable.combineLatest(getDataObs, Observable.timer(3, TimeUnit.SECONDS), BiFunction
+            { _: Unit, _: Long ->
+                true
+            }).subscribe
+            {
+                startActivityMain()
+            })
+        }
 
-                }.observeOn(Schedulers.io())
-                .subscribeOn(Schedulers.io())
-
-        subscriptions.add(Observable.combineLatest(getDataObs, Observable.timer(3, TimeUnit.SECONDS), BiFunction
-        { _: Unit, _: Long ->
-            true
-        }).subscribe
-        {
-            startActivityMain()
-        })
     }
 
     override fun onResume() {
@@ -92,6 +100,19 @@ class ActivitySplash : AbstractActivity() {
     // =================================================================================================================
     // Specific job
     // =================================================================================================================
+
+    private fun loadFromAssets() {
+        Realm.getDefaultInstance().use {
+            if (it.where(Section::class.java).findAll().count() == 0) {
+                val sections = SectionList.getSectionsFromAssets(applicationContext)
+                if (sections != null) {
+                    it.executeTransaction {
+                        it.insertOrUpdate(sections.sections)
+                    }
+                }
+            }
+        }
+    }
 
     private fun startActivityMain() {
         val intent = Intent(this, ActivityMain::class.java)

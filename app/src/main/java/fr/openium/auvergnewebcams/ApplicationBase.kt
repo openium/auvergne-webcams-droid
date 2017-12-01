@@ -19,9 +19,11 @@ import uk.co.chrisjenx.calligraphy.CalligraphyConfig
 
 abstract class ApplicationBase : Application(), KodeinAware {
     override val kodein by Kodein.lazy {
+
         bind<Context>() with singleton { applicationContext }
         import(Modules.configModule)
         import(Modules.serviceModule)
+        import(Modules.restModule)
     }
 
     val refWatcher: RefWatcher by lazy.instance<RefWatcher>()

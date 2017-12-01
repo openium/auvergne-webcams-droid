@@ -16,7 +16,9 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 
 
 abstract class AbstractActivity : AppCompatActivity() {
-    protected val subscriptions: CompositeDisposable = CompositeDisposable()
+
+    protected val disposables: CompositeDisposable = CompositeDisposable()
+
     protected open val handleFragmentBackPressed: Boolean = true
     protected val kodeinInjector = KodeinInjector()
 
@@ -49,7 +51,7 @@ abstract class AbstractActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        subscriptions.clear()
+        disposables.clear()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
