@@ -24,7 +24,8 @@
         <activity android:name=".activity.ActivityMain">
         </activity>
 
-        <activity android:name=".activity.ActivityWebcam"/>
+        <activity android:name=".activity.ActivityWebcam"
+            android:configChanges="orientation|screenSize"/>
 
         <meta-data
             android:name="io.fabric.ApiKey"
