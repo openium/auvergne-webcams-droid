@@ -20,7 +20,7 @@ import java.util.*
 /**
  * Created by laura on 23/03/2017.
  */
-class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)? = null, val items: List<Section>) : RecyclerView.Adapter<AdapterWebcam.WebcamHolder>() {
+class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)? = null, var items: List<Section>) : RecyclerView.Adapter<AdapterWebcam.WebcamHolder>() {
 
     val heightImage: Int
 
@@ -44,10 +44,7 @@ class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)?
         val item = items.get(position)
 
         val section = item.title
-        val webCam = item.webcams.first()
-        val nameWebCam = webCam!!.title
 
-        holder.mTextViewNameWebcam.setText(nameWebCam)
         holder.mLinearLayoutSection.visibility = View.VISIBLE
         holder.mTextViewNameSection.setText(section)
         val imageName = item.imageName?.replace("-", "_") ?: ""
@@ -61,9 +58,14 @@ class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)?
         holder.mTextViewNbCameras.text = nbWebCams
 
         holder.itemView.setOnClickListener {
-            listener?.invoke(webCam, position)
+            val pos = (holder.itemView.recyclerView.layoutManager as CarouselLayoutManager).centerItemPosition
+            val webcam = item.webcams.get(pos)
+            if (webcam != null) {
+                listener?.invoke(webcam, position)
+            }
         }
         holder.mRecyclerView.adapter = AdapterWebcamCarousel(context, listener, item.webcams)
+
         holder.onSelectedListener = { pos ->
             val name = item.webcams[pos]!!.title
             holder.mTextViewNameWebcam.setText(name)
