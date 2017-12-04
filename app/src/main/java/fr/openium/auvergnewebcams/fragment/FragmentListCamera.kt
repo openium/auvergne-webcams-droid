@@ -31,10 +31,16 @@ import kotlinx.android.synthetic.main.fragment_list_camera.*
  */
 class FragmentListCamera : AbstractFragment() {
 
+    companion object {
+        private const val POSITION_LISTE = "POSITION_LISTE"
+    }
+
     protected val api: AWApi by kodeinInjector.instance()
 
     override val layoutId: Int
         get() = R.layout.fragment_list_camera
+
+    private var position: Int = 0
 
     // =================================================================================================================
     // Life cycle
@@ -47,7 +53,9 @@ class FragmentListCamera : AbstractFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
+        if (savedInstanceState != null) {
+            position = savedInstanceState.getInt(POSITION_LISTE)
+        }
         swipeRefreshLayoutWebcams.setOnRefreshListener {
             if (applicationContext.hasNetwork) {
                 oneTimeSubscriptions.add(api.getSections()
@@ -94,6 +102,12 @@ class FragmentListCamera : AbstractFragment() {
                 })
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        val position = (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+        outState.putInt(POSITION_LISTE, position)
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.menu_settings, menu)
         super.onCreateOptionsMenu(menu, inflater)
@@ -129,6 +143,7 @@ class FragmentListCamera : AbstractFragment() {
             (recyclerView.adapter as AdapterWebcam).items = sections
             recyclerView.adapter.notifyDataSetChanged()
         }
+        recyclerView.scrollToPosition(position)
     }
 
 
