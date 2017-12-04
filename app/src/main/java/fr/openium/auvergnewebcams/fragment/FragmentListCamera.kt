@@ -3,6 +3,9 @@ package fr.openium.auvergnewebcams.fragment
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import com.github.salomonbrys.kodein.instance
 import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
@@ -34,6 +37,11 @@ class FragmentListCamera : AbstractFragment() {
     // =================================================================================================================
     // Life cycle
     // =================================================================================================================
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -82,6 +90,21 @@ class FragmentListCamera : AbstractFragment() {
                 .subscribe { sections ->
                     initAdapter(sections)
                 })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        inflater?.inflate(R.menu.menu_settings, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if (item?.itemId == R.id.menu_settings) {
+
+
+            return true
+        } else {
+            return super.onOptionsItemSelected(item)
+        }
     }
 
     // =================================================================================================================

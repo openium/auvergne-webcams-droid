@@ -3,6 +3,7 @@ package fr.openium.auvergnewebcams.fragment
 import android.net.Uri
 import android.widget.MediaController
 import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.ext.hide
 import fr.openium.auvergnewebcams.model.Webcam
 import kotlinx.android.synthetic.main.fragment_webcam_video.*
 
@@ -34,6 +35,9 @@ class FragmentWebcamVideo : AbstractFragmentWebcam() {
                 val videoUri = Uri.parse(urlWebcam)
                 viewViewWebcam.setMediaController(mediaController)
                 viewViewWebcam.setVideoURI(videoUri)
+                viewViewWebcam.setOnPreparedListener {
+                    progressbar_detail?.hide()
+                }
                 viewViewWebcam.start()
 
             }
