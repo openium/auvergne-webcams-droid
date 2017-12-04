@@ -2,6 +2,7 @@ package fr.openium.auvergnewebcams.fragment
 
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.activity.ActivitySettingsAbout
@@ -24,14 +25,21 @@ class FragmentSettings : AbstractFragment() {
         textview_about.setOnClickListener {
             startActivity(Intent(applicationContext, ActivitySettingsAbout::class.java))
         }
-        textview_openium.setOnClickListener { }
-        textview_pirates.setOnClickListener { }
-        textview_note.setOnClickListener { }
+        textview_openium.setOnClickListener { startActivityForUrl(getString(R.string.url_openium)) }
+        textview_pirates.setOnClickListener { startActivityForUrl(getString(R.string.url_pirates)) }
+        textview_note.setOnClickListener { startActivityForUrl(getString(R.string.url_note, applicationContext.packageName)) }
     }
 
     // =================================================================================================================
     // Specific job
     // =================================================================================================================
+
+    private fun startActivityForUrl(url: String) {
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            data = Uri.parse(url)
+        }
+        startActivity(intent)
+    }
 
     private fun initVersion() {
         try {

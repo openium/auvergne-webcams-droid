@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
-            android:paddingTop="20dp"
+            android:paddingTop="10dp"
             android:text="@string/settings_credits_title"
             android:textAllCaps="true"
             android:textColor="@color/grey"

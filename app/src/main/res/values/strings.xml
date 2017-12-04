@@ -26,4 +26,7 @@
 
     <string name="settings_about_title">Auvergne Webcams</string>
 
+    <string name="url_openium">https://openium.fr</string>
+    <string name="url_pirates">http://agencelespirates.com/</string>
+    <string name="url_note">market://details?id=%s</string>
 </resources>
