@@ -2,6 +2,7 @@ package fr.openium.auvergnewebcams.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.app.ActivityOptionsCompat
 import android.view.animation.AnimationUtils
 import com.github.salomonbrys.kodein.instance
 import fr.openium.auvergnewebcams.R
@@ -114,7 +115,8 @@ class ActivitySplash : AbstractActivity() {
 
     private fun startActivityMain() {
         val intent = Intent(this, ActivityMain::class.java)
-        startActivity(intent)
+        val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, android.R.anim.fade_in, android.R.anim.fade_out).toBundle()
+        startActivity(intent, bundle)
         finish()
     }
 }

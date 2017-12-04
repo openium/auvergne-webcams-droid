@@ -2,6 +2,7 @@ package fr.openium.auvergnewebcams.fragment
 
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.app.ActivityOptionsCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuInflater
@@ -9,6 +10,7 @@ import android.view.MenuItem
 import com.github.salomonbrys.kodein.instance
 import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.activity.ActivitySettings
 import fr.openium.auvergnewebcams.activity.ActivityWebcam
 import fr.openium.auvergnewebcams.adapter.AdapterWebcam
 import fr.openium.auvergnewebcams.ext.applicationContext
@@ -99,8 +101,8 @@ class FragmentListCamera : AbstractFragment() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if (item?.itemId == R.id.menu_settings) {
-
-
+            val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, android.R.anim.slide_in_left, android.R.anim.slide_out_right).toBundle()
+            startActivity(Intent(applicationContext, ActivitySettings::class.java), bundle)
             return true
         } else {
             return super.onOptionsItemSelected(item)
@@ -120,7 +122,8 @@ class FragmentListCamera : AbstractFragment() {
                     putExtra(Constants.KEY_ID, webcam.uid)
                     putExtra(Constants.KEY_TYPE, webcam.type)
                 }
-                startActivity(intent)
+                val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, android.R.anim.slide_in_left, android.R.anim.slide_out_right).toBundle()
+                startActivity(intent, bundle)
             }, sections)
         } else {
             (recyclerView.adapter as AdapterWebcam).items = sections

@@ -25,11 +25,16 @@ class ActivityWebcam : AbstractActivityFragment() {
 
     override fun onConfigurationChanged(newConfig: Configuration?) {
         super.onConfigurationChanged(newConfig)
-        if(newConfig?.orientation == Configuration.ORIENTATION_PORTRAIT) {
+        if (newConfig?.orientation == Configuration.ORIENTATION_PORTRAIT) {
             toolbar.show()
         } else {
             toolbar.gone()
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
     }
 
     override fun getDefaultFragment(): Fragment? {
@@ -39,4 +44,7 @@ class ActivityWebcam : AbstractActivityFragment() {
             return FragmentWebcam()
         }
     }
+
+    override val showHomeAsUp: Boolean
+        get() = true
 }

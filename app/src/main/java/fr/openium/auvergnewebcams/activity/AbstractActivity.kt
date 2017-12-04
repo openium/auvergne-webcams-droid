@@ -14,7 +14,6 @@ import kotlinx.android.synthetic.main.toolbar.*
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 
 
-
 abstract class AbstractActivity : AppCompatActivity() {
 
     protected val disposables: CompositeDisposable = CompositeDisposable()
@@ -55,7 +54,7 @@ abstract class AbstractActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.home) {
+        if (item.itemId == android.R.id.home) {
             onArrowPressed()
             return true
         } else {

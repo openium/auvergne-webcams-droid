@@ -12,4 +12,18 @@
 
     <string name="settings_title">Paramètres</string>
 
+    <string name="settings_global_title">Général</string>
+    <string name="settings_global_refresh">Rafraîchissement automatique</string>
+    <string name="settings_global_refresh_delay">Délai de rafraîchissement (minutes)</string>
+    <string name="settings_global_quality_high">Haute qualité</string>
+    <string name="settings_global_quality_light">Basse qualité</string>
+    <string name="settings_credits_title">Auvergne webcams</string>
+    <string name="settings_credits_about">À propos</string>
+    <string name="settings_credits_openium">Openium</string>
+    <string name="settings_credits_pirates">Les Pirates</string>
+    <string name="settings_credits_note">Noter l\'application</string>
+    <string name="settings_version">Version %1$s (%2$s)</string>
+
+    <string name="settings_about_title">Auvergne Webcams</string>
+
 </resources>
