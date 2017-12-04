@@ -1,6 +1,6 @@
-# Auvergne Webcams - iOS
+# Auvergne Webcams - Android
 
-iOS application displaying the content of the Webcams available in Auvergne - France
+Android application displaying the content of the Webcams available in Auvergne - France
 
 ![Auvergne Webcams - Home Mockups](resources/mockup/mockup-home.png)
 
