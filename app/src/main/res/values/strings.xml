@@ -29,4 +29,10 @@
     <string name="url_openium">https://openium.fr</string>
     <string name="url_pirates">http://agencelespirates.com/</string>
     <string name="url_note">market://details?id=%s</string>
+
+
+    <string name="transition_search_name">SearchTransition</string>
+    <string name="search_hint">Rechercher une webcam</string>
+    <string name="search_title">Rechercher</string>
+    <string name="search_result">%d résultats pour</string>
 </resources>

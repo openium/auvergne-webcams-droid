@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="20dp">
+
+        <ImageView
+            android:id="@+id/imageViewCamera"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_image_list" />
+
+    </android.support.v7.widget.CardView>
+
+    <TextView
+        android:id="@+id/textViewNameWebcam"
+        style="@style/font_proxima_regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingBottom="15dp"
+        android:textColor="@color/grey_text"
+        android:textSize="14sp"
+        tools:text="Caméra 1" />
+
+</LinearLayout>

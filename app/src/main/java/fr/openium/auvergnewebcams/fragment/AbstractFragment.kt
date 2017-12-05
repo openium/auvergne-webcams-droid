@@ -14,6 +14,7 @@ import io.realm.Realm
 
 abstract class AbstractFragment : Fragment() {
     protected abstract val layoutId: Int
+
     protected var oneTimeSubscriptions: CompositeDisposable = CompositeDisposable() //only subscribe one time and unsubscribe later
     protected var rebindSubscriptions: CompositeDisposable = CompositeDisposable() //Resubscribe in onstart
 

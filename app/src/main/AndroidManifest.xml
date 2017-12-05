@@ -28,6 +28,10 @@
             android:label="@string/settings_credits_about" />
 
         <activity
+            android:name=".activity.ActivitySearch"
+            android:label="@string/search_title" />
+
+        <activity
             android:name=".activity.ActivityWebcam"
             android:configChanges="orientation|screenSize" />
 

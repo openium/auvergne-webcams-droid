@@ -25,5 +25,9 @@
     </style>
 
 
+    <style name="search_view" parent="Widget.AppCompat.SearchView">
+        <item name="searchIcon">@drawable/ic_search</item>
+        <item name="android:queryHint">@string/search_hint</item>
+    </style>
 
 </resources>

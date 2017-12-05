@@ -10,11 +10,13 @@ import android.view.MenuItem
 import com.github.salomonbrys.kodein.instance
 import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.activity.ActivitySearch
 import fr.openium.auvergnewebcams.activity.ActivitySettings
 import fr.openium.auvergnewebcams.activity.ActivityWebcam
 import fr.openium.auvergnewebcams.adapter.AdapterWebcam
 import fr.openium.auvergnewebcams.ext.applicationContext
 import fr.openium.auvergnewebcams.ext.hasNetwork
+import fr.openium.auvergnewebcams.ext.isLollipopOrMore
 import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.rest.AWApi
@@ -56,6 +58,19 @@ class FragmentListCamera : AbstractFragment() {
         if (savedInstanceState != null) {
             position = savedInstanceState.getInt(POSITION_LISTE)
         }
+        textViewSearch.setOnClickListener {
+            val intent = Intent(applicationContext, ActivitySearch::class.java)
+            if (activity?.isLollipopOrMore() == true) {
+                val transitionName = getString(R.string.transition_search_name)
+                val activityOptions = ActivityOptionsCompat.makeSceneTransitionAnimation(activity!!, textViewSearch, transitionName)
+
+                startActivity(intent, activityOptions.toBundle())
+            } else {
+                val intentSearch = Intent(applicationContext, ActivitySearch::class.java)
+                startActivity(intentSearch)
+            }
+        }
+
         swipeRefreshLayoutWebcams.setOnRefreshListener {
             position = 0
             if (applicationContext.hasNetwork) {
