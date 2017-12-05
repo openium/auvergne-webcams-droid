@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.support.v4.app.ActivityOptionsCompat
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.activity.ActivitySettingsAbout
 import fr.openium.auvergnewebcams.ext.applicationContext
@@ -23,7 +24,8 @@ class FragmentSettings : AbstractFragment() {
         super.onActivityCreated(savedInstanceState)
         initVersion()
         textview_about.setOnClickListener {
-            startActivity(Intent(applicationContext, ActivitySettingsAbout::class.java))
+            val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, android.R.anim.slide_in_left, android.R.anim.slide_out_right).toBundle()
+            startActivity(Intent(applicationContext, ActivitySettingsAbout::class.java), bundle)
         }
         textview_openium.setOnClickListener { startActivityForUrl(getString(R.string.url_openium)) }
         textview_pirates.setOnClickListener { startActivityForUrl(getString(R.string.url_pirates)) }
@@ -38,7 +40,8 @@ class FragmentSettings : AbstractFragment() {
         val intent = Intent(Intent.ACTION_VIEW).apply {
             data = Uri.parse(url)
         }
-        startActivity(intent)
+        val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, android.R.anim.slide_in_left, android.R.anim.slide_out_right).toBundle()
+        startActivity(intent, bundle)
     }
 
     private fun initVersion() {

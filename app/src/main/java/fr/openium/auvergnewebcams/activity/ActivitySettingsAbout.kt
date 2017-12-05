@@ -2,8 +2,8 @@ package fr.openium.auvergnewebcams.activity
 
 import android.graphics.Color
 import android.os.Bundle
+import android.webkit.WebChromeClient
 import android.webkit.WebView
-import android.webkit.WebViewClient
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.ext.gone
 import kotlinx.android.synthetic.main.activity_settings_about.*
@@ -15,15 +15,25 @@ class ActivitySettingsAbout : AbstractActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        webviewAbout.webViewClient = object : WebViewClient() {
-            override fun onPageFinished(view: WebView?, url: String?) {
-                super.onPageFinished(view, url)
-                framelayout_progress?.gone()
+        webviewAbout.webChromeClient = object : WebChromeClient() {
+            override fun onProgressChanged(view: WebView?, newProgress: Int) {
+                super.onProgressChanged(view, newProgress)
+                if (newProgress == 100) {
+                    framelayout_progress.postDelayed({
+                        framelayout_progress?.gone()
+                    }, 200)
+                }
             }
         }
 
         webviewAbout.setBackgroundColor(Color.TRANSPARENT)
         webviewAbout.loadUrl("file:///android_asset/about.html")
+    }
+
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
     }
 
     override val layoutId: Int

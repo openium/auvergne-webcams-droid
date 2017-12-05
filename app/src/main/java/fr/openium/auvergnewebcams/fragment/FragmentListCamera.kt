@@ -57,6 +57,7 @@ class FragmentListCamera : AbstractFragment() {
             position = savedInstanceState.getInt(POSITION_LISTE)
         }
         swipeRefreshLayoutWebcams.setOnRefreshListener {
+            position = 0
             if (applicationContext.hasNetwork) {
                 oneTimeSubscriptions.add(api.getSections()
                         .subscribe({
