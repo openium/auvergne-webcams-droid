@@ -3,13 +3,14 @@ package fr.openium.auvergnewebcams.adapter
 import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.util.TypedValue
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.injection.GlideApp
 import fr.openium.auvergnewebcams.model.Webcam
+import kotlinx.android.synthetic.main.item_carousel.view.*
 
 /**
  * Created by laura on 23/03/2017.
@@ -21,11 +22,12 @@ class AdapterWebcamCarousel(val context: Context, val listener: ((Webcam, Int) -
 
     init {
         heightImage = context.resources.getDimensionPixelOffset(R.dimen.height_image_list)
-        padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60f, context.resources.displayMetrics).toInt()
+        padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50f, context.resources.displayMetrics).toInt()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WebcamHolder {
-        return WebcamHolder(ImageView(parent.context).apply {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_carousel, parent, false)
+        return WebcamHolder(view.apply {
             layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, heightImage).apply {
                 setPadding(padding, 0, padding, 0)
             }
@@ -44,7 +46,7 @@ class AdapterWebcamCarousel(val context: Context, val listener: ((Webcam, Int) -
         GlideApp.with(context).load(urlWebCam)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .centerCrop()
-                .into(holder.itemView as ImageView)
+                .into(holder.itemView.imageViewCamera)
 
         holder.itemView.setOnClickListener {
             listener?.invoke(item, position)
@@ -57,7 +59,6 @@ class AdapterWebcamCarousel(val context: Context, val listener: ((Webcam, Int) -
     }
 
     class WebcamHolder(view: View) : RecyclerView.ViewHolder(view) {
-        init {
-        }
+
     }
 }
