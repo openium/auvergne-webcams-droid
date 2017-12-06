@@ -1,13 +1,17 @@
 package fr.openium.auvergnewebcams.fragment
 
+import android.content.Intent
 import android.os.Bundle
+import android.support.v4.app.ActivityOptionsCompat
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import com.jakewharton.rxbinding2.widget.RxSearchView
+import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.activity.ActivityWebcam
 import fr.openium.auvergnewebcams.adapter.AdapterSearch
 import fr.openium.auvergnewebcams.ext.applicationContext
 import fr.openium.auvergnewebcams.ext.gone
@@ -66,7 +70,14 @@ class FragmentSearch : AbstractFragment() {
 
         if (recyclerViewSearch.adapter == null) {
             recyclerViewSearch.layoutManager = LinearLayoutManager(applicationContext)
-            recyclerViewSearch.adapter = AdapterSearch(applicationContext, webcamsAdapter)
+            recyclerViewSearch.adapter = AdapterSearch(applicationContext, webcamsAdapter, { webcam ->
+                val intent: Intent = Intent(context, ActivityWebcam::class.java).apply {
+                    putExtra(Constants.KEY_ID, webcam.uid)
+                    putExtra(Constants.KEY_TYPE, webcam.type)
+                }
+                val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, android.R.anim.slide_in_left, android.R.anim.slide_out_right).toBundle()
+                startActivity(intent, bundle)
+            })
         } else {
             (recyclerViewSearch.adapter as AdapterSearch).items = webcamsAdapter
             recyclerViewSearch.adapter.notifyDataSetChanged()
@@ -79,7 +90,7 @@ class FragmentSearch : AbstractFragment() {
             val nbResult = getString(R.string.search_result, webcamsAdapter.size)
             val spannable = SpannableString(String.format("%s %s", nbResult, search))
             spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(applicationContext, R.color.white)), 0, nbResult.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(applicationContext, R.color.grey_text)), nbResult.length, nbResult.length + search.length+1, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+            spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(applicationContext, R.color.blue)), nbResult.length, nbResult.length + search.length + 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
             textViewResultSearch.setText(spannable)
         }
     }

@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.item_search.view.*
 /**
  * Created by laura on 05/12/2017.
  */
-class AdapterSearch(val context: Context, var items: List<Webcam>) : RecyclerView.Adapter<AdapterSearch.ViewHolder>() {
+class AdapterSearch(val context: Context, var items: List<Webcam>, val listener: ((Webcam) -> Unit)? = null) : RecyclerView.Adapter<AdapterSearch.ViewHolder>() {
 
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
         val webcam = items.get(position)
@@ -33,6 +33,10 @@ class AdapterSearch(val context: Context, var items: List<Webcam>) : RecyclerVie
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .centerCrop()
                 .into(holder?.itemView?.imageViewCamera)
+
+        holder?.itemView?.setOnClickListener {
+            listener?.invoke(webcam)
+        }
 
     }
 
