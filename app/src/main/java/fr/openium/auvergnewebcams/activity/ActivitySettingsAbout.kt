@@ -33,7 +33,7 @@ class ActivitySettingsAbout : AbstractActivity() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+        overridePendingTransition(R.anim.animation_from_left, R.anim.animation_to_right)
     }
 
     override val layoutId: Int

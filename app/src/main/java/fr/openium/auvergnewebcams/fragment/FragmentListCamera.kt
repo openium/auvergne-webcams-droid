@@ -131,7 +131,7 @@ class FragmentListCamera : AbstractFragment() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if (item?.itemId == R.id.menu_settings) {
-            val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, android.R.anim.slide_in_left, android.R.anim.slide_out_right).toBundle()
+            val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
             startActivity(Intent(applicationContext, ActivitySettings::class.java), bundle)
             return true
         } else {
@@ -152,7 +152,7 @@ class FragmentListCamera : AbstractFragment() {
                     putExtra(Constants.KEY_ID, webcam.uid)
                     putExtra(Constants.KEY_TYPE, webcam.type)
                 }
-                val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, android.R.anim.slide_in_left, android.R.anim.slide_out_right).toBundle()
+                val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
                 startActivity(intent, bundle)
             }, sections)
         } else {

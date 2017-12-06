@@ -61,7 +61,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
             shareWebCam()
             return true
         } else if (item?.itemId == R.id.menu_save) {
-
+            saveWebCamPicture()
             return true
         } else if (item?.itemId == R.id.menu_signal_problem) {
             signalProblem()
@@ -74,6 +74,24 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     // =================================================================================================================
     // Specific job
     // =================================================================================================================
+
+    private fun saveWebCamPicture() {
+        var url = ""
+        if (webcam?.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
+            if (!webcam?.mediaViewSurfHD.isNullOrEmpty() && !webcam?.viewsurfHD.isNullOrEmpty()) {
+                url = String.format("%s/%s.mp4", webcam!!.viewsurfHD!!, webcam!!.mediaViewSurfHD!!)
+            } else if (!webcam?.mediaViewSurfLD.isNullOrEmpty() && !webcam?.viewsurfLD.isNullOrEmpty()) {
+                url = String.format("%s/%s.mp4", webcam!!.viewsurfLD!!, webcam!!.mediaViewSurfLD!!)
+            }
+        } else {
+            if (!webcam!!.imageHD.isNullOrBlank()) {
+                url = webcam!!.imageHD!!
+            } else if (!webcam!!.imageLD.isNullOrBlank()) {
+                url = webcam!!.imageLD!!
+            }
+        }
+        // TODO
+    }
 
     private fun signalProblem() {
         val subject = getString(R.string.detail_signal_problem_subject, webcam?.title ?: "")

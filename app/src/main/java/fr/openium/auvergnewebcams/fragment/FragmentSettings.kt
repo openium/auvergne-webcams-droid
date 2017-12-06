@@ -24,7 +24,7 @@ class FragmentSettings : AbstractFragment() {
         super.onActivityCreated(savedInstanceState)
         initVersion()
         textview_about.setOnClickListener {
-            val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, android.R.anim.slide_in_left, android.R.anim.slide_out_right).toBundle()
+            val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
             startActivity(Intent(applicationContext, ActivitySettingsAbout::class.java), bundle)
         }
         textview_openium.setOnClickListener { startActivityForUrl(getString(R.string.url_openium)) }
@@ -40,7 +40,7 @@ class FragmentSettings : AbstractFragment() {
         val intent = Intent(Intent.ACTION_VIEW).apply {
             data = Uri.parse(url)
         }
-        val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, android.R.anim.slide_in_left, android.R.anim.slide_out_right).toBundle()
+        val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
         startActivity(intent, bundle)
     }
 

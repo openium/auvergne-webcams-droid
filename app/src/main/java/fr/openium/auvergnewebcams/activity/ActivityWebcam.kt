@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import fr.openium.auvergnewebcams.Constants
+import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.ext.gone
 import fr.openium.auvergnewebcams.ext.show
 import fr.openium.auvergnewebcams.fragment.FragmentWebcam
@@ -34,7 +35,7 @@ class ActivityWebcam : AbstractActivityFragment() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+        overridePendingTransition(R.anim.animation_from_left, R.anim.animation_to_right)
     }
 
     override fun getDefaultFragment(): Fragment? {

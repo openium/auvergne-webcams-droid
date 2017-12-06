@@ -1,6 +1,7 @@
 package fr.openium.auvergnewebcams.activity
 
 import android.support.v4.app.Fragment
+import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.fragment.FragmentSettings
 
 /**
@@ -17,7 +18,7 @@ class ActivitySettings : AbstractActivityFragment() {
 
     override fun onBackPressed() {
         super.onBackPressed()
-        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right)
+        overridePendingTransition(R.anim.animation_from_left, R.anim.animation_to_right)
     }
 
 }
