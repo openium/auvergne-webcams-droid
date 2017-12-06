@@ -35,4 +35,13 @@
     <string name="search_hint">Rechercher une webcam</string>
     <string name="search_title">Rechercher</string>
     <string name="search_result">%d résultats pour</string>
+
+    <string name="detail_refresh_menu">Mettre à jour</string>
+    <string name="detail_share_menu">Partager</string>
+    <string name="detail_save_menu">Sauvergarder</string>
+    <string name="detail_signal_problem_menu">Signaler un problème</string>
+
+    <string name="detail_signal_problem_subject">Signaler un problème - Webcam %s</string>
+    <string name="detail_signal_problem_body">La webcam %1$s (%2$s) ne fonctionne pas.</string>
+    <string name="detail_signal_problem_email">auvergnewebcams@openium.fr</string>
 </resources>

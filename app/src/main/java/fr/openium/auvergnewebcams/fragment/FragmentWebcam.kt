@@ -6,6 +6,7 @@ import com.github.piasy.biv.loader.ImageLoader
 import com.github.piasy.biv.view.BigImageView
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.ext.hide
+import fr.openium.auvergnewebcams.ext.show
 import fr.openium.auvergnewebcams.model.Webcam
 import kotlinx.android.synthetic.main.fragment_webcam.*
 import java.io.File
@@ -23,7 +24,7 @@ class FragmentWebcam : AbstractFragmentWebcam() {
 
     override fun initWebCam() {
         if (isAlive) {
-            
+
             mBigImage.setImageLoaderCallback(object : ImageLoader.Callback {
                 override fun onSuccess(image: File?) {
                     progressbar_detail?.hide()
@@ -39,14 +40,12 @@ class FragmentWebcam : AbstractFragmentWebcam() {
                 }
 
                 override fun onProgress(progress: Int) {
-
                 }
 
                 override fun onStart() {
                 }
 
                 override fun onFinish() {
-
                 }
 
             })
@@ -95,6 +94,10 @@ class FragmentWebcam : AbstractFragmentWebcam() {
             }
 
         }
+    }
+
+    override fun showProgress() {
+        progressbar_detail.show()
     }
 
 }

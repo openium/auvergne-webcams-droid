@@ -1,9 +1,12 @@
 package fr.openium.auvergnewebcams.fragment
 
 import android.net.Uri
+import android.os.Bundle
+import android.view.View
 import android.widget.MediaController
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.ext.hide
+import fr.openium.auvergnewebcams.ext.show
 import fr.openium.auvergnewebcams.model.Webcam
 import kotlinx.android.synthetic.main.fragment_webcam_video.*
 
@@ -11,6 +14,15 @@ import kotlinx.android.synthetic.main.fragment_webcam_video.*
  * Created by laura on 01/12/2017.
  */
 class FragmentWebcamVideo : AbstractFragmentWebcam() {
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val mediaController = MediaController(activity)
+        mediaController.setAnchorView(viewViewWebcam)
+        mediaController.setMediaPlayer(viewViewWebcam)
+        viewViewWebcam.setMediaController(mediaController)
+    }
 
     // =================================================================================================================
     // Overridden
@@ -28,12 +40,8 @@ class FragmentWebcamVideo : AbstractFragmentWebcam() {
                 } else if (!webcam?.mediaViewSurfLD.isNullOrEmpty() && !webcam?.viewsurfLD.isNullOrEmpty()) {
                     urlWebcam = String.format("%s/%s.mp4", webcam!!.viewsurfLD!!, webcam!!.mediaViewSurfLD!!)
                 }
-                val mediaController = MediaController(activity)
-                mediaController.setAnchorView(viewViewWebcam)
-                mediaController.setMediaPlayer(viewViewWebcam)
 
                 val videoUri = Uri.parse(urlWebcam)
-                viewViewWebcam.setMediaController(mediaController)
                 viewViewWebcam.setVideoURI(videoUri)
                 viewViewWebcam.setOnPreparedListener {
                     progressbar_detail?.hide()
@@ -44,5 +52,8 @@ class FragmentWebcamVideo : AbstractFragmentWebcam() {
         }
     }
 
+    override fun showProgress() {
+        progressbar_detail.show()
+    }
 
 }
