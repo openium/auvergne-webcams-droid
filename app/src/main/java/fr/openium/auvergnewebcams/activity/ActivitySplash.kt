@@ -48,6 +48,8 @@ class ActivitySplash : AbstractActivity() {
                                         webcam.mediaViewSurfLD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfLD)
                                         webcam.mediaViewSurfHD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfHD)
                                     }
+                                    val urlwebcam = webcam.getUrlForWebcam(true, true)
+                                    webcam.lastUpdate = LoadWebCamUtils.getLastUpdateWebcam(urlwebcam)
                                 }
                             }
                             Realm.getDefaultInstance().use {

@@ -35,12 +35,7 @@ class AdapterWebcamCarousel(val context: Context, val listener: ((Webcam, Int) -
 
     override fun onBindViewHolder(holder: WebcamHolder, position: Int) {
         val item = items.get(position)
-        val urlWebCam: String
-        if (item.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
-            urlWebCam = String.format("%s/%s.jpg", item.viewsurfLD ?: "", item.mediaViewSurfLD ?: "")
-        } else {
-            urlWebCam = item.imageLD ?: ""
-        }
+        val urlWebCam: String = item.getUrlForWebcam(false, false)
 
         GlideApp.with(context).load(urlWebCam)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)

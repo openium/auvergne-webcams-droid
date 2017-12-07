@@ -1,6 +1,7 @@
 package fr.openium.auvergnewebcams.fragment
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -11,13 +12,17 @@ import com.tbruyelle.rxpermissions2.RxPermissions
 import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.ext.applicationContext
+import fr.openium.auvergnewebcams.ext.gone
 import fr.openium.auvergnewebcams.ext.hasNetwork
+import fr.openium.auvergnewebcams.ext.show
 import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.service.ServiceUploadFile
+import fr.openium.auvergnewebcams.utils.DateUtils
 import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
+import kotlinx.android.synthetic.main.fragment_webcam.*
 
 
 /**
@@ -48,6 +53,24 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
             webcam = realm!!.copyFromRealm(webcamDB)
             (activity as AppCompatActivity).supportActionBar?.title = webcam!!.title
             initWebCam()
+
+
+            if (webcam!!.lastUpdate ?: 0 > 0L) {
+                val date = DateUtils.getDateFormatDateHour(webcam!!.lastUpdate!!)
+                textViewLastUpdate.setText(getString(R.string.generic_last_update, date))
+                textViewLastUpdate.show()
+            } else {
+                textViewLastUpdate.gone()
+            }
+        }
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration?) {
+        super.onConfigurationChanged(newConfig)
+        if (newConfig?.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            textViewLastUpdate.show()
+        } else {
+            textViewLastUpdate.gone()
         }
     }
 
@@ -89,24 +112,14 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     }
 
     private fun saveWebCamPicture() {
-        var urlSrc = ""
+        val urlSrc = webcam?.getUrlForWebcam(true, true) ?: ""
         val fileName: String
         val isImage: Boolean
 
         if (webcam!!.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
-            if (!webcam?.mediaViewSurfHD.isNullOrEmpty() && !webcam?.viewsurfHD.isNullOrEmpty()) {
-                urlSrc = String.format("%s/%s.mp4", webcam!!.viewsurfHD!!, webcam!!.mediaViewSurfHD!!)
-            } else if (!webcam?.mediaViewSurfLD.isNullOrEmpty() && !webcam?.viewsurfLD.isNullOrEmpty()) {
-                urlSrc = String.format("%s/%s.mp4", webcam!!.viewsurfLD!!, webcam!!.mediaViewSurfLD!!)
-            }
             fileName = String.format("%s_%s.mp4", webcam!!.title ?: "", System.currentTimeMillis().toString())
             isImage = false
         } else {
-            if (!webcam!!.imageHD.isNullOrBlank()) {
-                urlSrc = webcam!!.imageHD!!
-            } else if (!webcam!!.imageLD.isNullOrBlank()) {
-                urlSrc = webcam!!.imageLD!!
-            }
             fileName = String.format("%s_%s.jpg", webcam!!.title ?: "", System.currentTimeMillis().toString())
             isImage = true
         }
@@ -134,20 +147,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     private fun shareWebCam() {
         val subject = webcam?.title
 
-        var url = ""
-        if (webcam?.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
-            if (!webcam?.mediaViewSurfHD.isNullOrEmpty() && !webcam?.viewsurfHD.isNullOrEmpty()) {
-                url = String.format("%s/%s.mp4", webcam!!.viewsurfHD!!, webcam!!.mediaViewSurfHD!!)
-            } else if (!webcam?.mediaViewSurfLD.isNullOrEmpty() && !webcam?.viewsurfLD.isNullOrEmpty()) {
-                url = String.format("%s/%s.mp4", webcam!!.viewsurfLD!!, webcam!!.mediaViewSurfLD!!)
-            }
-        } else {
-            if (!webcam!!.imageHD.isNullOrBlank()) {
-                url = webcam!!.imageHD!!
-            } else if (!webcam!!.imageLD.isNullOrBlank()) {
-                url = webcam!!.imageLD!!
-            }
-        }
+        val url = webcam?.getUrlForWebcam(true, true) ?: ""
         val intent = Intent(Intent.ACTION_SEND).apply {
             setType("text/plain")
             putExtra(Intent.EXTRA_TEXT, String.format("%s \n%s", subject, url))
@@ -170,6 +170,8 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
                             // load media ld
                             webcam!!.mediaViewSurfLD = LoadWebCamUtils.getMediaViewSurf(webcam!!.viewsurfLD)
                             webcam!!.mediaViewSurfHD = LoadWebCamUtils.getMediaViewSurf(webcam!!.viewsurfHD)
+                            val urlwebcam = webcam!!.getUrlForWebcam(true, true)
+                            webcam!!.lastUpdate = LoadWebCamUtils.getLastUpdateWebcam(urlwebcam)
                             Realm.getDefaultInstance().use {
                                 it.executeTransaction {
                                     it.insertOrUpdate(webcam!!)

@@ -53,5 +53,6 @@
     <string name="detail_save_video_progress">Enregistrement de la vidéo</string>
     <string name="detail_save_file_retry">Réessayer</string>
 
+    <string name="generic_last_update">Mise à jour le %s</string>
 
 </resources>

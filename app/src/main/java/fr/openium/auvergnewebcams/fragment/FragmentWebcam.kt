@@ -91,7 +91,6 @@ class FragmentWebcam : AbstractFragmentWebcam() {
                     mBigImage.showImage(image)
                 }
             }
-
         }
     }
 

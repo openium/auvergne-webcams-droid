@@ -22,12 +22,7 @@ class AdapterSearch(val context: Context, var items: List<Webcam>, val listener:
 
         holder?.itemView?.textViewNameWebcam?.text = webcam.title ?: ""
 
-        val urlWebCam: String
-        if (webcam.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
-            urlWebCam = String.format("%s/%s.jpg", webcam.viewsurfLD ?: "", webcam.mediaViewSurfLD ?: "")
-        } else {
-            urlWebCam = webcam.imageLD ?: ""
-        }
+        val urlWebCam: String = webcam.getUrlForWebcam(false, false)
 
         GlideApp.with(context).load(urlWebCam)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
