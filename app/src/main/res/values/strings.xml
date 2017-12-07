@@ -38,10 +38,20 @@
 
     <string name="detail_refresh_menu">Mettre à jour</string>
     <string name="detail_share_menu">Partager</string>
-    <string name="detail_save_menu">Sauvergarder</string>
+    <string name="detail_save_menu">Sauvegarder</string>
     <string name="detail_signal_problem_menu">Signaler un problème</string>
 
     <string name="detail_signal_problem_subject">Signaler un problème - Webcam %s</string>
     <string name="detail_signal_problem_body">La webcam %1$s (%2$s) ne fonctionne pas.</string>
     <string name="detail_signal_problem_email">auvergnewebcams@openium.fr</string>
+
+    <string name="detail_save_image_success">L\'image a bien été enregistrée dans vos images</string>
+    <string name="detail_save_image_error">Une erreur est survenue pendant l\'enregistrement de l'image</string>
+    <string name="detail_save_image_progress">Enregistrement de l\'image</string>
+    <string name="detail_save_video_success">La vidéo a bien été enregistrée dans vos vidéos</string>
+    <string name="detail_save_video_error">Une erreur est survenue pendant l\'enregistrement de la vidéo</string>
+    <string name="detail_save_video_progress">Enregistrement de la vidéo</string>
+    <string name="detail_save_file_retry">Réessayer</string>
+
+
 </resources>

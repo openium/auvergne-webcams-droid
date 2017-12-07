@@ -45,6 +45,7 @@ class AdapterWebcamCarousel(val context: Context, val listener: ((Webcam, Int) -
 
         GlideApp.with(context).load(urlWebCam)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
                 .centerCrop()
                 .into(holder.itemView.imageViewCamera)
 

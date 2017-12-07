@@ -7,15 +7,18 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import com.tbruyelle.rxpermissions2.RxPermissions
 import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.ext.applicationContext
 import fr.openium.auvergnewebcams.ext.hasNetwork
 import fr.openium.auvergnewebcams.model.Webcam
+import fr.openium.auvergnewebcams.service.ServiceUploadFile
 import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
+
 
 /**
  * Created by laura on 01/12/2017.
@@ -61,7 +64,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
             shareWebCam()
             return true
         } else if (item?.itemId == R.id.menu_save) {
-            saveWebCamPicture()
+            checkPermissionSaveFile()
             return true
         } else if (item?.itemId == R.id.menu_signal_problem) {
             signalProblem()
@@ -75,22 +78,40 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     // Specific job
     // =================================================================================================================
 
+    private fun checkPermissionSaveFile() {
+        val rxPermission = RxPermissions(activity!!)
+        rxPermission.request(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                .subscribe { granted ->
+                    if (granted) {
+                        saveWebCamPicture()
+                    }
+                }
+    }
+
     private fun saveWebCamPicture() {
-        var url = ""
-        if (webcam?.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
+        var urlSrc = ""
+        val fileName: String
+        val isImage: Boolean
+
+        if (webcam!!.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
             if (!webcam?.mediaViewSurfHD.isNullOrEmpty() && !webcam?.viewsurfHD.isNullOrEmpty()) {
-                url = String.format("%s/%s.mp4", webcam!!.viewsurfHD!!, webcam!!.mediaViewSurfHD!!)
+                urlSrc = String.format("%s/%s.mp4", webcam!!.viewsurfHD!!, webcam!!.mediaViewSurfHD!!)
             } else if (!webcam?.mediaViewSurfLD.isNullOrEmpty() && !webcam?.viewsurfLD.isNullOrEmpty()) {
-                url = String.format("%s/%s.mp4", webcam!!.viewsurfLD!!, webcam!!.mediaViewSurfLD!!)
+                urlSrc = String.format("%s/%s.mp4", webcam!!.viewsurfLD!!, webcam!!.mediaViewSurfLD!!)
             }
+            fileName = String.format("%s_%s.mp4", webcam!!.title ?: "", System.currentTimeMillis().toString())
+            isImage = false
         } else {
             if (!webcam!!.imageHD.isNullOrBlank()) {
-                url = webcam!!.imageHD!!
+                urlSrc = webcam!!.imageHD!!
             } else if (!webcam!!.imageLD.isNullOrBlank()) {
-                url = webcam!!.imageLD!!
+                urlSrc = webcam!!.imageLD!!
             }
+            fileName = String.format("%s_%s.jpg", webcam!!.title ?: "", System.currentTimeMillis().toString())
+            isImage = true
         }
-        // TODO
+
+        ServiceUploadFile.startServiceUploadFile(applicationContext, urlSrc, isImage, fileName)
     }
 
     private fun signalProblem() {

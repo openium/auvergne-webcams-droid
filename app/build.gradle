@@ -90,7 +90,9 @@ dependencies {
     implementation 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
 
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
-    compile 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+
+    implementation 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.4@aar'
 
     implementation 'uk.co.chrisjenx:calligraphy:2.3.0'
     implementation 'com.github.piasy:BigImageViewer:1.4.2'
