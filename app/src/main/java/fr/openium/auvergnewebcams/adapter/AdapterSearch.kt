@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.ext.gone
+import fr.openium.auvergnewebcams.ext.show
 import fr.openium.auvergnewebcams.injection.GlideApp
 import fr.openium.auvergnewebcams.model.Webcam
 import kotlinx.android.synthetic.main.item_search.view.*
@@ -21,6 +23,15 @@ class AdapterSearch(val context: Context, var items: List<Webcam>, val listener:
         val webcam = items.get(position)
 
         holder?.itemView?.textViewNameWebcam?.text = webcam.title ?: ""
+
+        val isUp = webcam.isUpToDate()
+
+        if (isUp) {
+            holder?.itemView?.textviewWebcamNotUpdate?.gone()
+        } else {
+            holder?.itemView?.textviewWebcamNotUpdate?.show()
+        }
+
 
         val urlWebCam: String = webcam.getUrlForWebcam(false, false)
 

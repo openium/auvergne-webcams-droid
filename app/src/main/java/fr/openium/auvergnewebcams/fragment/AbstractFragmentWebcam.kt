@@ -53,15 +53,6 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
             webcam = realm!!.copyFromRealm(webcamDB)
             (activity as AppCompatActivity).supportActionBar?.title = webcam!!.title
             initWebCam()
-
-
-            if (webcam!!.lastUpdate ?: 0 > 0L) {
-                val date = DateUtils.getDateFormatDateHour(webcam!!.lastUpdate!!)
-                textViewLastUpdate.setText(getString(R.string.generic_last_update, date))
-                textViewLastUpdate.show()
-            } else {
-                textViewLastUpdate.gone()
-            }
         }
     }
 
@@ -185,7 +176,26 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
         }
     }
 
-    abstract fun initWebCam()
+    protected open fun initWebCam() {
+        if (isAlive) {
+            if (webcam != null) {
+                if (webcam!!.isUpToDate()) {
+                    textviewWebcamNotUpdate.gone()
+                } else {
+                    textviewWebcamNotUpdate.show()
+                }
+
+                if (webcam!!.lastUpdate ?: 0 > 0L) {
+                    val date = DateUtils.getDateFormatDateHour(webcam!!.lastUpdate!!)
+                    textViewLastUpdate.setText(getString(R.string.generic_last_update, date))
+                    textViewLastUpdate.show()
+                } else {
+                    textViewLastUpdate.gone()
+                }
+            }
+        }
+    }
+
     abstract fun showProgress()
 
 }

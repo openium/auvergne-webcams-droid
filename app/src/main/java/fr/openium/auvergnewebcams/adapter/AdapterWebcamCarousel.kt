@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.ext.gone
+import fr.openium.auvergnewebcams.ext.show
 import fr.openium.auvergnewebcams.injection.GlideApp
 import fr.openium.auvergnewebcams.model.Webcam
 import kotlinx.android.synthetic.main.item_carousel.view.*
@@ -36,6 +38,13 @@ class AdapterWebcamCarousel(val context: Context, val listener: ((Webcam, Int) -
     override fun onBindViewHolder(holder: WebcamHolder, position: Int) {
         val item = items.get(position)
         val urlWebCam: String = item.getUrlForWebcam(false, false)
+        val isUp = item.isUpToDate()
+
+        if(isUp) {
+            holder.itemView.textviewWebcamNotUpdate.gone()
+        } else {
+            holder.itemView.textviewWebcamNotUpdate.show()
+        }
 
         GlideApp.with(context).load(urlWebCam)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)

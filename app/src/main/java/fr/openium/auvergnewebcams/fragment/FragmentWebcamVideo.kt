@@ -32,6 +32,7 @@ class FragmentWebcamVideo : AbstractFragmentWebcam() {
         get() = R.layout.fragment_webcam_video
 
     override fun initWebCam() {
+        super.initWebCam()
         if (isAlive) {
             if (webcam?.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
                 var urlWebcam = ""

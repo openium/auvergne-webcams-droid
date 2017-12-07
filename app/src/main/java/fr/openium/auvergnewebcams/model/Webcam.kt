@@ -1,5 +1,6 @@
 package fr.openium.auvergnewebcams.model
 
+import fr.openium.auvergnewebcams.utils.DateUtils
 import io.realm.RealmList
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
@@ -44,4 +45,13 @@ open class Webcam(@PrimaryKey var uid: Long = 0, var order: Int = 0, var title: 
         }
         return url
     }
+
+    fun isUpToDate(): Boolean {
+        var isUp = true
+        if (lastUpdate != null && lastUpdate!! > 0L) {
+            isUp = !DateUtils.isMoreThan48Hour(lastUpdate!!)
+        }
+        return isUp
+    }
+
 }

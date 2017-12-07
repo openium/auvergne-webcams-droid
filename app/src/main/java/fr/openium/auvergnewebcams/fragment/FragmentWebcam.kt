@@ -23,6 +23,7 @@ class FragmentWebcam : AbstractFragmentWebcam() {
 
 
     override fun initWebCam() {
+        super.initWebCam()
         if (isAlive) {
             mBigImage.setImageLoaderCallback(object : ImageLoader.Callback {
                 override fun onSuccess(image: File?) {
