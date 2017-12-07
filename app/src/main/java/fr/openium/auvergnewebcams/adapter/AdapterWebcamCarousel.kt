@@ -2,7 +2,6 @@ package fr.openium.auvergnewebcams.adapter
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,7 +21,7 @@ class AdapterWebcamCarousel(val context: Context, val listener: ((Webcam, Int) -
 
     init {
         heightImage = context.resources.getDimensionPixelOffset(R.dimen.height_image_list)
-        padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50f, context.resources.displayMetrics).toInt()
+        padding = context.resources.getDimensionPixelOffset(R.dimen.padding_image_list)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WebcamHolder {

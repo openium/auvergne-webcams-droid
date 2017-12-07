@@ -24,7 +24,6 @@ class FragmentWebcam : AbstractFragmentWebcam() {
 
     override fun initWebCam() {
         if (isAlive) {
-
             mBigImage.setImageLoaderCallback(object : ImageLoader.Callback {
                 override fun onSuccess(image: File?) {
                     progressbar_detail?.hide()

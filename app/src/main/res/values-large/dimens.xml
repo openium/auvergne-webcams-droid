@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="height_image_list">250dp</dimen>
+    <dimen name="padding_image_list">100dp</dimen>
+
+</resources>
