@@ -46,12 +46,15 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
 
         val id = arguments?.getLong(Constants.KEY_ID) ?: 0
 
-        val webcamDB = realm!!.where(Webcam::class.java)
+        webcam = realm!!.where(Webcam::class.java)
                 .equalTo(Webcam::uid.name, id)
                 .findFirst()
-        if (webcamDB != null) {
-            webcam = realm!!.copyFromRealm(webcamDB)
+        if (webcam != null) {
             (activity as AppCompatActivity).supportActionBar?.title = webcam!!.title
+            webcam!!.addChangeListener<Webcam> { webcamChange ->
+                webcam = webcamChange
+                initDateLastUpdate() //TODO
+            }
             initWebCam()
         }
     }
@@ -63,6 +66,11 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
         } else {
             textViewLastUpdate.gone()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        webcam?.removeAllChangeListeners()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
@@ -157,18 +165,21 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
                     .observeOn(Schedulers.io())
                     .subscribeOn(Schedulers.io())
                     .subscribe {
-                        if (webcam?.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
-                            // load media ld
-                            webcam!!.mediaViewSurfLD = LoadWebCamUtils.getMediaViewSurf(webcam!!.viewsurfLD)
-                            webcam!!.mediaViewSurfHD = LoadWebCamUtils.getMediaViewSurf(webcam!!.viewsurfHD)
-                            val urlwebcam = webcam!!.getUrlForWebcam(true, true)
-                            webcam!!.lastUpdate = LoadWebCamUtils.getLastUpdateWebcam(urlwebcam)
-                            Realm.getDefaultInstance().use {
-                                it.executeTransaction {
-                                    it.insertOrUpdate(webcam!!)
+                        val id = arguments?.getLong(Constants.KEY_ID) ?: 0
+                        Realm.getDefaultInstance().executeTransaction {
+                            val webcamDB = it.where(Webcam::class.java)
+                                    .equalTo(Webcam::uid.name, id)
+                                    .findFirst()
+                            if (webcamDB != null) {
+                                if (webcamDB.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
+                                    // load media ld
+                                    webcamDB.mediaViewSurfLD = LoadWebCamUtils.getMediaViewSurf(webcamDB.viewsurfLD)
+                                    webcamDB.mediaViewSurfHD = LoadWebCamUtils.getMediaViewSurf(webcamDB.viewsurfHD)
                                 }
+                                it.insertOrUpdate(webcamDB)
                             }
                         }
+
                         activity?.runOnUiThread {
                             initWebCam()
                         }
@@ -177,6 +188,12 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     }
 
     protected open fun initWebCam() {
+        if (isAlive) {
+            initDateLastUpdate()
+        }
+    }
+
+    private fun initDateLastUpdate() {
         if (isAlive) {
             if (webcam != null) {
                 if (webcam!!.isUpToDate()) {

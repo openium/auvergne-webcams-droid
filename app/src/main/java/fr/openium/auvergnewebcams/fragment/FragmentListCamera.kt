@@ -24,8 +24,8 @@ import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.realm.Realm
 import io.realm.RealmResults
-import io.realm.Sort
 import kotlinx.android.synthetic.main.fragment_list_camera.*
+import timber.log.Timber
 
 
 /**
@@ -76,23 +76,26 @@ class FragmentListCamera : AbstractFragment() {
             if (applicationContext.hasNetwork) {
                 oneTimeSubscriptions.add(api.getSections()
                         .subscribe({
-                            if (!it.isError && it.response()?.body() != null) {
-                                val sections = it.response()!!.body()!!
-                                for (section in sections.sections) {
-                                    for (webcam in section.webcams) {
-                                        if (webcam.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
-                                            // load media ld
-                                            webcam.mediaViewSurfLD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfLD)
-                                            webcam.mediaViewSurfHD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfHD)
+                            Realm.getDefaultInstance().executeTransaction { realm ->
+                                if (!it.isError && it.response()?.body() != null) {
+                                    val sections = it.response()!!.body()!!
+                                    for (section in sections.sections) {
+                                        for (webcam in section.webcams) {
+                                            if (webcam.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
+                                                // load media ld
+                                                webcam.mediaViewSurfLD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfLD)
+                                                webcam.mediaViewSurfHD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfHD)
+                                            }
+
+                                            val webcamDB = realm.where(Webcam::class.java)
+                                                    .equalTo(Webcam::uid.name, webcam.uid)
+                                                    .findFirst()
+                                            if (webcamDB?.lastUpdate != null) {
+                                                webcam.lastUpdate = webcamDB.lastUpdate
+                                            }
                                         }
-                                        val urlwebcam = webcam!!.getUrlForWebcam(true, true)
-                                        webcam.lastUpdate = LoadWebCamUtils.getLastUpdateWebcam(urlwebcam)
                                     }
-                                }
-                                Realm.getDefaultInstance().use {
-                                    it.executeTransaction {
-                                        it.insertOrUpdate(sections.sections)
-                                    }
+                                    realm.insertOrUpdate(sections.sections)
                                 }
                             }
                             activity?.runOnUiThread {
@@ -111,8 +114,14 @@ class FragmentListCamera : AbstractFragment() {
         }
 
 
+//        val sections = realm!!.where(Section::class.java)
+//                .sort(Section::order.name)
+//                .findAll()
+//        initAdapter(sections)
+
         oneTimeSubscriptions.add(realm!!.where(Section::class.java)
-                .findAllSortedAsync(Section::order.name, Sort.ASCENDING)
+                .sort(Section::order.name)
+                .findAllAsync()
                 .asFlowable()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { sections ->
@@ -146,6 +155,7 @@ class FragmentListCamera : AbstractFragment() {
     // =================================================================================================================
 
     private fun initAdapter(sections: RealmResults<Section>) {
+        Timber.e("ADAPTER")
         if (recyclerView.adapter == null) {
             recyclerView.layoutManager = LinearLayoutManager(context)
             recyclerView.adapter = AdapterWebcam(context!!, { webcam, _ ->
@@ -157,11 +167,11 @@ class FragmentListCamera : AbstractFragment() {
                 val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
                 startActivity(intent, bundle)
             }, sections)
+            recyclerView.scrollToPosition(position)
         } else {
             (recyclerView.adapter as AdapterWebcam).items = sections
             recyclerView.adapter.notifyDataSetChanged()
         }
-        recyclerView.scrollToPosition(position)
     }
 
 

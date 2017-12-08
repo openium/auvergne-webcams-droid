@@ -36,26 +36,29 @@ class ActivitySplash : AbstractActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (applicationContext.hasNetwork) {
-            disposables.add(Observable.zip(Observable.timer(3, TimeUnit.SECONDS), api.getSections(),
+            disposables.add(Observable.zip(Observable.timer(2, TimeUnit.SECONDS), api.getSections(),
                     BiFunction
-                    { _: Long, it: Result<SectionList> ->
-                        if (!it.isError && it.response()?.body() != null) {
-                            val sections = it.response()!!.body()!!
-                            for (section in sections.sections) {
-                                for (webcam in section.webcams) {
-                                    if (webcam.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
-                                        // load media ld
-                                        webcam.mediaViewSurfLD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfLD)
-                                        webcam.mediaViewSurfHD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfHD)
+                    { _: Long, result: Result<SectionList> ->
+                        if (!result.isError && result.response()?.body() != null) {
+
+                            Realm.getDefaultInstance().executeTransaction { realm ->
+                                val sections = result.response()!!.body()!!
+                                for (section in sections.sections) {
+                                    for (webcam in section.webcams) {
+                                        if (webcam.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
+                                            // load media ld
+                                            webcam.mediaViewSurfLD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfLD)
+                                            webcam.mediaViewSurfHD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfHD)
+                                        }
+
+                                        val webcamDB = realm.where(Webcam::class.java)
+                                                .equalTo(Webcam::uid.name, webcam.uid)
+                                                .findFirst()
+                                        webcam.lastUpdate = webcamDB?.lastUpdate
+
                                     }
-                                    val urlwebcam = webcam.getUrlForWebcam(true, true)
-                                    webcam.lastUpdate = LoadWebCamUtils.getLastUpdateWebcam(urlwebcam)
                                 }
-                            }
-                            Realm.getDefaultInstance().use {
-                                it.executeTransaction {
-                                    it.insertOrUpdate(sections.sections)
-                                }
+                                realm.insertOrUpdate(sections.sections)
                             }
                         } else {
                             loadFromAssets()

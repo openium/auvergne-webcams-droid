@@ -10,12 +10,16 @@ import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
 import fr.openium.auvergnewebcams.injection.Modules
 import fr.openium.auvergnewebcams.log.CrashReportingTree
+import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.utils.CustomGlideImageLoader
 import io.fabric.sdk.android.Fabric
 import io.realm.Realm
 import io.realm.RealmConfiguration
+import okhttp3.OkHttpClient
 import timber.log.Timber
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig
+import java.text.SimpleDateFormat
+import java.util.*
 
 abstract class ApplicationBase : Application(), KodeinAware {
     override val kodein by Kodein.lazy {
@@ -52,7 +56,40 @@ abstract class ApplicationBase : Application(), KodeinAware {
                 .setDefaultFontPath("fonts/ProximaNova-Sbold.otf")
                 .setFontAttrId(R.attr.fontPath).build())
 
-        BigImageViewer.initialize(CustomGlideImageLoader.with(applicationContext))
+        val client = OkHttpClient.Builder()
+                .addInterceptor {
+                    val response = it.proceed(it.request())
+                    if (response?.header("Last-Modified") != null) {
+                        val url = it.request().url().url().toString()
+                        Realm.getDefaultInstance().executeTransaction {
+                            val webcam = it.where(Webcam::class.java)
+                                    .contains(Webcam::imageLD.name, url)
+                                    .or()
+                                    .contains(Webcam::imageHD.name, url)
+                                    .or()
+                                    .contains(Webcam::viewsurfLD.name, url)
+                                    .or()
+                                    .contains(Webcam::viewsurfHD.name, url)
+                                    .findFirst() // TODO manage viewsurf
+                            if (webcam != null) {
+                                val lastModified = response.header("Last-Modified")!!
+                                if (!lastModified.isEmpty()) {
+                                    val dateFormat = SimpleDateFormat("E, d MMM yyyy HH:mm:ss 'GMT'", Locale.US)
+                                    dateFormat.timeZone = TimeZone.getTimeZone("GMT")
+                                    val newTime = dateFormat.parse(lastModified).time
+                                    if (webcam.lastUpdate == null || newTime != webcam.lastUpdate!!) {
+                                        webcam.lastUpdate = newTime
+//                                        Timber.e("UPDATE DATE ${webcam.title}  ${webcam.lastUpdate}")
+                                        it.insertOrUpdate(webcam)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    response
+                }
+                .build()
+        BigImageViewer.initialize(CustomGlideImageLoader.with(applicationContext, client))
     }
 
     open fun initializeCrashlytics() {

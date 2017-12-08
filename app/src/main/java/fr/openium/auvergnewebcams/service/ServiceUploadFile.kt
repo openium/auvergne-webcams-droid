@@ -118,7 +118,7 @@ class ServiceUploadFile : Service() {
                             total += count
                             val progress = (total * 100) / contentLength
                             if (currentProgress != progress) {
-                                Timber.e("PROGRESS = ${progress}")
+                               // Timber.e("PROGRESS = ${progress}")
                                 notifyProgress(100, progress, texte)
                                 currentProgress = progress
                             }

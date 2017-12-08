@@ -15,10 +15,15 @@ import com.github.piasy.biv.loader.glide.R
 import com.github.piasy.biv.view.BigImageView
 import fr.openium.auvergnewebcams.injection.GlideApp
 import fr.openium.auvergnewebcams.injection.GlideRequests
+import fr.openium.auvergnewebcams.model.Webcam
+import io.realm.Realm
 import okhttp3.*
 import okio.Okio
+import timber.log.Timber
 import java.io.File
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Created by t.coulange on 16/11/2017.
@@ -43,14 +48,45 @@ class CustomGlideImageLoader private constructor(val context: Context, okHttpCli
                 callback.onFinish()
                 object : AsyncTask<Void, Void, File?>() {
                     override fun doInBackground(vararg p0: Void?): File? {
-                        if (response?.body() != null) {
-                            Okio.buffer(Okio.source(response.body()!!.byteStream())).use { source ->
-                                val file = File(context.externalCacheDir, "webcam.jpg")
-                                Okio.buffer(Okio.sink(file)).use { sink ->
-                                    sink.writeAll(source)
-                                    sink.flush()
-                                    return file
+                        if (response?.header("Last-Modified") != null) {
+                            Realm.getDefaultInstance().executeTransaction {
+                                val webcam = it.where(Webcam::class.java)
+                                        .contains(Webcam::imageLD.name, uri.toString())
+                                        .or()
+                                        .contains(Webcam::imageHD.name, uri.toString())
+                                        .or()
+                                        .contains(Webcam::viewsurfLD.name, uri.toString())
+                                        .or()
+                                        .contains(Webcam::viewsurfHD.name, uri.toString())
+                                        .findFirst() // TODO manage viewsurf
+                                if (webcam != null) {
+                                    val lastModified = response!!.header("Last-Modified")!!
+                                    if (!lastModified.isNullOrEmpty()) {
+                                        val dateFormat = SimpleDateFormat("E, d MMM yyyy HH:mm:ss 'GMT'", Locale.US)
+                                        dateFormat.timeZone = TimeZone.getTimeZone("GMT")
+                                        val newTime = dateFormat.parse(lastModified).time
+                                        if (webcam.lastUpdate == null || newTime != webcam.lastUpdate!!) {
+                                            webcam.lastUpdate = newTime
+                                            Timber.e("UPDATE DATE ${webcam.title}  ${webcam.lastUpdate}")
+                                            it.insertOrUpdate(webcam)
+                                        }
+                                    }
                                 }
+                            }
+                        }
+
+                        if (response?.body() != null) {
+                            try {
+                                Okio.buffer(Okio.source(response.body()!!.byteStream())).use { source ->
+                                    val file = File(context.externalCacheDir, "webcam.jpg")
+                                    Okio.buffer(Okio.sink(file)).use { sink ->
+                                        sink.writeAll(source)
+                                        sink.flush()
+                                        return file
+                                    }
+                                }
+                            } catch (error: Exception) {
+                                Timber.e(error.message)
                             }
                         }
                         return null

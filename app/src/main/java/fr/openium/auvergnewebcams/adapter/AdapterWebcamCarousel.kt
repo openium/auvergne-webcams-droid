@@ -1,11 +1,13 @@
 package fr.openium.auvergnewebcams.adapter
 
 import android.content.Context
+import android.graphics.Point
 import android.graphics.drawable.Drawable
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
@@ -18,17 +20,26 @@ import fr.openium.auvergnewebcams.injection.GlideApp
 import fr.openium.auvergnewebcams.model.Webcam
 import kotlinx.android.synthetic.main.item_carousel.view.*
 
+
 /**
  * Created by laura on 23/03/2017.
  */
-class AdapterWebcamCarousel(val context: Context, val listener: ((Webcam, Int) -> Unit)? = null, val items: List<Webcam>) : RecyclerView.Adapter<AdapterWebcamCarousel.WebcamHolder>() {
+class AdapterWebcamCarousel(val context: Context, val listener: ((Webcam, Int) -> Unit)? = null, var items: List<Webcam>) : RecyclerView.Adapter<AdapterWebcamCarousel.WebcamHolder>() {
 
     val heightImage: Int
     val padding: Int
+    val widthScreen: Int
 
     init {
-        heightImage = context.resources.getDimensionPixelOffset(R.dimen.height_image_list)
+
         padding = context.resources.getDimensionPixelOffset(R.dimen.padding_image_list)
+        heightImage = context.resources.getDimensionPixelOffset(R.dimen.height_image_list)
+
+        val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val display = wm.defaultDisplay
+        val size = Point()
+        display.getSize(size)
+        widthScreen = size.x
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WebcamHolder {
@@ -51,6 +62,7 @@ class AdapterWebcamCarousel(val context: Context, val listener: ((Webcam, Int) -
             holder.itemView.textviewWebcamNotUpdate.show()
         }
 
+
         GlideApp.with(context)
                 .load(urlWebCam)
                 .listener(object : RequestListener<Drawable> {
@@ -67,7 +79,7 @@ class AdapterWebcamCarousel(val context: Context, val listener: ((Webcam, Int) -
                 })
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
-                .centerCrop()
+                .override(widthScreen, heightImage)
                 .into(holder.itemView.imageViewCamera)
 
 

@@ -16,7 +16,8 @@
         <ImageView
             android:id="@+id/imageViewCamera"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/height_image_list" />
+            android:layout_height="@dimen/height_image_list"
+            android:scaleType="centerCrop" />
 
 
         <ProgressBar

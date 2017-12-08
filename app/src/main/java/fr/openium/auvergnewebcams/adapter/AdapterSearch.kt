@@ -1,11 +1,13 @@
 package fr.openium.auvergnewebcams.adapter
 
 import android.content.Context
+import android.graphics.Point
 import android.graphics.drawable.Drawable
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
@@ -23,6 +25,20 @@ import kotlinx.android.synthetic.main.item_search.view.*
  * Created by laura on 05/12/2017.
  */
 class AdapterSearch(val context: Context, var items: List<Webcam>, val listener: ((Webcam) -> Unit)? = null) : RecyclerView.Adapter<AdapterSearch.ViewHolder>() {
+
+    val heightImage: Int
+    val widthScreen: Int
+
+    init {
+
+        heightImage = context.resources.getDimensionPixelOffset(R.dimen.height_image_list)
+
+        val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val display = wm.defaultDisplay
+        val size = Point()
+        display.getSize(size)
+        widthScreen = size.x
+    }
 
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
         val webcam = items.get(position)
@@ -55,7 +71,7 @@ class AdapterSearch(val context: Context, var items: List<Webcam>, val listener:
 
                 })
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .centerCrop()
+                .override(widthScreen, heightImage)
                 .into(holder?.itemView?.imageViewCamera)
 
         holder?.itemView?.setOnClickListener {

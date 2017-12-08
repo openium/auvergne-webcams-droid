@@ -47,6 +47,7 @@ class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)?
 
         holder.mLinearLayoutSection.visibility = View.VISIBLE
         holder.mTextViewNameSection.setText(section)
+
         val imageName = item.imageName?.replace("-", "_") ?: ""
         val resourceId = context.resources.getIdentifier(imageName, "drawable", context.getPackageName())
         if (resourceId != -1 && resourceId != 0) {
@@ -64,9 +65,20 @@ class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)?
                 listener?.invoke(webcam, position)
             }
         }
-        holder.mRecyclerView.adapter = AdapterWebcamCarousel(context, listener, item.webcams)
 
         holder.onSelectedListener = { pos ->
+            val name = item.webcams[pos]!!.title
+            holder.mTextViewNameWebcam.setText(name)
+        }
+        if (holder.mRecyclerView.adapter == null) {
+            holder.mRecyclerView.adapter = AdapterWebcamCarousel(context, listener, item.webcams)
+        } else {
+            (holder.mRecyclerView.adapter as AdapterWebcamCarousel).items = item.webcams
+            holder.mRecyclerView.adapter.notifyDataSetChanged()
+        }
+
+        val pos = (holder.itemView.recyclerView.layoutManager as CarouselLayoutManager).centerItemPosition
+        if (pos >= 0) {
             val name = item.webcams[pos]!!.title
             holder.mTextViewNameWebcam.setText(name)
         }
@@ -93,6 +105,7 @@ class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)?
             mImageViewSection = view.imageViewSection
             mRecyclerView = view.recyclerView
             mLinearLayoutSection = view.linearLayoutSection
+
             (view.recyclerView.layoutManager as CarouselLayoutManager).addOnItemSelectionListener { pos ->
                 onSelectedListener?.invoke(pos)
             }
