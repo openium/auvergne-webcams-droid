@@ -2,9 +2,12 @@ package fr.openium.auvergnewebcams.fragment
 
 import android.graphics.Point
 import android.net.Uri
+import android.support.v4.content.ContextCompat
+import android.widget.ImageView
 import com.github.piasy.biv.loader.ImageLoader
 import com.github.piasy.biv.view.BigImageView
 import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.ext.applicationContext
 import fr.openium.auvergnewebcams.ext.hide
 import fr.openium.auvergnewebcams.ext.show
 import fr.openium.auvergnewebcams.model.Webcam
@@ -25,12 +28,17 @@ class FragmentWebcam : AbstractFragmentWebcam() {
     override fun initWebCam() {
         super.initWebCam()
         if (isAlive) {
+            mBigImage.setFailureImage(ContextCompat.getDrawable(applicationContext, R.drawable.broken_camera))
+            mBigImage.setFailureImageInitScaleType(ImageView.ScaleType.FIT_CENTER)
+
             mBigImage.setImageLoaderCallback(object : ImageLoader.Callback {
                 override fun onSuccess(image: File?) {
                     progressbar_detail?.hide()
                 }
 
                 override fun onFail(error: Exception?) {
+                    onLoadWebcamError()
+                    progressbar_detail?.hide()
                 }
 
                 override fun onCacheHit(image: File?) {
@@ -49,6 +57,7 @@ class FragmentWebcam : AbstractFragmentWebcam() {
                 }
 
             })
+
 
             val display = activity!!.getWindowManager().getDefaultDisplay()
             val size = Point()
@@ -79,8 +88,6 @@ class FragmentWebcam : AbstractFragmentWebcam() {
                     scaleType = BigImageView.INIT_SCALE_TYPE_CENTER_INSIDE
                 }
             }
-
-
 
             if (scaleType != null) {
                 mBigImage.setInitScaleType(scaleType)

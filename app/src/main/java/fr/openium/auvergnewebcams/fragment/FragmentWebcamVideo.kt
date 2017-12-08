@@ -44,8 +44,16 @@ class FragmentWebcamVideo : AbstractFragmentWebcam() {
 
                 val videoUri = Uri.parse(urlWebcam)
                 viewViewWebcam.setVideoURI(videoUri)
+
                 viewViewWebcam.setOnPreparedListener {
                     progressbar_detail?.hide()
+                    imageViewErrorLoad?.hide()
+                }
+                viewViewWebcam.setOnErrorListener { mediaPlayer, i, j ->
+                    progressbar_detail?.hide()
+                    imageViewErrorLoad?.show()
+                    onLoadWebcamError()
+                    true
                 }
                 viewViewWebcam.start()
 

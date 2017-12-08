@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.ImageView
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
@@ -61,6 +62,7 @@ class AdapterWebcamCarousel(val context: Context, val listener: ((Webcam, Int) -
                 .fromIOToMain()
                 .subscribe {
                     if (it == item.uid) {
+//                        Timber.e("uid = ${item.uid}")
                         this.notifyItemChanged(position)
                     }
                 })
@@ -71,20 +73,31 @@ class AdapterWebcamCarousel(val context: Context, val listener: ((Webcam, Int) -
         if (isUp) {
             holder.itemView.textviewWebcamNotUpdate.gone()
         } else {
-            holder.itemView?.textviewWebcamNotUpdate?.setText(context.getString(R.string.generic_not_up_to_date))
+            holder.itemView.textviewWebcamNotUpdate.setText(context.getString(R.string.generic_not_up_to_date))
             holder.itemView.textviewWebcamNotUpdate.show()
         }
 
 
         GlideApp.with(context)
                 .load(urlWebCam)
+                .error(R.drawable.broken_camera)
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                        holder.itemView.textviewWebcamNotUpdate.setText(context.getString(R.string.load_webcam_error))
+                        holder.itemView.textviewWebcamNotUpdate.show()
+
+                        holder.itemView.imageViewCamera.scaleType = ImageView.ScaleType.CENTER_INSIDE
                         holder.itemView.progressbar.gone()
                         return false
                     }
 
                     override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                        if (isUp) {
+                            holder.itemView.textviewWebcamNotUpdate.gone()
+                        } else {
+                            holder.itemView.textviewWebcamNotUpdate.show()
+                        }
+                        holder.itemView.imageViewCamera.scaleType = ImageView.ScaleType.CENTER_CROP
                         holder.itemView.progressbar.gone()
                         return false
                     }
@@ -92,7 +105,6 @@ class AdapterWebcamCarousel(val context: Context, val listener: ((Webcam, Int) -
                 })
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
-                .centerCrop()
                 .into(holder.itemView.imageViewCamera)
 
 

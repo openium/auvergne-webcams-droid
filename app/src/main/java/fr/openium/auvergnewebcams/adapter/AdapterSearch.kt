@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.ImageView
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
@@ -65,25 +66,32 @@ class AdapterSearch(val context: Context, var items: List<Webcam>, val listener:
             holder?.itemView?.textviewWebcamNotUpdate?.show()
         }
 
-
         val urlWebCam: String = webcam.getUrlForWebcam(false, false)
-
         GlideApp.with(context)
                 .load(urlWebCam)
+                .error(R.drawable.broken_camera)
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                        holder?.itemView?.textviewWebcamNotUpdate?.setText(context.getString(R.string.load_webcam_error))
+                        holder?.itemView?.textviewWebcamNotUpdate?.show()
+
+                        holder?.itemView?.imageViewCamera?.scaleType = ImageView.ScaleType.CENTER_INSIDE
                         holder?.itemView?.progressbar?.gone()
                         return false
                     }
 
                     override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                        if (isUp) {
+                            holder?.itemView?.textviewWebcamNotUpdate?.gone()
+                        }
+                        holder?.itemView?.imageViewCamera?.scaleType = ImageView.ScaleType.CENTER_CROP
                         holder?.itemView?.progressbar?.gone()
                         return false
                     }
 
                 })
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .override(widthScreen, heightImage)
+                .skipMemoryCache(true)
                 .into(holder?.itemView?.imageViewCamera)
 
         holder?.itemView?.setOnClickListener {

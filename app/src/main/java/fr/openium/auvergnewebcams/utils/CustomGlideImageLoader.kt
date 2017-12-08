@@ -84,6 +84,7 @@ class CustomGlideImageLoader private constructor(val context: Context, okHttpCli
                                 }
                             } catch (error: Exception) {
                                 Timber.e(error.message)
+                                return null
                             }
                         }
                         return null

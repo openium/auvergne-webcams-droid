@@ -199,6 +199,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
                 if (webcam!!.isUpToDate()) {
                     textviewWebcamNotUpdate.gone()
                 } else {
+                    textviewWebcamNotUpdate.setText(getString(R.string.generic_not_up_to_date))
                     textviewWebcamNotUpdate.show()
                 }
 
@@ -211,6 +212,11 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
                 }
             }
         }
+    }
+
+    open protected fun onLoadWebcamError() {
+        textviewWebcamNotUpdate.setText(getString(R.string.load_webcam_error))
+        textviewWebcamNotUpdate.show()
     }
 
     abstract fun showProgress()

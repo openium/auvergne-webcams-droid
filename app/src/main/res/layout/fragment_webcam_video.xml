@@ -27,6 +27,14 @@
             android:layout_height="match_parent"
             android:layout_gravity="center" />
 
+        <ImageView
+            android:id="@+id/imageViewErrorLoad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/broken_camera"
+            android:visibility="gone" />
+
         <TextView
             android:id="@+id/textviewWebcamNotUpdate"
             style="@style/font_proxima_regular"

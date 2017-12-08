@@ -84,17 +84,21 @@ abstract class ApplicationBase : Application(), KodeinAware {
                                         .contains(Webcam::mediaViewSurfHD.name, urlMedia)
                                         .or()
                                         .contains(Webcam::mediaViewSurfLD.name, urlMedia)
+                                        .or()
+                                        .contains(Webcam::imageLD.name, url)
+                                        .or()
+                                        .contains(Webcam::imageHD.name, url)
                                         .findFirst()
                             }
 
                             if (webcam != null) {
+//                                Timber.e("UPDATE DATE ${webcam.uid}")
                                 val lastModified = response.header("Last-Modified")!!
                                 if (!lastModified.isEmpty()) {
                                     val dateFormat = SimpleDateFormat("E, d MMM yyyy HH:mm:ss 'GMT'", Locale.US)
                                     dateFormat.timeZone = TimeZone.getTimeZone("GMT")
                                     val newTime = dateFormat.parse(lastModified).time
                                     if (webcam.lastUpdate == null || newTime != webcam.lastUpdate!!) {
-                                        Timber.e("UPDATE DATE ${webcam.title}  ${webcam.lastUpdate}    ${newTime}")
                                         webcam.lastUpdate = newTime
                                         Events.eventCameraDateUpdate.set(webcam.uid)
                                     }
