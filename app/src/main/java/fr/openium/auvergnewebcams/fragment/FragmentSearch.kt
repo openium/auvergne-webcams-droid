@@ -48,7 +48,8 @@ class FragmentSearch : AbstractFragment() {
                 })
 
         val webcamsBdd = realm!!.where(Webcam::class.java)
-                .findAllSorted(Webcam::order.name)
+                .sort(Webcam::order.name)
+                .findAll()
         if (webcamsBdd != null) {
             webcams.addAll(realm!!.copyFromRealm(webcamsBdd))
         }
@@ -77,7 +78,7 @@ class FragmentSearch : AbstractFragment() {
                 }
                 val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
                 startActivity(intent, bundle)
-            })
+            }, oneTimeSubscriptions)
         } else {
             (recyclerViewSearch.adapter as AdapterSearch).items = webcamsAdapter
             recyclerViewSearch.adapter.notifyDataSetChanged()

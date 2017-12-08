@@ -14,13 +14,14 @@ import com.azoft.carousellayoutmanager.CenterScrollListener
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.Webcam
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.item_webcam.view.*
 import java.util.*
 
 /**
  * Created by laura on 23/03/2017.
  */
-class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)? = null, var items: List<Section>) : RecyclerView.Adapter<AdapterWebcam.WebcamHolder>() {
+class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)? = null, var items: List<Section>, val composites: CompositeDisposable) : RecyclerView.Adapter<AdapterWebcam.WebcamHolder>() {
 
     val heightImage: Int
 
@@ -71,14 +72,14 @@ class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)?
             holder.mTextViewNameWebcam.setText(name)
         }
         if (holder.mRecyclerView.adapter == null) {
-            holder.mRecyclerView.adapter = AdapterWebcamCarousel(context, listener, item.webcams)
+            holder.mRecyclerView.adapter = AdapterWebcamCarousel(context, listener, item.webcams, composites)
         } else {
             (holder.mRecyclerView.adapter as AdapterWebcamCarousel).items = item.webcams
             holder.mRecyclerView.adapter.notifyDataSetChanged()
         }
 
         val pos = (holder.itemView.recyclerView.layoutManager as CarouselLayoutManager).centerItemPosition
-        if (pos >= 0) {
+        if (pos >= 0 && pos < item.webcams.size) {
             val name = item.webcams[pos]!!.title
             holder.mTextViewNameWebcam.setText(name)
         }

@@ -13,6 +13,7 @@ import com.github.piasy.biv.loader.glide.GlideLoaderException
 import com.github.piasy.biv.loader.glide.GlideProgressSupport
 import com.github.piasy.biv.loader.glide.R
 import com.github.piasy.biv.view.BigImageView
+import fr.openium.auvergnewebcams.event.Events
 import fr.openium.auvergnewebcams.injection.GlideApp
 import fr.openium.auvergnewebcams.injection.GlideRequests
 import fr.openium.auvergnewebcams.model.Webcam
@@ -39,6 +40,7 @@ class CustomGlideImageLoader private constructor(val context: Context, okHttpCli
     }
 
     override fun loadImage(uri: Uri, callback: ImageLoader.Callback) {
+
         okHttpClient.newCall(Request.Builder().get().url(uri.toString()).build()).enqueue(object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
                 callback.onFail(GlideLoaderException(null))
@@ -54,21 +56,16 @@ class CustomGlideImageLoader private constructor(val context: Context, okHttpCli
                                         .contains(Webcam::imageLD.name, uri.toString())
                                         .or()
                                         .contains(Webcam::imageHD.name, uri.toString())
-                                        .or()
-                                        .contains(Webcam::viewsurfLD.name, uri.toString())
-                                        .or()
-                                        .contains(Webcam::viewsurfHD.name, uri.toString())
-                                        .findFirst() // TODO manage viewsurf
+                                        .findFirst()
                                 if (webcam != null) {
-                                    val lastModified = response!!.header("Last-Modified")!!
+                                    val lastModified = response.header("Last-Modified")!!
                                     if (!lastModified.isNullOrEmpty()) {
                                         val dateFormat = SimpleDateFormat("E, d MMM yyyy HH:mm:ss 'GMT'", Locale.US)
                                         dateFormat.timeZone = TimeZone.getTimeZone("GMT")
                                         val newTime = dateFormat.parse(lastModified).time
                                         if (webcam.lastUpdate == null || newTime != webcam.lastUpdate!!) {
                                             webcam.lastUpdate = newTime
-                                            Timber.e("UPDATE DATE ${webcam.title}  ${webcam.lastUpdate}")
-                                            it.insertOrUpdate(webcam)
+                                            Events.eventCameraDateUpdate.set(webcam.uid)
                                         }
                                     }
                                 }
@@ -106,35 +103,6 @@ class CustomGlideImageLoader private constructor(val context: Context, okHttpCli
             }
         })
 
-//        Glide.get(co)
-
-//        mRequestManager
-//                .downloadOnly()
-//                .load(uri)
-//                .into(object : ImageDownloadTarget(uri.toString()) {
-//                    override fun onResourceReady(resource: File,
-//                                                 transition: Transition<in File>) {
-//                        // we don't need delete this image file, so it behaves live cache hit
-//                        callback.onCacheHit(resource)
-//                        callback.onSuccess(resource)
-//                    }
-//
-//                    override fun onLoadFailed(errorDrawable: Drawable?) {
-//
-//                    }
-//
-//                    override fun onDownloadStart() {
-//                        callback.onStart()
-//                    }
-//
-//                    override fun onProgress(progress: Int) {
-//                        callback.onProgress(progress)
-//                    }
-//
-//                    override fun onDownloadFinish() {
-//                        callback.onFinish()
-//                    }
-//                })
     }
 
     override fun showThumbnail(parent: BigImageView, thumbnail: Uri, scaleType: Int): View {
@@ -154,15 +122,7 @@ class CustomGlideImageLoader private constructor(val context: Context, okHttpCli
     }
 
     override fun prefetch(uri: Uri) {
-//        mRequestManager
-//                .downloadOnly()
-//                .load(uri)
-//                .into(object : SimpleTarget<File>() {
-//                    override fun onResourceReady(resource: File,
-//                                                 transition: Transition<in File>) {
-//                        // not interested in result
-//                    }
-//                })
+
     }
 
     companion object {

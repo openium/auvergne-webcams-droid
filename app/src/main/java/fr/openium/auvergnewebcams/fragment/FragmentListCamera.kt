@@ -21,11 +21,8 @@ import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.rest.AWApi
 import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.realm.Realm
-import io.realm.RealmResults
 import kotlinx.android.synthetic.main.fragment_list_camera.*
-import timber.log.Timber
 
 
 /**
@@ -99,6 +96,7 @@ class FragmentListCamera : AbstractFragment() {
                                 }
                             }
                             activity?.runOnUiThread {
+                                initAdapter()
                                 swipeRefreshLayoutWebcams.isRefreshing = false
                             }
                         }, {
@@ -113,20 +111,7 @@ class FragmentListCamera : AbstractFragment() {
             }
         }
 
-
-//        val sections = realm!!.where(Section::class.java)
-//                .sort(Section::order.name)
-//                .findAll()
-//        initAdapter(sections)
-
-        oneTimeSubscriptions.add(realm!!.where(Section::class.java)
-                .sort(Section::order.name)
-                .findAllAsync()
-                .asFlowable()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { sections ->
-                    initAdapter(sections)
-                })
+        initAdapter()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -154,8 +139,11 @@ class FragmentListCamera : AbstractFragment() {
     // Specific job
     // =================================================================================================================
 
-    private fun initAdapter(sections: RealmResults<Section>) {
-        Timber.e("ADAPTER")
+    private fun initAdapter() {
+        val sections = realm!!.where(Section::class.java)
+                .sort(Section::order.name)
+                .findAll()
+
         if (recyclerView.adapter == null) {
             recyclerView.layoutManager = LinearLayoutManager(context)
             recyclerView.adapter = AdapterWebcam(context!!, { webcam, _ ->
@@ -166,7 +154,7 @@ class FragmentListCamera : AbstractFragment() {
                 }
                 val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
                 startActivity(intent, bundle)
-            }, sections)
+            }, sections, composites = oneTimeSubscriptions)
             recyclerView.scrollToPosition(position)
         } else {
             (recyclerView.adapter as AdapterWebcam).items = sections

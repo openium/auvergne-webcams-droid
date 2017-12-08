@@ -8,6 +8,7 @@ import com.github.piasy.biv.BigImageViewer
 import com.github.salomonbrys.kodein.*
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
+import fr.openium.auvergnewebcams.event.Events
 import fr.openium.auvergnewebcams.injection.Modules
 import fr.openium.auvergnewebcams.log.CrashReportingTree
 import fr.openium.auvergnewebcams.model.Webcam
@@ -61,16 +62,31 @@ abstract class ApplicationBase : Application(), KodeinAware {
                     val response = it.proceed(it.request())
                     if (response?.header("Last-Modified") != null) {
                         val url = it.request().url().url().toString()
+
+                        val argsSplit = url.split("/")
+                        val urlMedia: String
+                        if (!argsSplit.isEmpty()) {
+                            urlMedia = argsSplit.lastOrNull()?.replace(".jpg", "") ?: ""
+                        } else {
+                            urlMedia = ""
+                        }
+
                         Realm.getDefaultInstance().executeTransaction {
-                            val webcam = it.where(Webcam::class.java)
-                                    .contains(Webcam::imageLD.name, url)
-                                    .or()
-                                    .contains(Webcam::imageHD.name, url)
-                                    .or()
-                                    .contains(Webcam::viewsurfLD.name, url)
-                                    .or()
-                                    .contains(Webcam::viewsurfHD.name, url)
-                                    .findFirst() // TODO manage viewsurf
+                            val webcam: Webcam?
+                            if (urlMedia.isEmpty()) {
+                                webcam = it.where(Webcam::class.java)
+                                        .contains(Webcam::imageLD.name, url)
+                                        .or()
+                                        .contains(Webcam::imageHD.name, url)
+                                        .findFirst()
+                            } else {
+                                webcam = it.where(Webcam::class.java)
+                                        .contains(Webcam::mediaViewSurfHD.name, urlMedia)
+                                        .or()
+                                        .contains(Webcam::mediaViewSurfLD.name, urlMedia)
+                                        .findFirst()
+                            }
+
                             if (webcam != null) {
                                 val lastModified = response.header("Last-Modified")!!
                                 if (!lastModified.isEmpty()) {
@@ -78,9 +94,9 @@ abstract class ApplicationBase : Application(), KodeinAware {
                                     dateFormat.timeZone = TimeZone.getTimeZone("GMT")
                                     val newTime = dateFormat.parse(lastModified).time
                                     if (webcam.lastUpdate == null || newTime != webcam.lastUpdate!!) {
+                                        Timber.e("UPDATE DATE ${webcam.title}  ${webcam.lastUpdate}    ${newTime}")
                                         webcam.lastUpdate = newTime
-//                                        Timber.e("UPDATE DATE ${webcam.title}  ${webcam.lastUpdate}")
-                                        it.insertOrUpdate(webcam)
+                                        Events.eventCameraDateUpdate.set(webcam.uid)
                                     }
                                 }
                             }

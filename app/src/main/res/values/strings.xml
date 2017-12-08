@@ -56,4 +56,6 @@
     <string name="generic_last_update">Mise à jour le %s</string>
     <string name="generic_not_up_to_date">Cette webcam ne semble pas être à jour</string>
 
+    <string name="load_webcam_error">Cette webcam ne semble pas fonctionner</string>
+
 </resources>

@@ -14,17 +14,20 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.event.Events
+import fr.openium.auvergnewebcams.ext.fromIOToMain
 import fr.openium.auvergnewebcams.ext.gone
 import fr.openium.auvergnewebcams.ext.show
 import fr.openium.auvergnewebcams.injection.GlideApp
 import fr.openium.auvergnewebcams.model.Webcam
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.item_carousel.view.*
 
 
 /**
  * Created by laura on 23/03/2017.
  */
-class AdapterWebcamCarousel(val context: Context, val listener: ((Webcam, Int) -> Unit)? = null, var items: List<Webcam>) : RecyclerView.Adapter<AdapterWebcamCarousel.WebcamHolder>() {
+class AdapterWebcamCarousel(val context: Context, val listener: ((Webcam, Int) -> Unit)? = null, var items: List<Webcam>, val composites: CompositeDisposable) : RecyclerView.Adapter<AdapterWebcamCarousel.WebcamHolder>() {
 
     val heightImage: Int
     val padding: Int
@@ -53,12 +56,22 @@ class AdapterWebcamCarousel(val context: Context, val listener: ((Webcam, Int) -
 
     override fun onBindViewHolder(holder: WebcamHolder, position: Int) {
         val item = items.get(position)
+        composites.add(Events.eventCameraDateUpdate
+                .obs
+                .fromIOToMain()
+                .subscribe {
+                    if (it == item.uid) {
+                        this.notifyItemChanged(position)
+                    }
+                })
+
         val urlWebCam: String = item.getUrlForWebcam(false, false)
         val isUp = item.isUpToDate()
 
         if (isUp) {
             holder.itemView.textviewWebcamNotUpdate.gone()
         } else {
+            holder.itemView?.textviewWebcamNotUpdate?.setText(context.getString(R.string.generic_not_up_to_date))
             holder.itemView.textviewWebcamNotUpdate.show()
         }
 
@@ -79,7 +92,7 @@ class AdapterWebcamCarousel(val context: Context, val listener: ((Webcam, Int) -
                 })
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
-                .override(widthScreen, heightImage)
+                .centerCrop()
                 .into(holder.itemView.imageViewCamera)
 
 

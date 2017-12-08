@@ -53,7 +53,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
             (activity as AppCompatActivity).supportActionBar?.title = webcam!!.title
             webcam!!.addChangeListener<Webcam> { webcamChange ->
                 webcam = webcamChange
-                initDateLastUpdate() //TODO
+                initDateLastUpdate()
             }
             initWebCam()
         }
