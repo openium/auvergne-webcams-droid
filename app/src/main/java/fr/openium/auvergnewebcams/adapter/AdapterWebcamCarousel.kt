@@ -1,13 +1,11 @@
 package fr.openium.auvergnewebcams.adapter
 
 import android.content.Context
-import android.graphics.Point
 import android.graphics.drawable.Drawable
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.widget.ImageView
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -31,27 +29,18 @@ import kotlinx.android.synthetic.main.item_carousel.view.*
 class AdapterWebcamCarousel(val context: Context, val listener: ((Webcam, Int) -> Unit)? = null, var items: List<Webcam>, val composites: CompositeDisposable) : RecyclerView.Adapter<AdapterWebcamCarousel.WebcamHolder>() {
 
     val heightImage: Int
-    val padding: Int
-    val widthScreen: Int
+    val widthImage: Int
 
     init {
 
-        padding = context.resources.getDimensionPixelOffset(R.dimen.padding_image_list)
         heightImage = context.resources.getDimensionPixelOffset(R.dimen.height_image_list)
-
-        val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        val display = wm.defaultDisplay
-        val size = Point()
-        display.getSize(size)
-        widthScreen = size.x
+        widthImage = context.resources.getDimensionPixelOffset(R.dimen.width_image_list)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WebcamHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_carousel, parent, false)
         return WebcamHolder(view.apply {
-            layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, heightImage).apply {
-                setPadding(padding, 0, padding, 0)
-            }
+            layoutParams = ViewGroup.LayoutParams(widthImage, heightImage)
         })
     }
 
@@ -62,9 +51,9 @@ class AdapterWebcamCarousel(val context: Context, val listener: ((Webcam, Int) -
                 .fromIOToMain()
                 .subscribe {
                     if (it == item.uid) {
-//                        Timber.e("uid = ${item.uid}")
-//                        this.notifyItemChanged(position)
-                        this.notifyDataSetChanged()
+                        //    Timber.e("uid = ${item.uid}")
+                        this.notifyItemChanged(position)
+//                        this.notifyDataSetChanged()
                     }
                 })
 
@@ -78,6 +67,8 @@ class AdapterWebcamCarousel(val context: Context, val listener: ((Webcam, Int) -
             holder.itemView.textviewWebcamNotUpdate.show()
         }
 
+
+        holder.itemView.progressbar.show()
 
         GlideApp.with(context)
                 .load(urlWebCam)
@@ -106,6 +97,7 @@ class AdapterWebcamCarousel(val context: Context, val listener: ((Webcam, Int) -
                 })
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .skipMemoryCache(true)
+                .override(widthImage, heightImage)
                 .into(holder.itemView.imageViewCamera)
 
 
@@ -113,10 +105,6 @@ class AdapterWebcamCarousel(val context: Context, val listener: ((Webcam, Int) -
             listener?.invoke(item, position)
         }
 
-    }
-
-    override fun onViewRecycled(holder: WebcamHolder?) {
-        super.onViewRecycled(holder)
     }
 
     override fun getItemCount(): Int {

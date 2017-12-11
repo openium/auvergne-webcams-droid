@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="5dp">
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/linearLayoutSection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal"
         android:padding="5dp">
 
@@ -56,17 +59,21 @@
 
     </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerView"
+
+    <fr.openium.auvergnewebcams.carousel.DiscreteScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/height_image_list" />
+        android:layout_height="@dimen/height_image_list"
+        app:dsv_orientation="horizontal" />
 
     <TextView
         android:id="@+id/textViewNameWebcam"
         style="@style/font_proxima_regular"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
         android:gravity="center"
+        android:lines="3"
         android:paddingTop="10dp"
         android:textColor="@color/grey_text"
         android:textSize="14sp"

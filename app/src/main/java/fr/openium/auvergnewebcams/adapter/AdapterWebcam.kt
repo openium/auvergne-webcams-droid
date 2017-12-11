@@ -8,10 +8,11 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import com.azoft.carousellayoutmanager.CarouselLayoutManager
-import com.azoft.carousellayoutmanager.CarouselZoomPostLayoutListener
-import com.azoft.carousellayoutmanager.CenterScrollListener
 import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.carousel.DiscreteScrollView
+import fr.openium.auvergnewebcams.carousel.InfiniteScrollAdapter
+import fr.openium.auvergnewebcams.carousel.transform.Pivot
+import fr.openium.auvergnewebcams.carousel.transform.ScaleTransformer
 import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.Webcam
 import io.reactivex.disposables.CompositeDisposable
@@ -31,13 +32,13 @@ class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)?
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WebcamHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_webcam, parent, false)
-        view.recyclerView.apply {
-            layoutManager = CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL, true).apply {
-                setPostLayoutListener(CarouselZoomPostLayoutListener())
-            }
-            setHasFixedSize(true)
-            addOnScrollListener(CenterScrollListener())
-        }
+//        view.recyclerView.apply {
+//            layoutManager = CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL, true).apply {
+//                setPostLayoutListener(CarouselZoomPostLayoutListener())
+//            }
+//            setHasFixedSize(true)
+//            addOnScrollListener(CenterScrollListener())
+//        }
         return WebcamHolder(view)
     }
 
@@ -60,28 +61,27 @@ class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)?
         holder.mTextViewNbCameras.text = nbWebCams
 
         holder.itemView.setOnClickListener {
-            val pos = (holder.itemView.recyclerView.layoutManager as CarouselLayoutManager).centerItemPosition
+            val pos = (holder.scrollView.adapter as InfiniteScrollAdapter).getRealPosition(holder.scrollView.currentItem)
             val webcam = item.webcams.get(pos)
             if (webcam != null) {
                 listener?.invoke(webcam, position)
             }
         }
 
-        holder.onSelectedListener = { pos ->
-            val name = item.webcams[pos]!!.title
-            holder.mTextViewNameWebcam.setText(name)
-        }
-        if (holder.mRecyclerView.adapter == null) {
-            holder.mRecyclerView.adapter = AdapterWebcamCarousel(context, listener, item.webcams, composites)
-        } else {
-            (holder.mRecyclerView.adapter as AdapterWebcamCarousel).items = item.webcams
-            holder.mRecyclerView.adapter.notifyDataSetChanged()
+        holder.scrollView.addOnItemChangedListener { viewHolder, adapterPosition ->
+            holder.scrollView.postDelayed({
+                val realPos = (holder.scrollView.adapter as InfiniteScrollAdapter).getRealPosition(adapterPosition)
+                val name = item.webcams[realPos]!!.title
+                holder.mTextViewNameWebcam.setText(name)
+            }, 100)
         }
 
-        val pos = (holder.itemView.recyclerView.layoutManager as CarouselLayoutManager).centerItemPosition
-        if (pos >= 0 && pos < item.webcams.size) {
-            val name = item.webcams[pos]!!.title
-            holder.mTextViewNameWebcam.setText(name)
+        if (holder.scrollView.adapter == null) {
+            val adapter = AdapterWebcamCarousel(context, listener, item.webcams, composites)
+            val infiniteAdapter = InfiniteScrollAdapter.wrap(adapter)
+            holder.scrollView.adapter = infiniteAdapter
+        } else {
+            holder.scrollView.adapter.notifyDataSetChanged()
         }
 
     }
@@ -97,21 +97,22 @@ class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)?
         val mTextViewNbCameras: TextView
         val mImageViewSection: ImageView
         val mLinearLayoutSection: LinearLayout
-        val mRecyclerView: RecyclerView
-        var onSelectedListener: ((Int) -> Unit)? = null
+        val scrollView: DiscreteScrollView
 
         init {
             mTextViewNameWebcam = view.textViewNameWebcam
             mTextViewNameSection = view.textViewNameSection
             mTextViewNbCameras = view.textViewNbCameras
             mImageViewSection = view.imageViewSection
-            mRecyclerView = view.recyclerView
+            scrollView = view.scrollView
+            scrollView.setItemTransformer(ScaleTransformer.Builder()
+                    .setMaxScale(1.05f)
+                    .setMinScale(0.9f)
+                    .setPivotX(Pivot.X.CENTER) // CENTER is a default one
+                    .setPivotY(Pivot.Y.CENTER)
+                    .build())
             mLinearLayoutSection = view.linearLayoutSection
 
-            mRecyclerView.setHasFixedSize(true)
-            (view.recyclerView.layoutManager as CarouselLayoutManager).addOnItemSelectionListener { pos ->
-                onSelectedListener?.invoke(pos)
-            }
         }
     }
 }

@@ -2,6 +2,7 @@
 <resources>
 
     <dimen name="height_image_list">150dp</dimen>
+    <dimen name="width_image_list">220dp</dimen>
     <dimen name="padding_image_list">50dp</dimen>
 
 </resources>

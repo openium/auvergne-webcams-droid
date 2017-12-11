@@ -1,5 +1,6 @@
 package fr.openium.auvergnewebcams.service
 
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
@@ -7,6 +8,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.os.Environment
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
@@ -118,7 +120,7 @@ class ServiceUploadFile : Service() {
                             total += count
                             val progress = (total * 100) / contentLength
                             if (currentProgress != progress) {
-                               // Timber.e("PROGRESS = ${progress}")
+                                // Timber.e("PROGRESS = ${progress}")
                                 notifyProgress(100, progress, texte)
                                 currentProgress = progress
                             }
@@ -161,6 +163,9 @@ class ServiceUploadFile : Service() {
         }
 
         mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mNotificationManager!!.createNotificationChannel(NotificationChannel(NOTIF_CHANNEL, getString(R.string.app_name), NotificationManager.IMPORTANCE_DEFAULT))
+        }
         mBuilder = NotificationCompat.Builder(this, NOTIF_CHANNEL)
                 .setTicker(texte)
                 .setSmallIcon(R.mipmap.ic_notif)
@@ -182,11 +187,12 @@ class ServiceUploadFile : Service() {
     }
 
     private fun initNotifEnd(text: String, addRetry: Boolean) {
-        createNotification()
+        //   createNotification()
+        mNotificationManager?.cancel(NOTIF_ID)
         if (addRetry) {
             addActionRetry()
         }
-        mBuilder?.setOngoing(false)
+        //  mBuilder?.setOngoing(false)
         //     mBuilder?.setSmallIcon(android.R.drawable.stat_sys_upload_done)
         notifyProgress(0, 0, text)
     }
