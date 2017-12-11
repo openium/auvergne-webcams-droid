@@ -201,15 +201,21 @@ public class DiscreteScrollView extends RecyclerView {
 
         @Override
         public void onScrollEnd() {
-            if (onItemChangedListeners.isEmpty() && scrollStateChangeListeners.isEmpty()) {
-                return;
-            }
-            int current = layoutManager.getCurrentPosition();
-            ViewHolder holder = getViewHolder(current);
-            if (holder != null) {
-                notifyScrollEnd(holder, current);
-                notifyCurrentItemChanged(holder, current);
-            }
+            postDelayed((new Runnable() {
+                @Override
+                public void run() {
+                    if (onItemChangedListeners.isEmpty() && scrollStateChangeListeners.isEmpty()) {
+                        return;
+                    }
+                    int current = layoutManager.getCurrentPosition();
+                    ViewHolder holder = getViewHolder(current);
+                    if (holder != null) {
+                        notifyScrollEnd(holder, current);
+                        notifyCurrentItemChanged(holder, current);
+                    }
+                }
+            }), 100);
+
         }
 
         @Override

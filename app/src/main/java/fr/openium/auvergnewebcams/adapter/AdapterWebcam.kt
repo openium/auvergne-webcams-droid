@@ -17,6 +17,7 @@ import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.Webcam
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.item_webcam.view.*
+import timber.log.Timber
 import java.util.*
 
 /**
@@ -68,17 +69,20 @@ class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)?
             }
         }
 
+
         holder.scrollView.addOnItemChangedListener { viewHolder, adapterPosition ->
             holder.scrollView.postDelayed({
                 val realPos = (holder.scrollView.adapter as InfiniteScrollAdapter).getRealPosition(adapterPosition)
                 val name = item.webcams[realPos]!!.title
+                Timber.e("$name   $adapterPosition   $realPos")
                 holder.mTextViewNameWebcam.setText(name)
-            }, 100)
+            }, 200)
         }
 
         if (holder.scrollView.adapter == null) {
             val adapter = AdapterWebcamCarousel(context, listener, item.webcams, composites)
             val infiniteAdapter = InfiniteScrollAdapter.wrap(adapter)
+
             holder.scrollView.adapter = infiniteAdapter
         } else {
             holder.scrollView.adapter.notifyDataSetChanged()
@@ -111,6 +115,8 @@ class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)?
                     .setPivotX(Pivot.X.CENTER) // CENTER is a default one
                     .setPivotY(Pivot.Y.CENTER)
                     .build())
+            scrollView.setItemTransitionTimeMillis(400)
+            scrollView.setSlideOnFling(true)
             mLinearLayoutSection = view.linearLayoutSection
 
         }

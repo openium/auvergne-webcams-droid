@@ -100,7 +100,6 @@ class InfiniteScrollAdapter<T : RecyclerView.ViewHolder>(private val wrapped: Re
         layoutManager!!.scrollToPosition(currentRangeStart + newPosition)
     }
 
-    //TODO: handle proper data set change notifications
     private inner class DataSetChangeDelegate : RecyclerView.AdapterDataObserver() {
 
         override fun onChanged() {
