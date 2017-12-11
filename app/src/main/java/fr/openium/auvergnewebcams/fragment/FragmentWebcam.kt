@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.Point
 import android.net.Uri
 import android.support.v4.content.ContextCompat
+import android.support.v4.content.FileProvider
 import android.widget.ImageView
 import com.github.piasy.biv.loader.ImageLoader
 import com.github.piasy.biv.view.BigImageView
@@ -29,13 +30,14 @@ class FragmentWebcam : AbstractFragmentWebcam() {
     override fun shareWebCam() {
         val subject = webcam?.title
 
-        val image = Uri.fromFile(mBigImage.currentImageFile)
+        val image = FileProvider.getUriForFile(applicationContext, applicationContext.getApplicationContext().getPackageName() + ".provider", mBigImage.currentImageFile)
 
         val intent = Intent(Intent.ACTION_SEND).apply {
             setType("application/image")
             putExtra(Intent.EXTRA_TEXT, subject)
             putExtra(Intent.EXTRA_SUBJECT, subject)
             putExtra(Intent.EXTRA_STREAM, image)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
 
         if (intent.resolveActivity(activity?.getPackageManager()) != null) {

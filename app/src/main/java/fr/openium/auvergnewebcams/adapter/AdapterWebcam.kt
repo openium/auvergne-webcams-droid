@@ -86,6 +86,7 @@ class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)?
 
     }
 
+
     override fun getItemCount(): Int {
         return items.size
     }
@@ -107,6 +108,7 @@ class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)?
             mRecyclerView = view.recyclerView
             mLinearLayoutSection = view.linearLayoutSection
 
+            mRecyclerView.setHasFixedSize(true)
             (view.recyclerView.layoutManager as CarouselLayoutManager).addOnItemSelectionListener { pos ->
                 onSelectedListener?.invoke(pos)
             }

@@ -63,7 +63,8 @@ class AdapterWebcamCarousel(val context: Context, val listener: ((Webcam, Int) -
                 .subscribe {
                     if (it == item.uid) {
 //                        Timber.e("uid = ${item.uid}")
-                        this.notifyItemChanged(position)
+//                        this.notifyItemChanged(position)
+                        this.notifyDataSetChanged()
                     }
                 })
 
@@ -112,6 +113,10 @@ class AdapterWebcamCarousel(val context: Context, val listener: ((Webcam, Int) -
             listener?.invoke(item, position)
         }
 
+    }
+
+    override fun onViewRecycled(holder: WebcamHolder?) {
+        super.onViewRecycled(holder)
     }
 
     override fun getItemCount(): Int {
