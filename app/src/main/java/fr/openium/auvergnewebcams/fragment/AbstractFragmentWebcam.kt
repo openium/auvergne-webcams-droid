@@ -143,21 +143,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
         }
     }
 
-    private fun shareWebCam() {
-        val subject = webcam?.title
-
-        val url = webcam?.getUrlForWebcam(true, true) ?: ""
-        val intent = Intent(Intent.ACTION_SEND).apply {
-            setType("text/plain")
-            putExtra(Intent.EXTRA_TEXT, String.format("%s \n%s", subject, url))
-            putExtra(Intent.EXTRA_SUBJECT, subject)
-        }
-
-        if (intent.resolveActivity(activity?.getPackageManager()) != null) {
-            startActivity(intent)
-        }
-
-    }
+    abstract fun shareWebCam()
 
     private fun getLastPictureOrVideoOfWebcam() {
         if (applicationContext.hasNetwork) {

@@ -1,5 +1,6 @@
 package fr.openium.auvergnewebcams.fragment
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -59,6 +60,22 @@ class FragmentWebcamVideo : AbstractFragmentWebcam() {
 
             }
         }
+    }
+
+    override fun shareWebCam() {
+        val subject = webcam?.title
+
+        val url = webcam?.getUrlForWebcam(true, true) ?: ""
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            setType("text/plain")
+            putExtra(Intent.EXTRA_TEXT, String.format("%s \n%s", subject, url))
+            putExtra(Intent.EXTRA_SUBJECT, subject)
+        }
+
+        if (intent.resolveActivity(activity?.getPackageManager()) != null) {
+            startActivity(intent)
+        }
+
     }
 
     override fun showProgress() {

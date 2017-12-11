@@ -1,5 +1,6 @@
 package fr.openium.auvergnewebcams.fragment
 
+import android.content.Intent
 import android.graphics.Point
 import android.net.Uri
 import android.support.v4.content.ContextCompat
@@ -12,6 +13,7 @@ import fr.openium.auvergnewebcams.ext.hide
 import fr.openium.auvergnewebcams.ext.show
 import fr.openium.auvergnewebcams.model.Webcam
 import kotlinx.android.synthetic.main.fragment_webcam.*
+import timber.log.Timber
 import java.io.File
 import java.lang.Exception
 
@@ -24,6 +26,24 @@ class FragmentWebcam : AbstractFragmentWebcam() {
     override val layoutId: Int
         get() = R.layout.fragment_webcam
 
+    override fun shareWebCam() {
+        val subject = webcam?.title
+
+        val image = Uri.fromFile(mBigImage.currentImageFile)
+
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            setType("application/image")
+            putExtra(Intent.EXTRA_TEXT, subject)
+            putExtra(Intent.EXTRA_SUBJECT, subject)
+            putExtra(Intent.EXTRA_STREAM, image)
+        }
+
+        if (intent.resolveActivity(activity?.getPackageManager()) != null) {
+            startActivity(intent)
+        }
+
+    }
+
 
     override fun initWebCam() {
         super.initWebCam()
@@ -33,10 +53,12 @@ class FragmentWebcam : AbstractFragmentWebcam() {
 
             mBigImage.setImageLoaderCallback(object : ImageLoader.Callback {
                 override fun onSuccess(image: File?) {
+                    Timber.e("onSuccess")
                     progressbar_detail?.hide()
                 }
 
                 override fun onFail(error: Exception?) {
+                    Timber.e("onFail")
                     onLoadWebcamError()
                     progressbar_detail?.hide()
                 }
