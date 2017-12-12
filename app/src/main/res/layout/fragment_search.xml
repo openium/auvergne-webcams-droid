@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <SearchView
+    <android.support.v7.widget.SearchView
         android:id="@+id/textViewSearch"
+        style="@style/searchview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/height_search"
         android:layout_gravity="center_vertical"
         android:background="@color/grey"
         android:gravity="center_vertical"
         android:hint="@string/search_hint"
+        android:paddingEnd="12dp"
+        android:paddingStart="12dp"
         android:textColor="@color/grey_text"
         android:textSize="14sp"
-        android:transitionName="@string/transition_search_name" />
+        android:transitionName="@string/transition_search_name"
+        app:queryBackground="@color/grey"/>
 
     <TextView
         android:id="@+id/textViewResultSearch"

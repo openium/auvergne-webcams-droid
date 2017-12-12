@@ -68,7 +68,7 @@ class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)?
             }
         }
 
-        holder.scrollView.addOnItemChangedListener { viewHolder, adapterPosition ->
+        holder.scrollView.addOnItemChangedListener { _, adapterPosition ->
             val realPos = (holder.scrollView.adapter as InfiniteScrollAdapter).getRealPosition(adapterPosition)
             if (realPos >= 0 && item.webcams.size > realPos) {
                 val name = item.webcams[realPos]!!.title

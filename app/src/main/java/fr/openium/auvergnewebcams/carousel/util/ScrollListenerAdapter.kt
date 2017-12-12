@@ -22,11 +22,11 @@ class ScrollListenerAdapter<T : RecyclerView.ViewHolder>(private val adapter: Di
         adapter.onScroll(scrollPosition, currentIndex, newIndex, currentHolder, newCurrentHolder)
     }
 
-    override fun equals(obj: Any?): Boolean {
-        return if (obj is ScrollListenerAdapter<*>) {
-            adapter == obj.adapter
+    override fun equals(other: Any?): Boolean {
+        return if (other is ScrollListenerAdapter<*>) {
+            adapter == other.adapter
         } else {
-            super.equals(obj)
+            super.equals(other)
         }
     }
 }

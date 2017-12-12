@@ -71,9 +71,7 @@ enum class Orientation {
             outCenter.set(newX, outCenter.y)
         }
 
-        override fun isViewVisible(
-                viewCenter: Point, halfWidth: Int, halfHeight: Int, endBound: Int,
-                extraSpace: Int): Boolean {
+        override fun isViewVisible(viewCenter: Point, halfWidth: Int, halfHeight: Int, endBound: Int, extraSpace: Int): Boolean {
             val viewLeft = viewCenter.x - halfWidth
             val viewRight = viewCenter.x + halfWidth
             return viewLeft < endBound + extraSpace && viewRight > -extraSpace
@@ -147,9 +145,7 @@ enum class Orientation {
             return (viewCenterY - center.y).toFloat()
         }
 
-        override fun isViewVisible(
-                viewCenter: Point, halfWidth: Int, halfHeight: Int, endBound: Int,
-                extraSpace: Int): Boolean {
+        override fun isViewVisible(viewCenter: Point, halfWidth: Int, halfHeight: Int, endBound: Int, extraSpace: Int): Boolean {
             val viewTop = viewCenter.y - halfHeight
             val viewBottom = viewCenter.y + halfHeight
             return viewTop < endBound + extraSpace && viewBottom > -extraSpace

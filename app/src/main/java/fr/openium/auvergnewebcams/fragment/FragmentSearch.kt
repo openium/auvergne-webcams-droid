@@ -8,7 +8,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
-import com.jakewharton.rxbinding2.widget.RxSearchView
+import com.jakewharton.rxbinding2.support.v7.widget.RxSearchView
 import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.activity.ActivityWebcam

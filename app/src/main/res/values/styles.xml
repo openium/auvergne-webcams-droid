@@ -7,7 +7,11 @@
         <item name="colorPrimaryDark">@color/black</item>
         <item name="colorAccent">@color/white</item>
         <item name="colorControlNormal">@color/white</item>
+    </style>
 
+    <style name="searchview" parent="Widget.AppCompat.SearchView">
+        <item name="colorControlActivated">@color/grey_text</item>
+        <item name="fontPath">fonts/ProximaNova-RegularItalic.otf</item>
     </style>
 
     <style name="font_proxima_bold">
