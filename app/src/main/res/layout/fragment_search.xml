@@ -7,7 +7,6 @@
 
     <android.support.v7.widget.SearchView
         android:id="@+id/textViewSearch"
-        style="@style/searchview"
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_search"
         android:layout_gravity="center_vertical"
@@ -19,7 +18,7 @@
         android:textColor="@color/grey_text"
         android:textSize="14sp"
         android:transitionName="@string/transition_search_name"
-        app:queryBackground="@color/grey"/>
+        app:queryBackground="@color/grey" />
 
     <TextView
         android:id="@+id/textViewResultSearch"

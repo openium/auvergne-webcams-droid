@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuInflater
@@ -11,10 +12,7 @@ import android.view.MenuItem
 import com.tbruyelle.rxpermissions2.RxPermissions
 import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
-import fr.openium.auvergnewebcams.ext.applicationContext
-import fr.openium.auvergnewebcams.ext.gone
-import fr.openium.auvergnewebcams.ext.hasNetwork
-import fr.openium.auvergnewebcams.ext.show
+import fr.openium.auvergnewebcams.ext.*
 import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.service.ServiceUploadFile
 import fr.openium.auvergnewebcams.utils.DateUtils
@@ -106,6 +104,8 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
                 .subscribe { granted ->
                     if (granted) {
                         saveWebCamPicture()
+                    } else {
+                        this.snackbar(getString(R.string.error_no_permisson), Snackbar.LENGTH_SHORT)
                     }
                 }
     }

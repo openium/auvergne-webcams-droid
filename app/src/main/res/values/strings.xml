@@ -58,4 +58,6 @@
 
     <string name="load_webcam_error">Cette webcam ne semble pas fonctionner</string>
 
+    <string name="error_no_permisson">Veuillez activer les permissions dans les paramètres de l\'application</string>
+
 </resources>
