@@ -17,7 +17,6 @@ import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.Webcam
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.item_webcam.view.*
-import timber.log.Timber
 import java.util.*
 
 /**
@@ -69,14 +68,13 @@ class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)?
             }
         }
 
-
         holder.scrollView.addOnItemChangedListener { viewHolder, adapterPosition ->
-            holder.scrollView.postDelayed({
-                val realPos = (holder.scrollView.adapter as InfiniteScrollAdapter).getRealPosition(adapterPosition)
+            val realPos = (holder.scrollView.adapter as InfiniteScrollAdapter).getRealPosition(adapterPosition)
+            if (realPos >= 0 && item.webcams.size > realPos) {
                 val name = item.webcams[realPos]!!.title
-                Timber.e("$name   $adapterPosition   $realPos")
+//                Timber.e("$name   $adapterPosition   $realPos")
                 holder.mTextViewNameWebcam.setText(name)
-            }, 200)
+            }
         }
 
         if (holder.scrollView.adapter == null) {
@@ -86,6 +84,12 @@ class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)?
             holder.scrollView.adapter = infiniteAdapter
         } else {
             holder.scrollView.adapter.notifyDataSetChanged()
+        }
+
+        val realPos = (holder.scrollView.adapter as InfiniteScrollAdapter).getRealPosition(holder.scrollView.currentItem)
+        if (realPos >= 0 && item.webcams.size > realPos) {
+            val name = item.webcams[realPos]!!.title
+            holder.mTextViewNameWebcam.setText(name)
         }
 
     }
