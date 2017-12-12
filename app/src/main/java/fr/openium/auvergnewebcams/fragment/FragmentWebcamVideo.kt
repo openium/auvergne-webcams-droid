@@ -49,11 +49,13 @@ class FragmentWebcamVideo : AbstractFragmentWebcam() {
                 viewViewWebcam.setOnPreparedListener {
                     progressbar_detail?.hide()
                     imageViewErrorLoad?.hide()
+                    itemMenuRefresh?.isEnabled = true
                 }
                 viewViewWebcam.setOnErrorListener { _, _, _ ->
                     progressbar_detail?.hide()
                     imageViewErrorLoad?.show()
                     onLoadWebcamError()
+                    itemMenuRefresh?.isEnabled = true
                     true
                 }
                 viewViewWebcam.start()

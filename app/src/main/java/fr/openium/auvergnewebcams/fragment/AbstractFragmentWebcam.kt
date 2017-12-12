@@ -30,6 +30,8 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
 
     protected var webcam: Webcam? = null
 
+    protected var itemMenuRefresh: MenuItem? = null
+
     // =================================================================================================================
     // Life cycle
     // =================================================================================================================
@@ -73,6 +75,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
         inflater?.inflate(R.menu.menu_detail, menu)
+        itemMenuRefresh = menu?.findItem(R.id.menu_refresh)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
@@ -147,6 +150,9 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
 
     private fun getLastPictureOrVideoOfWebcam() {
         if (applicationContext.hasNetwork) {
+            showProgress()
+            itemMenuRefresh?.isEnabled = false
+
             Observable.just(1)
                     .observeOn(Schedulers.io())
                     .subscribeOn(Schedulers.io())

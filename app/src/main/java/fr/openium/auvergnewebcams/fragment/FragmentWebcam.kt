@@ -57,12 +57,14 @@ class FragmentWebcam : AbstractFragmentWebcam() {
                 override fun onSuccess(image: File?) {
                     Timber.e("onSuccess")
                     progressbar_detail?.hide()
+                    itemMenuRefresh?.isEnabled = true
                 }
 
                 override fun onFail(error: Exception?) {
                     Timber.e("onFail")
                     onLoadWebcamError()
                     progressbar_detail?.hide()
+                    itemMenuRefresh?.isEnabled = true
                 }
 
                 override fun onCacheHit(image: File?) {
