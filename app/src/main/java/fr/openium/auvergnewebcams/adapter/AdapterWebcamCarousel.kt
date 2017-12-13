@@ -53,7 +53,6 @@ class AdapterWebcamCarousel(val context: Context, val listener: ((Webcam, Int) -
                     if (it == item.uid) {
                         //    Timber.e("uid = ${item.uid}")
                         this.notifyItemChanged(position)
-//                        this.notifyDataSetChanged()
                     }
                 })
 

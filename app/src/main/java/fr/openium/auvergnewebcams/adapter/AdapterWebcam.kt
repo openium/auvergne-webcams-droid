@@ -32,13 +32,6 @@ class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)?
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WebcamHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_webcam, parent, false)
-//        view.recyclerView.apply {
-//            layoutManager = CarouselLayoutManager(CarouselLayoutManager.HORIZONTAL, true).apply {
-//                setPostLayoutListener(CarouselZoomPostLayoutListener())
-//            }
-//            setHasFixedSize(true)
-//            addOnScrollListener(CenterScrollListener())
-//        }
         return WebcamHolder(view)
     }
 
@@ -77,14 +70,9 @@ class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)?
             }
         }
 
-        if (holder.scrollView.adapter == null) {
-            val adapter = AdapterWebcamCarousel(context, listener, item.webcams, composites)
-            val infiniteAdapter = InfiniteScrollAdapter.wrap(adapter)
-
-            holder.scrollView.adapter = infiniteAdapter
-        } else {
-            holder.scrollView.adapter.notifyDataSetChanged()
-        }
+        val adapter = AdapterWebcamCarousel(context, listener, item.webcams, composites)
+        val infiniteAdapter = InfiniteScrollAdapter.wrap(adapter)
+        holder.scrollView.adapter = infiniteAdapter
 
         val realPos = (holder.scrollView.adapter as InfiniteScrollAdapter).getRealPosition(holder.scrollView.currentItem)
         if (realPos >= 0 && item.webcams.size > realPos) {
