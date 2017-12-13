@@ -17,7 +17,7 @@ class InfiniteScrollAdapter<T : RecyclerView.ViewHolder>(private val wrapped: Re
         get() = wrapped.itemCount
 
     val realCurrentPosition: Int
-        get() = getRealPosition(layoutManager!!.currentPosition)
+        get() = getRealPosition(layoutManager?.currentPosition ?: currentRangeStart)
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView?) {
         wrapped.onAttachedToRecyclerView(recyclerView)
@@ -56,25 +56,25 @@ class InfiniteScrollAdapter<T : RecyclerView.ViewHolder>(private val wrapped: Re
         return mapPositionToReal(position)
     }
 
-    fun getClosestPosition(position: Int): Int {
-        val adapterTarget = currentRangeStart + position
-        val adapterCurrent = layoutManager!!.currentPosition
-        if (adapterTarget == adapterCurrent) {
-            return adapterCurrent
-        } else if (adapterTarget < adapterCurrent) {
-            val adapterTargetNextSet = currentRangeStart + wrapped.itemCount + position
-            return if (adapterCurrent - adapterTarget < adapterTargetNextSet - adapterCurrent)
-                adapterTarget
-            else
-                adapterTargetNextSet
-        } else {
-            val adapterTargetPrevSet = currentRangeStart - wrapped.itemCount + position
-            return if (adapterCurrent - adapterTargetPrevSet < adapterTarget - adapterCurrent)
-                adapterTargetPrevSet
-            else
-                adapterTarget
-        }
-    }
+//    fun getClosestPosition(position: Int): Int {
+//        val adapterTarget = currentRangeStart + position
+//        val adapterCurrent = layoutManager!!.currentPosition
+//        if (adapterTarget == adapterCurrent) {
+//            return adapterCurrent
+//        } else if (adapterTarget < adapterCurrent) {
+//            val adapterTargetNextSet = currentRangeStart + wrapped.itemCount + position
+//            return if (adapterCurrent - adapterTarget < adapterTargetNextSet - adapterCurrent)
+//                adapterTarget
+//            else
+//                adapterTargetNextSet
+//        } else {
+//            val adapterTargetPrevSet = currentRangeStart - wrapped.itemCount + position
+//            return if (adapterCurrent - adapterTargetPrevSet < adapterTarget - adapterCurrent)
+//                adapterTargetPrevSet
+//            else
+//                adapterTarget
+//        }
+//    }
 
     private fun mapPositionToReal(position: Int): Int {
         val newPosition = position - currentRangeStart
@@ -97,7 +97,7 @@ class InfiniteScrollAdapter<T : RecyclerView.ViewHolder>(private val wrapped: Re
 
     private fun resetRange(newPosition: Int) {
         currentRangeStart = Integer.MAX_VALUE / 2
-        layoutManager!!.scrollToPosition(currentRangeStart + newPosition)
+        layoutManager?.scrollToPosition(currentRangeStart + newPosition)
     }
 
     private inner class DataSetChangeDelegate : RecyclerView.AdapterDataObserver() {

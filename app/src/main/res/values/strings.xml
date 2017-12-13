@@ -6,7 +6,7 @@
         <item quantity="other">%d webcams</item>
     </plurals>
 
-    <string name="splash_loading_cameras">Chargement des webcams ...</string>
+    <string name="splash_loading_cameras">Chargement des webcams</string>
 
     <string name="url_prod">https://raw.githubusercontent.com/Drusy/auvergne-webcams-ios/master/</string>
 

@@ -30,18 +30,20 @@ class FragmentWebcam : AbstractFragmentWebcam() {
     override fun shareWebCam() {
         val subject = webcam?.title
 
-        val image = FileProvider.getUriForFile(applicationContext, applicationContext.getApplicationContext().getPackageName() + ".provider", mBigImage.currentImageFile)
+        if (mBigImage.currentImageFile != null) {
+            val image = FileProvider.getUriForFile(applicationContext, applicationContext.getApplicationContext().getPackageName() + ".provider", mBigImage.currentImageFile)
 
-        val intent = Intent(Intent.ACTION_SEND).apply {
-            setType("application/image")
-            putExtra(Intent.EXTRA_TEXT, subject)
-            putExtra(Intent.EXTRA_SUBJECT, subject)
-            putExtra(Intent.EXTRA_STREAM, image)
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
+            val intent = Intent(Intent.ACTION_SEND).apply {
+                setType("application/image")
+                putExtra(Intent.EXTRA_TEXT, subject)
+                putExtra(Intent.EXTRA_SUBJECT, subject)
+                putExtra(Intent.EXTRA_STREAM, image)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
 
-        if (intent.resolveActivity(activity?.getPackageManager()) != null) {
-            startActivity(intent)
+            if (intent.resolveActivity(activity?.getPackageManager()) != null) {
+                startActivity(intent)
+            }
         }
 
     }
