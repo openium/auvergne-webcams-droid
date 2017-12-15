@@ -116,8 +116,10 @@ class FragmentListCamera : AbstractFragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        val position = (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
-        outState.putInt(POSITION_LISTE, position)
+        if (recyclerView?.layoutManager != null) {
+            val position = (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+            outState.putInt(POSITION_LISTE, position)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
