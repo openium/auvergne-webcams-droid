@@ -51,6 +51,7 @@ class AdapterWebcamCarousel(val context: Context, val listener: ((Webcam, Int) -
                 .fromIOToMain()
                 .subscribe {
                     if (it == item.uid) {
+                        item.realm.refresh()
                         //    Timber.e("uid = ${item.uid}")
                         this.notifyItemChanged(position)
                     }

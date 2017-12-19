@@ -48,6 +48,7 @@ open class Webcam(@PrimaryKey var uid: Long = 0, var order: Int = 0, var title: 
 
     fun isUpToDate(): Boolean {
         var isUp = true
+        //Timber.e("last date => $lastUpdate   name => $title")
         if (lastUpdate != null && lastUpdate!! > 0L) {
             isUp = !DateUtils.isMoreThan48Hour(lastUpdate!!)
         }

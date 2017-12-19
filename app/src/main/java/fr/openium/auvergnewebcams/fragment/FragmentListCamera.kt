@@ -142,9 +142,9 @@ class FragmentListCamera : AbstractFragment() {
     // =================================================================================================================
 
     private fun initAdapter() {
-        val sections = realm!!.copyFromRealm(realm!!.where(Section::class.java)
+        val sections = realm!!.where(Section::class.java)
                 .sort(Section::order.name)
-                .findAll())
+                .findAll()
 
         if (recyclerView.adapter == null) {
             recyclerView.layoutManager = LinearLayoutManager(context)

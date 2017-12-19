@@ -67,6 +67,8 @@ class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)?
                 val name = item.webcams[realPos]!!.title
 //                Timber.e("$name   $adapterPosition   $realPos")
                 holder.mTextViewNameWebcam.setText(name)
+            } else {
+                holder.mTextViewNameWebcam.setText("")
             }
         }
 
@@ -78,6 +80,8 @@ class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)?
         if (realPos >= 0 && item.webcams.size > realPos) {
             val name = item.webcams[realPos]!!.title
             holder.mTextViewNameWebcam.setText(name)
+        } else {
+            holder.mTextViewNameWebcam.setText("")
         }
 
     }

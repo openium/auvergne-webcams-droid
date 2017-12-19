@@ -63,6 +63,7 @@ class CustomGlideImageLoader private constructor(val context: Context, okHttpCli
                                         val dateFormat = SimpleDateFormat("E, d MMM yyyy HH:mm:ss 'GMT'", Locale.US)
                                         dateFormat.timeZone = TimeZone.getTimeZone("GMT")
                                         val newTime = dateFormat.parse(lastModified).time
+                                      //  Timber.e("update date $newTime   ${webcam.title}")
                                         if (webcam.lastUpdate == null || newTime != webcam.lastUpdate!!) {
                                             webcam.lastUpdate = newTime
                                             Events.eventCameraDateUpdate.set(webcam.uid)
