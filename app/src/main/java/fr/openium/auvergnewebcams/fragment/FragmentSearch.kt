@@ -12,7 +12,7 @@ import com.jakewharton.rxbinding2.support.v7.widget.RxSearchView
 import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.activity.ActivityWebcam
-import fr.openium.auvergnewebcams.adapter.AdapterSearch
+import fr.openium.auvergnewebcams.adapter.AdapterWebcams
 import fr.openium.auvergnewebcams.ext.applicationContext
 import fr.openium.auvergnewebcams.ext.gone
 import fr.openium.auvergnewebcams.ext.show
@@ -71,7 +71,7 @@ class FragmentSearch : AbstractFragment() {
 
         if (recyclerViewSearch.adapter == null) {
             recyclerViewSearch.layoutManager = LinearLayoutManager(applicationContext)
-            recyclerViewSearch.adapter = AdapterSearch(applicationContext, webcamsAdapter, { webcam ->
+            recyclerViewSearch.adapter = AdapterWebcams(applicationContext, webcamsAdapter, { webcam ->
                 val intent: Intent = Intent(context, ActivityWebcam::class.java).apply {
                     putExtra(Constants.KEY_ID, webcam.uid)
                     putExtra(Constants.KEY_TYPE, webcam.type)
@@ -80,7 +80,7 @@ class FragmentSearch : AbstractFragment() {
                 startActivity(intent, bundle)
             }, oneTimeSubscriptions)
         } else {
-            (recyclerViewSearch.adapter as AdapterSearch).items = webcamsAdapter
+            (recyclerViewSearch.adapter as AdapterWebcams).items = webcamsAdapter
             recyclerViewSearch.adapter.notifyDataSetChanged()
         }
 

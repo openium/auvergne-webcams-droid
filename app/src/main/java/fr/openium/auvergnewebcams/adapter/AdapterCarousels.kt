@@ -16,13 +16,13 @@ import fr.openium.auvergnewebcams.carousel.transform.ScaleTransformer
 import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.Webcam
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.item_webcam.view.*
+import kotlinx.android.synthetic.main.item_carousel.view.*
 import java.util.*
 
 /**
  * Created by laura on 23/03/2017.
  */
-class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)? = null, var items: List<Section>, val composites: CompositeDisposable) : RecyclerView.Adapter<AdapterWebcam.WebcamHolder>() {
+class AdapterCarousels(val context: Context, val listener: ((Webcam, Int) -> Unit)? = null, var items: List<Section>, val composites: CompositeDisposable) : RecyclerView.Adapter<AdapterCarousels.WebcamHolder>() {
 
     val heightImage: Int
 
@@ -31,7 +31,7 @@ class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)?
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WebcamHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_webcam, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_carousel, parent, false)
         return WebcamHolder(view)
     }
 
@@ -72,7 +72,7 @@ class AdapterWebcam(val context: Context, val listener: ((Webcam, Int) -> Unit)?
             }
         }
 
-        val adapter = AdapterWebcamCarousel(context, listener, item.webcams, composites)
+        val adapter = AdapterWebcamsCarousel(context, listener, item.webcams, composites)
         val infiniteAdapter = InfiniteScrollAdapter.wrap(adapter)
         holder.scrollView.adapter = infiniteAdapter
 

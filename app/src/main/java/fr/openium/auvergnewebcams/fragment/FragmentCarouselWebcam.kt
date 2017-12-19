@@ -13,7 +13,7 @@ import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.activity.ActivitySearch
 import fr.openium.auvergnewebcams.activity.ActivitySettings
 import fr.openium.auvergnewebcams.activity.ActivityWebcam
-import fr.openium.auvergnewebcams.adapter.AdapterWebcam
+import fr.openium.auvergnewebcams.adapter.AdapterCarousels
 import fr.openium.auvergnewebcams.ext.applicationContext
 import fr.openium.auvergnewebcams.ext.hasNetwork
 import fr.openium.auvergnewebcams.ext.isLollipopOrMore
@@ -22,13 +22,13 @@ import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.rest.AWApi
 import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
 import io.realm.Realm
-import kotlinx.android.synthetic.main.fragment_list_camera.*
+import kotlinx.android.synthetic.main.fragment_list_webcam.*
 
 
 /**
  * Created by t.coulange on 09/12/2016.
  */
-class FragmentListCamera : AbstractFragment() {
+class FragmentCarouselWebcam : AbstractFragment() {
 
     companion object {
         private const val POSITION_LISTE = "POSITION_LISTE"
@@ -37,7 +37,7 @@ class FragmentListCamera : AbstractFragment() {
     protected val api: AWApi by kodeinInjector.instance()
 
     override val layoutId: Int
-        get() = R.layout.fragment_list_camera
+        get() = R.layout.fragment_list_webcam
 
     private var position: Int = 0
 
@@ -148,7 +148,7 @@ class FragmentListCamera : AbstractFragment() {
 
         if (recyclerView.adapter == null) {
             recyclerView.layoutManager = LinearLayoutManager(context)
-            recyclerView.adapter = AdapterWebcam(context!!, { webcam, _ ->
+            recyclerView.adapter = AdapterCarousels(context!!, { webcam, _ ->
 
                 val intent: Intent = Intent(context, ActivityWebcam::class.java).apply {
                     putExtra(Constants.KEY_ID, webcam.uid)
@@ -159,7 +159,7 @@ class FragmentListCamera : AbstractFragment() {
             }, sections, composites = oneTimeSubscriptions)
             recyclerView.scrollToPosition(position)
         } else {
-            (recyclerView.adapter as AdapterWebcam).items = sections
+            (recyclerView.adapter as AdapterCarousels).items = sections
             recyclerView.adapter.notifyDataSetChanged()
         }
     }

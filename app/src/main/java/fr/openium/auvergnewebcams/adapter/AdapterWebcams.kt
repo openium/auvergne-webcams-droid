@@ -22,13 +22,13 @@ import fr.openium.auvergnewebcams.ext.show
 import fr.openium.auvergnewebcams.injection.GlideApp
 import fr.openium.auvergnewebcams.model.Webcam
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.item_search.view.*
+import kotlinx.android.synthetic.main.item_webcam.view.*
 
 
 /**
  * Created by laura on 05/12/2017.
  */
-class AdapterSearch(val context: Context, var items: List<Webcam>, val listener: ((Webcam) -> Unit)? = null, val composites: CompositeDisposable) : RecyclerView.Adapter<AdapterSearch.ViewHolder>() {
+class AdapterWebcams(val context: Context, var items: List<Webcam>, val listener: ((Webcam) -> Unit)? = null, val composites: CompositeDisposable) : RecyclerView.Adapter<AdapterWebcams.ViewHolder>() {
 
     val heightImage: Int
     val widthScreen: Int
@@ -101,7 +101,7 @@ class AdapterSearch(val context: Context, var items: List<Webcam>, val listener:
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent!!.context).inflate(R.layout.item_search, parent, false)
+        val view = LayoutInflater.from(parent!!.context).inflate(R.layout.item_webcam, parent, false)
         return ViewHolder(view)
     }
 
