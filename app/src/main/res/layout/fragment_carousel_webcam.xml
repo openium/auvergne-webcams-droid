@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dark_grey">
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayoutWebcams"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textViewSearch"
+                style="@style/font_proxima_regular_italic"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_search"
+                android:background="@color/grey"
+                android:drawablePadding="10dp"
+                android:drawableStart="@drawable/ic_search"
+                android:gravity="center_vertical"
+                android:paddingEnd="12dp"
+                android:paddingStart="32dp"
+                android:text="@string/search_hint"
+                android:textColor="@color/grey_text"
+                android:textSize="14sp"
+                android:transitionName="@string/transition_search_name" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+
+</FrameLayout>

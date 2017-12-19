@@ -10,6 +10,7 @@ import android.view.MenuItem
 import com.github.salomonbrys.kodein.instance
 import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.activity.ActivityListWebcam
 import fr.openium.auvergnewebcams.activity.ActivitySearch
 import fr.openium.auvergnewebcams.activity.ActivitySettings
 import fr.openium.auvergnewebcams.activity.ActivityWebcam
@@ -17,12 +18,13 @@ import fr.openium.auvergnewebcams.adapter.AdapterCarousels
 import fr.openium.auvergnewebcams.ext.applicationContext
 import fr.openium.auvergnewebcams.ext.hasNetwork
 import fr.openium.auvergnewebcams.ext.isLollipopOrMore
+import fr.openium.auvergnewebcams.ext.startActivity
 import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.rest.AWApi
 import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
 import io.realm.Realm
-import kotlinx.android.synthetic.main.fragment_list_webcam.*
+import kotlinx.android.synthetic.main.fragment_carousel_webcam.*
 
 
 /**
@@ -37,7 +39,7 @@ class FragmentCarouselWebcam : AbstractFragment() {
     protected val api: AWApi by kodeinInjector.instance()
 
     override val layoutId: Int
-        get() = R.layout.fragment_list_webcam
+        get() = R.layout.fragment_carousel_webcam
 
     private var position: Int = 0
 
@@ -156,7 +158,9 @@ class FragmentCarouselWebcam : AbstractFragment() {
                 }
                 val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
                 startActivity(intent, bundle)
-            }, sections, composites = oneTimeSubscriptions)
+            }, sections, oneTimeSubscriptions, { section: Section ->
+                startActivity<ActivityListWebcam>(ActivityListWebcam.getBundle(section.uid))
+            })
             recyclerView.scrollToPosition(position)
         } else {
             (recyclerView.adapter as AdapterCarousels).items = sections
