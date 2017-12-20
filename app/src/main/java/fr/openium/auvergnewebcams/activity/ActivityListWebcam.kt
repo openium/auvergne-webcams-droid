@@ -14,6 +14,9 @@ class ActivityListWebcam : AbstractActivityFragment() {
         return FragmentListWebcam()
     }
 
+    override val showHomeAsUp: Boolean
+        get() = true
+
     companion object {
         fun getBundle(sectionUid: Long): Bundle {
             val bundle = Bundle()

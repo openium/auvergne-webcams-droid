@@ -20,13 +20,13 @@ import fr.openium.auvergnewebcams.model.Webcam
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.header_list_webcam.view.*
 import kotlinx.android.synthetic.main.item_carousel.view.*
-import kotlinx.android.synthetic.main.item_webcam.view.*
 import java.util.*
 
 /**
  * Created by laura on 23/03/2017.
  */
-class AdapterCarousels(val context: Context, val listener: ((Webcam, Int) -> Unit)? = null, var items: List<Section>, val composites: CompositeDisposable, var sectionFavoris: Section, val listenerSectionClick: ((Section) -> Unit)) : RecyclerView.Adapter<AdapterCarousels.WebcamHolder>() {
+class AdapterCarousels(val context: Context, val listener: ((Webcam, Int) -> Unit)? = null, var items: List<Section>, val composites: CompositeDisposable, var sectionFavoris: Section,
+                       val listenerSectionClick: ((Section) -> Unit)) : RecyclerView.Adapter<AdapterCarousels.WebcamHolder>() {
 
     val heightImage: Int
 
@@ -40,6 +40,7 @@ class AdapterCarousels(val context: Context, val listener: ((Webcam, Int) -> Uni
     }
 
     override fun onBindViewHolder(holder: WebcamHolder, position: Int) {
+
         val item: Section
         if (position == 0) {
             item = sectionFavoris
@@ -122,6 +123,7 @@ class AdapterCarousels(val context: Context, val listener: ((Webcam, Int) -> Uni
         val mTextViewNameSection: TextView
         val mTextViewNameWebcam: TextView
         val mTextViewNbCameras: TextView
+        val mTextViewNbCamerasArrow: TextView
         val mImageViewSection: ImageView
         val mLinearLayoutSection: LinearLayout
         val scrollView: DiscreteScrollView
@@ -130,6 +132,7 @@ class AdapterCarousels(val context: Context, val listener: ((Webcam, Int) -> Uni
             mTextViewNameWebcam = view.textViewNameWebcam
             mTextViewNameSection = view.textViewNameSection
             mTextViewNbCameras = view.textViewNbCameras
+            mTextViewNbCamerasArrow = view.textViewNbCamerasArrow
             mImageViewSection = view.imageViewSection
             scrollView = view.scrollView
             scrollView.setItemTransformer(ScaleTransformer.Builder()
@@ -142,6 +145,7 @@ class AdapterCarousels(val context: Context, val listener: ((Webcam, Int) -> Uni
             scrollView.setSlideOnFling(true)
             mLinearLayoutSection = view.linearLayoutSection
 
+            mTextViewNbCamerasArrow.show()
         }
     }
 }

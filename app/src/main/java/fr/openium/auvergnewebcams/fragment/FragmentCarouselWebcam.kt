@@ -10,16 +10,13 @@ import android.view.MenuItem
 import com.github.salomonbrys.kodein.instance
 import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
-import fr.openium.auvergnewebcams.R.id.swipeRefreshLayoutWebcams
+import fr.openium.auvergnewebcams.activity.ActivityListWebcam
 import fr.openium.auvergnewebcams.activity.ActivitySearch
 import fr.openium.auvergnewebcams.activity.ActivitySettings
 import fr.openium.auvergnewebcams.activity.ActivityWebcam
 import fr.openium.auvergnewebcams.adapter.AdapterCarousels
 import fr.openium.auvergnewebcams.event.Events
-import fr.openium.auvergnewebcams.ext.applicationContext
-import fr.openium.auvergnewebcams.ext.fromIOToMain
-import fr.openium.auvergnewebcams.ext.hasNetwork
-import fr.openium.auvergnewebcams.ext.isLollipopOrMore
+import fr.openium.auvergnewebcams.ext.*
 import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.rest.AWApi
@@ -173,7 +170,7 @@ class FragmentCarouselWebcam : AbstractFragment() {
             recyclerView.layoutManager = LinearLayoutManager(context)
             recyclerView.adapter = AdapterCarousels(context!!, { webcam, _ ->
                 startActivityDetailCamera(webcam)
-            }, sections, composites = oneTimeSubscriptions, sectionFavoris = sectionFavoris, { section: Section ->
+            }, sections, composites = oneTimeSubscriptions, sectionFavoris = sectionFavoris, listenerSectionClick = { section ->
                 startActivity<ActivityListWebcam>(ActivityListWebcam.getBundle(section.uid))
             })
             recyclerView.scrollToPosition(position)

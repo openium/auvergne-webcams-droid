@@ -43,7 +43,7 @@ class FragmentListWebcam : AbstractFragment() {
                 .equalTo(Section::uid.name, uidSection)
                 .findFirst()
         if (realmSection == null) {
-            section = Section(title = getString(R.string.favoris_section_title), imageName = "pdd_landscape")
+            section = Section(title = getString(R.string.favoris_section_title), imageName = "star")
             section.webcams.addAll(realm!!.where(Webcam::class.java)
                     .equalTo(Webcam::isFavoris.name, true)
                     .findAll())
