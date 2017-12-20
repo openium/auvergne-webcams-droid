@@ -7,65 +7,13 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/linearLayoutSection"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal"
-        android:padding="5dp">
-
-        <ImageView
-            android:id="@+id/imageViewSection"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center_vertical"
-            tools:src="@drawable/goal_landscape" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="10dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textViewNameSection"
-                style="@style/font_proxima_bold"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                tools:text="Puy de dome" />
-
-            <TextView
-                android:id="@+id/textViewNbCameras"
-                style="@style/font_proxima_regular_italic"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:textColor="@color/grey_text"
-                android:textSize="12sp"
-                android:textStyle="italic"
-                tools:text="2 caméras" />
-
-        </LinearLayout>
-
-
-    </LinearLayout>
-
+    <include layout="@layout/header_list_webcam"/>
 
     <fr.openium.auvergnewebcams.carousel.DiscreteScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_image_list"
-        app:dsv_orientation="horizontal" />
+        app:dsv_orientation="horizontal"/>
 
     <TextView
         android:id="@+id/textViewNameWebcam"
@@ -78,6 +26,6 @@
         android:paddingTop="10dp"
         android:textColor="@color/grey_text"
         android:textSize="14sp"
-        tools:text="Caméra 1" />
+        tools:text="Caméra 1"/>
 
 </LinearLayout>

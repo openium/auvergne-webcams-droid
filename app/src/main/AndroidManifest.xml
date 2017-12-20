@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="fr.openium.auvergnewebcams">
+          package="fr.openium.auvergnewebcams">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:name=".ApplicationImpl"
@@ -16,37 +16,41 @@
 
         <activity android:name=".activity.ActivitySplash">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
 
-        <activity android:name=".activity.ActivityMain" />
+        <activity android:name=".activity.ActivityMain"/>
+
+
+        <activity
+            android:name=".activity.ActivityListWebcam"/>
 
         <activity
             android:name=".activity.ActivitySettingsAbout"
-            android:label="@string/settings_credits_about" />
+            android:label="@string/settings_credits_about"/>
 
         <activity
             android:name=".activity.ActivitySearch"
-            android:label="@string/search_title" />
+            android:label="@string/search_title"/>
 
         <activity
             android:name=".activity.ActivityWebcam"
-            android:configChanges="orientation|screenSize" />
+            android:configChanges="orientation|screenSize"/>
 
         <activity
             android:name=".activity.ActivitySettings"
-            android:label="@string/settings_title" />
+            android:label="@string/settings_title"/>
 
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="7cc7cb6974a476c88eaefd8f8f18727ed0ba945a" />
+            android:value="7cc7cb6974a476c88eaefd8f8f18727ed0ba945a"/>
 
         <service
             android:name=".service.ServiceUploadFile"
-            android:exported="false" />
+            android:exported="false"/>
 
         <provider
             android:name=".provider.GenericFileProvider"
@@ -55,7 +59,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths" />
+                android:resource="@xml/provider_paths"/>
 
         </provider>
 

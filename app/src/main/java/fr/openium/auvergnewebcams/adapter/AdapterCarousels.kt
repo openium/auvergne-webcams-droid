@@ -18,13 +18,15 @@ import fr.openium.auvergnewebcams.ext.show
 import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.Webcam
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.android.synthetic.main.header_list_webcam.view.*
 import kotlinx.android.synthetic.main.item_carousel.view.*
+import kotlinx.android.synthetic.main.item_webcam.view.*
 import java.util.*
 
 /**
  * Created by laura on 23/03/2017.
  */
-class AdapterCarousels(val context: Context, val listener: ((Webcam, Int) -> Unit)? = null, var items: List<Section>, val composites: CompositeDisposable, var sectionFavoris: Section) : RecyclerView.Adapter<AdapterCarousels.WebcamHolder>() {
+class AdapterCarousels(val context: Context, val listener: ((Webcam, Int) -> Unit)? = null, var items: List<Section>, val composites: CompositeDisposable, var sectionFavoris: Section, val listenerSectionClick: ((Section) -> Unit)) : RecyclerView.Adapter<AdapterCarousels.WebcamHolder>() {
 
     val heightImage: Int
 
@@ -62,7 +64,9 @@ class AdapterCarousels(val context: Context, val listener: ((Webcam, Int) -> Uni
 
             val section = item.title
 
-            holder.mLinearLayoutSection.show()
+            holder.mLinearLayoutSection.setOnClickListener {
+                listenerSectionClick.invoke(item)
+            }
             holder.mTextViewNameSection.setText(section)
 
             val imageName = item.imageName?.replace("-", "_") ?: ""
