@@ -5,8 +5,11 @@ package fr.openium.auvergnewebcams.event
  */
 class EventCameraDateUpdate : PublishEvents<Long>()
 
+class EventCameraFavoris : PublishEvents<Long>()
+
 object Events {
 
     val eventCameraDateUpdate = EventCameraDateUpdate()
+    val eventCameraFavoris = EventCameraFavoris()
 
 }

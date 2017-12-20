@@ -55,7 +55,7 @@ class ActivitySplash : AbstractActivity() {
                                                 .equalTo(Webcam::uid.name, webcam.uid)
                                                 .findFirst()
                                         webcam.lastUpdate = webcamDB?.lastUpdate
-
+                                        webcam.isFavoris = webcamDB?.isFavoris ?: false
                                     }
                                 }
                                 realm.insertOrUpdate(sections.sections)

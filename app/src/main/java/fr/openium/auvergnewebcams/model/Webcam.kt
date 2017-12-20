@@ -12,7 +12,7 @@ import io.realm.annotations.RealmClass
 @RealmClass
 open class Webcam(@PrimaryKey var uid: Long = 0, var order: Int = 0, var title: String? = null, var imageLD: String? = null, var imageHD: String? = null,
                   var viewsurfLD: String? = null, var viewsurfHD: String? = null, var type: String? = "", var tags: RealmList<String>? = RealmList(),
-                  var mediaViewSurfLD: String? = null, var mediaViewSurfHD: String? = null, var lastUpdate: Long? = null) : RealmObject() {
+                  var mediaViewSurfLD: String? = null, var mediaViewSurfHD: String? = null, var lastUpdate: Long? = null, var isFavoris: Boolean = false) : RealmObject() {
 
     enum class WEBCAM_TYPE(val nameType: String) {
 

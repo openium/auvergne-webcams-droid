@@ -4,18 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-
-    <TextView
-        android:id="@+id/textViewLastUpdate"
-        style="@style/font_proxima_regular_italic"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/dark_grey"
-        android:gravity="center"
-        android:padding="10dp"
-        android:textColor="@color/grey_text"
-        android:textSize="14sp" />
-
+    <include layout="@layout/header_detail_camera" />
 
     <FrameLayout
         android:layout_width="match_parent"

@@ -60,4 +60,5 @@
 
     <string name="error_no_permisson">Veuillez activer les permissions dans les paramètres de l\'application</string>
 
+    <string name="favoris_section_title">Favoris</string>
 </resources>

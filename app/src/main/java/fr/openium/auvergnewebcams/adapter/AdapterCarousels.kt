@@ -13,6 +13,8 @@ import fr.openium.auvergnewebcams.carousel.DiscreteScrollView
 import fr.openium.auvergnewebcams.carousel.InfiniteScrollAdapter
 import fr.openium.auvergnewebcams.carousel.transform.Pivot
 import fr.openium.auvergnewebcams.carousel.transform.ScaleTransformer
+import fr.openium.auvergnewebcams.ext.gone
+import fr.openium.auvergnewebcams.ext.show
 import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.Webcam
 import io.reactivex.disposables.CompositeDisposable
@@ -22,7 +24,7 @@ import java.util.*
 /**
  * Created by laura on 23/03/2017.
  */
-class AdapterCarousels(val context: Context, val listener: ((Webcam, Int) -> Unit)? = null, var items: List<Section>, val composites: CompositeDisposable) : RecyclerView.Adapter<AdapterCarousels.WebcamHolder>() {
+class AdapterCarousels(val context: Context, val listener: ((Webcam, Int) -> Unit)? = null, var items: List<Section>, val composites: CompositeDisposable, var sectionFavoris: Section) : RecyclerView.Adapter<AdapterCarousels.WebcamHolder>() {
 
     val heightImage: Int
 
@@ -36,59 +38,80 @@ class AdapterCarousels(val context: Context, val listener: ((Webcam, Int) -> Uni
     }
 
     override fun onBindViewHolder(holder: WebcamHolder, position: Int) {
-        val item = items.get(position)
-
-        val section = item.title
-
-        holder.mLinearLayoutSection.visibility = View.VISIBLE
-        holder.mTextViewNameSection.setText(section)
-
-        val imageName = item.imageName?.replace("-", "_") ?: ""
-        val resourceId = context.resources.getIdentifier(imageName, "drawable", context.getPackageName())
-        if (resourceId != -1 && resourceId != 0) {
-            holder.mImageViewSection.setImageResource(resourceId)
+        val item: Section
+        if (position == 0) {
+            item = sectionFavoris
         } else {
-            holder.mImageViewSection.setImageResource(R.drawable.pdd_landscape)
+            item = items.get(position - 1)
         }
-        val nbWebCams = String.format(Locale.getDefault(), context.resources.getQuantityString(R.plurals.nb_cameras_format, item.webcams.count(), item.webcams.count()))
-        holder.mTextViewNbCameras.text = nbWebCams
 
-        holder.itemView.setOnClickListener {
-            val pos = (holder.scrollView.adapter as InfiniteScrollAdapter).getRealPosition(holder.scrollView.currentItem)
-            val webcam = item.webcams.get(pos)
-            if (webcam != null) {
-                listener?.invoke(webcam, position)
+        if (item.webcams.isEmpty()) {
+            holder.mTextViewNameSection.gone()
+            holder.mTextViewNameWebcam.gone()
+            holder.mTextViewNbCameras.gone()
+            holder.mImageViewSection.gone()
+            holder.mLinearLayoutSection.gone()
+            holder.scrollView.gone()
+        } else {
+            holder.mTextViewNameSection.show()
+            holder.mTextViewNameWebcam.show()
+            holder.mTextViewNbCameras.show()
+            holder.mImageViewSection.show()
+            holder.mLinearLayoutSection.show()
+            holder.scrollView.show()
+
+            val section = item.title
+
+            holder.mLinearLayoutSection.show()
+            holder.mTextViewNameSection.setText(section)
+
+            val imageName = item.imageName?.replace("-", "_") ?: ""
+            val resourceId = context.resources.getIdentifier(imageName, "drawable", context.getPackageName())
+            if (resourceId != -1 && resourceId != 0) {
+                holder.mImageViewSection.setImageResource(resourceId)
+            } else {
+                holder.mImageViewSection.setImageResource(R.drawable.pdd_landscape)
             }
-        }
+            val nbWebCams = String.format(Locale.getDefault(), context.resources.getQuantityString(R.plurals.nb_cameras_format, item.webcams.count(), item.webcams.count()))
+            holder.mTextViewNbCameras.text = nbWebCams
 
-        holder.scrollView.addOnItemChangedListener { _, adapterPosition ->
-            val realPos = (holder.scrollView.adapter as InfiniteScrollAdapter).getRealPosition(adapterPosition)
+            holder.itemView.setOnClickListener {
+                val pos = (holder.scrollView.adapter as InfiniteScrollAdapter).getRealPosition(holder.scrollView.currentItem)
+                val webcam = item.webcams.get(pos)
+                if (webcam != null) {
+                    listener?.invoke(webcam, position)
+                }
+            }
+
+            holder.scrollView.addOnItemChangedListener { _, adapterPosition ->
+                val realPos = (holder.scrollView.adapter as InfiniteScrollAdapter).getRealPosition(adapterPosition)
+                if (realPos >= 0 && item.webcams.size > realPos) {
+                    val name = item.webcams[realPos]!!.title
+//                Timber.e("$name   $adapterPosition   $realPos")
+                    holder.mTextViewNameWebcam.setText(name)
+                } else {
+                    holder.mTextViewNameWebcam.setText("")
+                }
+            }
+
+            val adapter = AdapterWebcamsCarousel(context, listener, item.webcams, composites)
+            val infiniteAdapter = InfiniteScrollAdapter.wrap(adapter)
+            holder.scrollView.adapter = infiniteAdapter
+
+            val realPos = (holder.scrollView.adapter as InfiniteScrollAdapter).getRealPosition(holder.scrollView.currentItem)
             if (realPos >= 0 && item.webcams.size > realPos) {
                 val name = item.webcams[realPos]!!.title
-//                Timber.e("$name   $adapterPosition   $realPos")
                 holder.mTextViewNameWebcam.setText(name)
             } else {
                 holder.mTextViewNameWebcam.setText("")
             }
         }
 
-        val adapter = AdapterWebcamsCarousel(context, listener, item.webcams, composites)
-        val infiniteAdapter = InfiniteScrollAdapter.wrap(adapter)
-        holder.scrollView.adapter = infiniteAdapter
-
-        val realPos = (holder.scrollView.adapter as InfiniteScrollAdapter).getRealPosition(holder.scrollView.currentItem)
-        if (realPos >= 0 && item.webcams.size > realPos) {
-            val name = item.webcams[realPos]!!.title
-            holder.mTextViewNameWebcam.setText(name)
-        } else {
-            holder.mTextViewNameWebcam.setText("")
-        }
-
     }
 
 
     override fun getItemCount(): Int {
-        return items.size
+        return items.size + 1
     }
 
     class WebcamHolder(view: View) : RecyclerView.ViewHolder(view) {

@@ -12,6 +12,7 @@ import android.view.MenuItem
 import com.tbruyelle.rxpermissions2.RxPermissions
 import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.event.Events
 import fr.openium.auvergnewebcams.ext.*
 import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.service.ServiceUploadFile
@@ -21,6 +22,7 @@ import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import kotlinx.android.synthetic.main.fragment_webcam.*
+import kotlinx.android.synthetic.main.header_detail_camera.*
 
 
 /**
@@ -95,7 +97,6 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
         }
         return super.onOptionsItemSelected(item)
     }
-
 
     // =================================================================================================================
     // Specific job
@@ -182,6 +183,14 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     protected open fun initWebCam() {
         if (isAlive) {
             initDateLastUpdate()
+            checkBoxFavoris.setOnCheckedChangeListener(null)
+            checkBoxFavoris.isChecked = webcam?.isFavoris == true
+            checkBoxFavoris.setOnCheckedChangeListener { compoundButton, isChecked ->
+                realm!!.executeTransaction {
+                    webcam?.isFavoris = isChecked
+                    Events.eventCameraFavoris.set(webcam?.uid ?: -1L)
+                }
+            }
         }
     }
 

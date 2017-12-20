@@ -14,7 +14,9 @@ import fr.openium.auvergnewebcams.activity.ActivitySearch
 import fr.openium.auvergnewebcams.activity.ActivitySettings
 import fr.openium.auvergnewebcams.activity.ActivityWebcam
 import fr.openium.auvergnewebcams.adapter.AdapterCarousels
+import fr.openium.auvergnewebcams.event.Events
 import fr.openium.auvergnewebcams.ext.applicationContext
+import fr.openium.auvergnewebcams.ext.fromIOToMain
 import fr.openium.auvergnewebcams.ext.hasNetwork
 import fr.openium.auvergnewebcams.ext.isLollipopOrMore
 import fr.openium.auvergnewebcams.model.Section
@@ -89,6 +91,7 @@ class FragmentCarouselWebcam : AbstractFragment() {
                                                     .findFirst()
                                             if (webcamDB?.lastUpdate != null) {
                                                 webcam.lastUpdate = webcamDB.lastUpdate
+                                                webcam.isFavoris = webcamDB.isFavoris
                                             }
                                         }
                                     }
@@ -110,6 +113,12 @@ class FragmentCarouselWebcam : AbstractFragment() {
                 }
             }
         }
+
+        oneTimeSubscriptions.add(Events.eventCameraFavoris.obs
+                .fromIOToMain()
+                .subscribe {
+                    initAdapter()
+                })
 
         initAdapter()
     }
@@ -141,28 +150,44 @@ class FragmentCarouselWebcam : AbstractFragment() {
     // Specific job
     // =================================================================================================================
 
+
     private fun initAdapter() {
+        val sectionFavoris = Section(uid = -1, order = -1, title = getString(R.string.favoris_section_title), imageName = "star")
+
+        val webcamsFavoris = realm!!.where(Webcam::class.java)
+                .sort(Webcam::title.name)
+                .equalTo(Webcam::isFavoris.name, true)
+                .findAll()
+
+        if (!webcamsFavoris.isEmpty()) {
+            sectionFavoris.webcams.addAll(webcamsFavoris)
+        }
+
         val sections = realm!!.where(Section::class.java)
                 .sort(Section::order.name)
+                .isNotEmpty(Section::webcams.name)
                 .findAll()
 
         if (recyclerView.adapter == null) {
             recyclerView.layoutManager = LinearLayoutManager(context)
             recyclerView.adapter = AdapterCarousels(context!!, { webcam, _ ->
-
-                val intent: Intent = Intent(context, ActivityWebcam::class.java).apply {
-                    putExtra(Constants.KEY_ID, webcam.uid)
-                    putExtra(Constants.KEY_TYPE, webcam.type)
-                }
-                val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
-                startActivity(intent, bundle)
-            }, sections, composites = oneTimeSubscriptions)
+                startActivityDetailCamera(webcam)
+            }, sections, composites = oneTimeSubscriptions, sectionFavoris = sectionFavoris)
             recyclerView.scrollToPosition(position)
         } else {
             (recyclerView.adapter as AdapterCarousels).items = sections
+            (recyclerView.adapter as AdapterCarousels).sectionFavoris = sectionFavoris
             recyclerView.adapter.notifyDataSetChanged()
         }
     }
 
+    private fun startActivityDetailCamera(webcam: Webcam) {
+        val intent: Intent = Intent(context, ActivityWebcam::class.java).apply {
+            putExtra(Constants.KEY_ID, webcam.uid)
+            putExtra(Constants.KEY_TYPE, webcam.type)
+        }
+        val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
+        startActivity(intent, bundle)
+    }
 
 }
