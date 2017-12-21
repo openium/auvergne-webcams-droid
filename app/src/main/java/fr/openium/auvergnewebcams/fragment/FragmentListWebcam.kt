@@ -5,12 +5,14 @@ import android.os.Bundle
 import android.support.v4.app.ActivityOptionsCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.view.View
+import android.util.Log
 import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.activity.ActivityWebcam
 import fr.openium.auvergnewebcams.adapter.AdapterWebcams
+import fr.openium.auvergnewebcams.event.Events
 import fr.openium.auvergnewebcams.ext.applicationContext
+import fr.openium.auvergnewebcams.ext.fromIOToMain
 import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.Webcam
 import kotlinx.android.synthetic.main.fragment_list_webcam.*
@@ -28,9 +30,15 @@ class FragmentListWebcam : AbstractFragment() {
     // Life cycle
     // =================================================================================================================
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
         initSection()
+        oneTimeSubscriptions.add(Events.eventCameraFavoris.obs
+                .fromIOToMain()
+                .subscribe {
+                    Log.d("test", "test")
+                    initSection()
+                })
     }
 
     // =================================================================================================================
@@ -50,6 +58,7 @@ class FragmentListWebcam : AbstractFragment() {
         } else {
             section = realmSection
         }
+        webcams.clear()
         webcams.addAll(section.webcams)
         initSectionInfo()
     }
@@ -60,21 +69,26 @@ class FragmentListWebcam : AbstractFragment() {
     }
 
     private fun initAdapter() {
-        val webcamsAdapter = ArrayList<Webcam>()
-        webcamsAdapter.addAll(webcams)
-        if (recyclerView.adapter == null) {
-            recyclerView.layoutManager = LinearLayoutManager(applicationContext)
-            recyclerView.adapter = AdapterWebcams(applicationContext, webcamsAdapter, { webcam ->
-                val intent: Intent = Intent(context, ActivityWebcam::class.java).apply {
-                    putExtra(Constants.KEY_ID, webcam.uid)
-                    putExtra(Constants.KEY_TYPE, webcam.type)
-                }
-                val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
-                startActivity(intent, bundle)
-            }, oneTimeSubscriptions, section)
+        if (webcams.isEmpty()) {
+            activity?.finish()
         } else {
-            (recyclerView.adapter as AdapterWebcams).items = webcamsAdapter
-            recyclerView.adapter.notifyDataSetChanged()
+            val webcamsAdapter = ArrayList<Webcam>()
+            webcamsAdapter.addAll(webcams)
+            if (recyclerView.adapter == null) {
+                recyclerView.layoutManager = LinearLayoutManager(applicationContext)
+                recyclerView.adapter = AdapterWebcams(applicationContext, webcamsAdapter, { webcam ->
+                    val intent: Intent = Intent(context, ActivityWebcam::class.java).apply {
+                        putExtra(Constants.KEY_ID, webcam.uid)
+                        putExtra(Constants.KEY_TYPE, webcam.type)
+                    }
+                    val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
+                    startActivity(intent, bundle)
+                }, oneTimeSubscriptions, section)
+            } else {
+                (recyclerView.adapter as AdapterWebcams).items = webcamsAdapter
+                (recyclerView.adapter as AdapterWebcams).hearderSection = section
+                recyclerView.adapter.notifyDataSetChanged()
+            }
         }
     }
 

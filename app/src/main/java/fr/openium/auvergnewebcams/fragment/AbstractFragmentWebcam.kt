@@ -188,8 +188,8 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
             checkBoxFavoris.setOnCheckedChangeListener { compoundButton, isChecked ->
                 realm!!.executeTransaction {
                     webcam?.isFavoris = isChecked
-                    Events.eventCameraFavoris.set(webcam?.uid ?: -1L)
                 }
+                Events.eventCameraFavoris.set(webcam?.uid ?: -1L)
             }
         }
     }

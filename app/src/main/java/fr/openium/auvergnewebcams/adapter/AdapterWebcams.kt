@@ -30,7 +30,7 @@ import java.util.*
 /**
  * Created by laura on 05/12/2017.
  */
-class AdapterWebcams(val context: Context, var items: List<Webcam>, val listener: ((Webcam) -> Unit)? = null, val composites: CompositeDisposable, val hearderSection: Section? = null) : RecyclerView.Adapter<AdapterWebcams.ViewHolder>() {
+class AdapterWebcams(val context: Context, var items: List<Webcam>, val listener: ((Webcam) -> Unit)? = null, val composites: CompositeDisposable, var hearderSection: Section? = null) : RecyclerView.Adapter<AdapterWebcams.ViewHolder>() {
 
     val heightImage: Int
     val widthScreen: Int
@@ -48,16 +48,16 @@ class AdapterWebcams(val context: Context, var items: List<Webcam>, val listener
 
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
         if (hearderSection != null && position == 0) {
-            val imageName = hearderSection.imageName?.replace("-", "_") ?: ""
+            val imageName = hearderSection?.imageName?.replace("-", "_") ?: ""
             val resourceId = context.resources.getIdentifier(imageName, "drawable", context.getPackageName())
             if (resourceId != -1 && resourceId != 0) {
                 holder?.itemView?.imageViewSection?.setImageResource(resourceId)
             } else {
                 holder?.itemView?.imageViewSection?.setImageResource(R.drawable.pdd_landscape)
             }
-            holder?.itemView?.textViewNameSection?.text = hearderSection.title ?: ""
+            holder?.itemView?.textViewNameSection?.text = hearderSection?.title ?: ""
             holder?.itemView?.textViewNbCameras?.text = String.format(Locale.getDefault(),
-                    context.resources.getQuantityString(R.plurals.nb_cameras_format, hearderSection.webcams.count(), hearderSection.webcams.count()))
+                    context.resources.getQuantityString(R.plurals.nb_cameras_format, hearderSection?.webcams?.count() ?: 0, hearderSection?.webcams?.count() ?: 0))
         } else {
             val webcam = items.get(position - if (hearderSection != null) 1 else 0)
             composites.add(Events.eventCameraDateUpdate
