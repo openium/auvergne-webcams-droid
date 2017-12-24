@@ -62,4 +62,6 @@
 
     <string name="favoris_section_title">Favoris</string>
 
+    <string name="generic_no_application_for_action">Aucune application installée sur votre appareil ne permet d\&#39;effectuer cette action.</string>
+
 </resources>

@@ -198,26 +198,28 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
         if (isAlive) {
             if (webcam != null) {
                 if (webcam!!.isUpToDate()) {
-                    textviewWebcamNotUpdate.gone()
+                    textviewWebcamNotUpdate?.gone()
                 } else {
-                    textviewWebcamNotUpdate.setText(getString(R.string.generic_not_up_to_date))
-                    textviewWebcamNotUpdate.show()
+                    textviewWebcamNotUpdate?.setText(getString(R.string.generic_not_up_to_date))
+                    textviewWebcamNotUpdate?.show()
                 }
 
                 if (webcam!!.lastUpdate ?: 0 > 0L) {
                     val date = DateUtils.getDateFormatDateHour(webcam!!.lastUpdate!!)
-                    textViewLastUpdate.setText(getString(R.string.generic_last_update, date))
-                    textViewLastUpdate.show()
+                    textViewLastUpdate?.setText(getString(R.string.generic_last_update, date))
+                    textViewLastUpdate?.show()
                 } else {
-                    textViewLastUpdate.gone()
+                    textViewLastUpdate?.gone()
                 }
             }
         }
     }
 
     open protected fun onLoadWebcamError() {
-        textviewWebcamNotUpdate.setText(getString(R.string.load_webcam_error))
-        textviewWebcamNotUpdate.show()
+        if (isAlive) {
+            textviewWebcamNotUpdate?.setText(getString(R.string.load_webcam_error))
+            textviewWebcamNotUpdate?.show()
+        }
     }
 
     abstract fun showProgress()

@@ -17,10 +17,12 @@ import io.fabric.sdk.android.Fabric
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import okhttp3.OkHttpClient
+import okhttp3.Response
 import timber.log.Timber
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeoutException
 
 abstract class ApplicationBase : Application(), KodeinAware {
     override val kodein by Kodein.lazy {
@@ -59,52 +61,58 @@ abstract class ApplicationBase : Application(), KodeinAware {
 
         val client = OkHttpClient.Builder()
                 .addInterceptor {
-                    val response = it.proceed(it.request())
-                    if (response?.header("Last-Modified") != null) {
-                        val url = it.request().url().toString()
+                    var response: Response? = null
+                    try {
+                        response = it.proceed(it.request())
+                        if (response?.header("Last-Modified") != null) {
+                            val url = it.request().url().toString()
 
-                        val argsSplit = url.split("/")
-                        val urlMedia: String
-                        if (!argsSplit.isEmpty()) {
-                            urlMedia = argsSplit.lastOrNull()?.replace(".jpg", "") ?: ""
-                        } else {
-                            urlMedia = ""
-                        }
-
-                        Realm.getDefaultInstance().executeTransaction {
-                            val webcam: Webcam?
-                            if (urlMedia.isEmpty()) {
-                                webcam = it.where(Webcam::class.java)
-                                        .contains(Webcam::imageLD.name, url)
-                                        .or()
-                                        .contains(Webcam::imageHD.name, url)
-                                        .findFirst()
+                            val argsSplit = url.split("/")
+                            val urlMedia: String
+                            if (!argsSplit.isEmpty()) {
+                                urlMedia = argsSplit.lastOrNull()?.replace(".jpg", "") ?: ""
                             } else {
-                                webcam = it.where(Webcam::class.java)
-                                        .contains(Webcam::mediaViewSurfHD.name, urlMedia)
-                                        .or()
-                                        .contains(Webcam::mediaViewSurfLD.name, urlMedia)
-                                        .or()
-                                        .contains(Webcam::imageLD.name, url)
-                                        .or()
-                                        .contains(Webcam::imageHD.name, url)
-                                        .findFirst()
+                                urlMedia = ""
                             }
 
-                            if (webcam != null) {
-                                val lastModified = response.header("Last-Modified")!!
-                                if (!lastModified.isEmpty()) {
-                                    val dateFormat = SimpleDateFormat("E, d MMM yyyy HH:mm:ss 'GMT'", Locale.US)
-                                    dateFormat.timeZone = TimeZone.getTimeZone("GMT")
-                                    val newTime = dateFormat.parse(lastModified).time
-                                   // Timber.e("update date $newTime   ${webcam.title}")
-                                    if (webcam.lastUpdate == null || newTime != webcam.lastUpdate!!) {
-                                        webcam.lastUpdate = newTime
-                                        Events.eventCameraDateUpdate.set(webcam.uid)
+                            Realm.getDefaultInstance().executeTransaction {
+                                val webcam: Webcam?
+                                if (urlMedia.isEmpty()) {
+                                    webcam = it.where(Webcam::class.java)
+                                            .contains(Webcam::imageLD.name, url)
+                                            .or()
+                                            .contains(Webcam::imageHD.name, url)
+                                            .findFirst()
+                                } else {
+                                    webcam = it.where(Webcam::class.java)
+                                            .contains(Webcam::mediaViewSurfHD.name, urlMedia)
+                                            .or()
+                                            .contains(Webcam::mediaViewSurfLD.name, urlMedia)
+                                            .or()
+                                            .contains(Webcam::imageLD.name, url)
+                                            .or()
+                                            .contains(Webcam::imageHD.name, url)
+                                            .findFirst()
+                                }
+
+                                if (webcam != null) {
+                                    val lastModified = response.header("Last-Modified")!!
+                                    if (!lastModified.isEmpty()) {
+                                        val dateFormat = SimpleDateFormat("E, d MMM yyyy HH:mm:ss 'GMT'", Locale.US)
+                                        dateFormat.timeZone = TimeZone.getTimeZone("GMT")
+                                        val newTime = dateFormat.parse(lastModified).time
+                                        // Timber.e("update date $newTime   ${webcam.title}")
+                                        if (webcam.lastUpdate == null || newTime != webcam.lastUpdate!!) {
+                                            webcam.lastUpdate = newTime
+                                            Events.eventCameraDateUpdate.set(webcam.uid)
+                                        }
                                     }
                                 }
                             }
                         }
+
+                    } catch (timeout: TimeoutException) {
+                        Crashlytics.logException(timeout)
                     }
                     response
                 }

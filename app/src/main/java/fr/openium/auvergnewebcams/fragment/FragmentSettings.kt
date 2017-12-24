@@ -4,10 +4,12 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityOptionsCompat
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.activity.ActivitySettingsAbout
 import fr.openium.auvergnewebcams.ext.applicationContext
+import fr.openium.auvergnewebcams.ext.snackbar
 import kotlinx.android.synthetic.main.fragment_settings.*
 import timber.log.Timber
 
@@ -41,7 +43,11 @@ class FragmentSettings : AbstractFragment() {
             data = Uri.parse(url)
         }
         val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
-        startActivity(intent, bundle)
+        if (intent.resolveActivity(activity!!.packageManager) != null) {
+            startActivity(intent, bundle)
+        } else {
+            snackbar(R.string.generic_no_application_for_action, Snackbar.LENGTH_SHORT)
+        }
     }
 
     private fun initVersion() {
