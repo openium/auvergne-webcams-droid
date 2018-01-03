@@ -98,16 +98,16 @@ class FragmentCarouselWebcam : AbstractFragment() {
                             }
                             activity?.runOnUiThread {
                                 initAdapter()
-                                swipeRefreshLayoutWebcams.isRefreshing = false
+                                swipeRefreshLayoutWebcams?.isRefreshing = false
                             }
                         }, {
                             activity?.runOnUiThread {
-                                swipeRefreshLayoutWebcams.isRefreshing = false
+                                swipeRefreshLayoutWebcams?.isRefreshing = false
                             }
                         }))
             } else {
                 activity?.runOnUiThread {
-                    swipeRefreshLayoutWebcams.isRefreshing = false
+                    swipeRefreshLayoutWebcams?.isRefreshing = false
                 }
             }
         }
@@ -150,34 +150,36 @@ class FragmentCarouselWebcam : AbstractFragment() {
 
 
     private fun initAdapter() {
-        val sectionFavoris = Section(uid = -1, order = -1, title = getString(R.string.favoris_section_title), imageName = "star")
+        if(isAlive) {
+            val sectionFavoris = Section(uid = -1, order = -1, title = getString(R.string.favoris_section_title), imageName = "star")
 
-        val webcamsFavoris = realm!!.where(Webcam::class.java)
-                .sort(Webcam::title.name)
-                .equalTo(Webcam::isFavoris.name, true)
-                .findAll()
+            val webcamsFavoris = realm!!.where(Webcam::class.java)
+                    .sort(Webcam::title.name)
+                    .equalTo(Webcam::isFavoris.name, true)
+                    .findAll()
 
-        if (!webcamsFavoris.isEmpty()) {
-            sectionFavoris.webcams.addAll(webcamsFavoris)
-        }
+            if (!webcamsFavoris.isEmpty()) {
+                sectionFavoris.webcams.addAll(webcamsFavoris)
+            }
 
-        val sections = realm!!.where(Section::class.java)
-                .sort(Section::order.name)
-                .isNotEmpty(Section::webcams.name)
-                .findAll()
+            val sections = realm!!.where(Section::class.java)
+                    .sort(Section::order.name)
+                    .isNotEmpty(Section::webcams.name)
+                    .findAll()
 
-        if (recyclerView.adapter == null) {
-            recyclerView.layoutManager = LinearLayoutManager(context)
-            recyclerView.adapter = AdapterCarousels(context!!, { webcam, _ ->
-                startActivityDetailCamera(webcam)
-            }, sections, composites = oneTimeSubscriptions, sectionFavoris = sectionFavoris, listenerSectionClick = { section ->
-                startActivity<ActivityListWebcam>(ActivityListWebcam.getBundle(section.uid))
-            })
-            recyclerView.scrollToPosition(position)
-        } else {
-            (recyclerView.adapter as AdapterCarousels).items = sections
-            (recyclerView.adapter as AdapterCarousels).sectionFavoris = sectionFavoris
-            recyclerView.adapter.notifyDataSetChanged()
+            if (recyclerView.adapter == null) {
+                recyclerView.layoutManager = LinearLayoutManager(context)
+                recyclerView.adapter = AdapterCarousels(context!!, { webcam, _ ->
+                    startActivityDetailCamera(webcam)
+                }, sections, composites = oneTimeSubscriptions, sectionFavoris = sectionFavoris, listenerSectionClick = { section ->
+                    startActivity<ActivityListWebcam>(ActivityListWebcam.getBundle(section.uid))
+                })
+                recyclerView.scrollToPosition(position)
+            } else {
+                (recyclerView.adapter as AdapterCarousels).items = sections
+                (recyclerView.adapter as AdapterCarousels).sectionFavoris = sectionFavoris
+                recyclerView.adapter.notifyDataSetChanged()
+            }
         }
     }
 

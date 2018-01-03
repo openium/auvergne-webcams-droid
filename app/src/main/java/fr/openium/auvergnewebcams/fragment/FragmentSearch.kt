@@ -19,6 +19,7 @@ import fr.openium.auvergnewebcams.ext.show
 import fr.openium.auvergnewebcams.model.Webcam
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_search.*
+import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -43,9 +44,11 @@ class FragmentSearch : AbstractFragment() {
                 .skip(1)
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
+                .subscribe({
                     initSearchAdapter(it.queryText().toString())
-                })
+                }, { error ->
+                    Timber.e(error)
+                }))
 
         val webcamsBdd = realm!!.where(Webcam::class.java)
                 .sort(Webcam::order.name)

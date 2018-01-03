@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.support.v4.app.ActivityOptionsCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.activity.ActivityWebcam
@@ -26,6 +25,7 @@ class FragmentListWebcam : AbstractFragment() {
     private val webcams = ArrayList<Webcam>()
 
     lateinit var section: Section
+
     // =================================================================================================================
     // Life cycle
     // =================================================================================================================
@@ -36,7 +36,6 @@ class FragmentListWebcam : AbstractFragment() {
         oneTimeSubscriptions.add(Events.eventCameraFavoris.obs
                 .fromIOToMain()
                 .subscribe {
-                    Log.d("test", "test")
                     initSection()
                 })
     }
@@ -46,7 +45,7 @@ class FragmentListWebcam : AbstractFragment() {
     // =================================================================================================================
 
     private fun initSection() {
-        val uidSection = arguments?.getLong(Constants.ARG_SECTION_UID)
+        val uidSection = arguments?.getLong(Constants.ARG_SECTION_UID) ?: -1L
         val realmSection = realm!!.where(Section::class.java)
                 .equalTo(Section::uid.name, uidSection)
                 .findFirst()

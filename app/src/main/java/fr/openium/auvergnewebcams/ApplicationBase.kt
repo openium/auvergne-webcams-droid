@@ -22,7 +22,6 @@ import timber.log.Timber
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.TimeoutException
 
 abstract class ApplicationBase : Application(), KodeinAware {
     override val kodein by Kodein.lazy {
@@ -111,7 +110,7 @@ abstract class ApplicationBase : Application(), KodeinAware {
                             }
                         }
 
-                    } catch (timeout: TimeoutException) {
+                    } catch (timeout: Exception) {
                         Crashlytics.logException(timeout)
                     }
                     response
