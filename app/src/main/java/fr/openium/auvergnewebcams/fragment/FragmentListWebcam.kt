@@ -15,6 +15,7 @@ import fr.openium.auvergnewebcams.ext.fromIOToMain
 import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.Webcam
 import kotlinx.android.synthetic.main.fragment_list_webcam.*
+import timber.log.Timber
 import java.util.*
 
 /**
@@ -35,9 +36,13 @@ class FragmentListWebcam : AbstractFragment() {
         initSection()
         oneTimeSubscriptions.add(Events.eventCameraFavoris.obs
                 .fromIOToMain()
-                .subscribe {
-                    initSection()
-                })
+                .subscribe({
+                    if (isAlive) {
+                        initSection()
+                    }
+                }, { error ->
+                    Timber.e(error)
+                }))
     }
 
     // =================================================================================================================

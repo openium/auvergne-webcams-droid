@@ -67,7 +67,6 @@ class AdapterWebcamsCarousel(val context: Context, val listener: ((Webcam, Int) 
             holder.itemView.textviewWebcamNotUpdate.show()
         }
 
-
         holder.itemView.progressbar.show()
 
         GlideApp.with(context)

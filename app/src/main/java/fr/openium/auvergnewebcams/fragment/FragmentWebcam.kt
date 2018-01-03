@@ -58,7 +58,7 @@ class FragmentWebcam : AbstractFragmentWebcam() {
             mBigImage.setImageLoaderCallback(object : ImageLoader.Callback {
                 override fun onSuccess(image: File?) {
                     if (isAlive) {
-                        Timber.e("onSuccess")
+//                        Timber.e("onSuccess")
                         progressbar_detail?.hide()
                         itemMenuRefresh?.isEnabled = true
                     }
