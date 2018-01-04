@@ -34,7 +34,10 @@
     <style name="SwitchStyle" parent="Theme.AppCompat.Light">
         <item name="colorControlActivated">@color/blue</item>
         <item name="colorSwitchThumbNormal">@color/grey_text</item>
-        <item name="fontPath">fonts/ProximaNova-Regular.otf</item>
+    </style>
+
+    <style name="dialog_style" parent="AlertDialog.AppCompat">
+
     </style>
 
 </resources>

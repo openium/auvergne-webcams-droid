@@ -63,4 +63,7 @@
 
     <string name="generic_no_application_for_action">Aucune application installée sur votre appareil ne permet d\&#39;effectuer cette action.</string>
 
+    <string name="generic_ok">OK</string>
+    <string name="generic_cancel">Annuler</string>
+
 </resources>

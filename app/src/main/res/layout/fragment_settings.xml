@@ -5,52 +5,103 @@
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/constraintLayout_settings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/textViewHeaderGeneral"
             style="@style/font_proxima_regular"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="10dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical"
             android:text="@string/settings_global_title"
             android:textAllCaps="true"
             android:textColor="@color/grey"
             android:textSize="14sp" />
 
-        <!--<android.support.v7.widget.SwitchCompat-->
-        <!--style="@style/SwitchStyle"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginEnd="10dp"-->
-        <!--android:layout_marginStart="10dp"-->
-        <!--android:text="@string/settings_global_refresh"-->
-        <!--android:textColor="@color/white"-->
-        <!--android:textSize="16sp"-->
-        <!--android:theme="@style/SwitchStyle" />-->
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/switch_refresh_delay"
+            style="@style/font_proxima_regular"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical"
+            android:text="@string/settings_global_refresh"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:theme="@style/SwitchStyle" />
+
+        <LinearLayout
+            android:id="@+id/linearlayout_delay_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textview_delay_title"
+                style="@style/font_proxima_regular"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="@string/settings_global_refresh_delay"
+                android:textColor="@color/color_white_grey"
+                android:textSize="16sp" />
+
+
+            <TextView
+                android:id="@+id/textview_delay_value"
+                style="@style/font_proxima_regular"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/selector_arrow"
+                android:gravity="center_vertical"
+                tools:text="10"
+                android:textColor="@color/color_white_grey"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
 
         <android.support.v7.widget.SwitchCompat
             android:id="@+id/switch_quality_webcams"
             style="@style/font_proxima_regular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="0dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical"
             android:text="@string/settings_global_quality_high"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:theme="@style/SwitchStyle" />
 
         <TextView
+            android:id="@+id/textview_header_aw"
             style="@style/font_proxima_regular"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingEnd="10dp"
-            android:paddingStart="10dp"
-            android:paddingTop="10dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="24dp"
+            android:gravity="center_vertical"
             android:text="@string/settings_credits_title"
             android:textAllCaps="true"
             android:textColor="@color/grey"
@@ -62,9 +113,12 @@
             style="@style/font_proxima_regular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
             android:drawableEnd="@drawable/selector_arrow"
             android:gravity="center_vertical"
-            android:padding="10dp"
             android:text="@string/settings_credits_about"
             android:textColor="@color/color_white_grey"
             android:textSize="16sp" />
@@ -75,9 +129,12 @@
             style="@style/font_proxima_regular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
             android:drawableEnd="@drawable/selector_arrow"
             android:gravity="center_vertical"
-            android:padding="10dp"
             android:text="@string/settings_credits_openium"
             android:textColor="@color/color_white_grey"
             android:textSize="16sp" />
@@ -88,22 +145,27 @@
             style="@style/font_proxima_regular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
             android:drawableEnd="@drawable/selector_arrow"
             android:gravity="center_vertical"
-            android:padding="10dp"
             android:text="@string/settings_credits_pirates"
             android:textColor="@color/color_white_grey"
             android:textSize="16sp" />
-
 
         <TextView
             android:id="@+id/textview_note"
             style="@style/font_proxima_regular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
             android:drawableEnd="@drawable/selector_arrow"
             android:gravity="center_vertical"
-            android:padding="10dp"
             android:text="@string/settings_credits_note"
             android:textColor="@color/color_white_grey"
             android:textSize="16sp" />
@@ -113,7 +175,11 @@
             style="@style/font_proxima_regular"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="10dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical"
             android:textColor="@color/grey"
             android:textSize="14sp"
             tools:text="Version 1.0 (1)" />
