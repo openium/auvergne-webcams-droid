@@ -39,15 +39,19 @@ class CustomGlideImageLoader private constructor(val context: Context, okHttpCli
         GlideProgressSupport.init(Glide.get(context), okHttpClient)
     }
 
-    override fun loadImage(uri: Uri, callback: ImageLoader.Callback) {
+    override fun cancel(requestId: Int) {
+
+    }
+
+    override fun loadImage(requestId: Int, uri: Uri?, callback: ImageLoader.Callback?) {
 
         okHttpClient.newCall(Request.Builder().get().url(uri.toString()).build()).enqueue(object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
-                callback.onFail(GlideLoaderException(null))
+                callback?.onFail(GlideLoaderException(null))
             }
 
             override fun onResponse(call: Call?, response: Response?) {
-                callback.onFinish()
+                callback?.onFinish()
                 object : AsyncTask<Void, Void, File?>() {
                     override fun doInBackground(vararg p0: Void?): File? {
                         if (response?.header("Last-Modified") != null) {
@@ -93,10 +97,10 @@ class CustomGlideImageLoader private constructor(val context: Context, okHttpCli
 
                     override fun onPostExecute(file: File?) {
                         if (file != null) {
-                            callback.onCacheHit(file)
-                            callback.onSuccess(file)
+                            callback?.onCacheHit(file)
+                            callback?.onSuccess(file)
                         } else {
-                            callback.onFail(GlideLoaderException(null))
+                            callback?.onFail(GlideLoaderException(null))
                         }
 
                     }

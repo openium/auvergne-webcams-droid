@@ -10,6 +10,7 @@ import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.activity.ActivitySettingsAbout
 import fr.openium.auvergnewebcams.ext.applicationContext
 import fr.openium.auvergnewebcams.ext.snackbar
+import fr.openium.auvergnewebcams.utils.PreferencesAW
 import kotlinx.android.synthetic.main.fragment_settings.*
 import timber.log.Timber
 
@@ -32,6 +33,11 @@ class FragmentSettings : AbstractFragment() {
         textview_openium.setOnClickListener { startActivityForUrl(getString(R.string.url_openium)) }
         textview_pirates.setOnClickListener { startActivityForUrl(getString(R.string.url_pirates)) }
         textview_note.setOnClickListener { startActivityForUrl(getString(R.string.url_note, applicationContext.packageName)) }
+
+        switch_quality_webcams.isChecked = PreferencesAW.isWebcamsHighQuality(applicationContext)
+        switch_quality_webcams.setOnCheckedChangeListener { _, isChecked ->
+            PreferencesAW.setWebcamHighQuality(applicationContext, isChecked)
+        }
     }
 
     // =================================================================================================================

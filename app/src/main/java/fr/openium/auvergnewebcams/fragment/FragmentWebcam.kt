@@ -13,6 +13,7 @@ import fr.openium.auvergnewebcams.ext.applicationContext
 import fr.openium.auvergnewebcams.ext.hide
 import fr.openium.auvergnewebcams.ext.show
 import fr.openium.auvergnewebcams.model.Webcam
+import fr.openium.auvergnewebcams.utils.PreferencesAW
 import kotlinx.android.synthetic.main.fragment_webcam.*
 import timber.log.Timber
 import java.io.File
@@ -102,8 +103,8 @@ class FragmentWebcam : AbstractFragmentWebcam() {
 
 
             if (webcam?.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
-                scaleType = BigImageView.INIT_SCALE_TYPE_AUTO
-                if (!webcam?.mediaViewSurfHD.isNullOrEmpty() && !webcam?.viewsurfHD.isNullOrEmpty()) {
+                scaleType = BigImageView.INIT_SCALE_TYPE_CENTER_CROP
+                if (PreferencesAW.isWebcamsHighQuality(applicationContext) && !webcam?.mediaViewSurfHD.isNullOrEmpty() && !webcam?.viewsurfHD.isNullOrEmpty()) {
                     val urlWebCam = String.format("%s/%s.jpg", webcam!!.viewsurfHD!!, webcam!!.mediaViewSurfHD!!)
                     image = Uri.parse(urlWebCam)
                 } else if (!webcam?.mediaViewSurfLD.isNullOrEmpty() && !webcam?.viewsurfLD.isNullOrEmpty()) {
@@ -111,8 +112,8 @@ class FragmentWebcam : AbstractFragmentWebcam() {
                     image = Uri.parse(urlWebCam)
                 }
             } else {
-                if (!webcam!!.imageHD.isNullOrBlank()) {
-                    scaleType = BigImageView.INIT_SCALE_TYPE_AUTO
+                if (PreferencesAW.isWebcamsHighQuality(applicationContext) && !webcam!!.imageHD.isNullOrBlank()) {
+                    scaleType = BigImageView.INIT_SCALE_TYPE_CENTER_CROP
                     thumbnail = Uri.parse(webcam!!.imageLD!!)
                     image = Uri.parse(webcam!!.imageHD!!)
                 } else if (!webcam!!.imageLD.isNullOrBlank()) {

@@ -31,4 +31,10 @@
         <item name="android:queryHint">@string/search_hint</item>
     </style>
 
+    <style name="SwitchStyle" parent="Theme.AppCompat.Light">
+        <item name="colorControlActivated">@color/blue</item>
+        <item name="colorSwitchThumbNormal">@color/grey_text</item>
+        <item name="fontPath">fonts/ProximaNova-Regular.otf</item>
+    </style>
+
 </resources>

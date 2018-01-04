@@ -9,24 +9,39 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!--<TextView-->
-        <!--style="@style/font_proxima_regular"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:padding="10dp"-->
-        <!--android:text="@string/settings_global_title"-->
-        <!--android:textAllCaps="true"-->
-        <!--android:textColor="@color/grey"-->
-        <!--android:textSize="14sp" />-->
+        <TextView
+            style="@style/font_proxima_regular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="@string/settings_global_title"
+            android:textAllCaps="true"
+            android:textColor="@color/grey"
+            android:textSize="14sp" />
 
         <!--<android.support.v7.widget.SwitchCompat-->
+        <!--style="@style/SwitchStyle"-->
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="wrap_content"-->
         <!--android:layout_marginEnd="10dp"-->
         <!--android:layout_marginStart="10dp"-->
         <!--android:text="@string/settings_global_refresh"-->
         <!--android:textColor="@color/white"-->
-        <!--android:textSize="14sp" />-->
+        <!--android:textSize="16sp"-->
+        <!--android:theme="@style/SwitchStyle" />-->
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/switch_quality_webcams"
+            style="@style/font_proxima_regular"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="0dp"
+            android:text="@string/settings_global_quality_high"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:theme="@style/SwitchStyle" />
 
         <TextView
             style="@style/font_proxima_regular"
@@ -35,6 +50,7 @@
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
             android:paddingTop="10dp"
+            android:layout_marginTop="20dp"
             android:text="@string/settings_credits_title"
             android:textAllCaps="true"
             android:textColor="@color/grey"
@@ -99,7 +115,7 @@
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:textColor="@color/grey"
-            android:textSize="16sp"
+            android:textSize="14sp"
             tools:text="Version 1.0 (1)" />
 
     </LinearLayout>
