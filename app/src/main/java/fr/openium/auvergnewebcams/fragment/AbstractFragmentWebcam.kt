@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import com.like.LikeButton
+import com.like.OnLikeListener
 import com.tbruyelle.rxpermissions2.RxPermissions
 import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
@@ -183,14 +185,26 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     protected open fun initWebCam() {
         if (isAlive) {
             initDateLastUpdate()
-            checkBoxFavoris.setOnCheckedChangeListener(null)
-            checkBoxFavoris.isChecked = webcam?.isFavoris == true
-            checkBoxFavoris.setOnCheckedChangeListener { _, isChecked ->
-                realm!!.executeTransaction {
-                    webcam?.isFavoris = isChecked
-                }
-                Events.eventCameraFavoris.set(webcam?.uid ?: -1L)
+
+            if (webcam?.isFavoris == true) {
+                likeButtonFavoris.isLiked = true
             }
+
+            likeButtonFavoris.setOnLikeListener(object : OnLikeListener {
+                override fun liked(likeButton: LikeButton) {
+                    realm!!.executeTransaction {
+                        webcam?.isFavoris = true
+                    }
+                    Events.eventCameraFavoris.set(webcam?.uid ?: -1L)
+                }
+
+                override fun unLiked(likeButton: LikeButton) {
+                    realm!!.executeTransaction {
+                        webcam?.isFavoris = false
+                    }
+                    Events.eventCameraFavoris.set(webcam?.uid ?: -1L)
+                }
+            })
         }
     }
 

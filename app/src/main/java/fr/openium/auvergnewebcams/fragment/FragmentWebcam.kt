@@ -46,9 +46,7 @@ class FragmentWebcam : AbstractFragmentWebcam() {
                 startActivity(intent)
             }
         }
-
     }
-
 
     override fun initWebCam() {
         super.initWebCam()

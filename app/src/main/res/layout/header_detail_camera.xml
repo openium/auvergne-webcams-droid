@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -18,13 +19,21 @@
         android:textSize="14sp"
         tools:text="Date mise à jour" />
 
-    <CheckBox
-        android:id="@+id/checkBoxFavoris"
+    <com.like.LikeButton
+        android:id="@+id/likeButtonFavoris"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="10dp"
-        android:background="@android:color/transparent"
-        android:button="@drawable/selector_favoris" />
+        app:anim_scale_factor="1.7"
+        app:circle_end_color="@color/blue"
+        app:circle_start_color="@color/blue"
+        app:dots_primary_color="@color/blue"
+        app:dots_secondary_color="@color/blue"
+        app:icon_size="24dp"
+        app:icon_type="Star"
+        app:like_drawable="@drawable/ic_favorite"
+        app:unlike_drawable="@drawable/ic_not_favorite" />
+
 
 </FrameLayout>

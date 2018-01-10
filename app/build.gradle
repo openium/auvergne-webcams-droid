@@ -98,9 +98,11 @@ dependencies {
 
     implementation 'uk.co.chrisjenx:calligraphy:2.3.0'
 
-    implementation ('com.github.piasy:BigImageViewer:1.4.5') {
+    implementation('com.github.piasy:BigImageViewer:1.4.5') {
         exclude module: 'com.android.support'
     }
+
+    implementation 'com.github.jd-alexander:LikeButton:0.2.3'
 
     implementation 'com.github.piasy:GlideImageLoader:1.4.2'
     implementation 'com.github.bumptech.glide:glide:4.3.1'
