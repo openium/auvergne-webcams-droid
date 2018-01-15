@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import com.bumptech.glide.Glide
 import com.github.salomonbrys.kodein.instance
 import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
@@ -21,6 +22,8 @@ import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.rest.AWApi
 import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
+import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import kotlinx.android.synthetic.main.fragment_carousel_webcam.*
 
@@ -70,46 +73,7 @@ class FragmentCarouselWebcam : AbstractFragment() {
 
         swipeRefreshLayoutWebcams.setOnRefreshListener {
             position = 0
-            if (applicationContext.hasNetwork) {
-                oneTimeSubscriptions.add(api.getSections()
-                        .subscribe({
-                            Realm.getDefaultInstance().executeTransaction { realm ->
-                                if (!it.isError && it.response()?.body() != null) {
-                                    val sections = it.response()!!.body()!!
-                                    for (section in sections.sections) {
-                                        for (webcam in section.webcams) {
-                                            if (webcam.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
-                                                // load media ld
-                                                webcam.mediaViewSurfLD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfLD)
-                                                webcam.mediaViewSurfHD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfHD)
-                                            }
-
-                                            val webcamDB = realm.where(Webcam::class.java)
-                                                    .equalTo(Webcam::uid.name, webcam.uid)
-                                                    .findFirst()
-                                            if (webcamDB?.lastUpdate != null) {
-                                                webcam.lastUpdate = webcamDB.lastUpdate
-                                                webcam.isFavoris = webcamDB.isFavoris
-                                            }
-                                        }
-                                    }
-                                    realm.insertOrUpdate(sections.sections)
-                                }
-                            }
-                            activity?.runOnUiThread {
-                                initAdapter()
-                                swipeRefreshLayoutWebcams?.isRefreshing = false
-                            }
-                        }, {
-                            activity?.runOnUiThread {
-                                swipeRefreshLayoutWebcams?.isRefreshing = false
-                            }
-                        }))
-            } else {
-                activity?.runOnUiThread {
-                    swipeRefreshLayoutWebcams?.isRefreshing = false
-                }
-            }
+            manageRefreshWebcams()
         }
 
         oneTimeSubscriptions.add(Events.eventCameraFavoris.obs
@@ -148,9 +112,68 @@ class FragmentCarouselWebcam : AbstractFragment() {
     // Specific job
     // =================================================================================================================
 
+    private fun manageRefreshWebcams() {
+        if (applicationContext.hasNetwork) {
+            oneTimeSubscriptions.add(api.getSections()
+                    .subscribe({
+                        Realm.getDefaultInstance().executeTransaction { realm ->
+                            if (!it.isError && it.response()?.body() != null) {
+                                val sections = it.response()!!.body()!!
+                                for (section in sections.sections) {
+                                    for (webcam in section.webcams) {
+                                        if (webcam.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
+                                            // load media ld
+                                            webcam.mediaViewSurfLD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfLD)
+                                            webcam.mediaViewSurfHD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfHD)
+                                        }
+
+                                        val webcamDB = realm.where(Webcam::class.java)
+                                                .equalTo(Webcam::uid.name, webcam.uid)
+                                                .findFirst()
+                                        if (webcamDB?.lastUpdate != null) {
+                                            webcam.lastUpdate = webcamDB.lastUpdate
+                                            webcam.isFavoris = webcamDB.isFavoris
+                                        }
+                                    }
+                                }
+                                realm.insertOrUpdate(sections.sections)
+                            }
+                        }
+
+                        activity?.runOnUiThread {
+//                      TODO      removeGlideCache()
+                            initAdapter()
+                            swipeRefreshLayoutWebcams?.isRefreshing = false
+                        }
+                    }, {
+                        activity?.runOnUiThread {
+                            swipeRefreshLayoutWebcams?.isRefreshing = false
+                        }
+                    }))
+        } else {
+            activity?.runOnUiThread {
+                swipeRefreshLayoutWebcams?.isRefreshing = false
+            }
+        }
+    }
+
+    private fun removeGlideCache() {
+        oneTimeSubscriptions.add(Observable.just(1)
+                .observeOn(Schedulers.io())
+                .subscribeOn(Schedulers.io())
+                .subscribe {
+                    Glide.get(applicationContext)
+                            .clearDiskCache()
+                    activity?.runOnUiThread {
+                        Glide.get(applicationContext)
+                                .clearMemory()
+                        recyclerView?.adapter?.notifyDataSetChanged()
+                    }
+                })
+    }
 
     private fun initAdapter() {
-        if(isAlive) {
+        if (isAlive) {
             val sectionFavoris = Section(uid = -1, order = -1, title = getString(R.string.favoris_section_title), imageName = "star")
 
             val webcamsFavoris = realm!!.where(Webcam::class.java)

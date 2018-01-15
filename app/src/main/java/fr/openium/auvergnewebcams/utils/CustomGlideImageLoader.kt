@@ -30,6 +30,7 @@ import java.util.*
  * Created by t.coulange on 16/11/2017.
  */
 class CustomGlideImageLoader private constructor(val context: Context, okHttpClient: OkHttpClient? = null) : ImageLoader {
+
     private val mRequestManager: GlideRequests
     private val okHttpClient: OkHttpClient
 
@@ -52,6 +53,7 @@ class CustomGlideImageLoader private constructor(val context: Context, okHttpCli
 
             override fun onResponse(call: Call?, response: Response?) {
                 callback?.onFinish()
+
                 object : AsyncTask<Void, Void, File?>() {
                     override fun doInBackground(vararg p0: Void?): File? {
                         if (response?.header("Last-Modified") != null) {
@@ -67,7 +69,7 @@ class CustomGlideImageLoader private constructor(val context: Context, okHttpCli
                                         val dateFormat = SimpleDateFormat("E, d MMM yyyy HH:mm:ss 'GMT'", Locale.US)
                                         dateFormat.timeZone = TimeZone.getTimeZone("GMT")
                                         val newTime = dateFormat.parse(lastModified).time
-                                      //  Timber.e("update date $newTime   ${webcam.title}")
+                                        //  Timber.e("update date $newTime   ${webcam.title}")
                                         if (webcam.lastUpdate == null || newTime != webcam.lastUpdate!!) {
                                             webcam.lastUpdate = newTime
                                             Events.eventCameraDateUpdate.set(webcam.uid)

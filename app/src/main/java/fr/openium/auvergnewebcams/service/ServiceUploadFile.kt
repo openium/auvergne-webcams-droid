@@ -90,7 +90,13 @@ class ServiceUploadFile : Service() {
             createNotification()
 
             Thread(Runnable {
-                val directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS + "/auvergne_webcams/")
+                val directory: File
+                if (mIsPhoto) {
+                    directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                } else {
+                    directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES)
+                }
+
                 directory.mkdirs()
 
                 val url = URL(mUrl)
@@ -164,10 +170,11 @@ class ServiceUploadFile : Service() {
 
         mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            mNotificationManager!!.createNotificationChannel(NotificationChannel(NOTIF_CHANNEL, getString(R.string.app_name), NotificationManager.IMPORTANCE_DEFAULT))
+            mNotificationManager!!.createNotificationChannel(NotificationChannel(NOTIF_CHANNEL, getString(R.string.app_name), NotificationManager.IMPORTANCE_HIGH))
         }
         mBuilder = NotificationCompat.Builder(this, NOTIF_CHANNEL)
                 .setTicker(texte)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setSmallIcon(R.mipmap.ic_notif)
                 .setStyle(NotificationCompat.BigTextStyle()
                         .setBigContentTitle(getString(R.string.app_name)))
@@ -177,23 +184,22 @@ class ServiceUploadFile : Service() {
 
 
     private fun notifyProgress(total: Int, progress: Int, text: String?) {
-        mBuilder?.setProgress(total, progress, false)
         if (text != null) {
             mBuilder?.setStyle(NotificationCompat.BigTextStyle()
                     .setBigContentTitle(getString(R.string.app_name))
                     .bigText(text))
         }
+        mBuilder?.setProgress(total, progress, false)
         mNotificationManager?.notify(NOTIF_ID, mBuilder?.build())
     }
 
     private fun initNotifEnd(text: String, addRetry: Boolean) {
-        //   createNotification()
-        mNotificationManager?.cancel(NOTIF_ID)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            mNotificationManager?.cancel(NOTIF_ID)
+        }
         if (addRetry) {
             addActionRetry()
         }
-        //  mBuilder?.setOngoing(false)
-        //     mBuilder?.setSmallIcon(android.R.drawable.stat_sys_upload_done)
         notifyProgress(0, 0, text)
     }
 

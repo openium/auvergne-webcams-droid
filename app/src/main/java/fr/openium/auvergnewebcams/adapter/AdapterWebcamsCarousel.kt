@@ -12,6 +12,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import fr.openium.auvergnewebcams.BuildConfig
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.event.Events
 import fr.openium.auvergnewebcams.ext.fromIOToMain
@@ -19,6 +20,7 @@ import fr.openium.auvergnewebcams.ext.gone
 import fr.openium.auvergnewebcams.ext.show
 import fr.openium.auvergnewebcams.injection.GlideApp
 import fr.openium.auvergnewebcams.model.Webcam
+import fr.openium.auvergnewebcams.utils.DateUtils
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.item_carousel_webcam.view.*
 
@@ -26,7 +28,8 @@ import kotlinx.android.synthetic.main.item_carousel_webcam.view.*
 /**
  * Created by laura on 23/03/2017.
  */
-class AdapterWebcamsCarousel(val context: Context, val listener: ((Webcam, Int) -> Unit)? = null, var items: List<Webcam>, val composites: CompositeDisposable) : RecyclerView.Adapter<AdapterWebcamsCarousel.WebcamHolder>() {
+class AdapterWebcamsCarousel(val context: Context, val listener: ((Webcam, Int) -> Unit)? = null, var items: List<Webcam>, val composites: CompositeDisposable)
+    : RecyclerView.Adapter<AdapterWebcamsCarousel.WebcamHolder>() {
 
     val heightImage: Int
     val widthImage: Int
@@ -95,13 +98,27 @@ class AdapterWebcamsCarousel(val context: Context, val listener: ((Webcam, Int) 
 
                 })
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
+//                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .skipMemoryCache(true)
+                //  .signature(ObjectKey(item.lastUpdate ?: 0))
                 .override(widthImage, heightImage)
                 .into(holder.itemView.imageViewCamera)
 
 
         holder.itemView.setOnClickListener {
             listener?.invoke(item, position)
+        }
+
+        if (BuildConfig.DEBUG) {
+            if (item.lastUpdate ?: 0 > 0L) {
+                val date = DateUtils.getDateFormatDateHour(item.lastUpdate!!)
+                holder.itemView.textviewWebcamLastUpdate.setText(context.getString(R.string.generic_last_update, date))
+                holder.itemView.textviewWebcamLastUpdate.show()
+            } else {
+                holder.itemView.textviewWebcamLastUpdate.gone()
+            }
+        } else {
+            holder.itemView.textviewWebcamLastUpdate.gone()
         }
 
     }
