@@ -25,8 +25,13 @@ import java.util.*
 /**
  * Created by laura on 23/03/2017.
  */
-class AdapterCarousels(val context: Context, val listener: ((Webcam, Int) -> Unit)? = null, var items: List<Section>, val composites: CompositeDisposable, var sectionFavoris: Section,
-                       val listenerSectionClick: ((Section) -> Unit)) : RecyclerView.Adapter<AdapterCarousels.WebcamHolder>() {
+class AdapterCarousels(val context: Context,
+                       val listener: ((Webcam, Int) -> Unit)? = null,
+                       var items: List<Section>,
+                       val composites: CompositeDisposable,
+                       var sectionFavoris: Section,
+                       val listenerSectionClick: ((Section) -> Unit),
+                       var lastUpdate: Long) : RecyclerView.Adapter<AdapterCarousels.WebcamHolder>() {
 
     val heightImage: Int
 
@@ -99,7 +104,7 @@ class AdapterCarousels(val context: Context, val listener: ((Webcam, Int) -> Uni
                 }
             }
 
-            val adapter = AdapterWebcamsCarousel(context, listener, item.webcams, composites)
+            val adapter = AdapterWebcamsCarousel(context, listener, item.webcams, composites, lastUpdate)
             val infiniteAdapter = InfiniteScrollAdapter.wrap(adapter)
             holder.scrollView.adapter = infiniteAdapter
 

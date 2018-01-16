@@ -22,10 +22,12 @@ import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.rest.AWApi
 import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
+import fr.openium.auvergnewebcams.utils.PreferencesAW
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import kotlinx.android.synthetic.main.fragment_carousel_webcam.*
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -79,10 +81,11 @@ class FragmentCarouselWebcam : AbstractFragment() {
         oneTimeSubscriptions.add(Events.eventCameraFavoris.obs
                 .fromIOToMain()
                 .subscribe {
-                    initAdapter()
+                    initAdapter(PreferencesAW.getLastUpdateWebcamsTimestamp(applicationContext))
                 })
 
-        initAdapter()
+        initAdapter(PreferencesAW.getLastUpdateWebcamsTimestamp(applicationContext))
+        startDelayRefreshWebcams()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -141,8 +144,8 @@ class FragmentCarouselWebcam : AbstractFragment() {
                         }
 
                         activity?.runOnUiThread {
-//                      TODO      removeGlideCache()
-                            initAdapter()
+                            // TODO  removeGlideCache()
+                            initAdapter(PreferencesAW.getLastUpdateWebcamsTimestamp(applicationContext))
                             swipeRefreshLayoutWebcams?.isRefreshing = false
                         }
                     }, {
@@ -155,6 +158,18 @@ class FragmentCarouselWebcam : AbstractFragment() {
                 swipeRefreshLayoutWebcams?.isRefreshing = false
             }
         }
+    }
+
+    private fun startDelayRefreshWebcams() {
+        val delay = PreferencesAW.getWebcamsDelayRefreshValue(applicationContext)
+        oneTimeSubscriptions.add(Observable.timer(delay.toLong(), TimeUnit.MINUTES)
+                .fromIOToMain()
+                .subscribe {
+                    //                    removeGlideCache()
+                    PreferencesAW.setLastUpdateTimestamp(applicationContext, System.currentTimeMillis().toUnixTimestamp())
+                    initAdapter(PreferencesAW.getLastUpdateWebcamsTimestamp(applicationContext))
+                    startDelayRefreshWebcams()
+                })
     }
 
     private fun removeGlideCache() {
@@ -172,7 +187,7 @@ class FragmentCarouselWebcam : AbstractFragment() {
                 })
     }
 
-    private fun initAdapter() {
+    private fun initAdapter(lastUpdate: Long) {
         if (isAlive) {
             val sectionFavoris = Section(uid = -1, order = -1, title = getString(R.string.favoris_section_title), imageName = "star")
 
@@ -196,11 +211,12 @@ class FragmentCarouselWebcam : AbstractFragment() {
                     startActivityDetailCamera(webcam)
                 }, sections, composites = oneTimeSubscriptions, sectionFavoris = sectionFavoris, listenerSectionClick = { section ->
                     startActivity<ActivityListWebcam>(ActivityListWebcam.getBundle(section.uid))
-                })
+                }, lastUpdate = lastUpdate)
                 recyclerView.scrollToPosition(position)
             } else {
                 (recyclerView.adapter as AdapterCarousels).items = sections
                 (recyclerView.adapter as AdapterCarousels).sectionFavoris = sectionFavoris
+                (recyclerView.adapter as AdapterCarousels).lastUpdate = lastUpdate
                 recyclerView.adapter.notifyDataSetChanged()
             }
         }

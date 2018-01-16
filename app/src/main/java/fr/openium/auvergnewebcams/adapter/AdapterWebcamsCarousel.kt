@@ -8,10 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.signature.MediaStoreSignature
 import fr.openium.auvergnewebcams.BuildConfig
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.event.Events
@@ -28,7 +28,11 @@ import kotlinx.android.synthetic.main.item_carousel_webcam.view.*
 /**
  * Created by laura on 23/03/2017.
  */
-class AdapterWebcamsCarousel(val context: Context, val listener: ((Webcam, Int) -> Unit)? = null, var items: List<Webcam>, val composites: CompositeDisposable)
+class AdapterWebcamsCarousel(val context: Context,
+                             val listener: ((Webcam, Int) -> Unit)? = null,
+                             var items: List<Webcam>,
+                             val composites: CompositeDisposable,
+                             var lastUpdate: Long)
     : RecyclerView.Adapter<AdapterWebcamsCarousel.WebcamHolder>() {
 
     val heightImage: Int
@@ -97,10 +101,10 @@ class AdapterWebcamsCarousel(val context: Context, val listener: ((Webcam, Int) 
                     }
 
                 })
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
+//                .diskCacheStrategy(DiskCacheStrategy.NONE)
 //                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .skipMemoryCache(true)
-                //  .signature(ObjectKey(item.lastUpdate ?: 0))
+//                .skipMemoryCache(true)
+                .signature(MediaStoreSignature("", lastUpdate, 0))
                 .override(widthImage, heightImage)
                 .into(holder.itemView.imageViewCamera)
 

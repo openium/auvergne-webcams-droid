@@ -62,7 +62,7 @@ abstract class ApplicationBase : Application(), KodeinAware {
         val client = OkHttpClient.Builder()
                 .retryOnConnectionFailure(true)
                 .addInterceptor {
-                    Timber.e("REQUEST ${it.request().url().toString()}")
+                   // Timber.e("REQUEST ${it.request().url().toString()}")
 
                     val response: Response = it.proceed(it.request())
                     if (response.header("Last-Modified") != null) {
@@ -114,8 +114,8 @@ abstract class ApplicationBase : Application(), KodeinAware {
 
                     response
                 }
-                .readTimeout(1000, TimeUnit.MINUTES)
-                .writeTimeout(1000, TimeUnit.MINUTES)
+                .readTimeout(5, TimeUnit.MINUTES)
+                .writeTimeout(5, TimeUnit.MINUTES)
                 .build()
         BigImageViewer.initialize(CustomGlideImageLoader.with(applicationContext, client))
     }

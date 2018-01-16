@@ -2,6 +2,7 @@ package fr.openium.auvergnewebcams.utils
 
 import android.content.Context
 import android.preference.PreferenceManager
+import fr.openium.auvergnewebcams.ext.toUnixTimestamp
 
 /**
  * Created by laura on 04/01/2018.
@@ -13,6 +14,7 @@ object PreferencesAW {
     private const val KEY_WEBCAM_QUALITY = "KEY_WEBCAM_QUALITY"
     private const val KEY_WEBCAM_DELAY_REFRESH = "KEY_WEBCAM_DELAY_REFRESH"
     private const val KEY_WEBCAM_DELAY_REFRESH_VALUE = "KEY_WEBCAM_DELAY_REFRESH_VALUE"
+    private const val KEY_WEBCAM_LAST_UPDATE_TIMESTAMP = "KEY_WEBCAM_LAST_UPDATE_TIMESTAMP"
 
 
     fun setWebcamsHighQuality(context: Context, isHighQuality: Boolean) {
@@ -45,4 +47,32 @@ object PreferencesAW {
         return preferencesManager.getInt(KEY_WEBCAM_DELAY_REFRESH_VALUE, DEFAUT_TIME_DELAY)
     }
 
+    fun getLastUpdateWebcamsTimestamp(context: Context): Long {
+        var lastUpdate = 0L
+        if (isWebcamsDelayRefreshActive(context)) {
+            lastUpdate = getLastUpdateTimestamp(context)
+            if (lastUpdate == -1L) {
+                lastUpdate = System.currentTimeMillis().toUnixTimestamp()
+                setLastUpdateTimestamp(context, lastUpdate)
+            } else {
+                val delayRefreshInSec = getWebcamsDelayRefreshValue(context) * 60
+                val diff = System.currentTimeMillis().toUnixTimestamp() - lastUpdate
+                if (diff > delayRefreshInSec) {
+                    lastUpdate = System.currentTimeMillis().toUnixTimestamp()
+                    setLastUpdateTimestamp(context, lastUpdate)
+                }
+            }
+        }
+        return lastUpdate
+    }
+
+    fun setLastUpdateTimestamp(context: Context, lastUpdateTimestamp: Long) {
+        val preferencesManager = PreferenceManager.getDefaultSharedPreferences(context)
+        preferencesManager.edit().putLong(KEY_WEBCAM_LAST_UPDATE_TIMESTAMP, lastUpdateTimestamp).apply()
+    }
+
+    private fun getLastUpdateTimestamp(context: Context): Long {
+        val preferencesManager = PreferenceManager.getDefaultSharedPreferences(context)
+        return preferencesManager.getLong(KEY_WEBCAM_LAST_UPDATE_TIMESTAMP, -1L)
+    }
 }
