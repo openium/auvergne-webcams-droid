@@ -10,6 +10,7 @@ import com.github.piasy.biv.loader.ImageLoader
 import com.github.piasy.biv.view.BigImageView
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.ext.applicationContext
+import fr.openium.auvergnewebcams.ext.gone
 import fr.openium.auvergnewebcams.ext.hide
 import fr.openium.auvergnewebcams.ext.show
 import fr.openium.auvergnewebcams.model.Webcam
@@ -51,6 +52,12 @@ class FragmentWebcam : AbstractFragmentWebcam() {
     override fun initWebCam() {
         super.initWebCam()
         if (isAlive) {
+            if (webcam?.imageHD.isNullOrEmpty()) {
+                textViewWebcamLowQualityOnly.show()
+            } else {
+                textViewWebcamLowQualityOnly.gone()
+            }
+
             mBigImage.setFailureImage(ContextCompat.getDrawable(applicationContext, R.drawable.broken_camera))
             mBigImage.setFailureImageInitScaleType(ImageView.ScaleType.FIT_CENTER)
 

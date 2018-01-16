@@ -66,4 +66,6 @@
     <string name="generic_ok">OK</string>
     <string name="generic_cancel">Annuler</string>
 
+    <string name="webcam_only_available_low_quality">Cette webcam est disponible en basse qualité uniquement</string>
+
 </resources>

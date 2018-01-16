@@ -8,7 +8,8 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <VideoView
             android:id="@+id/viewViewWebcam"
@@ -24,20 +25,6 @@
             android:src="@drawable/broken_camera"
             android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/textviewWebcamNotUpdate"
-            style="@style/font_proxima_regular"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:background="@color/dark_grey_transparent"
-            android:gravity="center"
-            android:padding="10dp"
-            android:text="@string/generic_not_up_to_date"
-            android:textColor="@color/grey_text"
-            android:textSize="16sp"
-            android:visibility="gone" />
-
         <ProgressBar
             android:id="@+id/progressbar_detail"
             android:layout_width="wrap_content"
@@ -45,6 +32,34 @@
             android:layout_gravity="center" />
 
     </FrameLayout>
+
+    <TextView
+        android:id="@+id/textviewWebcamNotUpdate"
+        style="@style/font_proxima_regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/dark_grey_transparent"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="@string/generic_not_up_to_date"
+        android:textColor="@color/grey_text"
+        android:textSize="14sp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/textViewWebcamLowQualityOnly"
+        style="@style/font_proxima_regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:background="@color/dark_grey"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="@string/webcam_only_available_low_quality"
+        android:textColor="@color/grey_text"
+        android:textSize="14sp"
+        android:visibility="gone" />
 
 </LinearLayout>
 

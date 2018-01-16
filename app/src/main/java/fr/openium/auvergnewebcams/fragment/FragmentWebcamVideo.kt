@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.MediaController
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.ext.applicationContext
+import fr.openium.auvergnewebcams.ext.gone
 import fr.openium.auvergnewebcams.ext.hide
 import fr.openium.auvergnewebcams.ext.show
 import fr.openium.auvergnewebcams.model.Webcam
@@ -37,6 +38,11 @@ class FragmentWebcamVideo : AbstractFragmentWebcam() {
     override fun initWebCam() {
         super.initWebCam()
         if (isAlive) {
+            if (webcam?.viewsurfHD.isNullOrEmpty()) {
+                textViewWebcamLowQualityOnly.show()
+            } else {
+                textViewWebcamLowQualityOnly.gone()
+            }
             if (webcam?.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
                 var urlWebcam = ""
                 if (PreferencesAW.isWebcamsHighQuality(applicationContext) && !webcam?.mediaViewSurfHD.isNullOrEmpty() && !webcam?.viewsurfHD.isNullOrEmpty()) {
