@@ -1,6 +1,7 @@
 package fr.openium.auvergnewebcams.fragment
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.Point
 import android.net.Uri
 import android.support.v4.content.ContextCompat
@@ -28,6 +29,20 @@ class FragmentWebcam : AbstractFragmentWebcam() {
 
     override val layoutId: Int
         get() = R.layout.fragment_webcam
+
+
+    override fun onConfigurationChanged(newConfig: Configuration?) {
+        super.onConfigurationChanged(newConfig)
+        if (newConfig?.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            if (webcam?.imageHD.isNullOrEmpty()) {
+                textViewWebcamLowQualityOnly.show()
+            } else {
+                textViewWebcamLowQualityOnly.gone()
+            }
+        } else {
+            textViewWebcamLowQualityOnly.gone()
+        }
+    }
 
     override fun shareWebCam() {
         val subject = webcam?.title

@@ -66,9 +66,16 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     override fun onConfigurationChanged(newConfig: Configuration?) {
         super.onConfigurationChanged(newConfig)
         if (newConfig?.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            textViewLastUpdate.show()
+            framelayout_header_detail.show()
+            if (webcam?.isUpToDate() == true) {
+                textviewWebcamNotUpdate?.gone()
+            } else {
+                textviewWebcamNotUpdate?.setText(getString(R.string.generic_not_up_to_date))
+                textviewWebcamNotUpdate?.show()
+            }
         } else {
-            textViewLastUpdate.gone()
+            framelayout_header_detail.gone()
+            textviewWebcamNotUpdate?.gone()
         }
     }
 
@@ -122,10 +129,12 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
         val isImage: Boolean
 
         if (webcam!!.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
-            fileName = String.format("%s_%s.mp4", webcam!!.title ?: "", System.currentTimeMillis().toString())
+            fileName = String.format("%s_%s.mp4", webcam!!.title
+                    ?: "", System.currentTimeMillis().toString())
             isImage = false
         } else {
-            fileName = String.format("%s_%s.jpg", webcam!!.title ?: "", System.currentTimeMillis().toString())
+            fileName = String.format("%s_%s.jpg", webcam!!.title
+                    ?: "", System.currentTimeMillis().toString())
             isImage = true
         }
 
@@ -134,7 +143,8 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
 
     private fun signalProblem() {
         val subject = getString(R.string.detail_signal_problem_subject, webcam?.title ?: "")
-        val body = getString(R.string.detail_signal_problem_body, webcam?.title ?: "", webcam?.uid?.toString() ?: "")
+        val body = getString(R.string.detail_signal_problem_body, webcam?.title
+                ?: "", webcam?.uid?.toString() ?: "")
         val emailDest = getString(R.string.detail_signal_problem_email)
 
         val intent = Intent(android.content.Intent.ACTION_SENDTO).apply {
@@ -210,21 +220,19 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
 
     private fun initDateLastUpdate() {
         if (isAlive) {
-            if (webcam != null) {
-                if (webcam!!.isUpToDate()) {
-                    textviewWebcamNotUpdate?.gone()
-                } else {
-                    textviewWebcamNotUpdate?.setText(getString(R.string.generic_not_up_to_date))
-                    textviewWebcamNotUpdate?.show()
-                }
+            if (webcam?.isUpToDate() == true) {
+                textviewWebcamNotUpdate?.gone()
+            } else {
+                textviewWebcamNotUpdate?.setText(getString(R.string.generic_not_up_to_date))
+                textviewWebcamNotUpdate?.show()
+            }
 
-                if (webcam!!.lastUpdate ?: 0 > 0L) {
-                    val date = DateUtils.getDateFormatDateHour(webcam!!.lastUpdate!!)
-                    textViewLastUpdate?.setText(getString(R.string.generic_last_update, date))
-                    textViewLastUpdate?.show()
-                } else {
-                    textViewLastUpdate?.gone()
-                }
+            if (webcam?.lastUpdate ?: 0 > 0L) {
+                val date = DateUtils.getDateFormatDateHour(webcam!!.lastUpdate!!)
+                textViewLastUpdate?.setText(getString(R.string.generic_last_update, date))
+                textViewLastUpdate?.show()
+            } else {
+                textViewLastUpdate?.gone()
             }
         }
     }

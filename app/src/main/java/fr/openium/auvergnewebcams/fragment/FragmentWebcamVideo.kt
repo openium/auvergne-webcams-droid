@@ -1,6 +1,7 @@
 package fr.openium.auvergnewebcams.fragment
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -22,10 +23,24 @@ class FragmentWebcamVideo : AbstractFragmentWebcam() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val mediaController = MediaController(activity)
+        val mediaController = MediaController(applicationContext)
         mediaController.setAnchorView(viewViewWebcam)
         mediaController.setMediaPlayer(viewViewWebcam)
         viewViewWebcam.setMediaController(mediaController)
+    }
+
+
+    override fun onConfigurationChanged(newConfig: Configuration?) {
+        super.onConfigurationChanged(newConfig)
+        if (newConfig?.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            if (webcam?.viewsurfHD.isNullOrEmpty()) {
+                textViewWebcamLowQualityOnly.show()
+            } else {
+                textViewWebcamLowQualityOnly.gone()
+            }
+        } else {
+            textViewWebcamLowQualityOnly.gone()
+        }
     }
 
     // =================================================================================================================
