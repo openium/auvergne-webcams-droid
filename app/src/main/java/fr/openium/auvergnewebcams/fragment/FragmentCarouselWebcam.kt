@@ -144,7 +144,7 @@ class FragmentCarouselWebcam : AbstractFragment() {
                         }
 
                         activity?.runOnUiThread {
-                            // TODO  removeGlideCache()
+                            removeGlideCache()
                             initAdapter(PreferencesAW.getLastUpdateWebcamsTimestamp(applicationContext))
                             swipeRefreshLayoutWebcams?.isRefreshing = false
                         }
@@ -161,15 +161,16 @@ class FragmentCarouselWebcam : AbstractFragment() {
     }
 
     private fun startDelayRefreshWebcams() {
-        val delay = PreferencesAW.getWebcamsDelayRefreshValue(applicationContext)
-        oneTimeSubscriptions.add(Observable.timer(delay.toLong(), TimeUnit.MINUTES)
-                .fromIOToMain()
-                .subscribe {
-                    //                    removeGlideCache()
-                    PreferencesAW.setLastUpdateTimestamp(applicationContext, System.currentTimeMillis().toUnixTimestamp())
-                    initAdapter(PreferencesAW.getLastUpdateWebcamsTimestamp(applicationContext))
-                    startDelayRefreshWebcams()
-                })
+        if (PreferencesAW.isWebcamsDelayRefreshActive(applicationContext)) {
+            val delay = PreferencesAW.getWebcamsDelayRefreshValue(applicationContext)
+            oneTimeSubscriptions.add(Observable.timer(delay.toLong(), TimeUnit.MINUTES)
+                    .fromIOToMain()
+                    .subscribe {
+                        PreferencesAW.setLastUpdateTimestamp(applicationContext, System.currentTimeMillis().toUnixTimestamp())
+                        initAdapter(PreferencesAW.getLastUpdateWebcamsTimestamp(applicationContext))
+                        startDelayRefreshWebcams()
+                    })
+        }
     }
 
     private fun removeGlideCache() {
@@ -182,7 +183,6 @@ class FragmentCarouselWebcam : AbstractFragment() {
                     activity?.runOnUiThread {
                         Glide.get(applicationContext)
                                 .clearMemory()
-                        recyclerView?.adapter?.notifyDataSetChanged()
                     }
                 })
     }

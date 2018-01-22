@@ -53,7 +53,33 @@ class InfiniteScrollAdapter<T : RecyclerView.ViewHolder>(private val wrapped: Re
     }
 
     fun getRealPosition(position: Int): Int {
-        return mapPositionToReal(position)
+        //return mapPositionToReal(position)
+        return getRealRealPosition(position)
+    }
+
+    fun getRealRealPosition(position: Int): Int {
+        var newPosition = (position - currentRangeStart).toFloat()
+
+        if (newPosition == 0f)
+            return 0
+        if (newPosition < 0f) {
+            return wrapped.itemCount - 1
+        }
+        if (newPosition.toInt() == wrapped.itemCount) {
+            return 0
+        }
+        if (newPosition >= wrapped.itemCount) {
+            return getRealRealPosition(position - wrapped.itemCount)
+        }
+
+        for (i in 1..wrapped.itemCount) {
+            if (newPosition / i == 1f) {
+                return i
+            }
+        }
+
+        return 0
+
     }
 
 //    fun getClosestPosition(position: Int): Int {

@@ -102,7 +102,7 @@ abstract class ApplicationBase : Application(), KodeinAware {
                                     val dateFormat = SimpleDateFormat("E, d MMM yyyy HH:mm:ss 'GMT'", Locale.US)
                                     dateFormat.timeZone = TimeZone.getTimeZone("GMT")
                                     val newTime = dateFormat.parse(lastModified).time
-                                    Timber.e("APP update date $newTime   ${webcam.title}")
+//                                    Timber.e("APP update date $newTime   ${webcam.title}")
                                     if (webcam.lastUpdate == null || newTime != webcam.lastUpdate!!) {
                                         webcam.lastUpdate = newTime
                                         Events.eventCameraDateUpdate.set(webcam.uid)

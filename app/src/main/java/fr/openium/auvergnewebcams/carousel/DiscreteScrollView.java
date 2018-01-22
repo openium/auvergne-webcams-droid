@@ -9,6 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +32,7 @@ public class DiscreteScrollView extends RecyclerView {
 
     private List<ScrollStateChangeListener> scrollStateChangeListeners;
     private List<OnItemChangedListener> onItemChangedListeners;
+    private List<OnItemSelectedListener> onItemSelectedListeners;
 
     public DiscreteScrollView(Context context) {
         super(context);
@@ -49,6 +52,7 @@ public class DiscreteScrollView extends RecyclerView {
     private void init(AttributeSet attrs) {
         scrollStateChangeListeners = new ArrayList<>();
         onItemChangedListeners = new ArrayList<>();
+        onItemSelectedListeners = new ArrayList<>();
 
         int orientation = DEFAULT_ORIENTATION;
         if (attrs != null) {
@@ -143,6 +147,10 @@ public class DiscreteScrollView extends RecyclerView {
         onItemChangedListeners.remove(onItemChangedListener);
     }
 
+    public void addItemSelectedListener(@NotNull OnItemSelectedListener<?> listener) {
+        onItemSelectedListeners.add(listener);
+    }
+
     private void notifyScrollStart(ViewHolder holder, int current) {
         for (ScrollStateChangeListener listener : scrollStateChangeListeners) {
             listener.onScrollStart(holder, current);
@@ -201,20 +209,18 @@ public class DiscreteScrollView extends RecyclerView {
 
         @Override
         public void onScrollEnd() {
-            postDelayed((new Runnable() {
-                @Override
-                public void run() {
-                    if (onItemChangedListeners.isEmpty() && scrollStateChangeListeners.isEmpty()) {
-                        return;
-                    }
-                    int current = layoutManager.getCurrentPosition();
-                    ViewHolder holder = getViewHolder(current);
-                    if (holder != null) {
-                        notifyScrollEnd(holder, current);
-                        notifyCurrentItemChanged(holder, current);
-                    }
-                }
-            }), 100);
+            if (onItemChangedListeners.isEmpty() && scrollStateChangeListeners.isEmpty() && onItemSelectedListeners.isEmpty()) {
+                return;
+            }
+            int current = layoutManager.getCurrentPosition();
+            ViewHolder holder = getViewHolder(current);
+            if (holder != null) {
+                notifyScrollEnd(holder, current);
+                notifyCurrentItemChanged(holder, current);
+            }
+            for(OnItemSelectedListener listener : onItemSelectedListeners) {
+                listener.onItemSelectedChanged(current);
+            }
 
         }
 
@@ -276,5 +282,13 @@ public class DiscreteScrollView extends RecyclerView {
          * If data set is empty, viewHolder will be null and adapterPosition will be NO_POSITION
          */
         void onCurrentItemChanged(@Nullable T viewHolder, int adapterPosition);
+    }
+
+    public interface OnItemSelectedListener<T extends ViewHolder> {
+        /*
+         * This method will be also triggered when view appears on the screen for the first time.
+         * If data set is empty, viewHolder will be null and adapterPosition will be NO_POSITION
+         */
+        void onItemSelectedChanged(int position);
     }
 }

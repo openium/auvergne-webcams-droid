@@ -2,6 +2,7 @@ package fr.openium.auvergnewebcams.adapter
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
+import android.util.LongSparseArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,7 @@ import fr.openium.auvergnewebcams.model.Webcam
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.header_list_webcam.view.*
 import kotlinx.android.synthetic.main.item_carousel.view.*
+import timber.log.Timber
 import java.util.*
 
 /**
@@ -33,7 +35,8 @@ class AdapterCarousels(val context: Context,
                        val listenerSectionClick: ((Section) -> Unit),
                        var lastUpdate: Long) : RecyclerView.Adapter<AdapterCarousels.WebcamHolder>() {
 
-    val heightImage: Int
+    private val heightImage: Int
+    private var positionsAdapters = LongSparseArray<Int>()
 
     init {
         heightImage = context.resources.getDimensionPixelOffset(R.dimen.height_image_list)
@@ -86,21 +89,10 @@ class AdapterCarousels(val context: Context,
             holder.mTextViewNbCameras.text = nbWebCams
 
             holder.itemView.setOnClickListener {
-                val pos = (holder.scrollView.adapter as InfiniteScrollAdapter).getRealPosition(holder.scrollView.currentItem)
+                val pos = (holder.scrollView.adapter as InfiniteScrollAdapter).getRealRealPosition(holder.scrollView.currentItem)
                 val webcam = item.webcams.get(pos)
                 if (webcam != null) {
                     listener?.invoke(webcam, position)
-                }
-            }
-
-            holder.scrollView.addOnItemChangedListener { _, adapterPosition ->
-                val realPos = (holder.scrollView.adapter as InfiniteScrollAdapter).getRealPosition(adapterPosition)
-                if (realPos >= 0 && item.webcams.size > realPos) {
-                    val name = item.webcams[realPos]!!.title
-//                Timber.e("$name   $adapterPosition   $realPos")
-                    holder.mTextViewNameWebcam.setText(name)
-                } else {
-                    holder.mTextViewNameWebcam.setText("")
                 }
             }
 
@@ -108,17 +100,41 @@ class AdapterCarousels(val context: Context,
             val infiniteAdapter = InfiniteScrollAdapter.wrap(adapter)
             holder.scrollView.adapter = infiniteAdapter
 
-            val realPos = (holder.scrollView.adapter as InfiniteScrollAdapter).getRealPosition(holder.scrollView.currentItem)
-            if (realPos >= 0 && item.webcams.size > realPos) {
-                val name = item.webcams[realPos]!!.title
-                holder.mTextViewNameWebcam.setText(name)
-            } else {
-                holder.mTextViewNameWebcam.setText("")
+            holder.scrollView.addItemSelectedListener {
+                Timber.d("addItemSelectedListener   ${item.uid}  newPosition: $it")
+                positionsAdapters.put(item.uid, it)
+
+                val realPosition = (holder.scrollView.adapter as InfiniteScrollAdapter).getRealRealPosition(it)
+                if (realPosition >= 0 && item.webcams.size > realPosition) {
+                    val name = item.webcams[realPosition]!!.title
+                    holder.mTextViewNameWebcam.setText(name)
+                } else {
+                    holder.mTextViewNameWebcam.setText("")
+                }
             }
+
+            holder.scrollView.post {
+                val positionAdapter: Int
+                if (positionsAdapters.get(item.uid, -1) != -1) {
+                    positionAdapter = positionsAdapters.get(item.uid)
+                } else {
+                    positionAdapter = holder.scrollView.currentItem
+                }
+
+                Timber.d("addItemSelectedListener ${item.uid}  getPosition: $positionAdapter")
+
+                val realPos = (holder.scrollView.adapter as InfiniteScrollAdapter).getRealRealPosition(positionAdapter)
+                if (realPos >= 0 && item.webcams.size > realPos) {
+                    val name = item.webcams[realPos]!!.title
+                    holder.mTextViewNameWebcam.setText(name)
+                } else {
+                    holder.mTextViewNameWebcam.setText("")
+                }
+                holder.scrollView.layoutManager.scrollToPosition(positionAdapter)
+            }
+
         }
-
     }
-
 
     override fun getItemCount(): Int {
         return items.size + 1
