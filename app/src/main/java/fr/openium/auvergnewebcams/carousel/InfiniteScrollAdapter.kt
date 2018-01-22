@@ -61,23 +61,20 @@ class InfiniteScrollAdapter<T : RecyclerView.ViewHolder>(private val wrapped: Re
         val newPosition = (position - currentRangeStart)
 
         if (newPosition == 0) {
-//            Timber.e("position 0")
             return 0
         }
         if (newPosition < 0) {
-            return wrapped.itemCount - 1
+            return Math.abs(newPosition % wrapped.itemCount)
         }
         if (newPosition == wrapped.itemCount) {
 //            Timber.e("position 0")
             return 0
         }
         if (newPosition >= wrapped.itemCount) {
-            return getRealRealPosition(position - wrapped.itemCount)
+            return newPosition % wrapped.itemCount
         }
 
-//        Timber.e("position $newPosition")
         return newPosition
-
     }
 
 //    fun getClosestPosition(position: Int): Int {

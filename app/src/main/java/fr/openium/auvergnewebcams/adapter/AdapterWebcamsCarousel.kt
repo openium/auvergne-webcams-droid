@@ -24,7 +24,6 @@ import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.utils.DateUtils
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.item_carousel_webcam.view.*
-import timber.log.Timber
 
 
 /**
@@ -102,7 +101,7 @@ class AdapterWebcamsCarousel(val context: Context,
 
         }
 
-        Timber.e("DATE UPDATE $lastUpdate")
+//        Timber.e("DATE UPDATE $lastUpdate")
         GlideApp.with(context)
                 .load(urlWebCam)
                 .error(R.drawable.broken_camera)

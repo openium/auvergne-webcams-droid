@@ -21,7 +21,6 @@ import fr.openium.auvergnewebcams.model.Webcam
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.header_list_webcam.view.*
 import kotlinx.android.synthetic.main.item_carousel.view.*
-import timber.log.Timber
 import java.util.*
 
 /**
@@ -141,7 +140,7 @@ class AdapterCarousels(val context: Context,
                     holder.mTextViewNameWebcam.setText("")
                 }
                 holder.scrollView.layoutManager.scrollToPosition(positionAdapter)
-                Timber.e("scroll to position  ${item.uid}   $positionAdapter")
+//                Timber.e("scroll to position  ${item.uid}   $positionAdapter")
             }
 
         }
