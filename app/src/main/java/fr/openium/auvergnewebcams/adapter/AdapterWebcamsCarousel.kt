@@ -19,10 +19,12 @@ import fr.openium.auvergnewebcams.ext.fromIOToMain
 import fr.openium.auvergnewebcams.ext.gone
 import fr.openium.auvergnewebcams.ext.show
 import fr.openium.auvergnewebcams.injection.GlideApp
+import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.utils.DateUtils
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.item_carousel_webcam.view.*
+import timber.log.Timber
 
 
 /**
@@ -30,7 +32,7 @@ import kotlinx.android.synthetic.main.item_carousel_webcam.view.*
  */
 class AdapterWebcamsCarousel(val context: Context,
                              val listener: ((Webcam, Int) -> Unit)? = null,
-                             var items: List<Webcam>,
+                             var section: Section,
                              val composites: CompositeDisposable,
                              var lastUpdate: Long)
     : RecyclerView.Adapter<AdapterWebcamsCarousel.WebcamHolder>() {
@@ -52,20 +54,20 @@ class AdapterWebcamsCarousel(val context: Context,
     }
 
     override fun onBindViewHolder(holder: WebcamHolder, position: Int) {
-        val item = items.get(position)
+        val item = section.webcams.get(position)
         composites.add(Events.eventCameraDateUpdate
                 .obs
                 .fromIOToMain()
                 .subscribe {
-                    if (it == item.uid) {
-                        item.realm.refresh()
+                    if (it == item?.uid) {
+                        item?.realm?.refresh()
                         //    Timber.e("uid = ${item.uid}")
                         this.notifyItemChanged(position)
                     }
                 })
 
-        val urlWebCam: String = item.getUrlForWebcam(false, false)
-        val isUp = item.isUpToDate()
+        val urlWebCam: String = item?.getUrlForWebcam(false, false) ?: ""
+        val isUp = item?.isUpToDate() ?: true
 
         if (isUp) {
             holder.itemView.textviewWebcamNotUpdate.gone()
@@ -76,31 +78,35 @@ class AdapterWebcamsCarousel(val context: Context,
 
         holder.itemView.progressbar.show()
 
+//        Timber.e("load image section ${section.uid}    $position => $urlWebCam")
+        val listenerGlide = object : RequestListener<Drawable> {
+            override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                holder.itemView.textviewWebcamNotUpdate.setText(context.getString(R.string.load_webcam_error))
+                holder.itemView.textviewWebcamNotUpdate.show()
+
+                holder.itemView.imageViewCamera.scaleType = ImageView.ScaleType.CENTER_INSIDE
+                holder.itemView.progressbar.gone()
+                return false
+            }
+
+            override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                if (isUp) {
+                    holder.itemView.textviewWebcamNotUpdate.gone()
+                } else {
+                    holder.itemView.textviewWebcamNotUpdate.show()
+                }
+                holder.itemView.imageViewCamera.scaleType = ImageView.ScaleType.CENTER_CROP
+                holder.itemView.progressbar.gone()
+                return false
+            }
+
+        }
+
+        Timber.e("DATE UPDATE $lastUpdate")
         GlideApp.with(context)
                 .load(urlWebCam)
                 .error(R.drawable.broken_camera)
-                .listener(object : RequestListener<Drawable> {
-                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                        holder.itemView.textviewWebcamNotUpdate.setText(context.getString(R.string.load_webcam_error))
-                        holder.itemView.textviewWebcamNotUpdate.show()
-
-                        holder.itemView.imageViewCamera.scaleType = ImageView.ScaleType.CENTER_INSIDE
-                        holder.itemView.progressbar.gone()
-                        return false
-                    }
-
-                    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                        if (isUp) {
-                            holder.itemView.textviewWebcamNotUpdate.gone()
-                        } else {
-                            holder.itemView.textviewWebcamNotUpdate.show()
-                        }
-                        holder.itemView.imageViewCamera.scaleType = ImageView.ScaleType.CENTER_CROP
-                        holder.itemView.progressbar.gone()
-                        return false
-                    }
-
-                })
+                .listener(listenerGlide)
 //                .diskCacheStrategy(DiskCacheStrategy.NONE)
 //                .diskCacheStrategy(DiskCacheStrategy.ALL)
 //                .skipMemoryCache(true)
@@ -110,12 +116,14 @@ class AdapterWebcamsCarousel(val context: Context,
 
 
         holder.itemView.setOnClickListener {
-            listener?.invoke(item, position)
+            if (item != null) {
+                listener?.invoke(item, position)
+            }
         }
 
         if (BuildConfig.DEBUG) {
-            if (item.lastUpdate ?: 0 > 0L) {
-                val date = DateUtils.getDateFormatDateHour(item.lastUpdate!!)
+            if (item?.lastUpdate ?: 0 > 0L) {
+                val date = DateUtils.getDateFormatDateHour(item!!.lastUpdate!!)
                 holder.itemView.textviewWebcamLastUpdate.setText(context.getString(R.string.generic_last_update, date))
                 holder.itemView.textviewWebcamLastUpdate.show()
             } else {
@@ -128,7 +136,7 @@ class AdapterWebcamsCarousel(val context: Context,
     }
 
     override fun getItemCount(): Int {
-        return items.size
+        return section.webcams.size
     }
 
     class WebcamHolder(view: View) : RecyclerView.ViewHolder(view) {

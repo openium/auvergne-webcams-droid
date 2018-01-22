@@ -23,12 +23,11 @@ class FragmentWebcamVideo : AbstractFragmentWebcam() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val mediaController = MediaController(applicationContext)
+        val mediaController = MediaController(activity)
         mediaController.setAnchorView(viewViewWebcam)
         mediaController.setMediaPlayer(viewViewWebcam)
         viewViewWebcam.setMediaController(mediaController)
     }
-
 
     override fun onConfigurationChanged(newConfig: Configuration?) {
         super.onConfigurationChanged(newConfig)

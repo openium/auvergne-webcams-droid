@@ -171,17 +171,19 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
                     .subscribeOn(Schedulers.io())
                     .subscribe {
                         val id = arguments?.getLong(Constants.KEY_ID) ?: 0
-                        Realm.getDefaultInstance().executeTransaction {
-                            val webcamDB = it.where(Webcam::class.java)
-                                    .equalTo(Webcam::uid.name, id)
-                                    .findFirst()
-                            if (webcamDB != null) {
-                                if (webcamDB.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
-                                    // load media ld
-                                    webcamDB.mediaViewSurfLD = LoadWebCamUtils.getMediaViewSurf(webcamDB.viewsurfLD)
-                                    webcamDB.mediaViewSurfHD = LoadWebCamUtils.getMediaViewSurf(webcamDB.viewsurfHD)
+                        Realm.getDefaultInstance().use {
+                            it.executeTransaction {
+                                val webcamDB = it.where(Webcam::class.java)
+                                        .equalTo(Webcam::uid.name, id)
+                                        .findFirst()
+                                if (webcamDB != null) {
+                                    if (webcamDB.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
+                                        // load media ld
+                                        webcamDB.mediaViewSurfLD = LoadWebCamUtils.getMediaViewSurf(webcamDB.viewsurfLD)
+                                        webcamDB.mediaViewSurfHD = LoadWebCamUtils.getMediaViewSurf(webcamDB.viewsurfHD)
+                                    }
+                                    it.insertOrUpdate(webcamDB)
                                 }
-                                it.insertOrUpdate(webcamDB)
                             }
                         }
 

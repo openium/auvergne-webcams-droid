@@ -85,6 +85,10 @@ class FragmentCarouselWebcam : AbstractFragment() {
                 })
 
         initAdapter(PreferencesAW.getLastUpdateWebcamsTimestamp(applicationContext))
+    }
+
+    override fun onStart() {
+        super.onStart()
         startDelayRefreshWebcams()
     }
 
@@ -118,35 +122,35 @@ class FragmentCarouselWebcam : AbstractFragment() {
     private fun manageRefreshWebcams() {
         if (applicationContext.hasNetwork) {
             oneTimeSubscriptions.add(api.getSections()
-                    .subscribe({
-                        Realm.getDefaultInstance().executeTransaction { realm ->
-                            if (!it.isError && it.response()?.body() != null) {
-                                val sections = it.response()!!.body()!!
-                                for (section in sections.sections) {
-                                    for (webcam in section.webcams) {
-                                        if (webcam.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
-                                            // load media ld
-                                            webcam.mediaViewSurfLD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfLD)
-                                            webcam.mediaViewSurfHD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfHD)
-                                        }
+                    .subscribe({ result ->
+                        Realm.getDefaultInstance().use {
+                            it.executeTransaction { realm ->
+                                if (!result.isError && result.response()?.body() != null) {
+                                    val sections = result.response()!!.body()!!
+                                    for (section in sections.sections) {
+                                        for (webcam in section.webcams) {
+                                            if (webcam.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
+                                                // load media ld
+                                                webcam.mediaViewSurfLD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfLD)
+                                                webcam.mediaViewSurfHD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfHD)
+                                            }
 
-                                        val webcamDB = realm.where(Webcam::class.java)
-                                                .equalTo(Webcam::uid.name, webcam.uid)
-                                                .findFirst()
-                                        if (webcamDB?.lastUpdate != null) {
-                                            webcam.lastUpdate = webcamDB.lastUpdate
-                                            webcam.isFavoris = webcamDB.isFavoris
+                                            val webcamDB = realm.where(Webcam::class.java)
+                                                    .equalTo(Webcam::uid.name, webcam.uid)
+                                                    .findFirst()
+                                            if (webcamDB?.lastUpdate != null) {
+                                                webcam.lastUpdate = webcamDB.lastUpdate
+                                                webcam.isFavoris = webcamDB.isFavoris
+                                            }
                                         }
                                     }
+                                    realm.insertOrUpdate(sections.sections)
                                 }
-                                realm.insertOrUpdate(sections.sections)
                             }
                         }
 
                         activity?.runOnUiThread {
                             removeGlideCache()
-                            initAdapter(PreferencesAW.getLastUpdateWebcamsTimestamp(applicationContext))
-                            swipeRefreshLayoutWebcams?.isRefreshing = false
                         }
                     }, {
                         activity?.runOnUiThread {
@@ -161,8 +165,8 @@ class FragmentCarouselWebcam : AbstractFragment() {
     }
 
     private fun startDelayRefreshWebcams() {
+        val delay = PreferencesAW.getWebcamsDelayRefreshValue(applicationContext)
         if (PreferencesAW.isWebcamsDelayRefreshActive(applicationContext)) {
-            val delay = PreferencesAW.getWebcamsDelayRefreshValue(applicationContext)
             oneTimeSubscriptions.add(Observable.timer(delay.toLong(), TimeUnit.MINUTES)
                     .fromIOToMain()
                     .subscribe {
@@ -183,6 +187,9 @@ class FragmentCarouselWebcam : AbstractFragment() {
                     activity?.runOnUiThread {
                         Glide.get(applicationContext)
                                 .clearMemory()
+                        PreferencesAW.setLastUpdateTimestamp(applicationContext, System.currentTimeMillis().toUnixTimestamp())
+                        initAdapter(PreferencesAW.getLastUpdateWebcamsTimestamp(applicationContext))
+                        swipeRefreshLayoutWebcams?.isRefreshing = false
                     }
                 })
     }

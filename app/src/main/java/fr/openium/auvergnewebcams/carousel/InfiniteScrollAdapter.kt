@@ -41,11 +41,11 @@ class InfiniteScrollAdapter<T : RecyclerView.ViewHolder>(private val wrapped: Re
     }
 
     override fun onBindViewHolder(holder: T, position: Int) {
-        wrapped.onBindViewHolder(holder, mapPositionToReal(position))
+        wrapped.onBindViewHolder(holder, getRealRealPosition(position))
     }
 
     override fun getItemViewType(position: Int): Int {
-        return wrapped.getItemViewType(mapPositionToReal(position))
+        return wrapped.getItemViewType(getRealRealPosition(position))
     }
 
     override fun getItemCount(): Int {
@@ -53,32 +53,30 @@ class InfiniteScrollAdapter<T : RecyclerView.ViewHolder>(private val wrapped: Re
     }
 
     fun getRealPosition(position: Int): Int {
-        //return mapPositionToReal(position)
         return getRealRealPosition(position)
+//        return getRealRealPosition(position)
     }
 
     fun getRealRealPosition(position: Int): Int {
-        var newPosition = (position - currentRangeStart).toFloat()
+        val newPosition = (position - currentRangeStart)
 
-        if (newPosition == 0f)
+        if (newPosition == 0) {
+//            Timber.e("position 0")
             return 0
-        if (newPosition < 0f) {
+        }
+        if (newPosition < 0) {
             return wrapped.itemCount - 1
         }
-        if (newPosition.toInt() == wrapped.itemCount) {
+        if (newPosition == wrapped.itemCount) {
+//            Timber.e("position 0")
             return 0
         }
         if (newPosition >= wrapped.itemCount) {
             return getRealRealPosition(position - wrapped.itemCount)
         }
 
-        for (i in 1..wrapped.itemCount) {
-            if (newPosition / i == 1f) {
-                return i
-            }
-        }
-
-        return 0
+//        Timber.e("position $newPosition")
+        return newPosition
 
     }
 

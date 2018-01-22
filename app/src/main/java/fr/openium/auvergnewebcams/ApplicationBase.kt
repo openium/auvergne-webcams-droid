@@ -76,40 +76,43 @@ abstract class ApplicationBase : Application(), KodeinAware {
                             urlMedia = ""
                         }
 
-                        Realm.getDefaultInstance().executeTransaction {
-                            val webcam: Webcam?
-                            if (urlMedia.isEmpty()) {
-                                webcam = it.where(Webcam::class.java)
-                                        .contains(Webcam::imageLD.name, url)
-                                        .or()
-                                        .contains(Webcam::imageHD.name, url)
-                                        .findFirst()
-                            } else {
-                                webcam = it.where(Webcam::class.java)
-                                        .contains(Webcam::mediaViewSurfHD.name, urlMedia)
-                                        .or()
-                                        .contains(Webcam::mediaViewSurfLD.name, urlMedia)
-                                        .or()
-                                        .contains(Webcam::imageLD.name, url)
-                                        .or()
-                                        .contains(Webcam::imageHD.name, url)
-                                        .findFirst()
-                            }
+                        Realm.getDefaultInstance().use {
+                            it.executeTransaction {
+                                val webcam: Webcam?
+                                if (urlMedia.isEmpty()) {
+                                    webcam = it.where(Webcam::class.java)
+                                            .contains(Webcam::imageLD.name, url)
+                                            .or()
+                                            .contains(Webcam::imageHD.name, url)
+                                            .findFirst()
+                                } else {
+                                    webcam = it.where(Webcam::class.java)
+                                            .contains(Webcam::mediaViewSurfHD.name, urlMedia)
+                                            .or()
+                                            .contains(Webcam::mediaViewSurfLD.name, urlMedia)
+                                            .or()
+                                            .contains(Webcam::imageLD.name, url)
+                                            .or()
+                                            .contains(Webcam::imageHD.name, url)
+                                            .findFirst()
+                                }
 
-                            if (webcam != null) {
-                                val lastModified = response.header("Last-Modified")!!
-                                if (!lastModified.isEmpty()) {
-                                    val dateFormat = SimpleDateFormat("E, d MMM yyyy HH:mm:ss 'GMT'", Locale.US)
-                                    dateFormat.timeZone = TimeZone.getTimeZone("GMT")
-                                    val newTime = dateFormat.parse(lastModified).time
+                                if (webcam != null) {
+                                    val lastModified = response.header("Last-Modified")!!
+                                    if (!lastModified.isEmpty()) {
+                                        val dateFormat = SimpleDateFormat("E, d MMM yyyy HH:mm:ss 'GMT'", Locale.US)
+                                        dateFormat.timeZone = TimeZone.getTimeZone("GMT")
+                                        val newTime = dateFormat.parse(lastModified).time
 //                                    Timber.e("APP update date $newTime   ${webcam.title}")
-                                    if (webcam.lastUpdate == null || newTime != webcam.lastUpdate!!) {
-                                        webcam.lastUpdate = newTime
-                                        Events.eventCameraDateUpdate.set(webcam.uid)
+                                        if (webcam.lastUpdate == null || newTime != webcam.lastUpdate!!) {
+                                            webcam.lastUpdate = newTime
+                                            Events.eventCameraDateUpdate.set(webcam.uid)
+                                        }
                                     }
                                 }
                             }
                         }
+
                     }
 
                     response

@@ -40,25 +40,26 @@ class ActivitySplash : AbstractActivity() {
                     BiFunction
                     { _: Long, result: Result<SectionList> ->
                         if (!result.isError && result.response()?.body() != null) {
+                            Realm.getDefaultInstance().use {
+                                it.executeTransaction { realm ->
+                                    val sections = result.response()!!.body()!!
+                                    for (section in sections.sections) {
+                                        for (webcam in section.webcams) {
+                                            if (webcam.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
+                                                // load media ld
+                                                webcam.mediaViewSurfLD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfLD)
+                                                webcam.mediaViewSurfHD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfHD)
+                                            }
 
-                            Realm.getDefaultInstance().executeTransaction { realm ->
-                                val sections = result.response()!!.body()!!
-                                for (section in sections.sections) {
-                                    for (webcam in section.webcams) {
-                                        if (webcam.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
-                                            // load media ld
-                                            webcam.mediaViewSurfLD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfLD)
-                                            webcam.mediaViewSurfHD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfHD)
+                                            val webcamDB = realm.where(Webcam::class.java)
+                                                    .equalTo(Webcam::uid.name, webcam.uid)
+                                                    .findFirst()
+                                            webcam.lastUpdate = webcamDB?.lastUpdate
+                                            webcam.isFavoris = webcamDB?.isFavoris ?: false
                                         }
-
-                                        val webcamDB = realm.where(Webcam::class.java)
-                                                .equalTo(Webcam::uid.name, webcam.uid)
-                                                .findFirst()
-                                        webcam.lastUpdate = webcamDB?.lastUpdate
-                                        webcam.isFavoris = webcamDB?.isFavoris ?: false
                                     }
+                                    realm.insertOrUpdate(sections.sections)
                                 }
-                                realm.insertOrUpdate(sections.sections)
                             }
                         } else {
                             loadFromAssets()

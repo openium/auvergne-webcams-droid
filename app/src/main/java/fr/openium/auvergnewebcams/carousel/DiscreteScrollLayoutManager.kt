@@ -165,10 +165,10 @@ class DiscreteScrollLayoutManager(
             layoutView(recycler, currentPosition, currentViewCenter)
         }
 
-        //Layout items before the current item
+        //Layout section before the current item
         layoutViews(recycler, Direction.START, endBound)
 
-        //Layout items after the current item
+        //Layout section after the current item
         layoutViews(recycler, Direction.END, endBound)
 
         recycleViewsAndClearCache(recycler)
@@ -248,7 +248,7 @@ class DiscreteScrollLayoutManager(
             newPosition = NO_POSITION
         } else if (currentPosition >= positionStart) {
             if (currentPosition < positionStart + itemCount) {
-                //If currentPosition is in the removed items, then the new item became current
+                //If currentPosition is in the removed section, then the new item became current
                 currentPosition = NO_POSITION
             }
             newPosition = Math.max(0, currentPosition - itemCount)
@@ -362,7 +362,7 @@ class DiscreteScrollLayoutManager(
     }
 
     /**
-     * @return true if scroll is ended and we don't need to settle items
+     * @return true if scroll is ended and we don't need to settle section
      */
     private fun onScrollEnd(): Boolean {
         if (pendingPosition != NO_POSITION) {
@@ -547,7 +547,7 @@ class DiscreteScrollLayoutManager(
     }
 
     private fun checkNewOnFlingPositionIsInBounds(position: Int): Int {
-        //The check is required in case slide through multiple items is turned on
+        //The check is required in case slide through multiple section is turned on
         if (currentPosition != 0 && position < 0) {
             //If currentPosition == 0 && position < 0 we forbid scroll to the left,
             //but if currentPosition != 0 we can slide to the first item

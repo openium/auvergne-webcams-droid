@@ -147,7 +147,7 @@ public class DiscreteScrollView extends RecyclerView {
         onItemChangedListeners.remove(onItemChangedListener);
     }
 
-    public void addItemSelectedListener(@NotNull OnItemSelectedListener<?> listener) {
+    public void addItemSelectedListener(@NotNull OnItemSelectedListener listener) {
         onItemSelectedListeners.add(listener);
     }
 
@@ -218,10 +218,9 @@ public class DiscreteScrollView extends RecyclerView {
                 notifyScrollEnd(holder, current);
                 notifyCurrentItemChanged(holder, current);
             }
-            for(OnItemSelectedListener listener : onItemSelectedListeners) {
+            for (OnItemSelectedListener listener : onItemSelectedListeners) {
                 listener.onItemSelectedChanged(current);
             }
-
         }
 
         @Override
@@ -284,7 +283,7 @@ public class DiscreteScrollView extends RecyclerView {
         void onCurrentItemChanged(@Nullable T viewHolder, int adapterPosition);
     }
 
-    public interface OnItemSelectedListener<T extends ViewHolder> {
+    public interface OnItemSelectedListener {
         /*
          * This method will be also triggered when view appears on the screen for the first time.
          * If data set is empty, viewHolder will be null and adapterPosition will be NO_POSITION
