@@ -101,17 +101,28 @@ class AdapterWebcamsCarousel(val context: Context,
 
         }
 
-//        Timber.e("DATE UPDATE $lastUpdate")
-        GlideApp.with(context)
-                .load(urlWebCam)
-                .error(R.drawable.broken_camera)
-                .listener(listenerGlide)
-//                .diskCacheStrategy(DiskCacheStrategy.NONE)
-//                .diskCacheStrategy(DiskCacheStrategy.ALL)
-//                .skipMemoryCache(true)
-                .signature(MediaStoreSignature("", lastUpdate, 0))
-                .override(widthImage, heightImage)
-                .into(holder.itemView.imageViewCamera)
+       // Timber.e("DATE UPDATE $lastUpdate")
+//        if (lastUpdate == 0L) { // no cache
+//            GlideApp.with(context)
+//                    .load(urlWebCam)
+//                    .error(R.drawable.broken_camera)
+//                    .listener(listenerGlide)
+//                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+//                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                    .skipMemoryCache(true)
+//                    .override(widthImage, heightImage)
+//                    .into(holder.itemView.imageViewCamera)
+//        } else {
+            GlideApp.with(context)
+                    .load(urlWebCam)
+                    .error(R.drawable.broken_camera)
+                    .listener(listenerGlide)
+                    .signature(MediaStoreSignature("", lastUpdate, 0))
+                    .override(widthImage, heightImage)
+                    .into(holder.itemView.imageViewCamera)
+//        }
+
+
 
 
         holder.itemView.setOnClickListener {

@@ -174,6 +174,8 @@ class FragmentCarouselWebcam : AbstractFragment() {
                         initAdapter(PreferencesAW.getLastUpdateWebcamsTimestamp(applicationContext))
                         startDelayRefreshWebcams()
                     })
+        } else {
+            PreferencesAW.setLastUpdateTimestamp(applicationContext, System.currentTimeMillis().toUnixTimestamp())
         }
     }
 
@@ -187,7 +189,9 @@ class FragmentCarouselWebcam : AbstractFragment() {
                     activity?.runOnUiThread {
                         Glide.get(applicationContext)
                                 .clearMemory()
+//                        if (PreferencesAW.isWebcamsDelayRefreshActive(applicationContext)) {
                         PreferencesAW.setLastUpdateTimestamp(applicationContext, System.currentTimeMillis().toUnixTimestamp())
+//                        }
                         initAdapter(PreferencesAW.getLastUpdateWebcamsTimestamp(applicationContext))
                         swipeRefreshLayoutWebcams?.isRefreshing = false
                     }

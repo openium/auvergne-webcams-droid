@@ -62,6 +62,8 @@ object PreferencesAW {
                     setLastUpdateTimestamp(context, lastUpdate)
                 }
             }
+        } else {
+            lastUpdate = getLastUpdateTimestamp(context)
         }
         return lastUpdate
     }

@@ -64,14 +64,14 @@ class InfiniteScrollAdapter<T : RecyclerView.ViewHolder>(private val wrapped: Re
             return 0
         }
         if (newPosition < 0) {
-            return Math.abs(newPosition % wrapped.itemCount)
+            return Math.abs(position % wrapped.itemCount)
         }
         if (newPosition == wrapped.itemCount) {
 //            Timber.e("position 0")
             return 0
         }
         if (newPosition >= wrapped.itemCount) {
-            return newPosition % wrapped.itemCount
+            return getRealRealPosition(position - wrapped.itemCount)
         }
 
         return newPosition
