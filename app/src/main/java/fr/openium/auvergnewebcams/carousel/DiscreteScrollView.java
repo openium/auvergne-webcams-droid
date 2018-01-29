@@ -32,7 +32,7 @@ public class DiscreteScrollView extends RecyclerView {
 
     private List<ScrollStateChangeListener> scrollStateChangeListeners;
     private List<OnItemChangedListener> onItemChangedListeners;
-    private List<OnItemSelectedListener> onItemSelectedListeners;
+    private OnItemSelectedListener onItemSelectedListeners;
 
     public DiscreteScrollView(Context context) {
         super(context);
@@ -52,7 +52,7 @@ public class DiscreteScrollView extends RecyclerView {
     private void init(AttributeSet attrs) {
         scrollStateChangeListeners = new ArrayList<>();
         onItemChangedListeners = new ArrayList<>();
-        onItemSelectedListeners = new ArrayList<>();
+        onItemSelectedListeners = null;
 
         int orientation = DEFAULT_ORIENTATION;
         if (attrs != null) {
@@ -73,7 +73,6 @@ public class DiscreteScrollView extends RecyclerView {
             super.setLayoutManager(layout);
         }
     }
-
 
     @Override
     public boolean fling(int velocityX, int velocityY) {
@@ -147,8 +146,8 @@ public class DiscreteScrollView extends RecyclerView {
         onItemChangedListeners.remove(onItemChangedListener);
     }
 
-    public void addItemSelectedListener(@NotNull OnItemSelectedListener listener) {
-        onItemSelectedListeners.add(listener);
+    public void setItemSelectedListener(@NotNull OnItemSelectedListener listener) {
+        onItemSelectedListeners = listener;
     }
 
     private void notifyScrollStart(ViewHolder holder, int current) {
@@ -209,7 +208,7 @@ public class DiscreteScrollView extends RecyclerView {
 
         @Override
         public void onScrollEnd() {
-            if (onItemChangedListeners.isEmpty() && scrollStateChangeListeners.isEmpty() && onItemSelectedListeners.isEmpty()) {
+            if (onItemChangedListeners.isEmpty() && scrollStateChangeListeners.isEmpty() && onItemSelectedListeners == null) {
                 return;
             }
             int current = layoutManager.getCurrentPosition();
@@ -218,9 +217,8 @@ public class DiscreteScrollView extends RecyclerView {
                 notifyScrollEnd(holder, current);
                 notifyCurrentItemChanged(holder, current);
             }
-            for (OnItemSelectedListener listener : onItemSelectedListeners) {
-                listener.onItemSelectedChanged(current);
-            }
+            onItemSelectedListeners.onItemSelectedChanged(current);
+
         }
 
         @Override

@@ -101,26 +101,22 @@ class AdapterCarousels(val context: Context,
             holder.scrollView.adapter = infiniteAdapter
 
             val listener: DiscreteScrollView.OnItemSelectedListener
-            if (listeners.get(item.uid) != null) {
-                listener = listeners.get(item.uid)
-            } else {
-                listener = object : DiscreteScrollView.OnItemSelectedListener {
-                    override fun onItemSelectedChanged(position: Int) {
+            listener = object : DiscreteScrollView.OnItemSelectedListener {
+                override fun onItemSelectedChanged(position: Int) {
 //                        Timber.d("addItemSelectedListener ${item.uid}  newPosition: $position")
-                        positionsAdapters.put(item.uid, position)
+                    positionsAdapters.put(item.uid, position)
 
-                        val realPosition = (holder.scrollView.adapter as InfiniteScrollAdapter).getRealRealPosition(position)
-                        if (realPosition >= 0 && item.webcams.size > realPosition) {
-                            val name = item.webcams[realPosition]!!.title
-                            holder.mTextViewNameWebcam.setText(name)
-                        } else {
-                            holder.mTextViewNameWebcam.setText("")
-                        }
+                    val realPosition = (holder.scrollView.adapter as InfiniteScrollAdapter).getRealRealPosition(position)
+                    if (realPosition >= 0 && item.webcams.size > realPosition) {
+                        val name = item.webcams[realPosition]!!.title
+                        holder.mTextViewNameWebcam.setText(name)
+                    } else {
+                        holder.mTextViewNameWebcam.setText("")
                     }
                 }
-                listeners.put(item.uid, listener)
-                holder.scrollView.addItemSelectedListener(listener)
             }
+            listeners.put(item.uid, listener)
+            holder.scrollView.setItemSelectedListener(listener)
 
             holder.scrollView.post {
                 val positionAdapter: Int

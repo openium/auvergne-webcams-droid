@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.accessibility.AccessibilityEvent
 import fr.openium.auvergnewebcams.carousel.transform.DiscreteScrollItemTransformer
+import timber.log.Timber
 
 /**
  * Created by yarolegovich on 17.02.2017.
@@ -72,6 +73,8 @@ class DiscreteScrollLayoutManager(
 
     val lastChild: View
         get() = getChildAt(childCount - 1)
+
+    var isScrollingStarted = false
 
     init {
         this.timeForItemSettle = DEFAULT_TIME_FOR_ITEM_SETTLE
@@ -365,6 +368,10 @@ class DiscreteScrollLayoutManager(
      * @return true if scroll is ended and we don't need to settle section
      */
     private fun onScrollEnd(): Boolean {
+        isScrollingStarted = true
+
+        Timber.d("TEST SCROLL END")
+
         if (pendingPosition != NO_POSITION) {
             currentPosition = pendingPosition
             pendingPosition = NO_POSITION
@@ -386,6 +393,7 @@ class DiscreteScrollLayoutManager(
         if (pendingScroll == 0) {
             return true
         } else {
+            isScrollingStarted = false
             startSmoothPendingScroll()
             return false
         }
@@ -624,6 +632,15 @@ class DiscreteScrollLayoutManager(
         private val EXTRA_POSITION = "extra_position"
         private val DEFAULT_TIME_FOR_ITEM_SETTLE = 300
         private val DEFAULT_FLING_THRESHOLD = 2100 //Decrease to increase sensitivity.
+    }
+
+    override fun onDetachedFromWindow(view: RecyclerView?, recycler: RecyclerView.Recycler?) {
+        super.onDetachedFromWindow(view, recycler)
+        if (isScrollingStarted) {
+            Timber.d("TEST SCROLL")
+            view?.adapter?.notifyDataSetChanged()
+            isScrollingStarted = false
+        }
     }
 
 }
