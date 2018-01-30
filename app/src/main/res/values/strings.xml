@@ -34,6 +34,7 @@
     <string name="search_hint">Rechercher une webcam</string>
     <string name="search_title">Rechercher</string>
     <string name="search_result">%d résultats pour</string>
+    <string name="search_result_none">Aucun résultat pour %s </string>
 
     <string name="detail_refresh_menu">Mettre à jour</string>
     <string name="detail_share_menu">Partager</string>

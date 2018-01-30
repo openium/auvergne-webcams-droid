@@ -42,7 +42,7 @@ class FragmentSearch : AbstractFragment() {
 
         oneTimeSubscriptions.add(RxSearchView.queryTextChangeEvents(textViewSearch)
                 .skip(1)
-                .debounce(500, TimeUnit.MILLISECONDS)
+                .debounce(2, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     initSearchAdapter(it.queryText().toString())
@@ -87,8 +87,15 @@ class FragmentSearch : AbstractFragment() {
             recyclerViewSearch.adapter.notifyDataSetChanged()
         }
 
-        if (webcamsAdapter.isEmpty()) {
+        if (webcamsAdapter.isEmpty() && search.isEmpty()) {
             textViewResultSearch.gone()
+        } else if (webcamsAdapter.isEmpty() && !search.isEmpty()) {
+            textViewResultSearch.show()
+            val result = getString(R.string.search_result_none, search)
+            val spannable = SpannableString(result)
+            spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(applicationContext, R.color.white)), 0, result.length - search.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(applicationContext, R.color.blue)), result.length - search.length, result.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+            textViewResultSearch.setText(spannable)
         } else {
             textViewResultSearch.show()
             val nbResult = getString(R.string.search_result, webcamsAdapter.size)
@@ -99,9 +106,9 @@ class FragmentSearch : AbstractFragment() {
         }
     }
 
-    // =================================================================================================================
-    // Overridden
-    // =================================================================================================================
+// =================================================================================================================
+// Overridden
+// =================================================================================================================
 
     override val layoutId: Int
         get() = R.layout.fragment_search
