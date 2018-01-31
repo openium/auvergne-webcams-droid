@@ -61,6 +61,7 @@ class InfiniteScrollAdapter<T : RecyclerView.ViewHolder>(private val wrapped: Re
         val newPosition = (position - currentRangeStart)
 
         if (newPosition == 0) {
+            resetRange(0)
             return 0
         }
         if (newPosition < 0) {
@@ -71,7 +72,10 @@ class InfiniteScrollAdapter<T : RecyclerView.ViewHolder>(private val wrapped: Re
             return 0
         }
         if (newPosition >= wrapped.itemCount) {
-            return getRealRealPosition(position - wrapped.itemCount)
+            val modulo = position % currentRangeStart
+            val resultTemp = modulo / wrapped.itemCount
+            val resultTempTemp = resultTemp * wrapped.itemCount
+            return (position - currentRangeStart) - resultTempTemp
         }
 
         return newPosition
