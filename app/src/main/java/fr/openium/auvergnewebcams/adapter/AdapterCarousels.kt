@@ -48,7 +48,6 @@ class AdapterCarousels(val context: Context,
         heightImage = context.resources.getDimensionPixelOffset(R.dimen.height_image_list)
     }
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WebcamHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_carousel, parent, false)
         return WebcamHolder(view)
