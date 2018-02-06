@@ -31,6 +31,7 @@ abstract class ApplicationBase : Application(), KodeinAware {
         import(Modules.configModule)
         import(Modules.serviceModule)
         import(Modules.restModule)
+        import(Modules.weatherModule)
     }
 
     val refWatcher: RefWatcher by lazy.instance<RefWatcher>()
@@ -62,7 +63,7 @@ abstract class ApplicationBase : Application(), KodeinAware {
         val client = OkHttpClient.Builder()
                 .retryOnConnectionFailure(true)
                 .addInterceptor {
-                   // Timber.e("REQUEST ${it.request().url().toString()}")
+                    // Timber.e("REQUEST ${it.request().url().toString()}")
 
                     val response: Response = it.proceed(it.request())
                     if (response.header("Last-Modified") != null) {

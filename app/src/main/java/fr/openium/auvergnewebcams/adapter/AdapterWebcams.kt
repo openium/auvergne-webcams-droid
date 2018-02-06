@@ -22,6 +22,8 @@ import fr.openium.auvergnewebcams.ext.show
 import fr.openium.auvergnewebcams.injection.GlideApp
 import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.Webcam
+import fr.openium.auvergnewebcams.utils.PreferencesAW
+import fr.openium.auvergnewebcams.utils.WeatherUtils
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.header_list_webcam.view.*
 import kotlinx.android.synthetic.main.item_webcam.view.*
@@ -58,6 +60,12 @@ class AdapterWebcams(val context: Context, var items: List<Webcam>, val listener
             holder?.itemView?.textViewNameSection?.text = hearderSection?.title ?: ""
             holder?.itemView?.textViewNbCameras?.text = String.format(Locale.getDefault(),
                     context.resources.getQuantityString(R.plurals.nb_cameras_format, hearderSection?.webcams?.count() ?: 0, hearderSection?.webcams?.count() ?: 0))
+
+            if (hearderSection!!.weather != null && PreferencesAW.getIfWeatherCouldBeDisplayed(context)) {
+                //Set weather
+                holder?.itemView?.imageViewSectionWeather?.setImageResource(WeatherUtils.weatherImage(hearderSection!!.weather!!.id!!))
+                holder?.itemView?.textViewSectionWeather?.setText(context.getString(R.string.weather_celcius, WeatherUtils.convertKelvinToCelcius(hearderSection!!.weather!!.temp!!)))
+            }
         } else {
             val webcam = items.get(position - if (hearderSection != null) 1 else 0)
             composites.add(Events.eventCameraDateUpdate

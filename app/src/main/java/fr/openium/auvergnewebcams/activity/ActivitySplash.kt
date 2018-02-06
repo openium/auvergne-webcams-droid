@@ -6,17 +6,25 @@ import android.support.v4.app.ActivityOptionsCompat
 import android.view.animation.AnimationUtils
 import com.github.salomonbrys.kodein.instance
 import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.ext.applicationContext
 import fr.openium.auvergnewebcams.ext.hasNetwork
+import fr.openium.auvergnewebcams.ext.toUnixTimestamp
 import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.SectionList
+import fr.openium.auvergnewebcams.model.Weather
 import fr.openium.auvergnewebcams.model.Webcam
+import fr.openium.auvergnewebcams.model.rest.WeatherRest
 import fr.openium.auvergnewebcams.rest.AWApi
+import fr.openium.auvergnewebcams.rest.AWWeatherApi
 import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
+import fr.openium.auvergnewebcams.utils.PreferencesAW
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import io.realm.Realm
+import io.realm.RealmList
 import kotlinx.android.synthetic.main.activity_splash.*
 import retrofit2.adapter.rxjava2.Result
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 /**
@@ -25,6 +33,7 @@ import java.util.concurrent.TimeUnit
 class ActivitySplash : AbstractActivity() {
 
     protected val api: AWApi by kodeinInjector.instance()
+    protected val apiWeather: AWWeatherApi by kodeinInjector.instance()
 
     override val layoutId: Int
         get() = R.layout.activity_splash
@@ -58,21 +67,22 @@ class ActivitySplash : AbstractActivity() {
                                             webcam.isFavoris = webcamDB?.isFavoris ?: false
                                         }
                                     }
+
                                     realm.insertOrUpdate(sections.sections)
+                                    initWeather(sections)
                                 }
                             }
                         } else {
                             loadFromAssets()
                         }
                         true
-                    })
-                    .subscribe(
-                            {
-                                startActivityMain()
-                            },
-                            {
-                                startActivityMain()
-                            }))
+                    }).subscribe(
+                    {
+
+                    },
+                    {
+
+                    }))
 
         } else {
             val getDataObs = Observable
@@ -88,6 +98,53 @@ class ActivitySplash : AbstractActivity() {
             })
         }
 
+    }
+
+    private fun initWeather(sections: SectionList) {
+        val listDisposable = arrayListOf<Observable<Result<WeatherRest>>>()
+        for (section in sections.sections) {
+            listDisposable.add(apiWeather.queryByGeographicCoordinates(section.latitude, section.longitude, getString(R.string.app_weather_id)))
+        }
+
+        PreferencesAW.setLastUpdateWeatherTimestamp(applicationContext, System.currentTimeMillis().toUnixTimestamp())
+
+        if (!listDisposable.isEmpty()) {
+            initWeatherSection(listDisposable, sections.sections, 0)
+        } else {
+            startActivityMain()
+        }
+    }
+
+    private fun initWeatherSection(listObs: List<Observable<Result<WeatherRest>>>, sections: RealmList<Section>, actualPos: Int) {
+        if (sections.get(actualPos)!!.latitude != 0.0 || sections.get(actualPos)!!.longitude != 0.0) {
+            disposables.add(listObs.get(actualPos).doOnComplete {
+                if (listObs.size == actualPos + 1) {
+                    startActivityMain()
+                } else {
+                    initWeatherSection(listObs, sections, actualPos + 1)
+                }
+            }.subscribe({ weatherRest ->
+                if (weatherRest.response() != null) {
+                    val weather = Weather(weatherRest.response()!!.body()?.weather!!.get(0).id!!, weatherRest.response()!!.body()?.main!!.temp!!)
+                    sections.get(actualPos)!!.weather = weather
+                    Realm.getDefaultInstance().use {
+                        it.executeTransaction {
+                            it.insertOrUpdate(sections.get(actualPos)!!)
+                        }
+                    }
+                    Timber.d("Success done")
+                }
+            }, {
+                startActivityMain()
+                Timber.d("Error init weather")
+            }))
+        } else {
+            if (listObs.size == actualPos + 1) {
+                startActivityMain()
+            } else {
+                initWeatherSection(listObs, sections, actualPos + 1)
+            }
+        }
     }
 
     override fun onResume() {

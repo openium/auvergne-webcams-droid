@@ -9,6 +9,8 @@
     <string name="splash_loading_cameras">Chargement des webcams</string>
 
     <string name="url_prod">https://raw.githubusercontent.com/Drusy/auvergne-webcams-ios/master/</string>
+    <string name="url_weather">http://api.openweathermap.org/data/2.5/</string>
+    <string name="app_weather_id">42d33e867dce175dc8e99755ad62b66f</string>
 
     <string name="settings_title">Paramètres</string>
 
@@ -29,6 +31,7 @@
     <string name="url_pirates">http://agencelespirates.com/</string>
     <string name="url_note">market://details?id=%s</string>
 
+    <string name="weather_celcius">%d°C</string>
 
     <string name="transition_search_name">SearchTransition</string>
     <string name="search_hint">Rechercher une webcam</string>

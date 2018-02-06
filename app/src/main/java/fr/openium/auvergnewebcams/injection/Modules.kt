@@ -7,6 +7,7 @@ import com.google.gson.GsonBuilder
 import com.squareup.leakcanary.RefWatcher
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.rest.AWApi
+import fr.openium.auvergnewebcams.rest.AWWeatherApi
 import io.reactivex.schedulers.Schedulers
 import okhttp3.Cache
 import okhttp3.HttpUrl
@@ -58,6 +59,25 @@ object Modules {
 
         bind<AWApi>() with singleton {
             instance<Retrofit>().create(AWApi::class.java)
+        }
+    }
+
+    val weatherModule = Kodein.Module {
+
+        bind<HttpUrl>("weather") with singleton {
+            HttpUrl.parse(instance<Context>().getString(R.string.url_weather))!!
+        }
+
+        bind<Retrofit>("weather") with singleton {
+            Retrofit.Builder()
+                    .baseUrl(instance<HttpUrl>("weather")).client(instance())
+                    .addConverterFactory(GsonConverterFactory.create(instance()))
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
+                    .build()
+        }
+
+        bind<AWWeatherApi>() with singleton {
+            instance<Retrofit>("weather").create(AWWeatherApi::class.java)
         }
     }
 }

@@ -128,17 +128,19 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
         val fileName: String
         val isImage: Boolean
 
-        if (webcam!!.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
-            fileName = String.format("%s_%s.mp4", webcam!!.title
-                    ?: "", System.currentTimeMillis().toString())
-            isImage = false
-        } else {
-            fileName = String.format("%s_%s.jpg", webcam!!.title
-                    ?: "", System.currentTimeMillis().toString())
-            isImage = true
-        }
+        if (context!!.hasNetwork) {
+            if (webcam!!.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
+                fileName = String.format("%s_%s.mp4", webcam!!.title
+                        ?: "", System.currentTimeMillis().toString())
+                isImage = false
+            } else {
+                fileName = String.format("%s_%s.jpg", webcam!!.title
+                        ?: "", System.currentTimeMillis().toString())
+                isImage = true
+            }
 
-        ServiceUploadFile.startServiceUploadFile(applicationContext, urlSrc, isImage, fileName)
+            ServiceUploadFile.startServiceUploadFile(applicationContext, urlSrc, isImage, fileName)
+        }
     }
 
     private fun signalProblem() {
