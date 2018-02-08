@@ -6,14 +6,13 @@ import android.support.v4.app.ActivityOptionsCompat
 import android.view.animation.AnimationUtils
 import com.github.salomonbrys.kodein.instance
 import fr.openium.auvergnewebcams.R
-import fr.openium.auvergnewebcams.ext.applicationContext
+import fr.openium.auvergnewebcams.ext.fromIOToMain
 import fr.openium.auvergnewebcams.ext.hasNetwork
 import fr.openium.auvergnewebcams.ext.toUnixTimestamp
 import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.SectionList
 import fr.openium.auvergnewebcams.model.Weather
 import fr.openium.auvergnewebcams.model.Webcam
-import fr.openium.auvergnewebcams.model.rest.WeatherRest
 import fr.openium.auvergnewebcams.rest.AWApi
 import fr.openium.auvergnewebcams.rest.AWWeatherApi
 import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
@@ -21,11 +20,11 @@ import fr.openium.auvergnewebcams.utils.PreferencesAW
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import io.realm.Realm
-import io.realm.RealmList
 import kotlinx.android.synthetic.main.activity_splash.*
 import retrofit2.adapter.rxjava2.Result
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * Created by laura on 20/03/2017.
@@ -37,6 +36,8 @@ class ActivitySplash : AbstractActivity() {
 
     override val layoutId: Int
         get() = R.layout.activity_splash
+
+    private var nbRemainingRequests: AtomicInteger? = AtomicInteger(0)
 
     // =================================================================================================================
     // Life cycle
@@ -53,6 +54,9 @@ class ActivitySplash : AbstractActivity() {
                                 it.executeTransaction { realm ->
                                     val sections = result.response()!!.body()!!
                                     for (section in sections.sections) {
+
+                                        section.latitude = Math.round(section.latitude * 100.0) / 100.0
+                                        section.longitude = Math.round(section.longitude * 100.0) / 100.0
                                         for (webcam in section.webcams) {
                                             if (webcam.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
                                                 // load media ld
@@ -67,22 +71,21 @@ class ActivitySplash : AbstractActivity() {
                                             webcam.isFavoris = webcamDB?.isFavoris ?: false
                                         }
                                     }
-
                                     realm.insertOrUpdate(sections.sections)
-                                    initWeather(sections)
                                 }
                             }
                         } else {
                             loadFromAssets()
                         }
                         true
-                    }).subscribe(
-                    {
-
-                    },
-                    {
-
-                    }))
+                    })
+                    .subscribe(
+                            {
+                                initWeather()
+                            },
+                            {
+                                initWeather()
+                            }))
 
         } else {
             val getDataObs = Observable
@@ -100,49 +103,46 @@ class ActivitySplash : AbstractActivity() {
 
     }
 
-    private fun initWeather(sections: SectionList) {
-        val listDisposable = arrayListOf<Observable<Result<WeatherRest>>>()
-        for (section in sections.sections) {
-            listDisposable.add(apiWeather.queryByGeographicCoordinates(section.latitude, section.longitude, getString(R.string.app_weather_id)))
-        }
-
+    private fun initWeather() {
+        Timber.d("[INFO] UPDATE Weather")
         PreferencesAW.setLastUpdateWeatherTimestamp(applicationContext, System.currentTimeMillis().toUnixTimestamp())
 
-        if (!listDisposable.isEmpty()) {
-            initWeatherSection(listDisposable, sections.sections, 0)
-        } else {
-            startActivityMain()
-        }
-    }
+        Realm.getDefaultInstance().use {
+            it.executeTransaction { realm ->
+                val sections = realm.where(Section::class.java)
+                        .sort(Section::order.name)
+                        .isNotEmpty(Section::webcams.name)
+                        .findAll()
 
-    private fun initWeatherSection(listObs: List<Observable<Result<WeatherRest>>>, sections: RealmList<Section>, actualPos: Int) {
-        if (sections.get(actualPos)!!.latitude != 0.0 || sections.get(actualPos)!!.longitude != 0.0) {
-            disposables.add(listObs.get(actualPos).doOnComplete {
-                if (listObs.size == actualPos + 1) {
-                    startActivityMain()
-                } else {
-                    initWeatherSection(listObs, sections, actualPos + 1)
-                }
-            }.subscribe({ weatherRest ->
-                if (weatherRest.response() != null) {
-                    val weather = Weather(weatherRest.response()!!.body()?.weather!!.get(0).id!!, weatherRest.response()!!.body()?.main!!.temp!!)
-                    sections.get(actualPos)!!.weather = weather
-                    Realm.getDefaultInstance().use {
-                        it.executeTransaction {
-                            it.insertOrUpdate(sections.get(actualPos)!!)
-                        }
+                for (section in sections) {
+                    if (section.latitude != 0.0 || section.longitude != 0.0) {
+                        nbRemainingRequests!!.incrementAndGet()
                     }
-                    Timber.d("Success done")
                 }
-            }, {
-                startActivityMain()
-                Timber.d("Error init weather")
-            }))
-        } else {
-            if (listObs.size == actualPos + 1) {
-                startActivityMain()
-            } else {
-                initWeatherSection(listObs, sections, actualPos + 1)
+
+                for (i in 0..sections.size - 1) {
+                    if (sections.get(i)!!.latitude != 0.0 || sections.get(i)!!.longitude != 0.0) {
+                        disposables.add(apiWeather.queryByGeographicCoordinates(sections.get(i)!!.latitude, sections.get(i)!!.longitude, getString(R.string.app_weather_id)).fromIOToMain().subscribe({ weatherRest ->
+                            Realm.getDefaultInstance().use {
+                                if (weatherRest.response() != null) {
+                                    it.executeTransaction {
+                                        it.where(Weather::class.java).equalTo(Weather::lat.name, weatherRest.response()!!.body()!!.coord!!.lat).equalTo(Weather::lon.name, weatherRest.response()!!.body()!!.coord!!.lon).findAll().deleteAllFromRealm()
+
+                                        val weather = Weather(weatherRest.response()!!.body()?.weather!!.get(0).id!!, weatherRest.response()!!.body()?.main!!.temp!!, weatherRest.response()!!.body()!!.coord!!.lon!!, weatherRest.response()!!.body()!!.coord!!.lat!!)
+                                        it.insertOrUpdate(weather)
+
+                                        nbRemainingRequests!!.decrementAndGet()
+                                        if (nbRemainingRequests!!.get() == 0) {
+                                            startActivityMain()
+                                        }
+                                    }
+                                }
+                            }
+                        }, { e ->
+                            Timber.e("Error init weather ${e.message}")
+                        }))
+                    }
+                }
             }
         }
     }

@@ -97,23 +97,6 @@ object PreferencesAW {
     // WEATHER
     // --------------------------------------- //
 
-    fun getLastUpdateWeatherTimestamp(context: Context): Long {
-        var lastUpdate = 0L
-        lastUpdate = getLastUpdateWeatherTimestampPreference(context)
-        if (lastUpdate == -1L) {
-            lastUpdate = System.currentTimeMillis().toUnixTimestamp()
-            setLastUpdateWeatherTimestamp(context, lastUpdate)
-        } else {
-            val delayRefreshInSec = getWeatherDelayRefreshValue()
-            val diff = System.currentTimeMillis().toUnixTimestamp() - lastUpdate
-            if (diff > delayRefreshInSec) {
-                lastUpdate = System.currentTimeMillis().toUnixTimestamp()
-                setLastUpdateWeatherTimestamp(context, lastUpdate)
-            }
-        }
-        return lastUpdate
-    }
-
     private fun getLastUpdateWeatherTimestampPreference(context: Context): Long {
         val preferencesManager = PreferenceManager.getDefaultSharedPreferences(context)
         return preferencesManager.getLong(KEY_WEATHER_LAST_UPDATE_TIMESTAMP, -1L)

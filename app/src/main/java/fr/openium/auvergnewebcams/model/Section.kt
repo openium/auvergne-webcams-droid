@@ -10,6 +10,6 @@ import io.realm.annotations.RealmClass
  */
 @RealmClass
 open class Section(@PrimaryKey var uid: Long = 0, var order: Int = 0, var title: String? = null, var imageName: String? = null, var latitude: Double = 0.0, var longitude: Double = 0.0,
-                   var webcams: RealmList<Webcam> = RealmList(), var weather: Weather? = null) : RealmObject() {
+                   var webcams: RealmList<Webcam> = RealmList()) : RealmObject() {
 
 }

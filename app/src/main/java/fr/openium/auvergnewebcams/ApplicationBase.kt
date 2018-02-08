@@ -2,6 +2,7 @@ package fr.openium.auvergnewebcams
 
 import android.app.Application
 import android.content.Context
+import android.support.multidex.MultiDexApplication
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
 import com.github.piasy.biv.BigImageViewer
@@ -24,7 +25,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-abstract class ApplicationBase : Application(), KodeinAware {
+abstract class ApplicationBase : MultiDexApplication(), KodeinAware {
     override val kodein by Kodein.lazy {
 
         bind<Context>() with singleton { applicationContext }

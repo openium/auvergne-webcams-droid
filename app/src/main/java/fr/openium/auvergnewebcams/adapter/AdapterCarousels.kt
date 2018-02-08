@@ -17,10 +17,12 @@ import fr.openium.auvergnewebcams.carousel.transform.ScaleTransformer
 import fr.openium.auvergnewebcams.ext.gone
 import fr.openium.auvergnewebcams.ext.show
 import fr.openium.auvergnewebcams.model.Section
+import fr.openium.auvergnewebcams.model.Weather
 import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.utils.PreferencesAW
 import fr.openium.auvergnewebcams.utils.WeatherUtils
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.realm.Realm
 import kotlinx.android.synthetic.main.header_list_webcam.view.*
 import kotlinx.android.synthetic.main.item_carousel.view.*
@@ -38,11 +40,14 @@ class AdapterCarousels(val context: Context,
                        val composites: CompositeDisposable,
                        var sectionFavoris: Section,
                        val listenerSectionClick: ((Section) -> Unit),
-                       var lastUpdate: Long) : RecyclerView.Adapter<AdapterCarousels.WebcamHolder>() {
+                       var lastUpdate: Long,
+                       var oneTimeSubscriptions: CompositeDisposable,
+                       var realm: Realm) : RecyclerView.Adapter<AdapterCarousels.WebcamHolder>() {
 
     private val heightImage: Int
     private var positionsAdapters = HashMap<Long, Int>()
     private var listeners = LongSparseArray<DiscreteScrollView.OnItemSelectedListener>()
+    private var subs = HashMap<Long, Disposable>()
 
     init {
         heightImage = context.resources.getDimensionPixelOffset(R.dimen.height_image_list)
@@ -107,10 +112,12 @@ class AdapterCarousels(val context: Context,
             val nbWebCams = String.format(Locale.getDefault(), context.resources.getQuantityString(R.plurals.nb_cameras_format, item.webcams.count(), item.webcams.count()))
             holder.mTextViewNbCameras.text = nbWebCams
 
-            if (item.weather != null && PreferencesAW.getIfWeatherCouldBeDisplayed(context)) {
+            //Weather
+            val weather = realm.where(Weather::class.java).equalTo(Weather::lat.name, item.latitude).equalTo(Weather::lon.name, item.longitude).findFirst()
+            if (weather != null && PreferencesAW.getIfWeatherCouldBeDisplayed(context)) {
                 //Set weather
-                holder.itemView?.imageViewSectionWeather?.setImageResource(WeatherUtils.weatherImage(item.weather!!.id!!))
-                holder.itemView?.textViewSectionWeather?.setText(context.getString(R.string.weather_celcius, WeatherUtils.convertKelvinToCelcius(item.weather!!.temp!!)))
+                holder.itemView?.imageViewSectionWeather?.setImageResource(WeatherUtils.weatherImage(weather.id!!))
+                holder.itemView?.textViewSectionWeather?.setText(context.getString(R.string.weather_celcius, WeatherUtils.convertKelvinToCelcius(weather.temp!!)))
             }
 
             holder.itemView.setOnClickListener {
@@ -159,10 +166,10 @@ class AdapterCarousels(val context: Context,
                         positionAdapter = existingPos
                     } else {
                         positionAdapter = holder.scrollView.currentItem
-                        Timber.d("Real posAdapter put in post $positionAdapter")
+                        //Timber.d("Real posAdapter put in post $positionAdapter")
                         positionsAdapters.put(item!!.uid, positionAdapter)
                     }
-                    Timber.d("Real posAdapter get $positionAdapter")
+                    //Timber.d("Real posAdapter get $positionAdapter")
 
                     val realPos = (holder.scrollView.adapter as InfiniteScrollAdapter).getRealPosition(positionAdapter)
                     //Timber.d("Real pos get $realPos")
@@ -173,12 +180,30 @@ class AdapterCarousels(val context: Context,
                         holder.mTextViewNameWebcam.setText("")
                     }
                     holder.scrollView.post {
-                        Timber.d("Real posAdapter get $positionAdapter")
+                        //Timber.d("Real posAdapter get $positionAdapter")
                         holder.scrollView.layoutManager.scrollToPosition(positionAdapter)
                     }
                 }
             }
 
+            if (item!!.latitude != 0.0 && item!!.longitude != 0.0) {
+                if (subs.get(item!!.uid) == null) {
+                    subs.put(item!!.uid, realm.where(Weather::class.java).equalTo(Weather::lat.name, item!!.latitude).equalTo(Weather::lon.name, item!!.longitude).findAll().asChangesetObservable().subscribe({
+                        if (it.collection.isNotEmpty()) {
+                            val newWeather = it.collection.first()
+
+                            if (newWeather != null && PreferencesAW.getIfWeatherCouldBeDisplayed(context)) {
+                                //Set weather
+                                holder.itemView?.imageViewSectionWeather?.setImageResource(WeatherUtils.weatherImage(newWeather.id!!))
+                                holder.itemView?.textViewSectionWeather?.setText(context.getString(R.string.weather_celcius, WeatherUtils.convertKelvinToCelcius(newWeather.temp!!)))
+                            }
+                        }
+                    }, { e ->
+                        Timber.e("ERROR ${e.message}")
+                    }))
+                    oneTimeSubscriptions.add(subs.get(item!!.uid)!!)
+                }
+            }
         }
     }
 

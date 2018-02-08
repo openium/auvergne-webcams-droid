@@ -24,7 +24,7 @@ object WeatherUtils {
     }
 
     fun convertKelvinToCelcius(temp: Float): Int {
-        return (temp - 273.15f).toInt()
+        return Math.round(temp - 273.15f)
     }
 
 }

@@ -81,7 +81,7 @@ class FragmentSearch : AbstractFragment() {
                 }
                 val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
                 startActivity(intent, bundle)
-            }, oneTimeSubscriptions)
+            }, oneTimeSubscriptions, realm = realm!!)
         } else {
             (recyclerViewSearch.adapter as AdapterWebcams).items = webcamsAdapter
             recyclerViewSearch.adapter.notifyDataSetChanged()

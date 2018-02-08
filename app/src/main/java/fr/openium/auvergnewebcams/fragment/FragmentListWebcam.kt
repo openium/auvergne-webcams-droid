@@ -87,7 +87,7 @@ class FragmentListWebcam : AbstractFragment() {
                     }
                     val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
                     startActivity(intent, bundle)
-                }, oneTimeSubscriptions, section)
+                }, oneTimeSubscriptions, section, realm!!)
             } else {
                 (recyclerView.adapter as AdapterWebcams).items = webcamsAdapter
                 (recyclerView.adapter as AdapterWebcams).hearderSection = section

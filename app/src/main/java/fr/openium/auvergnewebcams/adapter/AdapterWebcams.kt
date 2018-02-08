@@ -21,10 +21,12 @@ import fr.openium.auvergnewebcams.ext.gone
 import fr.openium.auvergnewebcams.ext.show
 import fr.openium.auvergnewebcams.injection.GlideApp
 import fr.openium.auvergnewebcams.model.Section
+import fr.openium.auvergnewebcams.model.Weather
 import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.utils.PreferencesAW
 import fr.openium.auvergnewebcams.utils.WeatherUtils
 import io.reactivex.disposables.CompositeDisposable
+import io.realm.Realm
 import kotlinx.android.synthetic.main.header_list_webcam.view.*
 import kotlinx.android.synthetic.main.item_webcam.view.*
 import java.util.*
@@ -32,7 +34,7 @@ import java.util.*
 /**
  * Created by laura on 05/12/2017.
  */
-class AdapterWebcams(val context: Context, var items: List<Webcam>, val listener: ((Webcam) -> Unit)? = null, val composites: CompositeDisposable, var hearderSection: Section? = null) : RecyclerView.Adapter<AdapterWebcams.ViewHolder>() {
+class AdapterWebcams(val context: Context, var items: List<Webcam>, val listener: ((Webcam) -> Unit)? = null, val composites: CompositeDisposable, var hearderSection: Section? = null, val realm: Realm) : RecyclerView.Adapter<AdapterWebcams.ViewHolder>() {
 
     val heightImage: Int
     val widthScreen: Int
@@ -61,10 +63,12 @@ class AdapterWebcams(val context: Context, var items: List<Webcam>, val listener
             holder?.itemView?.textViewNbCameras?.text = String.format(Locale.getDefault(),
                     context.resources.getQuantityString(R.plurals.nb_cameras_format, hearderSection?.webcams?.count() ?: 0, hearderSection?.webcams?.count() ?: 0))
 
-            if (hearderSection!!.weather != null && PreferencesAW.getIfWeatherCouldBeDisplayed(context)) {
+            //Weather
+            val weather = realm.where(Weather::class.java).equalTo(Weather::lat.name, hearderSection!!.latitude).equalTo(Weather::lon.name, hearderSection!!.longitude).findFirst()
+            if (weather != null && PreferencesAW.getIfWeatherCouldBeDisplayed(context)) {
                 //Set weather
-                holder?.itemView?.imageViewSectionWeather?.setImageResource(WeatherUtils.weatherImage(hearderSection!!.weather!!.id!!))
-                holder?.itemView?.textViewSectionWeather?.setText(context.getString(R.string.weather_celcius, WeatherUtils.convertKelvinToCelcius(hearderSection!!.weather!!.temp!!)))
+                holder?.itemView?.imageViewSectionWeather?.setImageResource(WeatherUtils.weatherImage(weather!!.id!!))
+                holder?.itemView?.textViewSectionWeather?.setText(context.getString(R.string.weather_celcius, WeatherUtils.convertKelvinToCelcius(weather!!.temp!!)))
             }
         } else {
             val webcam = items.get(position - if (hearderSection != null) 1 else 0)
