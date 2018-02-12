@@ -1,0 +1,94 @@
+{
+  "project_info": {
+    "project_number": "288038948917",
+    "firebase_url": "https://auvergne-webcams.firebaseio.com",
+    "project_id": "auvergne-webcams",
+    "storage_bucket": "auvergne-webcams.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:288038948917:android:31923c88009f9c4c",
+        "android_client_info": {
+          "package_name": "fr.openium.auvergnewebcams"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "288038948917-3dadtuo23i85st0gvtg9mqgjcsh4shni.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKBY1NEsLN1HqhwrF3S64nh34p27eFtMo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:288038948917:android:4a5ce7c9f2338a55",
+        "android_client_info": {
+          "package_name": "fr.openium.auvergnewebcams.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "288038948917-epcc137hhgqh6imknl3hdb9n834fkv0m.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "fr.openium.auvergnewebcams.debug",
+            "certificate_hash": "e578d121ab4e84f6085ff9e0efa806c5e1d2946d"
+          }
+        },
+        {
+          "client_id": "288038948917-3dadtuo23i85st0gvtg9mqgjcsh4shni.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCKBY1NEsLN1HqhwrF3S64nh34p27eFtMo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "288038948917-npjc592ckqp9bmbtjma5rk4fhc0a7t1q.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "fr.openium.AuvergneWebcams",
+                "app_store_id": "1183930829"
+              }
+            },
+            {
+              "client_id": "288038948917-3dadtuo23i85st0gvtg9mqgjcsh4shni.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

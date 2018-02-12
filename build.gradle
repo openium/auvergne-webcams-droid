@@ -15,6 +15,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "io.realm:realm-gradle-plugin:4.3.1"
         classpath 'fr.openium:version-plugin:1.2'
+        classpath 'com.google.gms:google-services:3.1.1'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -27,6 +28,9 @@ allprojects {
         google()
         maven {
             url "http://dl.bintray.com/piasy/maven"
+        }
+        maven {
+            url "https://maven.google.com" // Google's Maven repository
         }
 //        maven { url 'http://dl.bintray.com/kotlin/kotlin-eap' }
     }

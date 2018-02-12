@@ -11,6 +11,7 @@ import fr.openium.auvergnewebcams.activity.ActivitySettingsAbout
 import fr.openium.auvergnewebcams.dialog.NumberPickerDialog
 import fr.openium.auvergnewebcams.event.Events
 import fr.openium.auvergnewebcams.ext.*
+import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import fr.openium.auvergnewebcams.utils.PreferencesAW
 import kotlinx.android.synthetic.main.fragment_settings.*
 import timber.log.Timber
@@ -27,6 +28,18 @@ class FragmentSettings : AbstractFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        //Refresh auto
+        switch_refresh_delay.setOnCheckedChangeListener { _, isChecked ->
+            PreferencesAW.setWebcamsDelayRefreshActive(applicationContext, isChecked)
+            showDelayRefresh(isChecked)
+
+            //Analytics
+            AnalyticsUtils.setUserPropertiesRefreshPreferences(context!!, isChecked)
+        }
+
+        switch_refresh_delay.isChecked = PreferencesAW.isWebcamsDelayRefreshActive(applicationContext)
+        showDelayRefresh(PreferencesAW.isWebcamsDelayRefreshActive(applicationContext))
+
         oneTimeSubscriptions.add(Events.eventNewValueDelay
                 .obs
                 .fromIOToMain()
@@ -34,32 +47,14 @@ class FragmentSettings : AbstractFragment() {
                     if (isAlive) {
                         PreferencesAW.setWebcamsDelayRefreshValue(applicationContext, it)
                         textview_delay_value.text = it.toString()
+
+                        //Analytics
+                        AnalyticsUtils.setUserPropertiesRefreshIntervalPreferences(context!!, it)
                     }
                 })
 
-        initVersion()
-        textview_about.setOnClickListener {
-            val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
-            startActivity(Intent(applicationContext, ActivitySettingsAbout::class.java), bundle)
-        }
-        textview_openium.setOnClickListener { startActivityForUrl(getString(R.string.url_openium)) }
-        textview_pirates.setOnClickListener { startActivityForUrl(getString(R.string.url_pirates)) }
-        textview_note.setOnClickListener { startActivityForUrl(getString(R.string.url_note, applicationContext.packageName)) }
-
-        switch_quality_webcams.isChecked = PreferencesAW.isWebcamsHighQuality(applicationContext)
-        switch_quality_webcams.setOnCheckedChangeListener { _, isChecked ->
-            PreferencesAW.setWebcamsHighQuality(applicationContext, isChecked)
-        }
-
-        switch_refresh_delay.isChecked = PreferencesAW.isWebcamsDelayRefreshActive(applicationContext)
-        showDelayRefresh(PreferencesAW.isWebcamsDelayRefreshActive(applicationContext))
-
+        //Delay of auto refresh
         textview_delay_value.text = PreferencesAW.getWebcamsDelayRefreshValue(applicationContext).toString()
-
-        switch_refresh_delay.setOnCheckedChangeListener { _, isChecked ->
-            PreferencesAW.setWebcamsDelayRefreshActive(applicationContext, isChecked)
-            showDelayRefresh(isChecked)
-        }
 
         linearlayout_delay_refresh.setOnClickListener {
             val numberPickerDialog = NumberPickerDialog.newInstance(PreferencesAW.getWebcamsDelayRefreshValue(applicationContext))
@@ -67,6 +62,47 @@ class FragmentSettings : AbstractFragment() {
                     .add(numberPickerDialog, "dialog_picker")
                     .commitAllowingStateLoss()
         }
+
+        //Quality of webcams
+        switch_quality_webcams.isChecked = PreferencesAW.isWebcamsHighQuality(applicationContext)
+        switch_quality_webcams.setOnCheckedChangeListener { _, isChecked ->
+            PreferencesAW.setWebcamsHighQuality(applicationContext, isChecked)
+            if (isChecked) {
+                AnalyticsUtils.setUserPropertiesWebcamQualityPreferences(context!!, "high")
+            } else {
+                AnalyticsUtils.setUserPropertiesWebcamQualityPreferences(context!!, "low")
+            }
+        }
+
+        //Other info about Auvergne Webcam
+        textview_about.setOnClickListener {
+            //Analytics
+            AnalyticsUtils.buttonAboutClicked(context!!)
+
+            val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
+            startActivity(Intent(applicationContext, ActivitySettingsAbout::class.java), bundle)
+        }
+        textview_openium.setOnClickListener {
+            //Analytics
+            AnalyticsUtils.buttonWebsiteOpeniumClicked(context!!)
+
+            startActivityForUrl(getString(R.string.url_openium))
+        }
+        textview_pirates.setOnClickListener {
+            //Analytics
+            AnalyticsUtils.buttonLesPiratesClicked(context!!)
+
+            startActivityForUrl(getString(R.string.url_pirates))
+        }
+        textview_note.setOnClickListener {
+            //Analytics
+            AnalyticsUtils.buttonRateAppClicked(context!!)
+
+            startActivityForUrl(getString(R.string.url_note, applicationContext.packageName))
+        }
+
+        //Init version
+        initVersion()
     }
 
     // =================================================================================================================

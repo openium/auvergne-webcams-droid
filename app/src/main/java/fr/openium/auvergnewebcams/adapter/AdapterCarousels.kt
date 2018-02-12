@@ -87,13 +87,8 @@ class AdapterCarousels(val context: Context,
             holder.mImageViewSection.show()
             holder.mLinearLayoutSection.show()
             holder.scrollView.show()
-            if (!isFav) {
-                holder.mImageViewSectionWeather.show()
-                holder.mTextViewSectionWeather.show()
-            } else {
-                holder.mImageViewSectionWeather.gone()
-                holder.mTextViewSectionWeather.gone()
-            }
+            holder.mImageViewSectionWeather.show()
+            holder.mTextViewSectionWeather.show()
 
             val section = item.title
 
@@ -118,6 +113,9 @@ class AdapterCarousels(val context: Context,
                 //Set weather
                 holder.itemView?.imageViewSectionWeather?.setImageResource(WeatherUtils.weatherImage(weather.id!!))
                 holder.itemView?.textViewSectionWeather?.setText(context.getString(R.string.weather_celcius, WeatherUtils.convertKelvinToCelcius(weather.temp!!)))
+            } else {
+                holder.mImageViewSectionWeather.gone()
+                holder.mTextViewSectionWeather.gone()
             }
 
             holder.itemView.setOnClickListener {

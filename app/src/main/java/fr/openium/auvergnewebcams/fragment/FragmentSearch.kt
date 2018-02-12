@@ -17,6 +17,7 @@ import fr.openium.auvergnewebcams.ext.applicationContext
 import fr.openium.auvergnewebcams.ext.gone
 import fr.openium.auvergnewebcams.ext.show
 import fr.openium.auvergnewebcams.model.Webcam
+import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.android.synthetic.main.fragment_search.*
 import timber.log.Timber
@@ -46,6 +47,17 @@ class FragmentSearch : AbstractFragment() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     initSearchAdapter(it.queryText().toString())
+                }, { error ->
+                    Timber.e(error)
+                }))
+
+        oneTimeSubscriptions.add(RxSearchView.queryTextChangeEvents(textViewSearch)
+                .skip(1)
+                .debounce(1000, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    //Analytics
+                    AnalyticsUtils.searchRequestDone(context!!, it.queryText().toString())
                 }, { error ->
                     Timber.e(error)
                 }))

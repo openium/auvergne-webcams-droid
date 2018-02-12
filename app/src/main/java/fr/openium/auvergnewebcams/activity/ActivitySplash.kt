@@ -45,6 +45,7 @@ class ActivitySplash : AbstractActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         if (applicationContext.hasNetwork) {
             disposables.add(Observable.zip(Observable.timer(2, TimeUnit.SECONDS), api.getSections(),
                     BiFunction

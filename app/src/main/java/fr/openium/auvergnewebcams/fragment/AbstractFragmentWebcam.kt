@@ -18,6 +18,7 @@ import fr.openium.auvergnewebcams.event.Events
 import fr.openium.auvergnewebcams.ext.*
 import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.service.ServiceUploadFile
+import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import fr.openium.auvergnewebcams.utils.DateUtils
 import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
 import io.reactivex.Observable
@@ -92,15 +93,27 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if (item?.itemId == R.id.menu_refresh) {
+            //Analytics
+            AnalyticsUtils.webcamDetailRefreshed(context!!)
+
             getLastPictureOrVideoOfWebcam()
             return true
         } else if (item?.itemId == R.id.menu_share) {
+            //Analytics
+            AnalyticsUtils.buttonShareWebcamClicked(context!!)
+
             shareWebCam()
             return true
         } else if (item?.itemId == R.id.menu_save) {
+            //Analytics
+            AnalyticsUtils.buttonSaveWebcamClicked(context!!)
+
             checkPermissionSaveFile()
             return true
         } else if (item?.itemId == R.id.menu_signal_problem) {
+            //Analytics
+            AnalyticsUtils.buttonSignalProblemClicked(context!!)
+
             signalProblem()
             return true
         }
@@ -210,6 +223,9 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
                         webcam?.isFavoris = true
                     }
                     Events.eventCameraFavoris.set(webcam?.uid ?: -1L)
+
+                    //Analytics
+                    AnalyticsUtils.buttonFavoriteClicked(context!!, webcam?.title!!, true)
                 }
 
                 override fun unLiked(likeButton: LikeButton) {
@@ -217,6 +233,9 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
                         webcam?.isFavoris = false
                     }
                     Events.eventCameraFavoris.set(webcam?.uid ?: -1L)
+
+                    //Analytics
+                    AnalyticsUtils.buttonFavoriteClicked(context!!, webcam?.title!!, false)
                 }
             })
         }

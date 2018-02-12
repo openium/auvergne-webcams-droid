@@ -7,8 +7,10 @@ import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.crashlytics.android.answers.Answers
 import com.github.salomonbrys.kodein.KodeinInjector
 import com.github.salomonbrys.kodein.android.appKodein
+import com.google.firebase.analytics.FirebaseAnalytics
 import io.reactivex.disposables.CompositeDisposable
 import io.realm.Realm
 
@@ -20,6 +22,9 @@ abstract class AbstractFragment : Fragment() {
 
     protected var isAlive: Boolean = false
     protected var realm: Realm? = null
+
+    protected var mFirebaseAnalytics: FirebaseAnalytics? = null
+    protected var mAnswersAnalytics: Answers? = null
 
     open protected val customToolbarFragment: Toolbar? = null
 
@@ -37,6 +42,9 @@ abstract class AbstractFragment : Fragment() {
         super.onAttach(context)
         realm = Realm.getDefaultInstance()
         isAlive = true
+        // Obtain the FirebaseAnalytics instance.
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(context)
+        mAnswersAnalytics = Answers.getInstance()
         kodeinInjector.inject(appKodein())
     }
 

@@ -24,6 +24,7 @@ import fr.openium.auvergnewebcams.model.Weather
 import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.rest.AWApi
 import fr.openium.auvergnewebcams.rest.AWWeatherApi
+import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
 import fr.openium.auvergnewebcams.utils.PreferencesAW
 import io.reactivex.Observable
@@ -60,6 +61,9 @@ class FragmentCarouselWebcam : AbstractFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        sendAllAnalyticsData()
+
         setHasOptionsMenu(true)
     }
 
@@ -74,6 +78,9 @@ class FragmentCarouselWebcam : AbstractFragment() {
             positionAdapters = (listKeyPos.zip(listValuePos.toList()).toMap() as HashMap<Long, Int>)
         }
         textViewSearch.setOnClickListener {
+            //Analytics
+            AnalyticsUtils.buttonSearchClicked(context!!)
+
             val intent = Intent(applicationContext, ActivitySearch::class.java)
             if (activity?.isLollipopOrMore() == true) {
                 val transitionName = getString(R.string.transition_search_name)
@@ -88,6 +95,10 @@ class FragmentCarouselWebcam : AbstractFragment() {
 
         swipeRefreshLayoutWebcams.setOnRefreshListener {
             position = 0
+
+            //Analytics
+            AnalyticsUtils.buttonHomeRefreshed(context!!)
+
             manageRefreshWebcams()
         }
 
@@ -125,6 +136,9 @@ class FragmentCarouselWebcam : AbstractFragment() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if (item?.itemId == R.id.menu_settings) {
+            //Analytics
+            AnalyticsUtils.buttonSettingsClicked(context!!)
+
             val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
             startActivity(Intent(applicationContext, ActivitySettings::class.java), bundle)
             return true
@@ -255,8 +269,14 @@ class FragmentCarouselWebcam : AbstractFragment() {
             if (recyclerView.adapter == null) {
                 recyclerView.layoutManager = LinearLayoutManager(context)
                 recyclerView.adapter = AdapterCarousels(context!!, { webcam, _ ->
+                    //Analytics
+                    AnalyticsUtils.selectWebcamDetails(context!!, webcam.title!!)
+
                     startActivityDetailCamera(webcam)
                 }, sections, composites = oneTimeSubscriptions, sectionFavoris = sectionFavoris, listenerSectionClick = { section ->
+                    //Analytics
+                    AnalyticsUtils.selectSectionDetails(context!!, section.title!!)
+
                     startActivity<ActivityListWebcam>(ActivityListWebcam.getBundle(section.uid))
                 }, lastUpdate = lastUpdate, oneTimeSubscriptions = oneTimeSubscriptions, realm = realm!!)
 
@@ -318,6 +338,12 @@ class FragmentCarouselWebcam : AbstractFragment() {
         }
         val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
         startActivity(intent, bundle)
+    }
+
+    private fun sendAllAnalyticsData() {
+        //Analytics
+        AnalyticsUtils.appIsOpen(context!!)
+        AnalyticsUtils.sendAllUserPreferences(context!!)
     }
 
 }
