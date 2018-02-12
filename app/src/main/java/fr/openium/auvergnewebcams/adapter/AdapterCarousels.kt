@@ -60,10 +60,8 @@ class AdapterCarousels(val context: Context,
 
     override fun onBindViewHolder(holder: WebcamHolder, position: Int) {
         var item: Section?
-        var isFav = false
         if (position == 0) {
             item = sectionFavoris
-            isFav = true
         } else {
             item = items.get(position - 1)
         }
@@ -126,80 +124,93 @@ class AdapterCarousels(val context: Context,
                 }
             }
 
-            val adapter = AdapterWebcamsCarousel(context, listener, item, composites, lastUpdate)
-            val infiniteAdapter = InfiniteScrollAdapter.wrap(adapter)
-            holder.scrollView.adapter = infiniteAdapter
+            //If there is no more webcams that can be shown
+            if (item.webcams.isEmpty()) {
+                holder.mTextViewNameSection.gone()
+                holder.mTextViewNameWebcam.gone()
+                holder.mTextViewNbCameras.gone()
+                holder.mTextViewNbCamerasArrow.gone()
+                holder.mImageViewSection.gone()
+                holder.mLinearLayoutSection.gone()
+                holder.scrollView.gone()
+                holder.mImageViewSectionWeather.gone()
+                holder.mTextViewSectionWeather.gone()
+            } else {
+                val adapter = AdapterWebcamsCarousel(context, listener, item.webcams, composites, lastUpdate)
+                val infiniteAdapter = InfiniteScrollAdapter.wrap(adapter)
+                holder.scrollView.adapter = infiniteAdapter
 
-            val listener: DiscreteScrollView.OnItemSelectedListener
-            listener = object : DiscreteScrollView.OnItemSelectedListener {
-                override fun onItemSelectedChanged(position: Int) {
+                val listener: DiscreteScrollView.OnItemSelectedListener
+                listener = object : DiscreteScrollView.OnItemSelectedListener {
+                    override fun onItemSelectedChanged(position: Int) {
 //                        Timber.d("addItemSelectedListener ${item.uid}  newPosition: $position")
-                    Timber.d("Real posAdapter put in listener $position")
-                    positionsAdapters.put(item!!.uid, position)
+                        Timber.d("Real posAdapter put in listener $position")
+                        positionsAdapters.put(item!!.uid, position)
 
-                    val realPosition = (holder.scrollView.adapter as InfiniteScrollAdapter).getRealPosition(position)
-                    if (realPosition >= 0 && item!!.webcams.size > realPosition) {
-                        val name = item!!.webcams[realPosition]!!.title
-                        holder.mTextViewNameWebcam.setText(name)
-                    } else {
-                        holder.mTextViewNameWebcam.setText("")
-                    }
-                }
-            }
-            listeners.put(item.uid, listener)
-            holder.scrollView.setItemSelectedListener(listener)
-
-            holder.scrollView.post {
-                if (!item!!.isValid) {
-                    Realm.getDefaultInstance().use {
-                        it.executeTransaction {
-                            item = it.where(Section::class.java).equalTo(Section::uid.name, uid).findFirst()
+                        val realPosition = (holder.scrollView.adapter as InfiniteScrollAdapter).getRealPosition(position)
+                        if (realPosition >= 0 && item!!.webcams.size > realPosition) {
+                            val name = item!!.webcams[realPosition]!!.title
+                            holder.mTextViewNameWebcam.setText(name)
+                        } else {
+                            holder.mTextViewNameWebcam.setText("")
                         }
                     }
                 }
-                if (item != null) {
-                    val positionAdapter: Int
-                    val existingPos = positionsAdapters.get(item!!.uid)
-                    if (existingPos != null) {
-                        positionAdapter = existingPos
-                    } else {
-                        positionAdapter = holder.scrollView.currentItem
-                        //Timber.d("Real posAdapter put in post $positionAdapter")
-                        positionsAdapters.put(item!!.uid, positionAdapter)
-                    }
-                    //Timber.d("Real posAdapter get $positionAdapter")
+                listeners.put(item.uid, listener)
+                holder.scrollView.setItemSelectedListener(listener)
 
-                    val realPos = (holder.scrollView.adapter as InfiniteScrollAdapter).getRealPosition(positionAdapter)
-                    //Timber.d("Real pos get $realPos")
-                    if (realPos >= 0 && item!!.webcams.size > realPos) {
-                        val name = item!!.webcams[realPos]!!.title
-                        holder.mTextViewNameWebcam.setText(name)
-                    } else {
-                        holder.mTextViewNameWebcam.setText("")
-                    }
-                    holder.scrollView.post {
-                        //Timber.d("Real posAdapter get $positionAdapter")
-                        holder.scrollView.layoutManager.scrollToPosition(positionAdapter)
-                    }
-                }
-            }
-
-            if (item!!.latitude != 0.0 && item!!.longitude != 0.0) {
-                if (subs.get(item!!.uid) == null) {
-                    subs.put(item!!.uid, realm.where(Weather::class.java).equalTo(Weather::lat.name, item!!.latitude).equalTo(Weather::lon.name, item!!.longitude).findAll().asChangesetObservable().subscribe({
-                        if (it.collection.isNotEmpty()) {
-                            val newWeather = it.collection.first()
-
-                            if (newWeather != null && PreferencesAW.getIfWeatherCouldBeDisplayed(context)) {
-                                //Set weather
-                                holder.itemView?.imageViewSectionWeather?.setImageResource(WeatherUtils.weatherImage(newWeather.id!!))
-                                holder.itemView?.textViewSectionWeather?.setText(context.getString(R.string.weather_celcius, WeatherUtils.convertKelvinToCelcius(newWeather.temp!!)))
+                holder.scrollView.post {
+                    if (!item!!.isValid) {
+                        Realm.getDefaultInstance().use {
+                            it.executeTransaction {
+                                item = it.where(Section::class.java).equalTo(Section::uid.name, uid).findFirst()
                             }
                         }
-                    }, { e ->
-                        Timber.e("ERROR ${e.message}")
-                    }))
-                    oneTimeSubscriptions.add(subs.get(item!!.uid)!!)
+                    }
+                    if (item != null) {
+                        val positionAdapter: Int
+                        val existingPos = positionsAdapters.get(item!!.uid)
+                        if (existingPos != null) {
+                            positionAdapter = existingPos
+                        } else {
+                            positionAdapter = holder.scrollView.currentItem
+                            //Timber.d("Real posAdapter put in post $positionAdapter")
+                            positionsAdapters.put(item!!.uid, positionAdapter)
+                        }
+                        //Timber.d("Real posAdapter get $positionAdapter")
+
+                        val realPos = (holder.scrollView.adapter as InfiniteScrollAdapter).getRealPosition(positionAdapter)
+                        //Timber.d("Real pos get $realPos")
+                        if (realPos >= 0 && item!!.webcams.size > realPos) {
+                            val name = item!!.webcams[realPos]!!.title
+                            holder.mTextViewNameWebcam.setText(name)
+                        } else {
+                            holder.mTextViewNameWebcam.setText("")
+                        }
+                        holder.scrollView.post {
+                            //Timber.d("Real posAdapter get $positionAdapter")
+                            holder.scrollView.layoutManager.scrollToPosition(positionAdapter)
+                        }
+                    }
+                }
+
+                if (item!!.latitude != 0.0 && item!!.longitude != 0.0) {
+                    if (subs.get(item!!.uid) == null) {
+                        subs.put(item!!.uid, realm.where(Weather::class.java).equalTo(Weather::lat.name, item!!.latitude).equalTo(Weather::lon.name, item!!.longitude).findAll().asChangesetObservable().subscribe({
+                            if (it.collection.isNotEmpty()) {
+                                val newWeather = it.collection.first()
+
+                                if (newWeather != null && PreferencesAW.getIfWeatherCouldBeDisplayed(context)) {
+                                    //Set weather
+                                    holder.itemView?.imageViewSectionWeather?.setImageResource(WeatherUtils.weatherImage(newWeather.id!!))
+                                    holder.itemView?.textViewSectionWeather?.setText(context.getString(R.string.weather_celcius, WeatherUtils.convertKelvinToCelcius(newWeather.temp!!)))
+                                }
+                            }
+                        }, { e ->
+                            Timber.e("ERROR ${e.message}")
+                        }))
+                        oneTimeSubscriptions.add(subs.get(item!!.uid)!!)
+                    }
                 }
             }
         }

@@ -19,10 +19,10 @@ import fr.openium.auvergnewebcams.ext.fromIOToMain
 import fr.openium.auvergnewebcams.ext.gone
 import fr.openium.auvergnewebcams.ext.show
 import fr.openium.auvergnewebcams.injection.GlideApp
-import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.utils.DateUtils
 import io.reactivex.disposables.CompositeDisposable
+import io.realm.RealmObject
 import kotlinx.android.synthetic.main.item_carousel_webcam.view.*
 
 
@@ -31,7 +31,7 @@ import kotlinx.android.synthetic.main.item_carousel_webcam.view.*
  */
 class AdapterWebcamsCarousel(val context: Context,
                              val listener: ((Webcam, Int) -> Unit)? = null,
-                             var section: Section,
+                             var webcams: List<Webcam>,
                              val composites: CompositeDisposable,
                              var lastUpdate: Long)
     : RecyclerView.Adapter<AdapterWebcamsCarousel.WebcamHolder>() {
@@ -53,13 +53,13 @@ class AdapterWebcamsCarousel(val context: Context,
     }
 
     override fun onBindViewHolder(holder: WebcamHolder, position: Int) {
-        val item = section.webcams.get(position)
+        val item = webcams.get(position)
         composites.add(Events.eventCameraDateUpdate
                 .obs
                 .fromIOToMain()
                 .subscribe {
-                    if (it == item?.uid) {
-                        item?.realm?.refresh()
+                    if (item != null && RealmObject.isValid(item) && it == item.uid) {
+                        item.realm?.refresh()
                         //    Timber.e("uid = ${item.uid}")
                         this.notifyItemChanged(position)
                     }
@@ -101,7 +101,7 @@ class AdapterWebcamsCarousel(val context: Context,
 
         }
 
-       // Timber.e("DATE UPDATE $lastUpdate")
+        // Timber.e("DATE UPDATE $lastUpdate")
 //        if (lastUpdate == 0L) { // no cache
 //            GlideApp.with(context)
 //                    .load(urlWebCam)
@@ -113,16 +113,14 @@ class AdapterWebcamsCarousel(val context: Context,
 //                    .override(widthImage, heightImage)
 //                    .into(holder.itemView.imageViewCamera)
 //        } else {
-            GlideApp.with(context)
-                    .load(urlWebCam)
-                    .error(R.drawable.broken_camera)
-                    .listener(listenerGlide)
-                    .signature(MediaStoreSignature("", lastUpdate, 0))
-                    .override(widthImage, heightImage)
-                    .into(holder.itemView.imageViewCamera)
+        GlideApp.with(context)
+                .load(urlWebCam)
+                .error(R.drawable.broken_camera)
+                .listener(listenerGlide)
+                .signature(MediaStoreSignature("", lastUpdate, 0))
+                .override(widthImage, heightImage)
+                .into(holder.itemView.imageViewCamera)
 //        }
-
-
 
 
         holder.itemView.setOnClickListener {
@@ -142,14 +140,11 @@ class AdapterWebcamsCarousel(val context: Context,
         } else {
             holder.itemView.textviewWebcamLastUpdate.gone()
         }
-
     }
 
     override fun getItemCount(): Int {
-        return section.webcams.size
+        return webcams.size
     }
 
-    class WebcamHolder(view: View) : RecyclerView.ViewHolder(view) {
-
-    }
+    class WebcamHolder(view: View) : RecyclerView.ViewHolder(view)
 }

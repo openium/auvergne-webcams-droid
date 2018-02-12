@@ -30,6 +30,7 @@ import fr.openium.auvergnewebcams.utils.PreferencesAW
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
+import io.realm.RealmList
 import kotlinx.android.synthetic.main.fragment_carousel_webcam.*
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -159,6 +160,7 @@ class FragmentCarouselWebcam : AbstractFragment() {
                             it.executeTransaction {
                                 if (!result.isError && result.response()?.body() != null) {
                                     val sections = result.response()!!.body()!!
+
                                     for (section in sections.sections) {
 
                                         section.latitude = Math.round(section.latitude * 100.0) / 100.0
@@ -174,19 +176,31 @@ class FragmentCarouselWebcam : AbstractFragment() {
                                             val webcamDB = it.where(Webcam::class.java)
                                                     .equalTo(Webcam::uid.name, webcam.uid)
                                                     .findFirst()
-                                            if (webcamDB?.lastUpdate != null) {
-                                                webcam.lastUpdate = webcamDB.lastUpdate
+                                            if (webcamDB != null) {
+                                                if (webcamDB.lastUpdate != null) {
+                                                    webcam.lastUpdate = webcamDB.lastUpdate
+                                                }
+                                                webcam.isFavoris = webcamDB.isFavoris
                                             }
-                                            webcam.isFavoris = webcamDB?.isFavoris!!
+                                            if (webcam.hidden == null) {
+                                                webcam.hidden = false
+                                            }
+                                        }
+
+                                        section.webcams = RealmList<Webcam>().apply {
+                                            addAll(section.webcams.filter { it.hidden == false })
                                         }
                                     }
+
+                                    it.where(Section::class.java).findAll().deleteAllFromRealm()
+                                    it.where(Webcam::class.java).findAll().deleteAllFromRealm()
+
                                     it.insertOrUpdate(sections.sections)
                                 }
                             }
-                        }
-
-                        activity?.runOnUiThread {
-                            removeGlideCache()
+                            activity?.runOnUiThread {
+                                removeGlideCache()
+                            }
                         }
                     }, {
                         activity?.runOnUiThread {
@@ -232,11 +246,9 @@ class FragmentCarouselWebcam : AbstractFragment() {
                 .observeOn(Schedulers.io())
                 .subscribeOn(Schedulers.io())
                 .subscribe {
-                    Glide.get(applicationContext)
-                            .clearDiskCache()
+                    Glide.get(applicationContext).clearDiskCache()
                     activity?.runOnUiThread {
-                        Glide.get(applicationContext)
-                                .clearMemory()
+                        Glide.get(applicationContext).clearMemory()
 //                        if (PreferencesAW.isWebcamsDelayRefreshActive(applicationContext)) {
                         PreferencesAW.setLastUpdateTimestamp(applicationContext, System.currentTimeMillis().toUnixTimestamp())
 //                        }
@@ -295,6 +307,7 @@ class FragmentCarouselWebcam : AbstractFragment() {
                 (recyclerView.adapter as AdapterCarousels).items = sections
                 (recyclerView.adapter as AdapterCarousels).sectionFavoris = sectionFavoris
                 (recyclerView.adapter as AdapterCarousels).lastUpdate = lastUpdate
+                recyclerView.invalidate()
                 recyclerView.adapter.notifyDataSetChanged()
             }
         }

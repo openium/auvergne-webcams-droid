@@ -20,6 +20,7 @@ import fr.openium.auvergnewebcams.utils.PreferencesAW
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import io.realm.Realm
+import io.realm.RealmList
 import kotlinx.android.synthetic.main.activity_splash.*
 import retrofit2.adapter.rxjava2.Result
 import timber.log.Timber
@@ -54,10 +55,12 @@ class ActivitySplash : AbstractActivity() {
                             Realm.getDefaultInstance().use {
                                 it.executeTransaction { realm ->
                                     val sections = result.response()!!.body()!!
+
                                     for (section in sections.sections) {
 
                                         section.latitude = Math.round(section.latitude * 100.0) / 100.0
                                         section.longitude = Math.round(section.longitude * 100.0) / 100.0
+
                                         for (webcam in section.webcams) {
                                             if (webcam.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
                                                 // load media ld
@@ -68,11 +71,27 @@ class ActivitySplash : AbstractActivity() {
                                             val webcamDB = realm.where(Webcam::class.java)
                                                     .equalTo(Webcam::uid.name, webcam.uid)
                                                     .findFirst()
-                                            webcam.lastUpdate = webcamDB?.lastUpdate
-                                            webcam.isFavoris = webcamDB?.isFavoris ?: false
+                                            if (webcamDB != null) {
+                                                if (webcamDB.lastUpdate != null) {
+                                                    webcam.lastUpdate = webcamDB.lastUpdate
+                                                }
+                                                webcam.isFavoris = webcamDB.isFavoris
+                                            }
+                                            if (webcam.hidden == null) {
+                                                webcam.hidden = false
+                                            }
+                                        }
+
+                                        section.webcams = RealmList<Webcam>().apply {
+                                            addAll(section.webcams.filter { it.hidden == false })
                                         }
                                     }
-                                    realm.insertOrUpdate(sections.sections)
+
+
+                                    it.where(Section::class.java).findAll().deleteAllFromRealm()
+                                    it.where(Webcam::class.java).findAll().deleteAllFromRealm()
+
+                                    it.insertOrUpdate(sections.sections)
                                 }
                             }
                         } else {
@@ -119,6 +138,10 @@ class ActivitySplash : AbstractActivity() {
                     if (section.latitude != 0.0 || section.longitude != 0.0) {
                         nbRemainingRequests!!.incrementAndGet()
                     }
+                }
+
+                if (sections.isEmpty()) {
+                    startActivityMain()
                 }
 
                 for (i in 0..sections.size - 1) {
