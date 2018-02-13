@@ -27,10 +27,13 @@ import fr.openium.auvergnewebcams.rest.AWWeatherApi
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
 import fr.openium.auvergnewebcams.utils.PreferencesAW
+import io.reactivex.Flowable
 import io.reactivex.Observable
+import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import io.realm.RealmList
+import io.realm.RealmResults
 import kotlinx.android.synthetic.main.fragment_carousel_webcam.*
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -198,9 +201,7 @@ class FragmentCarouselWebcam : AbstractFragment() {
                                     it.insertOrUpdate(sections.sections)
                                 }
                             }
-                            activity?.runOnUiThread {
-                                removeGlideCache()
-                            }
+                            removeGlideCache()
                         }
                     }, {
                         activity?.runOnUiThread {
@@ -267,49 +268,59 @@ class FragmentCarouselWebcam : AbstractFragment() {
             val webcamsFavoris = realm!!.where(Webcam::class.java)
                     .sort(Webcam::title.name)
                     .equalTo(Webcam::isFavoris.name, true)
-                    .findAll()
-
-            if (!webcamsFavoris.isEmpty()) {
-                sectionFavoris.webcams.addAll(webcamsFavoris)
-            }
+                    .findAll().asFlowable().filter { it.isLoaded }
 
             val sections = realm!!.where(Section::class.java)
                     .sort(Section::order.name)
                     .isNotEmpty(Section::webcams.name)
-                    .findAll()
+                    .findAll().asFlowable().filter { it.isLoaded }
 
-            if (recyclerView.adapter == null) {
-                recyclerView.layoutManager = LinearLayoutManager(context)
-                recyclerView.adapter = AdapterCarousels(context!!, { webcam, _ ->
-                    //Analytics
-                    AnalyticsUtils.selectWebcamDetails(context!!, webcam.title!!)
+            oneTimeSubscriptions.add(Flowable.zip(webcamsFavoris, sections,
+                    BiFunction
+                    { webcamsFavorisList: RealmResults<Webcam>, result: RealmResults<Section> ->
+                        if (!webcamsFavorisList.isEmpty()) {
+                            sectionFavoris.webcams.clear()
+                            sectionFavoris.webcams.addAll(webcamsFavorisList)
+                        }
 
-                    startActivityDetailCamera(webcam)
-                }, sections, composites = oneTimeSubscriptions, sectionFavoris = sectionFavoris, listenerSectionClick = { section ->
-                    //Analytics
-                    AnalyticsUtils.selectSectionDetails(context!!, section.title!!)
+                        result
+                    }).subscribe(
+                    {
+                        if (recyclerView.adapter == null) {
+                            recyclerView.layoutManager = LinearLayoutManager(context)
+                            recyclerView.adapter = AdapterCarousels(context!!, { webcam, _ ->
+                                //Analytics
+                                AnalyticsUtils.selectWebcamDetails(context!!, webcam.title!!)
 
-                    startActivity<ActivityListWebcam>(ActivityListWebcam.getBundle(section.uid))
-                }, lastUpdate = lastUpdate, oneTimeSubscriptions = oneTimeSubscriptions, realm = realm!!)
+                                startActivityDetailCamera(webcam)
+                            }, it, composites = oneTimeSubscriptions, sectionFavoris = sectionFavoris, listenerSectionClick = { section ->
+                                //Analytics
+                                AnalyticsUtils.selectSectionDetails(context!!, section.title!!)
 
-                //Optimization:
-                recyclerView.setHasFixedSize(true)
-                recyclerView.setItemViewCacheSize(20)
-                recyclerView.isDrawingCacheEnabled = true
-                recyclerView.drawingCacheQuality = View.DRAWING_CACHE_QUALITY_HIGH
+                                startActivity<ActivityListWebcam>(ActivityListWebcam.getBundle(section.uid))
+                            }, lastUpdate = lastUpdate, oneTimeSubscriptions = oneTimeSubscriptions, realm = realm!!)
 
-                if (positionAdapters != null) {
-                    (recyclerView.adapter as AdapterCarousels).setPositionOfAllWebcams(positionAdapters!!)
-                }
+                            //Optimization:
+                            recyclerView.setHasFixedSize(true)
+                            recyclerView.setItemViewCacheSize(20)
+                            recyclerView.isDrawingCacheEnabled = true
+                            recyclerView.drawingCacheQuality = View.DRAWING_CACHE_QUALITY_HIGH
 
-                recyclerView.scrollToPosition(position)
-            } else {
-                (recyclerView.adapter as AdapterCarousels).items = sections
-                (recyclerView.adapter as AdapterCarousels).sectionFavoris = sectionFavoris
-                (recyclerView.adapter as AdapterCarousels).lastUpdate = lastUpdate
-                recyclerView.invalidate()
-                recyclerView.adapter.notifyDataSetChanged()
-            }
+                            if (positionAdapters != null) {
+                                (recyclerView.adapter as AdapterCarousels).setPositionOfAllWebcams(positionAdapters!!)
+                            }
+
+                            recyclerView.scrollToPosition(position)
+                        } else {
+                            (recyclerView.adapter as AdapterCarousels).items = it
+                            (recyclerView.adapter as AdapterCarousels).sectionFavoris = sectionFavoris
+                            (recyclerView.adapter as AdapterCarousels).lastUpdate = lastUpdate
+                            recyclerView.adapter.notifyDataSetChanged()
+                        }
+                    },
+                    {
+
+                    }))
         }
     }
 

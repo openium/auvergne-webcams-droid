@@ -15,12 +15,12 @@ class ApplicationImpl : ApplicationBase() {
         extend(super.kodein)
         import(DebugModules.configModule, true)
         import(DebugModules.serviceModule, true)
+        import(DebugModules.restModule, true)
     }
 
     override fun onCreate() {
         super.onCreate()
     }
-
 
     override fun initializeCrashlytics() {
         val core = CrashlyticsCore.Builder().disabled(true).build()

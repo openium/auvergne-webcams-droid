@@ -67,8 +67,8 @@ class AdapterWebcams(val context: Context, var items: List<Webcam>, val listener
             val weather = realm.where(Weather::class.java).equalTo(Weather::lat.name, hearderSection!!.latitude).equalTo(Weather::lon.name, hearderSection!!.longitude).findFirst()
             if (weather != null && PreferencesAW.getIfWeatherCouldBeDisplayed(context)) {
                 //Set weather
-                holder?.itemView?.imageViewSectionWeather?.setImageResource(WeatherUtils.weatherImage(weather!!.id!!))
-                holder?.itemView?.textViewSectionWeather?.setText(context.getString(R.string.weather_celcius, WeatherUtils.convertKelvinToCelcius(weather!!.temp!!)))
+                holder?.itemView?.imageViewSectionWeather?.setImageResource(WeatherUtils.weatherImage(weather.id!!))
+                holder?.itemView?.textViewSectionWeather?.setText(context.getString(R.string.weather_celcius, WeatherUtils.convertKelvinToCelcius(weather.temp!!)))
             }
         } else {
             val webcam = items.get(position - if (hearderSection != null) 1 else 0)

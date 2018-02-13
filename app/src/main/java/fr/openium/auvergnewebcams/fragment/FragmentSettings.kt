@@ -1,5 +1,6 @@
 package fr.openium.auvergnewebcams.fragment
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -15,6 +16,7 @@ import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import fr.openium.auvergnewebcams.utils.PreferencesAW
 import kotlinx.android.synthetic.main.fragment_settings.*
 import timber.log.Timber
+
 
 /**
  * Created by laura on 04/12/2017.
@@ -94,6 +96,17 @@ class FragmentSettings : AbstractFragment() {
 
             startActivityForUrl(getString(R.string.url_pirates))
         }
+        textview_send_new_webcam.setOnClickListener {
+            val alert = AlertDialog.Builder(context)
+            alert.setTitle(R.string.settings__send_new_webcam_title)
+                    .setMessage(R.string.settings__send_new_webcam_message)
+                    .setNeutralButton(R.string.generic_ok, { dialog, which ->
+                        AnalyticsUtils.buttonProposeWebcamClicked(context!!)
+                        sendEmail()
+                        dialog.dismiss()
+                    })
+                    .show()
+        }
         textview_note.setOnClickListener {
             //Analytics
             AnalyticsUtils.buttonRateAppClicked(context!!)
@@ -103,6 +116,19 @@ class FragmentSettings : AbstractFragment() {
 
         //Init version
         initVersion()
+    }
+
+    private fun sendEmail() {
+        val intentEmail = Intent(Intent.ACTION_SENDTO)
+        intentEmail.data = Uri.parse("mailto:${getString(R.string.detail_signal_problem_email)}") // only email apps should handle this
+        intentEmail.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.settings__send_new_webcam_email_title))
+        intentEmail.putExtra(Intent.EXTRA_TEXT, getString(R.string.settings__send_new_webcam_email_message))
+
+        if (intentEmail.resolveActivity(context!!.packageManager) != null) {
+            startActivityForResult(intentEmail, 1)
+        } else {
+            Snackbar.make(view!!.findViewById(android.R.id.content), R.string.settings__send_new_webcam_email_no_app_found, Snackbar.LENGTH_SHORT).show()
+        }
     }
 
     // =================================================================================================================

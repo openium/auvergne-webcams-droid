@@ -70,9 +70,9 @@
                 android:layout_height="wrap_content"
                 android:drawableEnd="@drawable/selector_arrow"
                 android:gravity="center_vertical"
-                tools:text="10"
                 android:textColor="@color/color_white_grey"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                tools:text="10" />
 
         </LinearLayout>
 
@@ -152,6 +152,21 @@
             android:drawableEnd="@drawable/selector_arrow"
             android:gravity="center_vertical"
             android:text="@string/settings_credits_pirates"
+            android:textColor="@color/color_white_grey"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/textview_send_new_webcam"
+            style="@style/font_proxima_regular"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:drawableEnd="@drawable/selector_arrow"
+            android:gravity="center_vertical"
+            android:text="@string/settings_send_new_webcam"
             android:textColor="@color/color_white_grey"
             android:textSize="16sp" />
 

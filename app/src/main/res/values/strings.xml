@@ -22,10 +22,16 @@
     <string name="settings_credits_about">À propos</string>
     <string name="settings_credits_openium">Openium</string>
     <string name="settings_credits_pirates">Les Pirates</string>
+    <string name="settings_send_new_webcam">Proposer une webcam</string>
     <string name="settings_credits_note">Noter l\'application</string>
     <string name="settings_version">Version %1$s (%2$s)</string>
 
     <string name="settings_about_title">Auvergne Webcams</string>
+    <string name="settings__send_new_webcam_title">Nouvelle webcam</string>
+    <string name="settings__send_new_webcam_message">Afin de proposer une webcam, veuillez vous munir du nom du lieu proposé ainsi que du lien vers la webcam en question.</string>
+    <string name="settings__send_new_webcam_email_title">Proposition de webcam</string>
+    <string name="settings__send_new_webcam_email_message">J\'ai connaissance d\'une webcam non disponible dans l\'application.\n\nNom du lieu:\nLien vers la webcam:\n</string>
+    <string name="settings__send_new_webcam_email_no_app_found">Aucune application mail n\'est disponible sur cet appareil</string>
 
     <string name="url_openium">https://openium.fr</string>
     <string name="url_pirates">http://agencelespirates.com/</string>

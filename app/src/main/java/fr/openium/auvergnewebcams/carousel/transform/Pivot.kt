@@ -3,9 +3,6 @@ package fr.openium.auvergnewebcams.carousel.transform
 import android.support.annotation.IntDef
 import android.view.View
 
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
-
 /**
  * Created by yarolegovich on 03.03.2017.
  */
@@ -73,7 +70,7 @@ class Pivot(@param:Axis @get:Axis
     }
 
     @IntDef(AXIS_X.toLong(), AXIS_Y.toLong())
-    @Retention(RetentionPolicy.SOURCE)
+    @kotlin.annotation.Retention
     annotation class Axis
 
     companion object {

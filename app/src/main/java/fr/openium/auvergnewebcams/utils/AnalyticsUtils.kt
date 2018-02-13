@@ -97,6 +97,7 @@ object AnalyticsUtils {
     private const val KEY_SPECIAL_EVENTS_CONTENT_TYPE_FAVORITE = "favorite"
     private const val KEY_SPECIAL_EVENTS_CONTENT_TYPE_IS_FAVORITE = "favorite"
     private const val KEY_SPECIAL_EVENTS_CONTENT_TYPE_IS_NOT_FAVORITE = "unfavorite"
+    private const val KEY_SPECIAL_EVENTS_CONTENT_TYPE_PROPOSE_WEBCAM = "propose_webcam"
 
     // ========= FIREBASE METHODS =========
 
@@ -115,13 +116,12 @@ object AnalyticsUtils {
     }
 
     // --- Affichage d'une section (liste des webcams d'un domaine. Par exemple "Puy de Sancy") ---
-    fun sendFirebaseLogEventViewItemList(firebaseAnalytics: FirebaseAnalytics, webcamName: String) {
+    fun sendFirebaseLogEventViewItemList(firebaseAnalytics: FirebaseAnalytics, sectionName: String) {
         val bundle = Bundle().apply {
-            putString(FirebaseAnalytics.Param.CONTENT_TYPE, KEY_SPECIAL_EVENTS_CONTENT_TYPE_WEBCAM)
-            putString(FirebaseAnalytics.Param.ITEM_ID, webcamName)
+            putString(FirebaseAnalytics.Param.ITEM_CATEGORY, sectionName)
         }
 
-        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle)
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.VIEW_ITEM_LIST, bundle)
     }
 
     // --- Affichage du détail d'une webcam ---
@@ -148,6 +148,11 @@ object AnalyticsUtils {
         firebaseAnalytics.logEvent(KEY_SPECIAL_EVENTS_CONTENT_TYPE_FAVORITE, bundle)
     }
 
+    // --- Proposition d'une nouvelle webcam  ---
+    fun sendFirebaseLogEventNewWebcam(firebaseAnalytics: FirebaseAnalytics) {
+        firebaseAnalytics.logEvent(KEY_SPECIAL_EVENTS_CONTENT_TYPE_PROPOSE_WEBCAM, null)
+    }
+
     // ========= FABRIC METHODS =========
 
     // --- Ouverture de l'application ---
@@ -161,8 +166,8 @@ object AnalyticsUtils {
     }
 
     // --- Affichage d'une section (liste des webcams d'un domaine. Par exemple "Puy de Sancy") ---
-    fun sendFabricLogEventViewItemList(answersAnalytics: Answers, webcamName: String) {
-        answersAnalytics.logContentView(ContentViewEvent().putContentName(FirebaseAnalytics.Event.VIEW_ITEM_LIST))
+    fun sendFabricLogEventViewItemList(answersAnalytics: Answers, sectionName: String) {
+        answersAnalytics.logContentView(ContentViewEvent().putContentName(FirebaseAnalytics.Event.VIEW_ITEM_LIST).putContentId(sectionName))
     }
 
     // --- Affichage du détail d'une webcam ---
@@ -183,6 +188,11 @@ object AnalyticsUtils {
                     KEY_SPECIAL_EVENTS_CONTENT_TYPE_IS_NOT_FAVORITE
                 })
                 .putContentId(webcamName))
+    }
+
+    // --- Proposition d'une nouvelle webcam  ---
+    fun sendFabricLogEventNewWebcam(answersAnalytics: Answers) {
+        answersAnalytics.logContentView(ContentViewEvent().putContentName(KEY_SPECIAL_EVENTS_CONTENT_TYPE_PROPOSE_WEBCAM))
     }
 
     // ======================================= //
@@ -247,7 +257,6 @@ object AnalyticsUtils {
                 .putContentName(FirebaseAnalytics.Event.SELECT_CONTENT)
                 .putContentType(KEY_BUTTON)
                 .putContentId(itemSelected))
-
     }
 
     // ======================================= //
@@ -338,6 +347,11 @@ object AnalyticsUtils {
     fun buttonRateAppClicked(context: Context) {
         AnalyticsUtils.sendFirebaseLogEventSelectContent(FirebaseAnalytics.getInstance(context)!!, AnalyticsUtils.KEY_BUTTON_RATE_APP)
         AnalyticsUtils.sendFabricLogEventSelectContent(Answers.getInstance(), AnalyticsUtils.KEY_BUTTON_RATE_APP)
+    }
+
+    fun buttonProposeWebcamClicked(context: Context) {
+        AnalyticsUtils.sendFirebaseLogEventNewWebcam(FirebaseAnalytics.getInstance(context)!!)
+        AnalyticsUtils.sendFabricLogEventNewWebcam(Answers.getInstance())
     }
 
 }
