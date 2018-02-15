@@ -240,11 +240,9 @@ class FragmentCarouselWebcam : AbstractFragment() {
 
                 recyclerView.scrollToPosition(actualPositionOfTheList)
             } else {
-                recyclerView.post {
-                    (recyclerView.adapter as AdapterCarousels).items = sections
-                    (recyclerView.adapter as AdapterCarousels).lastUpdate = lastUpdate
-                    recyclerView.adapter.notifyDataSetChanged()
-                }
+                (recyclerView.adapter as AdapterCarousels).items = sections
+                (recyclerView.adapter as AdapterCarousels).lastUpdate = lastUpdate
+                recyclerView.adapter.notifyDataSetChanged()
             }
         }
     }
