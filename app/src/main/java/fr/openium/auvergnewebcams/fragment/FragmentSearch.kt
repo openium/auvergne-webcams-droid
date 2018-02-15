@@ -47,17 +47,11 @@ class FragmentSearch : AbstractFragment() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     initSearchAdapter(it.queryText().toString())
-                }, { error ->
-                    Timber.e(error)
-                }))
 
-        oneTimeSubscriptions.add(RxSearchView.queryTextChangeEvents(textViewSearch)
-                .skip(1)
-                .debounce(1000, TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    //Analytics
-                    AnalyticsUtils.searchRequestDone(context!!, it.queryText().toString())
+                    view?.postDelayed({
+                        //Analytics
+                        AnalyticsUtils.searchRequestDone(context!!, it.queryText().toString())
+                    }, 1000)
                 }, { error ->
                     Timber.e(error)
                 }))
