@@ -65,8 +65,8 @@ class ApiHelper(val context: Context, val api: AWApi) {
                         //it.where(Section::class.java).findAll().deleteAllFromRealm()
                         //it.where(Webcam::class.java).findAll().deleteAllFromRealm()
 
-                        val item = it.where(Section::class.java).not().`in`(Section::uid.name, listId.toTypedArray()).findAll()
-                        item.deleteAllFromRealm()
+                        //val item = it.where(Section::class.java).not().`in`(Section::uid.name, listId.toTypedArray()).findAll()
+                        //item.deleteAllFromRealm()
                         it.insertOrUpdate(sections.sections)
                     }
                 }

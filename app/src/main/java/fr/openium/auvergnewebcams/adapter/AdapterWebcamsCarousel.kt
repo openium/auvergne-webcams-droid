@@ -41,16 +41,16 @@ class AdapterWebcamsCarousel(val context: Context,
     val widthImage: Int
 
     init {
-
         heightImage = context.resources.getDimensionPixelOffset(R.dimen.height_image_list)
         widthImage = context.resources.getDimensionPixelOffset(R.dimen.width_image_list)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WebcamHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_carousel_webcam, parent, false)
-        return WebcamHolder(view.apply {
-            layoutParams = ViewGroup.LayoutParams(widthImage, heightImage)
-        })
+        return WebcamHolder(view)
+//                .apply {
+//            layoutParams = ViewGroup.LayoutParams(widthImage, heightImage)
+//        }
     }
 
     override fun onBindViewHolder(holder: WebcamHolder, position: Int) {

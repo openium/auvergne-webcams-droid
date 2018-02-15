@@ -7,7 +7,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.view.View
 import com.bumptech.glide.Glide
 import com.github.salomonbrys.kodein.instance
 import fr.openium.auvergnewebcams.Constants
@@ -238,7 +237,6 @@ class FragmentCarouselWebcam : AbstractFragment() {
                 }
 
                 recyclerView.setHasFixedSize(true)
-                recyclerView.setItemViewCacheSize(10)
 
                 recyclerView.scrollToPosition(actualPositionOfTheList)
             } else {

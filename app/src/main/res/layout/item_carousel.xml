@@ -7,13 +7,13 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <include layout="@layout/header_list_webcam"/>
+    <include layout="@layout/header_list_webcam" />
 
     <fr.openium.auvergnewebcams.carousel.DiscreteScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_image_list"
-        app:dsv_orientation="horizontal"/>
+        app:dsv_orientation="horizontal" />
 
     <TextView
         android:id="@+id/textViewNameWebcam"
@@ -26,6 +26,6 @@
         android:paddingTop="10dp"
         android:textColor="@color/grey_text"
         android:textSize="14sp"
-        tools:text="Caméra 1"/>
+        tools:text="Caméra 1" />
 
 </LinearLayout>

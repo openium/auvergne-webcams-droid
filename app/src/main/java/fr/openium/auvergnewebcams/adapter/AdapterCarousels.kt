@@ -60,9 +60,6 @@ class AdapterCarousels(val context: Context,
         val item = items[position]
 
         if (item != null) {
-
-            val uid = item.uid
-
             if (item.webcams.isEmpty()) {
                 holder.mTextViewNameSection.gone()
                 holder.mTextViewNameWebcam.gone()
@@ -101,7 +98,7 @@ class AdapterCarousels(val context: Context,
                 val nbWebCams = String.format(Locale.getDefault(), context.resources.getQuantityString(R.plurals.nb_cameras_format, item.webcams.count(), item.webcams.count()))
                 holder.mTextViewNbCameras.text = nbWebCams
 
-                //Weather
+//                Weather
                 Realm.getDefaultInstance().use {
                     val weather = it.where(Weather::class.java).equalTo(Weather::lat.name, item.latitude).equalTo(Weather::lon.name, item.longitude).findFirst()
                     if (weather != null && PreferencesAW.getIfWeatherCouldBeDisplayed(context)) {
@@ -113,7 +110,6 @@ class AdapterCarousels(val context: Context,
                         holder.mTextViewSectionWeather.gone()
                     }
                 }
-
                 holder.itemView.setOnClickListener {
                     val pos = (holder.scrollView.adapter as InfiniteScrollAdapter).getRealPosition(holder.scrollView.currentItem)
                     val webcam = item.webcams.get(pos)
@@ -134,16 +130,17 @@ class AdapterCarousels(val context: Context,
                     holder.mImageViewSectionWeather.gone()
                     holder.mTextViewSectionWeather.gone()
                 } else {
-                    val adapter = AdapterWebcamsCarousel(context, listener, item.webcams, composites, lastUpdate)
-                    val infiniteAdapter = InfiniteScrollAdapter.wrap(adapter)
-                    holder.scrollView.setHasFixedSize(true)
-                    holder.scrollView.setItemViewCacheSize(20)
-                    holder.scrollView.isDrawingCacheEnabled = true
-                    holder.scrollView.drawingCacheQuality = View.DRAWING_CACHE_QUALITY_LOW
-                    holder.scrollView.adapter = infiniteAdapter
+                    if (holder.scrollView.adapter == null) {
+                        val adapter = AdapterWebcamsCarousel(context, listener, item.webcams, composites, lastUpdate)
+                        val infiniteAdapter = InfiniteScrollAdapter.wrap(adapter)
+                        holder.scrollView.adapter = infiniteAdapter
+                    } else {
+                        ((holder.scrollView.adapter as InfiniteScrollAdapter).wrapped as AdapterWebcamsCarousel).webcams = item.webcams
+                        ((holder.scrollView.adapter as InfiniteScrollAdapter).wrapped as AdapterWebcamsCarousel).lastUpdate = lastUpdate
+                        holder.scrollView.adapter.notifyDataSetChanged()
+                    }
 
-                    val listener: DiscreteScrollView.OnItemSelectedListener
-                    listener = object : DiscreteScrollView.OnItemSelectedListener {
+                    val itemSelectedListener = object : DiscreteScrollView.OnItemSelectedListener {
                         override fun onItemSelectedChanged(position: Int) {
 //                        Timber.d("addItemSelectedListener ${item.uid}  newPosition: $position")
                             Timber.d("Real posAdapter put in listener $position")
@@ -158,8 +155,8 @@ class AdapterCarousels(val context: Context,
                             }
                         }
                     }
-                    listeners.put(item.uid, listener)
-                    holder.scrollView.setItemSelectedListener(listener)
+                    listeners.put(item.uid, itemSelectedListener)
+                    holder.scrollView.setItemSelectedListener(itemSelectedListener)
 
                     holder.scrollView.post {
                         val positionAdapter: Int

@@ -146,7 +146,7 @@ public class DiscreteScrollView extends RecyclerView {
         onItemChangedListeners.remove(onItemChangedListener);
     }
 
-    public void setItemSelectedListener(@NotNull OnItemSelectedListener listener) {
+    public void setItemSelectedListener(OnItemSelectedListener listener) {
         onItemSelectedListeners = listener;
     }
 
