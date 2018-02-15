@@ -8,6 +8,7 @@ import com.squareup.leakcanary.RefWatcher
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.rest.AWApi
 import fr.openium.auvergnewebcams.rest.AWWeatherApi
+import fr.openium.auvergnewebcams.rest.ApiHelper
 import io.reactivex.schedulers.Schedulers
 import okhttp3.Cache
 import okhttp3.HttpUrl
@@ -59,6 +60,10 @@ object Modules {
 
         bind<AWApi>() with singleton {
             instance<Retrofit>().create(AWApi::class.java)
+        }
+
+        bind<ApiHelper>() with singleton {
+            ApiHelper(instance(), instance())
         }
     }
 

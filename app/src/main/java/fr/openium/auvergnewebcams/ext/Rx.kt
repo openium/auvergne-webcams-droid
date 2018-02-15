@@ -1,6 +1,7 @@
 package fr.openium.auvergnewebcams.ext
 
 import io.reactivex.Completable
+import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -28,6 +29,11 @@ fun <T> Observable<T>.fromIOToMain(): Observable<T> {
 fun <T> Single<T>.fromIOToMain(): Single<T> {
     return subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
 }
+
+fun <T> Flowable<T>.fromIOToMain(): Flowable<T> {
+    return subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+}
+
 
 fun Completable.fromIOToMain(): Completable {
     return subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())

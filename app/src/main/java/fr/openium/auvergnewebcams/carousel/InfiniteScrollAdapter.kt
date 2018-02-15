@@ -7,7 +7,7 @@ import android.view.ViewGroup
  * Created by yarolegovich on 28-Apr-17.
  */
 
-class InfiniteScrollAdapter<T : RecyclerView.ViewHolder>(private val wrapped: RecyclerView.Adapter<T>) : RecyclerView.Adapter<T>() {
+class InfiniteScrollAdapter<T : RecyclerView.ViewHolder>(val wrapped: RecyclerView.Adapter<T>) : RecyclerView.Adapter<T>() {
 
     private var layoutManager: DiscreteScrollLayoutManager? = null
 

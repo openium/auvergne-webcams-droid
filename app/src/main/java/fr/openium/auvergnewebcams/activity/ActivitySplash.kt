@@ -13,11 +13,14 @@ import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.SectionList
 import fr.openium.auvergnewebcams.model.Weather
 import fr.openium.auvergnewebcams.model.Webcam
-import fr.openium.auvergnewebcams.rest.AWApi
 import fr.openium.auvergnewebcams.rest.AWWeatherApi
+import fr.openium.auvergnewebcams.rest.ApiHelper
 import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
 import fr.openium.auvergnewebcams.utils.PreferencesAW
 import io.reactivex.Observable
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.toSingle
 import io.reactivex.functions.BiFunction
 import io.realm.Realm
 import io.realm.RealmList
@@ -32,8 +35,8 @@ import java.util.concurrent.atomic.AtomicInteger
  */
 class ActivitySplash : AbstractActivity() {
 
-    protected val api: AWApi by kodeinInjector.instance()
-    protected val apiWeather: AWWeatherApi by kodeinInjector.instance()
+    private val apiWeather: AWWeatherApi by kodeinInjector.instance()
+    private val apiHelper: ApiHelper by kodeinInjector.instance()
 
     override val layoutId: Int
         get() = R.layout.activity_splash
@@ -47,57 +50,11 @@ class ActivitySplash : AbstractActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (applicationContext.hasNetwork) {
-            disposables.add(Observable.zip(Observable.timer(2, TimeUnit.SECONDS), api.getSections(),
-                    BiFunction
-                    { _: Long, result: Result<SectionList> ->
-                        if (!result.isError && result.response()?.body() != null) {
-                            Realm.getDefaultInstance().use {
-                                it.executeTransaction { realm ->
-                                    val sections = result.response()!!.body()!!
-
-                                    for (section in sections.sections) {
-
-                                        section.latitude = Math.round(section.latitude * 100.0) / 100.0
-                                        section.longitude = Math.round(section.longitude * 100.0) / 100.0
-
-                                        for (webcam in section.webcams) {
-                                            if (webcam.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
-                                                // load media ld
-                                                webcam.mediaViewSurfLD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfLD)
-                                                webcam.mediaViewSurfHD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfHD)
-                                            }
-
-                                            val webcamDB = realm.where(Webcam::class.java)
-                                                    .equalTo(Webcam::uid.name, webcam.uid)
-                                                    .findFirst()
-                                            if (webcamDB != null) {
-                                                if (webcamDB.lastUpdate != null) {
-                                                    webcam.lastUpdate = webcamDB.lastUpdate
-                                                }
-                                                webcam.isFavoris = webcamDB.isFavoris
-                                            }
-                                            if (webcam.hidden == null) {
-                                                webcam.hidden = false
-                                            }
-                                        }
-
-                                        section.webcams = RealmList<Webcam>().apply {
-                                            addAll(section.webcams.filter { it.hidden == false })
-                                        }
-                                    }
-
-
-                                    it.where(Section::class.java).findAll().deleteAllFromRealm()
-                                    it.where(Webcam::class.java).findAll().deleteAllFromRealm()
-
-                                    it.insertOrUpdate(sections.sections)
-                                }
-                            }
-                        } else {
-                            loadFromAssets()
-                        }
-                        true
-                    })
+            disposables.add(Single.zip(Observable.timer(2, TimeUnit.SECONDS).toSingle(), apiHelper.getSections(), BiFunction { time: Observable<Long>, list: Result<SectionList> ->
+                if(list.isError || list.response()?.body() != null){
+                    loadFromAssets()
+                }
+            }).observeOn(AndroidSchedulers.mainThread())
                     .subscribe(
                             {
                                 initWeather()
@@ -119,7 +76,6 @@ class ActivitySplash : AbstractActivity() {
                 startActivityMain()
             })
         }
-
     }
 
     private fun initWeather() {

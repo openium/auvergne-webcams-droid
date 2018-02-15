@@ -70,17 +70,17 @@ object AnalyticsUtils {
     // ========= METHODS =========
 
     // --- Refresh user properties part ---
-    fun sendFirebaseUserPropertiesRefreshPreferences(context: Context, firebaseAnalytics: FirebaseAnalytics) {
+    private fun sendFirebaseUserPropertiesRefreshPreferences(context: Context, firebaseAnalytics: FirebaseAnalytics) {
         firebaseAnalytics.setUserProperty(KEY_REFRESH_ENABLED_ANALYTICS, getUserPropertiesRefreshPreferences(context).toString())
     }
 
     // --- Refresh interval properties part ---
-    fun sendFirebaseUserPropertiesRefreshIntervalPreferences(context: Context, firebaseAnalytics: FirebaseAnalytics) {
+    private fun sendFirebaseUserPropertiesRefreshIntervalPreferences(context: Context, firebaseAnalytics: FirebaseAnalytics) {
         firebaseAnalytics.setUserProperty(KEY_REFRESH_INTERVAL_ENABLED_ANALYTICS, getUserPropertiesRefreshIntervalPreferences(context).toString())
     }
 
     // --- Webcam quality properties part ---
-    fun sendFirebaseUserPropertiesWebcamQualityPreferences(context: Context, firebaseAnalytics: FirebaseAnalytics) {
+    private fun sendFirebaseUserPropertiesWebcamQualityPreferences(context: Context, firebaseAnalytics: FirebaseAnalytics) {
         firebaseAnalytics.setUserProperty(KEY_WEBCAM_QUALITY_ENABLED_ANALYTICS, getUserPropertiesWebcamQualityPreferences(context))
     }
 
@@ -102,12 +102,12 @@ object AnalyticsUtils {
     // ========= FIREBASE METHODS =========
 
     // --- Ouverture de l'application ---
-    fun sendFirebaseLogEventAppOpen(firebaseAnalytics: FirebaseAnalytics) {
+    private fun sendFirebaseLogEventAppOpen(firebaseAnalytics: FirebaseAnalytics) {
         firebaseAnalytics.logEvent(FirebaseAnalytics.Event.APP_OPEN, null)
     }
 
     // --- Recherche dans la liste des webcams ---
-    fun sendFirebaseLogEventSearch(firebaseAnalytics: FirebaseAnalytics, text: String) {
+    private fun sendFirebaseLogEventSearch(firebaseAnalytics: FirebaseAnalytics, text: String) {
         val bundle = Bundle().apply {
             putString(FirebaseAnalytics.Param.SEARCH_TERM, text)
         }
@@ -116,7 +116,7 @@ object AnalyticsUtils {
     }
 
     // --- Affichage d'une section (liste des webcams d'un domaine. Par exemple "Puy de Sancy") ---
-    fun sendFirebaseLogEventViewItemList(firebaseAnalytics: FirebaseAnalytics, sectionName: String) {
+    private fun sendFirebaseLogEventViewItemList(firebaseAnalytics: FirebaseAnalytics, sectionName: String) {
         val bundle = Bundle().apply {
             putString(FirebaseAnalytics.Param.ITEM_CATEGORY, sectionName)
         }
@@ -125,7 +125,7 @@ object AnalyticsUtils {
     }
 
     // --- Affichage du détail d'une webcam ---
-    fun sendFirebaseLogEventSelectDetail(firebaseAnalytics: FirebaseAnalytics, webcamName: String) {
+    private fun sendFirebaseLogEventSelectDetail(firebaseAnalytics: FirebaseAnalytics, webcamName: String) {
         val bundle = Bundle().apply {
             putString(FirebaseAnalytics.Param.CONTENT_TYPE, KEY_SPECIAL_EVENTS_CONTENT_TYPE_WEBCAM)
             putString(FirebaseAnalytics.Param.ITEM_ID, webcamName)
@@ -135,7 +135,7 @@ object AnalyticsUtils {
     }
 
     // --- Ajout/Suppression d'une webcam aux favoris ---
-    fun sendFirebaseLogEventFavorite(firebaseAnalytics: FirebaseAnalytics, webcamName: String, isBecomeFavorite: Boolean) {
+    private fun sendFirebaseLogEventFavorite(firebaseAnalytics: FirebaseAnalytics, webcamName: String, isBecomeFavorite: Boolean) {
         val bundle = Bundle().apply {
             putString(FirebaseAnalytics.Param.CONTENT_TYPE, if (isBecomeFavorite) {
                 KEY_SPECIAL_EVENTS_CONTENT_TYPE_IS_FAVORITE
@@ -149,29 +149,29 @@ object AnalyticsUtils {
     }
 
     // --- Proposition d'une nouvelle webcam  ---
-    fun sendFirebaseLogEventNewWebcam(firebaseAnalytics: FirebaseAnalytics) {
+    private fun sendFirebaseLogEventNewWebcam(firebaseAnalytics: FirebaseAnalytics) {
         firebaseAnalytics.logEvent(KEY_SPECIAL_EVENTS_CONTENT_TYPE_PROPOSE_WEBCAM, null)
     }
 
     // ========= FABRIC METHODS =========
 
     // --- Ouverture de l'application ---
-    fun sendFabricLogEventAppOpen(answersAnalytics: Answers) {
+    private fun sendFabricLogEventAppOpen(answersAnalytics: Answers) {
         answersAnalytics.logContentView(ContentViewEvent().putContentName(FirebaseAnalytics.Event.APP_OPEN))
     }
 
     // --- Recherche dans la liste des webcams ---
-    fun sendFabricLogEventSearch(answersAnalytics: Answers, text: String) {
+    private fun sendFabricLogEventSearch(answersAnalytics: Answers, text: String) {
         answersAnalytics.logSearch(SearchEvent().putQuery(text))
     }
 
     // --- Affichage d'une section (liste des webcams d'un domaine. Par exemple "Puy de Sancy") ---
-    fun sendFabricLogEventViewItemList(answersAnalytics: Answers, sectionName: String) {
+    private fun sendFabricLogEventViewItemList(answersAnalytics: Answers, sectionName: String) {
         answersAnalytics.logContentView(ContentViewEvent().putContentName(FirebaseAnalytics.Event.VIEW_ITEM_LIST).putContentId(sectionName))
     }
 
     // --- Affichage du détail d'une webcam ---
-    fun sendFabricLogEventSelectDetail(answersAnalytics: Answers, webcamName: String) {
+    private fun sendFabricLogEventSelectDetail(answersAnalytics: Answers, webcamName: String) {
         answersAnalytics.logContentView(ContentViewEvent()
                 .putContentName(FirebaseAnalytics.Event.SELECT_CONTENT)
                 .putContentType(KEY_SPECIAL_EVENTS_CONTENT_TYPE_WEBCAM)
@@ -179,7 +179,7 @@ object AnalyticsUtils {
     }
 
     // --- Ajout/Suppression d'une webcam aux favoris ---
-    fun sendFabricLogEventFavorite(answersAnalytics: Answers, webcamName: String, isBecomeFavorite: Boolean) {
+    private fun sendFabricLogEventFavorite(answersAnalytics: Answers, webcamName: String, isBecomeFavorite: Boolean) {
         answersAnalytics.logContentView(ContentViewEvent()
                 .putContentName(KEY_SPECIAL_EVENTS_CONTENT_TYPE_FAVORITE)
                 .putContentType(if (isBecomeFavorite) {
@@ -191,7 +191,7 @@ object AnalyticsUtils {
     }
 
     // --- Proposition d'une nouvelle webcam  ---
-    fun sendFabricLogEventNewWebcam(answersAnalytics: Answers) {
+    private fun sendFabricLogEventNewWebcam(answersAnalytics: Answers) {
         answersAnalytics.logContentView(ContentViewEvent().putContentName(KEY_SPECIAL_EVENTS_CONTENT_TYPE_PROPOSE_WEBCAM))
     }
 
@@ -202,45 +202,45 @@ object AnalyticsUtils {
     // ========= VARIABLES =========
 
     // --- Content type ---
-    const val KEY_BUTTON = "button"
+    private const val KEY_BUTTON = "button"
 
     // --- Rate App ---
-    const val KEY_BUTTON_RATE_APP = "rate_app"
+    private const val KEY_BUTTON_RATE_APP = "rate_app"
 
     // --- About ---
-    const val KEY_BUTTON_ABOUT = "about"
+    private const val KEY_BUTTON_ABOUT = "about"
 
     // --- Website Les Pirates ---
-    const val KEY_BUTTON_WEBSITE_PIRATES = "website_lespirates"
+    private const val KEY_BUTTON_WEBSITE_PIRATES = "website_lespirates"
 
     // --- Website Openium ---
-    const val KEY_BUTTON_WEBSITE_OPENIUM = "website_openium"
+    private const val KEY_BUTTON_WEBSITE_OPENIUM = "website_openium"
 
     // --- Home Refresh ---
-    const val KEY_BUTTON_HOME_REFRESH = "home_refresh"
+    private const val KEY_BUTTON_HOME_REFRESH = "home_refresh"
 
     // --- Search ---
-    const val KEY_BUTTON_SEARCH = "search"
+    private const val KEY_BUTTON_SEARCH = "search"
 
     // --- Settings ---
-    const val KEY_BUTTON_SETTINGS = "settings"
+    private const val KEY_BUTTON_SETTINGS = "settings"
 
     // --- Webcam Detail Refresh ---
-    const val KEY_BUTTON_WEBCAM_DETAIL_REFRESH = "webcam_detail_refresh"
+    private const val KEY_BUTTON_WEBCAM_DETAIL_REFRESH = "webcam_detail_refresh"
 
     // --- Report Webcam Error ---
-    const val KEY_BUTTON_REPORT_WEBCAM_ERROR = "report_webcam_error"
+    private const val KEY_BUTTON_REPORT_WEBCAM_ERROR = "report_webcam_error"
 
     // --- Save Webcam ---
-    const val KEY_BUTTON_SAVE_WEBCAM = "save_webcam"
+    private const val KEY_BUTTON_SAVE_WEBCAM = "save_webcam"
 
     // --- Share Webcam ---
-    const val KEY_BUTTON_SHARE_WEBCAM = "share"
+    private const val KEY_BUTTON_SHARE_WEBCAM = "share"
 
     // ========= FIREBASE METHODS =========
 
     // --- Generic method to log all events not listed before ---
-    fun sendFirebaseLogEventSelectContent(firebaseAnalytics: FirebaseAnalytics, itemSelected: String) {
+    private fun sendFirebaseLogEventSelectContent(firebaseAnalytics: FirebaseAnalytics, itemSelected: String) {
         val bundle = Bundle().apply {
             putString(FirebaseAnalytics.Param.CONTENT_TYPE, KEY_BUTTON)
             putString(FirebaseAnalytics.Param.ITEM_ID, itemSelected)
@@ -252,7 +252,7 @@ object AnalyticsUtils {
     // ========= FABRIC METHODS =========
 
     // --- Generic method to log all events not listed before ---
-    fun sendFabricLogEventSelectContent(answersAnalytics: Answers, itemSelected: String) {
+    private fun sendFabricLogEventSelectContent(answersAnalytics: Answers, itemSelected: String) {
         answersAnalytics.logContentView(ContentViewEvent()
                 .putContentName(FirebaseAnalytics.Event.SELECT_CONTENT)
                 .putContentType(KEY_BUTTON)

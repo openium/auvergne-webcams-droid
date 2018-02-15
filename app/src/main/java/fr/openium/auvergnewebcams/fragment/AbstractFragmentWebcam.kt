@@ -24,6 +24,7 @@ import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
+import io.realm.RealmObject
 import kotlinx.android.synthetic.main.fragment_webcam.*
 import kotlinx.android.synthetic.main.header_detail_camera.*
 
@@ -243,6 +244,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
 
     private fun initDateLastUpdate() {
         if (isAlive) {
+
             if (webcam?.isUpToDate() == true) {
                 textviewWebcamNotUpdate?.gone()
             } else {

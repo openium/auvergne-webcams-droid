@@ -20,21 +20,23 @@ import fr.openium.auvergnewebcams.adapter.AdapterCarousels
 import fr.openium.auvergnewebcams.event.Events
 import fr.openium.auvergnewebcams.ext.*
 import fr.openium.auvergnewebcams.model.Section
+import fr.openium.auvergnewebcams.model.SectionList
 import fr.openium.auvergnewebcams.model.Weather
 import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.rest.AWApi
 import fr.openium.auvergnewebcams.rest.AWWeatherApi
+import fr.openium.auvergnewebcams.rest.ApiHelper
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
-import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
 import fr.openium.auvergnewebcams.utils.PreferencesAW
-import io.reactivex.Flowable
 import io.reactivex.Observable
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
+import io.reactivex.rxkotlin.toSingle
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
-import io.realm.RealmList
-import io.realm.RealmResults
 import kotlinx.android.synthetic.main.fragment_carousel_webcam.*
+import retrofit2.adapter.rxjava2.Result
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
@@ -52,11 +54,12 @@ class FragmentCarouselWebcam : AbstractFragment() {
 
     protected val api: AWApi by kodeinInjector.instance()
     protected val apiWeather: AWWeatherApi by kodeinInjector.instance()
+    protected val apiHelper: ApiHelper by kodeinInjector.instance()
 
     override val layoutId: Int
         get() = R.layout.fragment_carousel_webcam
 
-    private var position: Int = 0
+    private var actualPositionOfTheList: Int = 0
     private var positionAdapters: HashMap<Long, Int>? = null
 
     // =================================================================================================================
@@ -73,14 +76,17 @@ class FragmentCarouselWebcam : AbstractFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+        //Get saved position
         if (savedInstanceState != null) {
-            position = savedInstanceState.getInt(POSITION_LISTE)
+            actualPositionOfTheList = savedInstanceState.getInt(POSITION_LISTE)
 
             val listKeyPos = savedInstanceState.getLongArray(POSITION_ADAPTER_KEYS_LISTE)
             val listValuePos = savedInstanceState.getIntArray(POSITION_ADAPTER_VALUES_LISTE)
 
             positionAdapters = (listKeyPos.zip(listValuePos.toList()).toMap() as HashMap<Long, Int>)
         }
+
         textViewSearch.setOnClickListener {
             //Analytics
             AnalyticsUtils.buttonSearchClicked(context!!)
@@ -98,12 +104,12 @@ class FragmentCarouselWebcam : AbstractFragment() {
         }
 
         swipeRefreshLayoutWebcams.setOnRefreshListener {
-            position = 0
+            actualPositionOfTheList = 0
 
             //Analytics
             AnalyticsUtils.buttonHomeRefreshed(context!!)
 
-            manageRefreshWebcams()
+            refreshMethod()
         }
 
         oneTimeSubscriptions.add(Events.eventCameraFavoris.obs
@@ -117,6 +123,8 @@ class FragmentCarouselWebcam : AbstractFragment() {
 
     override fun onStart() {
         super.onStart()
+
+        //Start the 2 timers when the fragment start
         startDelayRefreshWebcams()
         startDelayRefreshWeather()
     }
@@ -124,9 +132,11 @@ class FragmentCarouselWebcam : AbstractFragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         if (recyclerView?.layoutManager != null) {
+            //Keep position of the vertical list
             val position = (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
             outState.putInt(POSITION_LISTE, position)
 
+            //Keep position of the horizontals list
             val posOfHorizontalScrollView = (recyclerView.adapter as AdapterCarousels).getPositionOfAllWebcams()
             outState.putLongArray(POSITION_ADAPTER_KEYS_LISTE, posOfHorizontalScrollView.keys.toLongArray())
             outState.putIntArray(POSITION_ADAPTER_VALUES_LISTE, posOfHorizontalScrollView.values.toIntArray())
@@ -155,65 +165,7 @@ class FragmentCarouselWebcam : AbstractFragment() {
     // Specific job
     // =================================================================================================================
 
-    private fun manageRefreshWebcams() {
-        if (applicationContext.hasNetwork) {
-            oneTimeSubscriptions.add(api.getSections()
-                    .subscribe({ result ->
-                        Realm.getDefaultInstance().use {
-                            it.executeTransaction {
-                                if (!result.isError && result.response()?.body() != null) {
-                                    val sections = result.response()!!.body()!!
-
-                                    for (section in sections.sections) {
-
-                                        section.latitude = Math.round(section.latitude * 100.0) / 100.0
-                                        section.longitude = Math.round(section.longitude * 100.0) / 100.0
-
-                                        for (webcam in section.webcams) {
-                                            if (webcam.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
-                                                // load media ld
-                                                webcam.mediaViewSurfLD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfLD)
-                                                webcam.mediaViewSurfHD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfHD)
-                                            }
-
-                                            val webcamDB = it.where(Webcam::class.java)
-                                                    .equalTo(Webcam::uid.name, webcam.uid)
-                                                    .findFirst()
-                                            if (webcamDB != null) {
-                                                if (webcamDB.lastUpdate != null) {
-                                                    webcam.lastUpdate = webcamDB.lastUpdate
-                                                }
-                                                webcam.isFavoris = webcamDB.isFavoris
-                                            }
-                                            if (webcam.hidden == null) {
-                                                webcam.hidden = false
-                                            }
-                                        }
-
-                                        section.webcams = RealmList<Webcam>().apply {
-                                            addAll(section.webcams.filter { it.hidden == false })
-                                        }
-                                    }
-
-                                    it.where(Section::class.java).findAll().deleteAllFromRealm()
-                                    it.where(Webcam::class.java).findAll().deleteAllFromRealm()
-
-                                    it.insertOrUpdate(sections.sections)
-                                }
-                            }
-                            removeGlideCache()
-                        }
-                    }, {
-                        activity?.runOnUiThread {
-                            swipeRefreshLayoutWebcams?.isRefreshing = false
-                        }
-                    }))
-        } else {
-            activity?.runOnUiThread {
-                swipeRefreshLayoutWebcams?.isRefreshing = false
-            }
-        }
-    }
+    // --- Start delay to refresh data ---
 
     private fun startDelayRefreshWebcams() {
         val delay = PreferencesAW.getWebcamsDelayRefreshValue(applicationContext)
@@ -242,85 +194,60 @@ class FragmentCarouselWebcam : AbstractFragment() {
                 })
     }
 
-    private fun removeGlideCache() {
-        oneTimeSubscriptions.add(Observable.just(1)
-                .observeOn(Schedulers.io())
-                .subscribeOn(Schedulers.io())
-                .subscribe {
-                    Glide.get(applicationContext).clearDiskCache()
-                    activity?.runOnUiThread {
-                        Glide.get(applicationContext).clearMemory()
-//                        if (PreferencesAW.isWebcamsDelayRefreshActive(applicationContext)) {
-                        PreferencesAW.setLastUpdateTimestamp(applicationContext, System.currentTimeMillis().toUnixTimestamp())
-//                        }
-                        initAdapter(PreferencesAW.getLastUpdateWebcamsTimestamp(applicationContext))
-                        swipeRefreshLayoutWebcams?.isRefreshing = false
-                    }
-                })
-    }
+    // --- Init adapters ---
 
     private fun initAdapter(lastUpdate: Long) {
         if (isAlive) {
             Timber.d("[INFO] UPDATE Webcams")
 
-            val sectionFavoris = Section(uid = -1, order = -1, title = getString(R.string.favoris_section_title), imageName = "star")
+            var sectionFavorisDB = realm!!.where(Section::class.java).equalTo(Section::uid.name, Constants.FAVORI_SECTION_ID).findFirst()
+            if (sectionFavorisDB == null) {
+                realm!!.executeTransaction {
+                    val sectionFavoris = Section(uid = Constants.FAVORI_SECTION_ID, order = -1, title = getString(R.string.favoris_section_title), imageName = "star")
+                    it.insertOrUpdate(sectionFavoris)
+                }
+            }
+
+            sectionFavorisDB = realm!!.where(Section::class.java).equalTo(Section::uid.name, Constants.FAVORI_SECTION_ID).findFirst()
 
             val webcamsFavoris = realm!!.where(Webcam::class.java)
                     .sort(Webcam::title.name)
                     .equalTo(Webcam::isFavoris.name, true)
-                    .findAll().asFlowable().filter { it.isLoaded }
+                    .findAll()
+
+            realm!!.executeTransaction {
+                sectionFavorisDB!!.webcams.clear()
+                sectionFavorisDB.webcams.addAll(webcamsFavoris)
+            }
 
             val sections = realm!!.where(Section::class.java)
                     .sort(Section::order.name)
                     .isNotEmpty(Section::webcams.name)
-                    .findAll().asFlowable().filter { it.isLoaded }
+                    .findAll()
 
-            oneTimeSubscriptions.add(Flowable.zip(webcamsFavoris, sections,
-                    BiFunction
-                    { webcamsFavorisList: RealmResults<Webcam>, result: RealmResults<Section> ->
-                        if (!webcamsFavorisList.isEmpty()) {
-                            sectionFavoris.webcams.clear()
-                            sectionFavoris.webcams.addAll(webcamsFavorisList)
-                        }
+            if (recyclerView.adapter == null) {
+                recyclerView.layoutManager = LinearLayoutManager(context)
+                recyclerView.adapter = AdapterCarousels(context!!, { webcam, _ ->
+                    startActivityDetailCamera(webcam)
+                }, sections, composites = oneTimeSubscriptions, listenerSectionClick = { section ->
+                    startActivityListWebcam(section)
+                }, lastUpdate = lastUpdate)
 
-                        result
-                    }).subscribe(
-                    {
-                        if (recyclerView.adapter == null) {
-                            recyclerView.layoutManager = LinearLayoutManager(context)
-                            recyclerView.adapter = AdapterCarousels(context!!, { webcam, _ ->
-                                //Analytics
-                                AnalyticsUtils.selectWebcamDetails(context!!, webcam.title!!)
+                if (positionAdapters != null) {
+                    (recyclerView.adapter as AdapterCarousels).setPositionOfAllWebcams(positionAdapters!!)
+                }
 
-                                startActivityDetailCamera(webcam)
-                            }, it, composites = oneTimeSubscriptions, sectionFavoris = sectionFavoris, listenerSectionClick = { section ->
-                                //Analytics
-                                AnalyticsUtils.selectSectionDetails(context!!, section.title!!)
+                recyclerView.setHasFixedSize(true)
+                recyclerView.setItemViewCacheSize(10)
 
-                                startActivity<ActivityListWebcam>(ActivityListWebcam.getBundle(section.uid))
-                            }, lastUpdate = lastUpdate, oneTimeSubscriptions = oneTimeSubscriptions, realm = realm!!)
-
-                            //Optimization:
-                            recyclerView.setHasFixedSize(true)
-                            recyclerView.setItemViewCacheSize(20)
-                            recyclerView.isDrawingCacheEnabled = true
-                            recyclerView.drawingCacheQuality = View.DRAWING_CACHE_QUALITY_HIGH
-
-                            if (positionAdapters != null) {
-                                (recyclerView.adapter as AdapterCarousels).setPositionOfAllWebcams(positionAdapters!!)
-                            }
-
-                            recyclerView.scrollToPosition(position)
-                        } else {
-                            (recyclerView.adapter as AdapterCarousels).items = it
-                            (recyclerView.adapter as AdapterCarousels).sectionFavoris = sectionFavoris
-                            (recyclerView.adapter as AdapterCarousels).lastUpdate = lastUpdate
-                            recyclerView.adapter.notifyDataSetChanged()
-                        }
-                    },
-                    {
-
-                    }))
+                recyclerView.scrollToPosition(actualPositionOfTheList)
+            } else {
+                recyclerView.post {
+                    (recyclerView.adapter as AdapterCarousels).items = sections
+                    (recyclerView.adapter as AdapterCarousels).lastUpdate = lastUpdate
+                    recyclerView.adapter.notifyDataSetChanged()
+                }
+            }
         }
     }
 
@@ -355,7 +282,39 @@ class FragmentCarouselWebcam : AbstractFragment() {
         }
     }
 
+    // --- Refresh method ---
+
+    private fun refreshMethod() {
+        oneTimeSubscriptions.add(Single.zip(Observable.timer(2, TimeUnit.SECONDS).toSingle(), apiHelper.getSections(), BiFunction { time: Observable<Long>, list: Result<SectionList> ->
+
+        }).observeOn(AndroidSchedulers.mainThread()).subscribe({
+            removeGlideCache()
+            swipeRefreshLayoutWebcams.isRefreshing = false
+        }, { result ->
+            swipeRefreshLayoutWebcams.isRefreshing = false
+        }))
+    }
+
+    private fun removeGlideCache() {
+        oneTimeSubscriptions.add(Observable.just(1)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe {
+                    Glide.get(applicationContext).clearDiskCache()
+                    activity?.runOnUiThread {
+                        Glide.get(applicationContext).clearMemory()
+                        initAdapter(PreferencesAW.getLastUpdateWebcamsTimestamp(context!!))
+                        PreferencesAW.setLastUpdateTimestamp(applicationContext, System.currentTimeMillis().toUnixTimestamp())
+                    }
+                })
+    }
+
+    // --- Go to another activity methods
+
     private fun startActivityDetailCamera(webcam: Webcam) {
+        //Analytics
+        AnalyticsUtils.selectWebcamDetails(context!!, webcam.title!!)
+
         val intent: Intent = Intent(context, ActivityWebcam::class.java).apply {
             putExtra(Constants.KEY_ID, webcam.uid)
             putExtra(Constants.KEY_TYPE, webcam.type)
@@ -363,6 +322,15 @@ class FragmentCarouselWebcam : AbstractFragment() {
         val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
         startActivity(intent, bundle)
     }
+
+    private fun startActivityListWebcam(section: Section) {
+        //Analytics
+        AnalyticsUtils.selectSectionDetails(context!!, section.title!!)
+
+        startActivity<ActivityListWebcam>(ActivityListWebcam.getBundle(section.uid))
+    }
+
+    // --- Analytics ---
 
     private fun sendAllAnalyticsData() {
         //Analytics

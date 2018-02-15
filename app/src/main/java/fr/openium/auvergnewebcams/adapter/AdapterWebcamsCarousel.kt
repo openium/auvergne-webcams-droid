@@ -55,55 +55,54 @@ class AdapterWebcamsCarousel(val context: Context,
 
     override fun onBindViewHolder(holder: WebcamHolder, position: Int) {
         val item = webcams.get(position)
-        if (item != null) {
-            composites.add(Events.eventCameraDateUpdate
-                    .obs
-                    .fromIOToMain()
-                    .subscribe {
-                        if (RealmObject.isValid(item) && it == item.uid) {
-                            item.realm?.refresh()
-                            //    Timber.e("uid = ${item.uid}")
-                            this.notifyItemChanged(position)
-                        }
-                    })
+        composites.add(Events.eventCameraDateUpdate
+                .obs
+                .fromIOToMain()
+                .subscribe {
+                    if (item != null && RealmObject.isValid(item) && it == item.uid) {
+                        item.realm?.refresh()
+                        //    Timber.e("uid = ${item.uid}")
+                        this.notifyItemChanged(position)
+                    }
+                })
 
-            val urlWebCam: String = item.getUrlForWebcam(false, false) ?: ""
-            val isUp = item.isUpToDate()
+        val urlWebCam: String = item?.getUrlForWebcam(false, false) ?: ""
+        val isUp = item?.isUpToDate() ?: true
 
-            if (isUp) {
-                holder.itemView.textviewWebcamNotUpdate.gone()
-            } else {
-                holder.itemView.textviewWebcamNotUpdate.setText(context.getString(R.string.generic_not_up_to_date))
-                holder.itemView.textviewWebcamNotUpdate.show()
-            }
+        if (isUp) {
+            holder.itemView.textviewWebcamNotUpdate.gone()
+        } else {
+            holder.itemView.textviewWebcamNotUpdate.setText(context.getString(R.string.generic_not_up_to_date))
+            holder.itemView.textviewWebcamNotUpdate.show()
+        }
 
-            holder.itemView.progressbar.show()
+        holder.itemView.progressbar.show()
 
 //        Timber.e("load image section ${section.uid}    $position => $urlWebCam")
-            val listenerGlide = object : RequestListener<Drawable> {
-                override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                    holder.itemView.textviewWebcamNotUpdate.setText(context.getString(R.string.load_webcam_error))
-                    holder.itemView.textviewWebcamNotUpdate.show()
+        val listenerGlide = object : RequestListener<Drawable> {
+            override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+                holder.itemView.textviewWebcamNotUpdate.setText(context.getString(R.string.load_webcam_error))
+                holder.itemView.textviewWebcamNotUpdate.show()
 
-                    holder.itemView.imageViewCamera.scaleType = ImageView.ScaleType.CENTER_INSIDE
-                    holder.itemView.progressbar.gone()
-                    return false
-                }
-
-                override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                    if (isUp) {
-                        holder.itemView.textviewWebcamNotUpdate.gone()
-                    } else {
-                        holder.itemView.textviewWebcamNotUpdate.show()
-                    }
-                    holder.itemView.imageViewCamera.scaleType = ImageView.ScaleType.CENTER_CROP
-                    holder.itemView.progressbar.gone()
-                    return false
-                }
-
+                holder.itemView.imageViewCamera.scaleType = ImageView.ScaleType.CENTER_INSIDE
+                holder.itemView.progressbar.gone()
+                return false
             }
 
-            // Timber.e("DATE UPDATE $lastUpdate")
+            override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                if (isUp) {
+                    holder.itemView.textviewWebcamNotUpdate.gone()
+                } else {
+                    holder.itemView.textviewWebcamNotUpdate.show()
+                }
+                holder.itemView.imageViewCamera.scaleType = ImageView.ScaleType.CENTER_CROP
+                holder.itemView.progressbar.gone()
+                return false
+            }
+
+        }
+
+        // Timber.e("DATE UPDATE $lastUpdate")
 //        if (lastUpdate == 0L) { // no cache
 //            GlideApp.with(context)
 //                    .load(urlWebCam)
@@ -115,31 +114,31 @@ class AdapterWebcamsCarousel(val context: Context,
 //                    .override(widthImage, heightImage)
 //                    .into(holder.itemView.imageViewCamera)
 //        } else {
-            GlideApp.with(context)
-                    .load(urlWebCam)
-                    .error(R.drawable.broken_camera)
-                    .listener(listenerGlide)
-                    .signature(MediaStoreSignature("", lastUpdate, 0))
-                    .override(widthImage, heightImage)
-                    .into(holder.itemView.imageViewCamera)
+        GlideApp.with(context)
+                .load(urlWebCam)
+                .error(R.drawable.broken_camera)
+                .listener(listenerGlide)
+                .signature(MediaStoreSignature("", lastUpdate, 0))
+                .override(widthImage, heightImage)
+                .into(holder.itemView.imageViewCamera)
 //        }
 
 
-            holder.itemView.setOnClickListener {
+        holder.itemView.setOnClickListener {
+            if (item != null)
                 listener?.invoke(item, position)
-            }
+        }
 
-            if (BuildConfig.DEBUG) {
-                if (item.lastUpdate ?: 0 > 0L) {
-                    val date = DateUtils.getDateFormatDateHour(item.lastUpdate!!)
-                    holder.itemView.textviewWebcamLastUpdate.setText(context.getString(R.string.generic_last_update, date))
-                    holder.itemView.textviewWebcamLastUpdate.show()
-                } else {
-                    holder.itemView.textviewWebcamLastUpdate.gone()
-                }
+        if (BuildConfig.DEBUG) {
+            if (item?.lastUpdate ?: 0 > 0L) {
+                val date = DateUtils.getDateFormatDateHour(item!!.lastUpdate!!)
+                holder.itemView.textviewWebcamLastUpdate.setText(context.getString(R.string.generic_last_update, date))
+                holder.itemView.textviewWebcamLastUpdate.show()
             } else {
                 holder.itemView.textviewWebcamLastUpdate.gone()
             }
+        } else {
+            holder.itemView.textviewWebcamLastUpdate.gone()
         }
     }
 

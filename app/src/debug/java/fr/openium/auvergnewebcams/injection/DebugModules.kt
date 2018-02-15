@@ -11,7 +11,7 @@ import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.model.SectionList
 import fr.openium.auvergnewebcams.rest.AWApi
 import fr.openium.auvergnewebcams.rest.MockApi
-import io.reactivex.Observable
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import okhttp3.Cache
 import okhttp3.HttpUrl
@@ -70,8 +70,8 @@ object DebugModules {
                 networkBehaviour.setVariancePercent(0)
                 val apiMock = object : MockApi() {
 
-                    override fun getSections(): Observable<Result<SectionList>> {
-                        val thisValue = instance<Context>().getAssets().open("test.json")
+                    override fun getSections(): Single<Result<SectionList>> {
+                        val thisValue = instance<Context>().getAssets().open("aw-config.json")
                         val reader = InputStreamReader(thisValue)
 
                         val sObjectMapper = GsonBuilder()
