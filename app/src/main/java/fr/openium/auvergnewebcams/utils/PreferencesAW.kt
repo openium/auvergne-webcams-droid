@@ -63,7 +63,7 @@ object PreferencesAW {
     }
 
     fun getLastUpdateWebcamsTimestamp(context: Context): Long {
-        var lastUpdate = 0L
+        var lastUpdate: Long
         if (isWebcamsDelayRefreshActive(context)) {
             lastUpdate = getLastUpdateTimestamp(context)
             if (lastUpdate == -1L) {

@@ -12,18 +12,14 @@ import fr.openium.auvergnewebcams.ext.toUnixTimestamp
 import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.SectionList
 import fr.openium.auvergnewebcams.model.Weather
-import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.rest.AWWeatherApi
 import fr.openium.auvergnewebcams.rest.ApiHelper
-import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
 import fr.openium.auvergnewebcams.utils.PreferencesAW
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.rxkotlin.toSingle
 import io.reactivex.functions.BiFunction
 import io.realm.Realm
-import io.realm.RealmList
 import kotlinx.android.synthetic.main.activity_splash.*
 import retrofit2.adapter.rxjava2.Result
 import timber.log.Timber
@@ -50,8 +46,8 @@ class ActivitySplash : AbstractActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (applicationContext.hasNetwork) {
-            disposables.add(Single.zip(Observable.timer(2, TimeUnit.SECONDS).toSingle(), apiHelper.getSections(), BiFunction { time: Observable<Long>, list: Result<SectionList> ->
-                if(list.isError || list.response()?.body() != null){
+            disposables.add(Single.zip(Observable.timer(2, TimeUnit.SECONDS).singleOrError(), apiHelper.getSections(), BiFunction { time: Long, list: Result<SectionList> ->
+                if (list.isError || list.response()?.body() != null) {
                     loadFromAssets()
                 }
             }).observeOn(AndroidSchedulers.mainThread())

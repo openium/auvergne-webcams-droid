@@ -37,7 +37,7 @@ class FragmentListWebcam : AbstractFragment() {
         oneTimeSubscriptions.add(Events.eventCameraFavoris.obs
                 .fromIOToMain()
                 .subscribe({
-                    if (isAlive) {
+                    if (isAlive && section.uid == -1L) {
                         initSection()
                     }
                 }, { error ->
@@ -76,11 +76,11 @@ class FragmentListWebcam : AbstractFragment() {
         if (webcams.isEmpty()) {
             activity?.finish()
         } else {
-            val webcamsAdapter = ArrayList<Webcam>()
-            webcamsAdapter.addAll(webcams)
+            val webcamsList = ArrayList<Webcam>()
+            webcamsList.addAll(webcams)
             if (recyclerView.adapter == null) {
                 recyclerView.layoutManager = LinearLayoutManager(applicationContext)
-                recyclerView.adapter = AdapterWebcams(applicationContext, webcamsAdapter, { webcam ->
+                recyclerView.adapter = AdapterWebcams(applicationContext, webcamsList, { webcam ->
                     val intent: Intent = Intent(context, ActivityWebcam::class.java).apply {
                         putExtra(Constants.KEY_ID, webcam.uid)
                         putExtra(Constants.KEY_TYPE, webcam.type)
@@ -89,8 +89,8 @@ class FragmentListWebcam : AbstractFragment() {
                     startActivity(intent, bundle)
                 }, oneTimeSubscriptions, section, realm!!)
             } else {
-                (recyclerView.adapter as AdapterWebcams).items = webcamsAdapter
-                (recyclerView.adapter as AdapterWebcams).hearderSection = section
+                (recyclerView.adapter as AdapterWebcams).items = webcamsList
+                (recyclerView.adapter as AdapterWebcams).headerSection = section
                 recyclerView.adapter.notifyDataSetChanged()
             }
         }

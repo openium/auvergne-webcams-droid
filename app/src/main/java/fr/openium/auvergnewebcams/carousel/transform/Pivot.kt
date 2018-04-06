@@ -69,7 +69,7 @@ class Pivot(@param:Axis @get:Axis
         abstract fun create(): Pivot
     }
 
-    @IntDef(AXIS_X.toLong(), AXIS_Y.toLong())
+    @IntDef(AXIS_X, AXIS_Y)
     @kotlin.annotation.Retention
     annotation class Axis
 

@@ -22,7 +22,6 @@ import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.SectionList
 import fr.openium.auvergnewebcams.model.Weather
 import fr.openium.auvergnewebcams.model.Webcam
-import fr.openium.auvergnewebcams.rest.AWApi
 import fr.openium.auvergnewebcams.rest.AWWeatherApi
 import fr.openium.auvergnewebcams.rest.ApiHelper
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
@@ -31,7 +30,6 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.BiFunction
-import io.reactivex.rxkotlin.toSingle
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import kotlinx.android.synthetic.main.fragment_carousel_webcam.*
@@ -51,7 +49,6 @@ class FragmentCarouselWebcam : AbstractFragment() {
         private const val POSITION_ADAPTER_VALUES_LISTE = "POSITION_ADAPTER_VALUES_LISTE"
     }
 
-    protected val api: AWApi by kodeinInjector.instance()
     protected val apiWeather: AWWeatherApi by kodeinInjector.instance()
     protected val apiHelper: ApiHelper by kodeinInjector.instance()
 
@@ -281,7 +278,7 @@ class FragmentCarouselWebcam : AbstractFragment() {
     // --- Refresh method ---
 
     private fun refreshMethod() {
-        oneTimeSubscriptions.add(Single.zip(Observable.timer(2, TimeUnit.SECONDS).toSingle(), apiHelper.getSections(), BiFunction { time: Observable<Long>, list: Result<SectionList> ->
+        oneTimeSubscriptions.add(Single.zip(Observable.timer(2, TimeUnit.SECONDS).singleOrError(), apiHelper.getSections(), BiFunction { time: Long, list: Result<SectionList> ->
 
         }).observeOn(AndroidSchedulers.mainThread()).subscribe({
             removeGlideCache()

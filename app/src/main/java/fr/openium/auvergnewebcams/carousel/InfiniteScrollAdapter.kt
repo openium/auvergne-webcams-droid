@@ -16,7 +16,7 @@ class InfiniteScrollAdapter<T : RecyclerView.ViewHolder>(val wrapped: RecyclerVi
     val realCurrentPosition: Int
         get() = getRealPosition(layoutManager?.currentPosition ?: currentRangeStart)
 
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView?) {
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         wrapped.onAttachedToRecyclerView(recyclerView)
         this.wrapped.registerAdapterDataObserver(DataSetChangeDelegate())
         if (recyclerView is DiscreteScrollView) {
@@ -25,7 +25,7 @@ class InfiniteScrollAdapter<T : RecyclerView.ViewHolder>(val wrapped: RecyclerVi
         }
     }
 
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView?) {
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         wrapped.onDetachedFromRecyclerView(recyclerView)
         layoutManager = null
     }
