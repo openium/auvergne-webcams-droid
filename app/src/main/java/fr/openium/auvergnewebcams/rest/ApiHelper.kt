@@ -5,6 +5,7 @@ import fr.openium.auvergnewebcams.model.SectionList
 import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
 import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
 import io.realm.RealmList
 import retrofit2.adapter.rxjava2.Result
@@ -18,8 +19,7 @@ class ApiHelper(val context: Context, val api: AWApi) {
     // --------------------- FLUX --------------------- //
 
     fun getSections(): Single<Result<SectionList>> {
-        return startQueryLogged(api.getSections()).doOnSuccess { result ->
-
+        return startQueryLogged(api.getSections()).observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).doOnSuccess { result ->
             if (!result.isError && result.response()?.body() != null) {
                 Realm.getDefaultInstance().use {
                     it.executeTransaction {
@@ -70,8 +70,8 @@ class ApiHelper(val context: Context, val api: AWApi) {
                 }
             }
         }.doOnError {
-                    Timber.d("Error getting sections")
-                }
+            Timber.d("Error getting sections")
+        }
     }
 // ----------------- OTHER METHODS ---------------- //
 

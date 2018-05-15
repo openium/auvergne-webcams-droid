@@ -47,7 +47,7 @@ class ActivitySplash : AbstractActivity() {
         super.onCreate(savedInstanceState)
         if (applicationContext.hasNetwork) {
             disposables.add(Single.zip(Observable.timer(2, TimeUnit.SECONDS).singleOrError(), apiHelper.getSections(), BiFunction { time: Long, list: Result<SectionList> ->
-                if (list.isError || list.response()?.body() != null) {
+                if (list.isError || list.response()?.body() == null) {
                     loadFromAssets()
                 }
             }).observeOn(AndroidSchedulers.mainThread())
@@ -60,15 +60,12 @@ class ActivitySplash : AbstractActivity() {
                             }))
 
         } else {
-            val getDataObs = Observable
-                    .fromCallable {
-                        loadFromAssets()
-                    }
-            disposables.add(Observable.combineLatest(getDataObs, Observable.timer(3, TimeUnit.SECONDS), BiFunction
-            { _: Unit, _: Long ->
+            val getDataObs = Observable.fromCallable {
+                loadFromAssets()
+            }
+            disposables.add(Observable.combineLatest(getDataObs, Observable.timer(3, TimeUnit.SECONDS), BiFunction { _: Unit, _: Long ->
                 true
-            }).subscribe
-            {
+            }).subscribe {
                 startActivityMain()
             })
         }
@@ -105,12 +102,11 @@ class ActivitySplash : AbstractActivity() {
 
                                         val weather = Weather(weatherRest.response()!!.body()?.weather!!.get(0).id!!, weatherRest.response()!!.body()?.main!!.temp!!, weatherRest.response()!!.body()!!.coord!!.lon!!, weatherRest.response()!!.body()!!.coord!!.lat!!)
                                         it.insertOrUpdate(weather)
-
-                                        nbRemainingRequests!!.decrementAndGet()
-                                        if (nbRemainingRequests!!.get() == 0) {
-                                            startActivityMain()
-                                        }
                                     }
+                                }
+                                nbRemainingRequests!!.decrementAndGet()
+                                if (nbRemainingRequests!!.get() == 0) {
+                                    startActivityMain()
                                 }
                             }
                         }, { e ->

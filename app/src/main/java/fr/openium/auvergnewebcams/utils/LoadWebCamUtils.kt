@@ -4,6 +4,7 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URL
 
+
 /**
  * Created by laura on 01/12/2017.
  */
@@ -26,5 +27,4 @@ object LoadWebCamUtils {
         }
         return media
     }
-
 }
