@@ -51,14 +51,11 @@ class ActivitySplash : AbstractActivity() {
                     loadFromAssets()
                 }
             }).observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                            {
-                                initWeather()
-                            },
-                            {
-                                initWeather()
-                            }))
-
+                    .subscribe({
+                        initWeather()
+                    }, {
+                        initWeather()
+                    }))
         } else {
             val getDataObs = Observable.fromCallable {
                 loadFromAssets()
@@ -72,7 +69,6 @@ class ActivitySplash : AbstractActivity() {
     }
 
     private fun initWeather() {
-        Timber.d("[INFO] UPDATE Weather")
         PreferencesAW.setLastUpdateWeatherTimestamp(applicationContext, System.currentTimeMillis().toUnixTimestamp())
 
         Realm.getDefaultInstance().use {
@@ -84,7 +80,7 @@ class ActivitySplash : AbstractActivity() {
 
                 for (section in sections) {
                     if (section.latitude != 0.0 || section.longitude != 0.0) {
-                        nbRemainingRequests!!.incrementAndGet()
+                        nbRemainingRequests?.incrementAndGet()
                     }
                 }
 
@@ -92,20 +88,22 @@ class ActivitySplash : AbstractActivity() {
                     startActivityMain()
                 }
 
-                for (i in 0..sections.size - 1) {
-                    if (sections.get(i)!!.latitude != 0.0 || sections.get(i)!!.longitude != 0.0) {
-                        disposables.add(apiWeather.queryByGeographicCoordinates(sections.get(i)!!.latitude, sections.get(i)!!.longitude, getString(R.string.app_weather_id)).fromIOToMain().subscribe({ weatherRest ->
+                for (section in sections) {
+                    if (section.latitude != 0.0 || section.longitude != 0.0) {
+                        disposables.add(apiWeather.queryByGeographicCoordinates(section.latitude, section.longitude, getString(R.string.app_weather_id)).fromIOToMain().subscribe({ weatherRest ->
                             Realm.getDefaultInstance().use {
-                                if (weatherRest.response() != null) {
+                                weatherRest.response()?.body()?.let { body ->
                                     it.executeTransaction {
-                                        it.where(Weather::class.java).equalTo(Weather::lat.name, weatherRest.response()!!.body()!!.coord!!.lat).equalTo(Weather::lon.name, weatherRest.response()!!.body()!!.coord!!.lon).findAll().deleteAllFromRealm()
+                                        it.where(Weather::class.java).equalTo(Weather::lat.name, body.coord?.lat).equalTo(Weather::lon.name, body.coord?.lon).findAll().deleteAllFromRealm()
 
-                                        val weather = Weather(weatherRest.response()!!.body()?.weather!!.get(0).id!!, weatherRest.response()!!.body()?.main!!.temp!!, weatherRest.response()!!.body()!!.coord!!.lon!!, weatherRest.response()!!.body()!!.coord!!.lat!!)
+                                        val weather = Weather(body.weather?.get(0)?.id, body.main?.temp, body.coord?.lon
+                                                ?: 0.0, body.coord?.lat
+                                                ?: 0.0)
                                         it.insertOrUpdate(weather)
                                     }
                                 }
-                                nbRemainingRequests!!.decrementAndGet()
-                                if (nbRemainingRequests!!.get() == 0) {
+                                nbRemainingRequests?.decrementAndGet()
+                                if (nbRemainingRequests?.get() == 0) {
                                     startActivityMain()
                                 }
                             }

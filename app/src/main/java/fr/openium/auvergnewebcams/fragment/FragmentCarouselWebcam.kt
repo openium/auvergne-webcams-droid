@@ -80,7 +80,7 @@ class FragmentCarouselWebcam : AbstractFragment() {
             val listKeyPos = savedInstanceState.getLongArray(POSITION_ADAPTER_KEYS_LISTE)
             val listValuePos = savedInstanceState.getIntArray(POSITION_ADAPTER_VALUES_LISTE)
 
-            positionAdapters = (listKeyPos.zip(listValuePos.toList()).toMap() as HashMap<Long, Int>)
+            positionAdapters = (listKeyPos.zip(listValuePos.toList()).toMap() as HashMap<Long, Int>?)
         }
 
         textViewSearch.setOnClickListener {
@@ -211,65 +211,68 @@ class FragmentCarouselWebcam : AbstractFragment() {
                     .equalTo(Webcam::isFavoris.name, true)
                     .findAll()
 
-            realm!!.executeTransaction {
-                sectionFavorisDB!!.webcams.clear()
-                sectionFavorisDB.webcams.addAll(webcamsFavoris)
+            if (sectionFavorisDB != null) {
+                realm!!.executeTransaction {
+                    sectionFavorisDB.webcams.clear()
+                    sectionFavorisDB.webcams.addAll(webcamsFavoris)
+                }
             }
 
-            val sections = realm!!.where(Section::class.java)
+            oneTimeSubscriptions.add(realm!!.where(Section::class.java)
                     .sort(Section::order.name)
                     .isNotEmpty(Section::webcams.name)
-                    .findAll()
+                    .findAll().asFlowable().subscribe({ sections ->
+                        if (recyclerView.adapter == null) {
+                            recyclerView.layoutManager = LinearLayoutManager(context)
+                            recyclerView.adapter = AdapterCarousels(context!!, { webcam, _ ->
+                                startActivityDetailCamera(webcam)
+                            }, sections, composites = oneTimeSubscriptions, listenerSectionClick = { section ->
+                                startActivityListWebcam(section)
+                            }, lastUpdate = lastUpdate)
 
-            if (recyclerView.adapter == null) {
-                recyclerView.layoutManager = LinearLayoutManager(context)
-                recyclerView.adapter = AdapterCarousels(context!!, { webcam, _ ->
-                    startActivityDetailCamera(webcam)
-                }, sections, composites = oneTimeSubscriptions, listenerSectionClick = { section ->
-                    startActivityListWebcam(section)
-                }, lastUpdate = lastUpdate)
+                            positionAdapters?.let {
+                                (recyclerView.adapter as AdapterCarousels).setPositionOfAllWebcams(it)
+                            }
 
-                if (positionAdapters != null) {
-                    (recyclerView.adapter as AdapterCarousels).setPositionOfAllWebcams(positionAdapters!!)
-                }
+                            recyclerView.setHasFixedSize(true)
 
-                recyclerView.setHasFixedSize(true)
-
-                recyclerView.scrollToPosition(actualPositionOfTheList)
-            } else {
-                (recyclerView.adapter as AdapterCarousels).items = sections
-                (recyclerView.adapter as AdapterCarousels).lastUpdate = lastUpdate
-                recyclerView.adapter.notifyDataSetChanged()
-            }
+                            recyclerView.scrollToPosition(actualPositionOfTheList)
+                        } else {
+                            (recyclerView.adapter as AdapterCarousels).lastUpdate = lastUpdate
+                            recyclerView.adapter.notifyDataSetChanged()
+                        }
+                    }, {
+                        Timber.e("Error init weather ${it.message}")
+                    }))
         }
     }
 
     private fun initWeather() {
         if (isAlive) {
-            Timber.d("[INFO] UPDATE Weather")
-
             val sections = realm!!.where(Section::class.java)
                     .sort(Section::order.name)
                     .isNotEmpty(Section::webcams.name)
                     .findAll()
 
-            for (i in 0..sections.size - 1) {
-                if (sections.get(i)!!.latitude != 0.0 || sections.get(i)!!.longitude != 0.0) {
-//                Timber.d("Old lat = ${sections.get(i).latitude} | Old lon = ${sections.get(i).longitude}")
-                    oneTimeSubscriptions.add(apiWeather.queryByGeographicCoordinates(sections.get(i)!!.latitude, sections.get(i)!!.longitude, getString(R.string.app_weather_id)).fromIOToMain().subscribe({ weatherRest ->
-                        Realm.getDefaultInstance().use {
-                            if (weatherRest.response() != null) {
-                                it.executeTransaction {
-                                    it.where(Weather::class.java).equalTo(Weather::lat.name, weatherRest.response()!!.body()!!.coord!!.lat).equalTo(Weather::lon.name, weatherRest.response()!!.body()!!.coord!!.lon).findAll().deleteAllFromRealm()
+            if (sections != null) {
+                for (section in sections) {
+                    if (section.latitude != 0.0 || section.longitude != 0.0) {
+                        oneTimeSubscriptions.add(apiWeather.queryByGeographicCoordinates(section.latitude, section.longitude, getString(R.string.app_weather_id)).fromIOToMain().subscribe({ weatherRest ->
+                            Realm.getDefaultInstance().use {
+                                weatherRest.response()?.body()?.let { body ->
+                                    it.executeTransaction {
+                                        it.where(Weather::class.java).equalTo(Weather::lat.name, body.coord?.lat).equalTo(Weather::lon.name, body.coord?.lon).findAll().deleteAllFromRealm()
 
-                                    val weather = Weather(weatherRest.response()!!.body()?.weather!!.get(0).id!!, weatherRest.response()!!.body()?.main!!.temp!!, weatherRest.response()!!.body()!!.coord!!.lon!!, weatherRest.response()!!.body()!!.coord!!.lat!!)
-                                    it.insertOrUpdate(weather)
+                                        val weather = Weather(body.weather?.get(0)?.id, body.main?.temp, body.coord?.lon
+                                                ?: 0.0, body.coord?.lat ?: 0.0)
+                                        it.insertOrUpdate(weather)
+                                    }
                                 }
                             }
-                        }
-                    }, { e ->
-                        Timber.e("Error init weather ${e.message}")
-                    }))
+                        }, { e ->
+                            Timber.e("Error init weather ${e.message}")
+                        }))
+                    }
                 }
             }
         }
@@ -306,7 +309,7 @@ class FragmentCarouselWebcam : AbstractFragment() {
 
     private fun startActivityDetailCamera(webcam: Webcam) {
         //Analytics
-        AnalyticsUtils.selectWebcamDetails(context!!, webcam.title!!)
+        AnalyticsUtils.selectWebcamDetails(context!!, webcam.title ?: "")
 
         val intent: Intent = Intent(context, ActivityWebcam::class.java).apply {
             putExtra(Constants.KEY_ID, webcam.uid)
@@ -318,7 +321,7 @@ class FragmentCarouselWebcam : AbstractFragment() {
 
     private fun startActivityListWebcam(section: Section) {
         //Analytics
-        AnalyticsUtils.selectSectionDetails(context!!, section.title!!)
+        AnalyticsUtils.selectSectionDetails(context!!, section.title ?: "")
 
         startActivity<ActivityListWebcam>(ActivityListWebcam.getBundle(section.uid))
     }

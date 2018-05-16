@@ -23,49 +23,49 @@ class ApiHelper(val context: Context, val api: AWApi) {
             if (!result.isError && result.response()?.body() != null) {
                 Realm.getDefaultInstance().use {
                     it.executeTransaction {
-                        val sections = result.response()!!.body()!!
+                        result.response()?.body()?.let { sections ->
+                            val listId = arrayListOf<Long>()
 
-                        val listId = arrayListOf<Long>()
+                            for (section in sections.sections) {
 
-                        for (section in sections.sections) {
+                                section.latitude = Math.round(section.latitude * 100.0) / 100.0
+                                section.longitude = Math.round(section.longitude * 100.0) / 100.0
 
-                            section.latitude = Math.round(section.latitude * 100.0) / 100.0
-                            section.longitude = Math.round(section.longitude * 100.0) / 100.0
-
-                            for (webcam in section.webcams) {
-                                if (webcam.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
-                                    // load media ld
-                                    webcam.mediaViewSurfLD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfLD)
-                                    webcam.mediaViewSurfHD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfHD)
-                                }
-
-                                val webcamDB = it.where(Webcam::class.java)
-                                        .equalTo(Webcam::uid.name, webcam.uid)
-                                        .findFirst()
-                                if (webcamDB != null) {
-                                    if (webcamDB.lastUpdate != null) {
-                                        webcam.lastUpdate = webcamDB.lastUpdate
+                                for (webcam in section.webcams) {
+                                    if (webcam.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
+                                        // load media ld
+                                        webcam.mediaViewSurfLD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfLD)
+                                        webcam.mediaViewSurfHD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfHD)
                                     }
-                                    webcam.isFavoris = webcamDB.isFavoris
+
+                                    val webcamDB = it.where(Webcam::class.java)
+                                            .equalTo(Webcam::uid.name, webcam.uid)
+                                            .findFirst()
+                                    if (webcamDB != null) {
+                                        if (webcamDB.lastUpdate != null) {
+                                            webcam.lastUpdate = webcamDB.lastUpdate
+                                        }
+                                        webcam.isFavoris = webcamDB.isFavoris
+                                    }
+                                    if (webcam.hidden == null) {
+                                        webcam.hidden = false
+                                    }
                                 }
-                                if (webcam.hidden == null) {
-                                    webcam.hidden = false
+
+                                section.webcams = RealmList<Webcam>().apply {
+                                    addAll(section.webcams.filter { it.hidden == false })
                                 }
+
+                                listId.add(section.uid)
                             }
 
-                            section.webcams = RealmList<Webcam>().apply {
-                                addAll(section.webcams.filter { it.hidden == false })
-                            }
+                            //it.where(Section::class.java).findAll().deleteAllFromRealm()
+                            //it.where(Webcam::class.java).findAll().deleteAllFromRealm()
 
-                            listId.add(section.uid)
+                            //val item = it.where(Section::class.java).not().`in`(Section::uid.name, listId.toTypedArray()).findAll()
+                            //item.deleteAllFromRealm()
+                            it.insertOrUpdate(sections.sections)
                         }
-
-                        //it.where(Section::class.java).findAll().deleteAllFromRealm()
-                        //it.where(Webcam::class.java).findAll().deleteAllFromRealm()
-
-                        //val item = it.where(Section::class.java).not().`in`(Section::uid.name, listId.toTypedArray()).findAll()
-                        //item.deleteAllFromRealm()
-                        it.insertOrUpdate(sections.sections)
                     }
                 }
             }

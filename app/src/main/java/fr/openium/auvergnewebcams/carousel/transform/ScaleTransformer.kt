@@ -22,8 +22,8 @@ class ScaleTransformer : DiscreteScrollItemTransformer {
     }
 
     override fun transformItem(item: View, position: Float) {
-        pivotX!!.setOn(item)
-        pivotY!!.setOn(item)
+        pivotX?.setOn(item)
+        pivotY?.setOn(item)
         val closenessToCenter = 1f - Math.abs(position)
         val scale = minScale + maxMinDiff * closenessToCenter
         item.scaleX = scale

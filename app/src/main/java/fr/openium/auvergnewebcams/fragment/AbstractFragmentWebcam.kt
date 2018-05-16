@@ -24,7 +24,6 @@ import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
-import io.realm.RealmObject
 import kotlinx.android.synthetic.main.fragment_webcam.*
 import kotlinx.android.synthetic.main.header_detail_camera.*
 
@@ -56,8 +55,8 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
                 .equalTo(Webcam::uid.name, id)
                 .findFirst()
         if (webcam != null) {
-            (activity as AppCompatActivity).supportActionBar?.title = webcam!!.title
-            webcam!!.addChangeListener<Webcam> { webcamChange ->
+            (activity as AppCompatActivity).supportActionBar?.title = webcam?.title
+            webcam?.addChangeListener<Webcam> { webcamChange ->
                 webcam = webcamChange
                 initDateLastUpdate()
             }
@@ -143,12 +142,12 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
         val isImage: Boolean
 
         if (context!!.hasNetwork) {
-            if (webcam!!.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
-                fileName = String.format("%s_%s.mp4", webcam!!.title
+            if (webcam?.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
+                fileName = String.format("%s_%s.mp4", webcam?.title
                         ?: "", System.currentTimeMillis().toString())
                 isImage = false
             } else {
-                fileName = String.format("%s_%s.jpg", webcam!!.title
+                fileName = String.format("%s_%s.jpg", webcam?.title
                         ?: "", System.currentTimeMillis().toString())
                 isImage = true
             }
@@ -226,7 +225,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
                     Events.eventCameraFavoris.set(webcam?.uid ?: -1L)
 
                     //Analytics
-                    AnalyticsUtils.buttonFavoriteClicked(context!!, webcam?.title!!, true)
+                    AnalyticsUtils.buttonFavoriteClicked(context!!, webcam?.title ?: "", true)
                 }
 
                 override fun unLiked(likeButton: LikeButton) {
@@ -236,7 +235,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
                     Events.eventCameraFavoris.set(webcam?.uid ?: -1L)
 
                     //Analytics
-                    AnalyticsUtils.buttonFavoriteClicked(context!!, webcam?.title!!, false)
+                    AnalyticsUtils.buttonFavoriteClicked(context!!, webcam?.title ?: "", false)
                 }
             })
         }
@@ -253,7 +252,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
             }
 
             if (webcam?.lastUpdate ?: 0 > 0L) {
-                val date = DateUtils.getDateFormatDateHour(webcam!!.lastUpdate!!)
+                val date = DateUtils.getDateFormatDateHour(webcam?.lastUpdate ?: 0)
                 textViewLastUpdate?.setText(getString(R.string.generic_last_update, date))
                 textViewLastUpdate?.show()
             } else {

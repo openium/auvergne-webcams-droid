@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.bumptech.glide.Glide
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.carousel.DiscreteScrollView
 import fr.openium.auvergnewebcams.carousel.InfiniteScrollAdapter
@@ -91,9 +92,9 @@ class AdapterCarousels(val context: Context,
                 val imageName = item.imageName?.replace("-", "_") ?: ""
                 val resourceId = context.resources.getIdentifier(imageName, "drawable", context.getPackageName())
                 if (resourceId != -1 && resourceId != 0) {
-                    holder.mImageViewSection.setImageResource(resourceId)
+                    Glide.with(context).load(resourceId).into(holder.mImageViewSection)
                 } else {
-                    holder.mImageViewSection.setImageResource(R.drawable.pdd_landscape)
+                    Glide.with(context).load(R.drawable.pdd_landscape).into(holder.mImageViewSection)
                 }
                 val nbWebCams = String.format(Locale.getDefault(), context.resources.getQuantityString(R.plurals.nb_cameras_format, item.webcams.count(), item.webcams.count()))
                 holder.mTextViewNbCameras.text = nbWebCams
@@ -103,8 +104,8 @@ class AdapterCarousels(val context: Context,
                     val weather = it.where(Weather::class.java).equalTo(Weather::lat.name, item.latitude).equalTo(Weather::lon.name, item.longitude).findFirst()
                     if (weather != null && PreferencesAW.getIfWeatherCouldBeDisplayed(context)) {
                         //Set weather
-                        holder.itemView?.imageViewSectionWeather?.setImageResource(WeatherUtils.weatherImage(weather.id!!))
-                        holder.itemView?.textViewSectionWeather?.setText(context.getString(R.string.weather_celcius, WeatherUtils.convertKelvinToCelcius(weather.temp!!)))
+                        Glide.with(context).load(WeatherUtils.weatherImage(weather.id)).into(holder.itemView?.imageViewSectionWeather)
+                        holder.itemView?.textViewSectionWeather?.setText(context.getString(R.string.weather_celcius, WeatherUtils.convertKelvinToCelcius(weather.temp)))
                     } else {
                         holder.mImageViewSectionWeather.gone()
                         holder.mTextViewSectionWeather.gone()
@@ -148,7 +149,7 @@ class AdapterCarousels(val context: Context,
 
                             val realPosition = (holder.scrollView.adapter as InfiniteScrollAdapter).getRealPosition(position)
                             if (realPosition >= 0 && item.webcams.size > realPosition) {
-                                val name = item.webcams[realPosition]!!.title
+                                val name = item.webcams[realPosition]?.title
                                 holder.mTextViewNameWebcam.setText(name)
                             } else {
                                 holder.mTextViewNameWebcam.setText("")
@@ -173,7 +174,7 @@ class AdapterCarousels(val context: Context,
                         val realPos = (holder.scrollView.adapter as InfiniteScrollAdapter).getRealPosition(positionAdapter)
                         //Timber.d("Real pos get $realPos")
                         if (realPos >= 0 && item.webcams.size > realPos) {
-                            val name = item.webcams[realPos]!!.title
+                            val name = item.webcams[realPos]?.title
                             holder.mTextViewNameWebcam.setText(name)
                         } else {
                             holder.mTextViewNameWebcam.setText("")
@@ -195,8 +196,8 @@ class AdapterCarousels(val context: Context,
 
                                     if (newWeather != null && PreferencesAW.getIfWeatherCouldBeDisplayed(context)) {
                                         //Set weather
-                                        holder.itemView?.imageViewSectionWeather?.setImageResource(WeatherUtils.weatherImage(newWeather.id!!))
-                                        holder.itemView?.textViewSectionWeather?.setText(context.getString(R.string.weather_celcius, WeatherUtils.convertKelvinToCelcius(newWeather.temp!!)))
+                                        Glide.with(context).load(WeatherUtils.weatherImage(newWeather.id)).into(holder.itemView?.imageViewSectionWeather)
+                                        holder.itemView?.textViewSectionWeather?.setText(context.getString(R.string.weather_celcius, WeatherUtils.convertKelvinToCelcius(newWeather.temp)))
                                     }
                                 }
                             }, { e ->

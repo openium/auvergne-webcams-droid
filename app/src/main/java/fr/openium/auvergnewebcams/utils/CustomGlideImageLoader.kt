@@ -65,13 +65,13 @@ class CustomGlideImageLoader private constructor(val context: Context, okHttpCli
                                             .contains(Webcam::imageHD.name, uri.toString())
                                             .findFirst()
                                     if (webcam != null) {
-                                        val lastModified = response.header("Last-Modified")!!
+                                        val lastModified = response.header("Last-Modified")
                                         if (!lastModified.isNullOrEmpty()) {
                                             val dateFormat = SimpleDateFormat("E, d MMM yyyy HH:mm:ss 'GMT'", Locale.US)
                                             dateFormat.timeZone = TimeZone.getTimeZone("GMT")
                                             val newTime = dateFormat.parse(lastModified).time
                                             //  Timber.e("update date $newTime   ${webcam.title}")
-                                            if (webcam.lastUpdate == null || newTime != webcam.lastUpdate!!) {
+                                            if (webcam.lastUpdate == null || newTime != webcam.lastUpdate) {
                                                 webcam.lastUpdate = newTime
                                                 Events.eventCameraDateUpdate.set(webcam.uid)
                                             }
@@ -82,9 +82,9 @@ class CustomGlideImageLoader private constructor(val context: Context, okHttpCli
 
                         }
 
-                        if (response?.body() != null) {
+                        response?.body()?.let { body ->
                             try {
-                                Okio.buffer(Okio.source(response.body()!!.byteStream())).use { source ->
+                                Okio.buffer(Okio.source(body.byteStream())).use { source ->
                                     val file = File(context.externalCacheDir, "webcam.jpg")
                                     Okio.buffer(Okio.sink(file)).use { sink ->
                                         sink.writeAll(source)

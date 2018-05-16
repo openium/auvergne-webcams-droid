@@ -100,8 +100,8 @@ abstract class ApplicationBase : MultiDexApplication(), KodeinAware {
                                 }
 
                                 if (webcam != null) {
-                                    val lastModified = response.header("Last-Modified")!!
-                                    if (!lastModified.isEmpty()) {
+                                    val lastModified = response.header("Last-Modified")
+                                    if (lastModified != null && !lastModified.isEmpty()) {
                                         val dateFormat = SimpleDateFormat("E, d MMM yyyy HH:mm:ss 'GMT'", Locale.US)
                                         dateFormat.timeZone = TimeZone.getTimeZone("GMT")
                                         val newTime = dateFormat.parse(lastModified).time

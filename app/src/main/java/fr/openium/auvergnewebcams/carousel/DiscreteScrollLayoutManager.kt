@@ -91,7 +91,7 @@ class DiscreteScrollLayoutManager(
     }
 
     override fun onLayoutChildren(recycler: RecyclerView.Recycler?, state: RecyclerView.State?) {
-        if (state!!.itemCount == 0) {
+        if (state?.itemCount == 0) {
             removeAndRecycleAllViews(recycler)
             pendingPosition = NO_POSITION
             currentPosition = pendingPosition
@@ -133,7 +133,7 @@ class DiscreteScrollLayoutManager(
     }
 
     private fun initChildDimensions(recycler: RecyclerView.Recycler?) {
-        val viewToMeasure = recycler!!.getViewForPosition(0)
+        val viewToMeasure = recycler?.getViewForPosition(0)
         addView(viewToMeasure)
         measureChildWithMargins(viewToMeasure, 0, 0)
 
@@ -203,9 +203,9 @@ class DiscreteScrollLayoutManager(
         if (position < 0) return
         var v: View? = detachedCache.get(position)
         if (v == null) {
-            v = recycler!!.getViewForPosition(position)
+            v = recycler?.getViewForPosition(position)
             addView(v)
-            measureChildWithMargins(v!!, 0, 0)
+            measureChildWithMargins(v, 0, 0)
             layoutDecoratedWithMargins(v,
                     viewCenter.x - childHalfWidth, viewCenter.y - childHalfHeight,
                     viewCenter.x + childHalfWidth, viewCenter.y + childHalfHeight)
@@ -230,7 +230,7 @@ class DiscreteScrollLayoutManager(
     private fun recycleViewsAndClearCache(recycler: RecyclerView.Recycler?) {
         for (i in 0 until detachedCache.size()) {
             val viewToRemove = detachedCache.valueAt(i)
-            recycler!!.recycleView(viewToRemove)
+            recycler?.recycleView(viewToRemove)
         }
         detachedCache.clear()
     }
@@ -501,7 +501,7 @@ class DiscreteScrollLayoutManager(
 
     override fun onRestoreInstanceState(state: Parcelable?) {
         val bundle = state as Bundle?
-        currentPosition = bundle!!.getInt(EXTRA_POSITION)
+        currentPosition = bundle?.getInt(EXTRA_POSITION) ?: 0
     }
 
     override fun generateDefaultLayoutParams(): RecyclerView.LayoutParams {

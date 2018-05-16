@@ -32,15 +32,15 @@ open class Webcam(@PrimaryKey var uid: Long = 0, var order: Int = 0, var title: 
                 format = "%s/%s.jpg"
             }
             if (canBeHD && !mediaViewSurfHD.isNullOrEmpty() && !viewsurfHD.isNullOrEmpty()) {
-                url = String.format(format, viewsurfHD!!, mediaViewSurfHD!!)
+                url = String.format(format, viewsurfHD, mediaViewSurfHD)
             } else if (!mediaViewSurfLD.isNullOrEmpty() && !viewsurfLD.isNullOrEmpty()) {
-                url = String.format(format, viewsurfLD!!, mediaViewSurfLD!!)
+                url = String.format(format, viewsurfLD, mediaViewSurfLD)
             }
         } else {
             if (canBeHD && !imageHD.isNullOrBlank()) {
-                url = imageHD!!
+                url = imageHD ?: ""
             } else if (!imageLD.isNullOrBlank()) {
-                url = imageLD!!
+                url = imageLD ?: ""
             }
         }
         return url

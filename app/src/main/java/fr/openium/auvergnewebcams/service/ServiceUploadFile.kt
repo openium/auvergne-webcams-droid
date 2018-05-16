@@ -170,7 +170,7 @@ class ServiceUploadFile : Service() {
 
         mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            mNotificationManager!!.createNotificationChannel(NotificationChannel(NOTIF_CHANNEL, getString(R.string.app_name), NotificationManager.IMPORTANCE_HIGH))
+            mNotificationManager?.createNotificationChannel(NotificationChannel(NOTIF_CHANNEL, getString(R.string.app_name), NotificationManager.IMPORTANCE_HIGH))
         }
         mBuilder = NotificationCompat.Builder(this, NOTIF_CHANNEL)
                 .setTicker(texte)

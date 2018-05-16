@@ -131,7 +131,7 @@ class AdapterWebcamsCarousel(val context: Context,
 
         if (BuildConfig.DEBUG) {
             if (item?.lastUpdate ?: 0 > 0L) {
-                val date = DateUtils.getDateFormatDateHour(item!!.lastUpdate!!)
+                val date = DateUtils.getDateFormatDateHour(item?.lastUpdate ?: 0)
                 holder.itemView.textviewWebcamLastUpdate.setText(context.getString(R.string.generic_last_update, date))
                 holder.itemView.textviewWebcamLastUpdate.show()
             } else {

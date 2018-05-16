@@ -60,9 +60,9 @@ class FragmentWebcamVideo : AbstractFragmentWebcam() {
             if (webcam?.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
                 var urlWebcam = ""
                 if (PreferencesAW.isWebcamsHighQuality(applicationContext) && !webcam?.mediaViewSurfHD.isNullOrEmpty() && !webcam?.viewsurfHD.isNullOrEmpty()) {
-                    urlWebcam = String.format("%s/%s.mp4", webcam!!.viewsurfHD!!, webcam!!.mediaViewSurfHD!!)
+                    urlWebcam = String.format("%s/%s.mp4", webcam?.viewsurfHD, webcam?.mediaViewSurfHD)
                 } else if (!webcam?.mediaViewSurfLD.isNullOrEmpty() && !webcam?.viewsurfLD.isNullOrEmpty()) {
-                    urlWebcam = String.format("%s/%s.mp4", webcam!!.viewsurfLD!!, webcam!!.mediaViewSurfLD!!)
+                    urlWebcam = String.format("%s/%s.mp4", webcam?.viewsurfLD, webcam?.mediaViewSurfLD)
                 }
 
                 val videoUri = Uri.parse(urlWebcam)

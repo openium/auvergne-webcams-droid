@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageView
+import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
@@ -58,9 +59,9 @@ class AdapterWebcams(val context: Context, var items: List<Webcam>, val listener
             val imageName = headerSection?.imageName?.replace("-", "_") ?: ""
             val resourceId = context.resources.getIdentifier(imageName, "drawable", context.getPackageName())
             if (resourceId != -1 && resourceId != 0) {
-                holder.itemView?.imageViewSection?.setImageResource(resourceId)
+                Glide.with(context).load(resourceId).into(holder.itemView?.imageViewSection)
             } else {
-                holder.itemView?.imageViewSection?.setImageResource(R.drawable.pdd_landscape)
+                Glide.with(context).load(R.drawable.pdd_landscape).into(holder.itemView?.imageViewSection)
             }
             holder.itemView?.textViewNameSection?.text = headerSection?.title ?: ""
             holder.itemView?.textViewNbCameras?.text = String.format(Locale.getDefault(),
@@ -68,11 +69,11 @@ class AdapterWebcams(val context: Context, var items: List<Webcam>, val listener
                             ?: 0, headerSection?.webcams?.count() ?: 0))
 
             //Weather
-            val weather = realm.where(Weather::class.java).equalTo(Weather::lat.name, headerSection!!.latitude).equalTo(Weather::lon.name, headerSection!!.longitude).findFirst()
+            val weather = realm.where(Weather::class.java).equalTo(Weather::lat.name, headerSection?.latitude).equalTo(Weather::lon.name, headerSection?.longitude).findFirst()
             if (weather != null && PreferencesAW.getIfWeatherCouldBeDisplayed(context)) {
                 //Set weather
-                holder.itemView?.imageViewSectionWeather?.setImageResource(WeatherUtils.weatherImage(weather.id!!))
-                holder.itemView?.textViewSectionWeather?.setText(context.getString(R.string.weather_celcius, WeatherUtils.convertKelvinToCelcius(weather.temp!!)))
+                Glide.with(context).load(WeatherUtils.weatherImage(weather.id)).into(holder.itemView?.imageViewSectionWeather)
+                holder.itemView?.textViewSectionWeather?.setText(context.getString(R.string.weather_celcius, WeatherUtils.convertKelvinToCelcius(weather.temp)))
             }
         } else {
             val webcam = items.get(position - if (headerSection != null) 1 else 0)
@@ -154,7 +155,7 @@ class AdapterWebcams(val context: Context, var items: List<Webcam>, val listener
                         Events.eventCameraFavoris.set(webcam.uid)
 
                         //Analytics
-                        AnalyticsUtils.buttonFavoriteClicked(context, webcam.title!!, true)
+                        AnalyticsUtils.buttonFavoriteClicked(context, webcam.title ?: "", true)
                     }
                 }
 
@@ -166,7 +167,7 @@ class AdapterWebcams(val context: Context, var items: List<Webcam>, val listener
                         Events.eventCameraFavoris.set(webcam.uid)
 
                         //Analytics
-                        AnalyticsUtils.buttonFavoriteClicked(context, webcam.title!!, false)
+                        AnalyticsUtils.buttonFavoriteClicked(context, webcam.title ?: "", false)
                     }
                 }
             })

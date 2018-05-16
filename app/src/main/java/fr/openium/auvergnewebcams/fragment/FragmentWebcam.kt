@@ -125,19 +125,19 @@ class FragmentWebcam : AbstractFragmentWebcam() {
             if (webcam?.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
                 scaleType = BigImageView.INIT_SCALE_TYPE_CENTER_CROP
                 if (PreferencesAW.isWebcamsHighQuality(applicationContext) && !webcam?.mediaViewSurfHD.isNullOrEmpty() && !webcam?.viewsurfHD.isNullOrEmpty()) {
-                    val urlWebCam = String.format("%s/%s.jpg", webcam!!.viewsurfHD!!, webcam!!.mediaViewSurfHD!!)
+                    val urlWebCam = String.format("%s/%s.jpg", webcam?.viewsurfHD, webcam?.mediaViewSurfHD)
                     image = Uri.parse(urlWebCam)
                 } else if (!webcam?.mediaViewSurfLD.isNullOrEmpty() && !webcam?.viewsurfLD.isNullOrEmpty()) {
-                    val urlWebCam = String.format("%s/%s.jpg", webcam!!.viewsurfLD!!, webcam!!.mediaViewSurfLD!!)
+                    val urlWebCam = String.format("%s/%s.jpg", webcam?.viewsurfLD, webcam?.mediaViewSurfLD)
                     image = Uri.parse(urlWebCam)
                 }
             } else {
-                if (PreferencesAW.isWebcamsHighQuality(applicationContext) && !webcam!!.imageHD.isNullOrBlank()) {
+                if (PreferencesAW.isWebcamsHighQuality(applicationContext) && !webcam?.imageHD.isNullOrBlank()) {
                     scaleType = BigImageView.INIT_SCALE_TYPE_CENTER_CROP
-                    thumbnail = Uri.parse(webcam!!.imageLD!!)
-                    image = Uri.parse(webcam!!.imageHD!!)
-                } else if (!webcam!!.imageLD.isNullOrBlank()) {
-                    image = Uri.parse(webcam!!.imageLD!!)
+                    thumbnail = Uri.parse(webcam?.imageLD)
+                    image = Uri.parse(webcam?.imageHD)
+                } else if (!webcam?.imageLD.isNullOrBlank()) {
+                    image = Uri.parse(webcam?.imageLD)
                     scaleType = BigImageView.INIT_SCALE_TYPE_CENTER_INSIDE
                 }
             }
