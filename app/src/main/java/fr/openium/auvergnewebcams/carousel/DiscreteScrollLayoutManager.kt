@@ -501,7 +501,7 @@ class DiscreteScrollLayoutManager(
 
     override fun onRestoreInstanceState(state: Parcelable?) {
         val bundle = state as Bundle?
-        currentPosition = bundle?.getInt(EXTRA_POSITION) ?: 0
+        currentPosition = bundle!!.getInt(EXTRA_POSITION)
     }
 
     override fun generateDefaultLayoutParams(): RecyclerView.LayoutParams {
