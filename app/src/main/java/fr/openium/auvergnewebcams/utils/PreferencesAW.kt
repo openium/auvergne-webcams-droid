@@ -2,7 +2,7 @@ package fr.openium.auvergnewebcams.utils
 
 import android.content.Context
 import android.preference.PreferenceManager
-import fr.openium.auvergnewebcams.ext.toUnixTimestamp
+import fr.openium.kotlintools.ext.toUnixTimestamp
 import java.util.*
 
 /**

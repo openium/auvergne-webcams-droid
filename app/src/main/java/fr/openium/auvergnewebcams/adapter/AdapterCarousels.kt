@@ -15,13 +15,13 @@ import fr.openium.auvergnewebcams.carousel.DiscreteScrollView
 import fr.openium.auvergnewebcams.carousel.InfiniteScrollAdapter
 import fr.openium.auvergnewebcams.carousel.transform.Pivot
 import fr.openium.auvergnewebcams.carousel.transform.ScaleTransformer
-import fr.openium.auvergnewebcams.ext.gone
-import fr.openium.auvergnewebcams.ext.show
 import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.Weather
 import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.utils.PreferencesAW
 import fr.openium.auvergnewebcams.utils.WeatherUtils
+import fr.openium.kotlintools.ext.gone
+import fr.openium.kotlintools.ext.show
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.realm.Realm

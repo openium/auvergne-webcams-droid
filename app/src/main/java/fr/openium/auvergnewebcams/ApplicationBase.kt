@@ -1,6 +1,5 @@
 package fr.openium.auvergnewebcams
 
-import android.app.Application
 import android.content.Context
 import android.support.multidex.MultiDexApplication
 import com.crashlytics.android.Crashlytics
@@ -25,6 +24,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
+
 abstract class ApplicationBase : MultiDexApplication(), KodeinAware {
     override val kodein by Kodein.lazy {
 
@@ -39,7 +39,6 @@ abstract class ApplicationBase : MultiDexApplication(), KodeinAware {
 
     override fun onCreate() {
         super.onCreate()
-
         if (LeakCanary.isInAnalyzerProcess(this)) {
             return
         }

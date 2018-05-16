@@ -7,12 +7,12 @@ import android.os.Bundle
 import android.view.View
 import android.widget.MediaController
 import fr.openium.auvergnewebcams.R
-import fr.openium.auvergnewebcams.ext.applicationContext
-import fr.openium.auvergnewebcams.ext.gone
-import fr.openium.auvergnewebcams.ext.hide
-import fr.openium.auvergnewebcams.ext.show
 import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.utils.PreferencesAW
+import fr.openium.kotlintools.ext.applicationContext
+import fr.openium.kotlintools.ext.gone
+import fr.openium.kotlintools.ext.hide
+import fr.openium.kotlintools.ext.show
 import kotlinx.android.synthetic.main.fragment_webcam_video.*
 
 /**
@@ -59,7 +59,7 @@ class FragmentWebcamVideo : AbstractFragmentWebcam() {
             }
             if (webcam?.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
                 var urlWebcam = ""
-                if (PreferencesAW.isWebcamsHighQuality(applicationContext) && !webcam?.mediaViewSurfHD.isNullOrEmpty() && !webcam?.viewsurfHD.isNullOrEmpty()) {
+                if (PreferencesAW.isWebcamsHighQuality(applicationContext!!) && !webcam?.mediaViewSurfHD.isNullOrEmpty() && !webcam?.viewsurfHD.isNullOrEmpty()) {
                     urlWebcam = String.format("%s/%s.mp4", webcam?.viewsurfHD, webcam?.mediaViewSurfHD)
                 } else if (!webcam?.mediaViewSurfLD.isNullOrEmpty() && !webcam?.viewsurfLD.isNullOrEmpty()) {
                     urlWebcam = String.format("%s/%s.mp4", webcam?.viewsurfLD, webcam?.mediaViewSurfLD)

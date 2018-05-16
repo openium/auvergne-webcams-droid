@@ -51,7 +51,10 @@ object DebugModules {
         }
 
         bind<OkHttpClient>(overrides = true) with provider {
-            OkHttpClient.Builder().cache(instance()).build()
+            OkHttpClient.Builder()
+                    .readTimeout(20, TimeUnit.SECONDS)
+                    .cache(instance())
+                    .build()
         }
 
         bind<Retrofit>(overrides = true) with singleton {

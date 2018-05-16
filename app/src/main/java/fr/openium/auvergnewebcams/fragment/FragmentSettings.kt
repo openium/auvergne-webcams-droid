@@ -11,9 +11,13 @@ import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.activity.ActivitySettingsAbout
 import fr.openium.auvergnewebcams.dialog.NumberPickerDialog
 import fr.openium.auvergnewebcams.event.Events
-import fr.openium.auvergnewebcams.ext.*
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import fr.openium.auvergnewebcams.utils.PreferencesAW
+import fr.openium.kotlintools.ext.applicationContext
+import fr.openium.kotlintools.ext.gone
+import fr.openium.kotlintools.ext.show
+import fr.openium.kotlintools.ext.snackbar
+import fr.openium.rxtools.ext.fromIOToMain
 import kotlinx.android.synthetic.main.fragment_settings.*
 import timber.log.Timber
 
@@ -32,22 +36,22 @@ class FragmentSettings : AbstractFragment() {
 
         //Refresh auto
         switch_refresh_delay.setOnCheckedChangeListener { _, isChecked ->
-            PreferencesAW.setWebcamsDelayRefreshActive(applicationContext, isChecked)
+            PreferencesAW.setWebcamsDelayRefreshActive(applicationContext!!, isChecked)
             showDelayRefresh(isChecked)
 
             //Analytics
             AnalyticsUtils.setUserPropertiesRefreshPreferences(context!!, isChecked)
         }
 
-        switch_refresh_delay.isChecked = PreferencesAW.isWebcamsDelayRefreshActive(applicationContext)
-        showDelayRefresh(PreferencesAW.isWebcamsDelayRefreshActive(applicationContext))
+        switch_refresh_delay.isChecked = PreferencesAW.isWebcamsDelayRefreshActive(applicationContext!!)
+        showDelayRefresh(PreferencesAW.isWebcamsDelayRefreshActive(applicationContext!!))
 
         oneTimeSubscriptions.add(Events.eventNewValueDelay
                 .obs
                 .fromIOToMain()
                 .subscribe {
                     if (isAlive) {
-                        PreferencesAW.setWebcamsDelayRefreshValue(applicationContext, it)
+                        PreferencesAW.setWebcamsDelayRefreshValue(applicationContext!!, it)
                         textview_delay_value.text = it.toString()
 
                         //Analytics
@@ -56,19 +60,19 @@ class FragmentSettings : AbstractFragment() {
                 })
 
         //Delay of auto refresh
-        textview_delay_value.text = PreferencesAW.getWebcamsDelayRefreshValue(applicationContext).toString()
+        textview_delay_value.text = PreferencesAW.getWebcamsDelayRefreshValue(applicationContext!!).toString()
 
         linearlayout_delay_refresh.setOnClickListener {
-            val numberPickerDialog = NumberPickerDialog.newInstance(PreferencesAW.getWebcamsDelayRefreshValue(applicationContext))
+            val numberPickerDialog = NumberPickerDialog.newInstance(PreferencesAW.getWebcamsDelayRefreshValue(applicationContext!!))
             childFragmentManager.beginTransaction()
                     .add(numberPickerDialog, "dialog_picker")
                     .commitAllowingStateLoss()
         }
 
         //Quality of webcams
-        switch_quality_webcams.isChecked = PreferencesAW.isWebcamsHighQuality(applicationContext)
+        switch_quality_webcams.isChecked = PreferencesAW.isWebcamsHighQuality(applicationContext!!)
         switch_quality_webcams.setOnCheckedChangeListener { _, isChecked ->
-            PreferencesAW.setWebcamsHighQuality(applicationContext, isChecked)
+            PreferencesAW.setWebcamsHighQuality(applicationContext!!, isChecked)
             if (isChecked) {
                 AnalyticsUtils.setUserPropertiesWebcamQualityPreferences(context!!, "high")
             } else {
@@ -81,7 +85,7 @@ class FragmentSettings : AbstractFragment() {
             //Analytics
             AnalyticsUtils.buttonAboutClicked(context!!)
 
-            val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
+            val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext!!, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
             startActivity(Intent(applicationContext, ActivitySettingsAbout::class.java), bundle)
         }
         textview_openium.setOnClickListener {
@@ -100,7 +104,7 @@ class FragmentSettings : AbstractFragment() {
             val alert = AlertDialog.Builder(context)
             alert.setTitle(R.string.settings__send_new_webcam_title)
                     .setMessage(R.string.settings__send_new_webcam_message)
-                    .setNeutralButton(R.string.generic_ok, { dialog, which ->
+                    .setNeutralButton(R.string.generic_ok, { dialog, _ ->
                         AnalyticsUtils.buttonProposeWebcamClicked(context!!)
                         sendEmail()
                         dialog.dismiss()
@@ -111,7 +115,7 @@ class FragmentSettings : AbstractFragment() {
             //Analytics
             AnalyticsUtils.buttonRateAppClicked(context!!)
 
-            startActivityForUrl(getString(R.string.url_note, applicationContext.packageName))
+            startActivityForUrl(getString(R.string.url_note, applicationContext!!.packageName))
         }
 
         //Init version
@@ -147,7 +151,7 @@ class FragmentSettings : AbstractFragment() {
         val intent = Intent(Intent.ACTION_VIEW).apply {
             data = Uri.parse(url)
         }
-        val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
+        val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext!!, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
         if (intent.resolveActivity(activity!!.packageManager) != null) {
             startActivity(intent, bundle)
         } else {
@@ -157,7 +161,7 @@ class FragmentSettings : AbstractFragment() {
 
     private fun initVersion() {
         try {
-            val packageInfo = applicationContext.getPackageManager().getPackageInfo(applicationContext.getPackageName(), 0)
+            val packageInfo = applicationContext!!.getPackageManager().getPackageInfo(applicationContext!!.getPackageName(), 0)
             if (packageInfo != null) {
                 val version = getString(R.string.settings_version, packageInfo.versionName, packageInfo.versionCode.toString())
                 textview_version.setText(version)

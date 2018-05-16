@@ -15,12 +15,16 @@ import com.tbruyelle.rxpermissions2.RxPermissions
 import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.event.Events
-import fr.openium.auvergnewebcams.ext.*
 import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.service.ServiceUploadFile
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import fr.openium.auvergnewebcams.utils.DateUtils
 import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
+import fr.openium.kotlintools.ext.applicationContext
+import fr.openium.kotlintools.ext.gone
+import fr.openium.kotlintools.ext.show
+import fr.openium.kotlintools.ext.snackbar
+import hasNetwork
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
@@ -177,7 +181,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     abstract fun shareWebCam()
 
     private fun getLastPictureOrVideoOfWebcam() {
-        if (applicationContext.hasNetwork) {
+        if (applicationContext?.hasNetwork == true) {
             showProgress()
             itemMenuRefresh?.isEnabled = false
 

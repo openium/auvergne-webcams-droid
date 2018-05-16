@@ -10,12 +10,12 @@ import android.widget.ImageView
 import com.github.piasy.biv.loader.ImageLoader
 import com.github.piasy.biv.view.BigImageView
 import fr.openium.auvergnewebcams.R
-import fr.openium.auvergnewebcams.ext.applicationContext
-import fr.openium.auvergnewebcams.ext.gone
-import fr.openium.auvergnewebcams.ext.hide
-import fr.openium.auvergnewebcams.ext.show
 import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.utils.PreferencesAW
+import fr.openium.kotlintools.ext.applicationContext
+import fr.openium.kotlintools.ext.gone
+import fr.openium.kotlintools.ext.hide
+import fr.openium.kotlintools.ext.show
 import kotlinx.android.synthetic.main.fragment_webcam.*
 import timber.log.Timber
 import java.io.File
@@ -48,7 +48,7 @@ class FragmentWebcam : AbstractFragmentWebcam() {
         val subject = webcam?.title
 
         if (mBigImage.currentImageFile != null) {
-            val image = FileProvider.getUriForFile(applicationContext, applicationContext.getApplicationContext().getPackageName() + ".provider", mBigImage.currentImageFile)
+            val image = FileProvider.getUriForFile(applicationContext!!, applicationContext!!.getApplicationContext().getPackageName() + ".provider", mBigImage.currentImageFile)
 
             val intent = Intent(Intent.ACTION_SEND).apply {
                 setType("application/image")
@@ -73,7 +73,7 @@ class FragmentWebcam : AbstractFragmentWebcam() {
                 textViewWebcamLowQualityOnly.gone()
             }
 
-            mBigImage.setFailureImage(ContextCompat.getDrawable(applicationContext, R.drawable.broken_camera))
+            mBigImage.setFailureImage(ContextCompat.getDrawable(applicationContext!!, R.drawable.broken_camera))
             mBigImage.setFailureImageInitScaleType(ImageView.ScaleType.FIT_CENTER)
 
             mBigImage.setImageLoaderCallback(object : ImageLoader.Callback {
@@ -124,7 +124,7 @@ class FragmentWebcam : AbstractFragmentWebcam() {
 
             if (webcam?.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
                 scaleType = BigImageView.INIT_SCALE_TYPE_CENTER_CROP
-                if (PreferencesAW.isWebcamsHighQuality(applicationContext) && !webcam?.mediaViewSurfHD.isNullOrEmpty() && !webcam?.viewsurfHD.isNullOrEmpty()) {
+                if (PreferencesAW.isWebcamsHighQuality(applicationContext!!) && !webcam?.mediaViewSurfHD.isNullOrEmpty() && !webcam?.viewsurfHD.isNullOrEmpty()) {
                     val urlWebCam = String.format("%s/%s.jpg", webcam?.viewsurfHD, webcam?.mediaViewSurfHD)
                     image = Uri.parse(urlWebCam)
                 } else if (!webcam?.mediaViewSurfLD.isNullOrEmpty() && !webcam?.viewsurfLD.isNullOrEmpty()) {
@@ -132,7 +132,7 @@ class FragmentWebcam : AbstractFragmentWebcam() {
                     image = Uri.parse(urlWebCam)
                 }
             } else {
-                if (PreferencesAW.isWebcamsHighQuality(applicationContext) && !webcam?.imageHD.isNullOrBlank()) {
+                if (PreferencesAW.isWebcamsHighQuality(applicationContext!!) && !webcam?.imageHD.isNullOrBlank()) {
                     scaleType = BigImageView.INIT_SCALE_TYPE_CENTER_CROP
                     thumbnail = Uri.parse(webcam?.imageLD)
                     image = Uri.parse(webcam?.imageHD)

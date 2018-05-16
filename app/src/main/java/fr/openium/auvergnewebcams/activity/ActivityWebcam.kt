@@ -5,11 +5,11 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
-import fr.openium.auvergnewebcams.ext.gone
-import fr.openium.auvergnewebcams.ext.show
 import fr.openium.auvergnewebcams.fragment.FragmentWebcam
 import fr.openium.auvergnewebcams.fragment.FragmentWebcamVideo
 import fr.openium.auvergnewebcams.model.Webcam
+import fr.openium.kotlintools.ext.gone
+import fr.openium.kotlintools.ext.show
 import kotlinx.android.synthetic.main.toolbar.*
 
 /**

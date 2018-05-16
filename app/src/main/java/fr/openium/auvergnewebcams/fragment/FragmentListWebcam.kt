@@ -10,10 +10,10 @@ import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.activity.ActivityWebcam
 import fr.openium.auvergnewebcams.adapter.AdapterWebcams
 import fr.openium.auvergnewebcams.event.Events
-import fr.openium.auvergnewebcams.ext.applicationContext
-import fr.openium.auvergnewebcams.ext.fromIOToMain
 import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.Webcam
+import fr.openium.kotlintools.ext.applicationContext
+import fr.openium.rxtools.ext.fromIOToMain
 import kotlinx.android.synthetic.main.fragment_list_webcam.*
 import timber.log.Timber
 import java.util.*
@@ -80,12 +80,12 @@ class FragmentListWebcam : AbstractFragment() {
             webcamsList.addAll(webcams)
             if (recyclerView.adapter == null) {
                 recyclerView.layoutManager = LinearLayoutManager(applicationContext)
-                recyclerView.adapter = AdapterWebcams(applicationContext, webcamsList, { webcam ->
+                recyclerView.adapter = AdapterWebcams(applicationContext!!, webcamsList, { webcam ->
                     val intent: Intent = Intent(context, ActivityWebcam::class.java).apply {
                         putExtra(Constants.KEY_ID, webcam.uid)
                         putExtra(Constants.KEY_TYPE, webcam.type)
                     }
-                    val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
+                    val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext!!, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
                     startActivity(intent, bundle)
                 }, oneTimeSubscriptions, section, realm!!)
             } else {

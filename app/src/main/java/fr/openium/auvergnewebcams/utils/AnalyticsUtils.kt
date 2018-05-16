@@ -305,52 +305,52 @@ object AnalyticsUtils {
     }
 
     fun buttonShareWebcamClicked(context: Context) {
-        AnalyticsUtils.sendFirebaseLogEventSelectContent(FirebaseAnalytics.getInstance(context)!!, AnalyticsUtils.KEY_BUTTON_SHARE_WEBCAM)
+        AnalyticsUtils.sendFirebaseLogEventSelectContent(FirebaseAnalytics.getInstance(context), AnalyticsUtils.KEY_BUTTON_SHARE_WEBCAM)
         AnalyticsUtils.sendFabricLogEventSelectContent(Answers.getInstance(), AnalyticsUtils.KEY_BUTTON_SHARE_WEBCAM)
     }
 
     fun buttonSaveWebcamClicked(context: Context) {
-        AnalyticsUtils.sendFirebaseLogEventSelectContent(FirebaseAnalytics.getInstance(context)!!, AnalyticsUtils.KEY_BUTTON_SAVE_WEBCAM)
+        AnalyticsUtils.sendFirebaseLogEventSelectContent(FirebaseAnalytics.getInstance(context), AnalyticsUtils.KEY_BUTTON_SAVE_WEBCAM)
         AnalyticsUtils.sendFabricLogEventSelectContent(Answers.getInstance(), AnalyticsUtils.KEY_BUTTON_SAVE_WEBCAM)
     }
 
     fun buttonSignalProblemClicked(context: Context) {
-        AnalyticsUtils.sendFirebaseLogEventSelectContent(FirebaseAnalytics.getInstance(context)!!, AnalyticsUtils.KEY_BUTTON_REPORT_WEBCAM_ERROR)
+        AnalyticsUtils.sendFirebaseLogEventSelectContent(FirebaseAnalytics.getInstance(context), AnalyticsUtils.KEY_BUTTON_REPORT_WEBCAM_ERROR)
         AnalyticsUtils.sendFabricLogEventSelectContent(Answers.getInstance(), AnalyticsUtils.KEY_BUTTON_REPORT_WEBCAM_ERROR)
     }
 
     fun buttonFavoriteClicked(context: Context, webcamTitle: String, isBecomeFavorite: Boolean) {
-        AnalyticsUtils.sendFirebaseLogEventFavorite(FirebaseAnalytics.getInstance(context)!!, webcamTitle, isBecomeFavorite)
+        AnalyticsUtils.sendFirebaseLogEventFavorite(FirebaseAnalytics.getInstance(context), webcamTitle, isBecomeFavorite)
         AnalyticsUtils.sendFabricLogEventFavorite(Answers.getInstance(), webcamTitle, isBecomeFavorite)
     }
 
     fun searchRequestDone(context: Context, searchText: String) {
-        AnalyticsUtils.sendFirebaseLogEventSearch(FirebaseAnalytics.getInstance(context)!!, searchText)
+        AnalyticsUtils.sendFirebaseLogEventSearch(FirebaseAnalytics.getInstance(context), searchText)
         AnalyticsUtils.sendFabricLogEventSearch(Answers.getInstance(), searchText)
     }
 
     fun buttonAboutClicked(context: Context) {
-        AnalyticsUtils.sendFirebaseLogEventSelectContent(FirebaseAnalytics.getInstance(context)!!, AnalyticsUtils.KEY_BUTTON_ABOUT)
+        AnalyticsUtils.sendFirebaseLogEventSelectContent(FirebaseAnalytics.getInstance(context), AnalyticsUtils.KEY_BUTTON_ABOUT)
         AnalyticsUtils.sendFabricLogEventSelectContent(Answers.getInstance(), AnalyticsUtils.KEY_BUTTON_ABOUT)
     }
 
     fun buttonWebsiteOpeniumClicked(context: Context) {
-        AnalyticsUtils.sendFirebaseLogEventSelectContent(FirebaseAnalytics.getInstance(context)!!, AnalyticsUtils.KEY_BUTTON_WEBSITE_OPENIUM)
+        AnalyticsUtils.sendFirebaseLogEventSelectContent(FirebaseAnalytics.getInstance(context), AnalyticsUtils.KEY_BUTTON_WEBSITE_OPENIUM)
         AnalyticsUtils.sendFabricLogEventSelectContent(Answers.getInstance(), AnalyticsUtils.KEY_BUTTON_WEBSITE_OPENIUM)
     }
 
     fun buttonLesPiratesClicked(context: Context) {
-        AnalyticsUtils.sendFirebaseLogEventSelectContent(FirebaseAnalytics.getInstance(context)!!, AnalyticsUtils.KEY_BUTTON_WEBSITE_PIRATES)
+        AnalyticsUtils.sendFirebaseLogEventSelectContent(FirebaseAnalytics.getInstance(context), AnalyticsUtils.KEY_BUTTON_WEBSITE_PIRATES)
         AnalyticsUtils.sendFabricLogEventSelectContent(Answers.getInstance(), AnalyticsUtils.KEY_BUTTON_WEBSITE_PIRATES)
     }
 
     fun buttonRateAppClicked(context: Context) {
-        AnalyticsUtils.sendFirebaseLogEventSelectContent(FirebaseAnalytics.getInstance(context)!!, AnalyticsUtils.KEY_BUTTON_RATE_APP)
+        AnalyticsUtils.sendFirebaseLogEventSelectContent(FirebaseAnalytics.getInstance(context), AnalyticsUtils.KEY_BUTTON_RATE_APP)
         AnalyticsUtils.sendFabricLogEventSelectContent(Answers.getInstance(), AnalyticsUtils.KEY_BUTTON_RATE_APP)
     }
 
     fun buttonProposeWebcamClicked(context: Context) {
-        AnalyticsUtils.sendFirebaseLogEventNewWebcam(FirebaseAnalytics.getInstance(context)!!)
+        AnalyticsUtils.sendFirebaseLogEventNewWebcam(FirebaseAnalytics.getInstance(context))
         AnalyticsUtils.sendFabricLogEventNewWebcam(Answers.getInstance())
     }
 

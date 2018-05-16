@@ -17,7 +17,6 @@ import fr.openium.auvergnewebcams.activity.ActivitySettings
 import fr.openium.auvergnewebcams.activity.ActivityWebcam
 import fr.openium.auvergnewebcams.adapter.AdapterCarousels
 import fr.openium.auvergnewebcams.event.Events
-import fr.openium.auvergnewebcams.ext.*
 import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.SectionList
 import fr.openium.auvergnewebcams.model.Weather
@@ -26,6 +25,11 @@ import fr.openium.auvergnewebcams.rest.AWWeatherApi
 import fr.openium.auvergnewebcams.rest.ApiHelper
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import fr.openium.auvergnewebcams.utils.PreferencesAW
+import fr.openium.kotlintools.ext.applicationContext
+import fr.openium.kotlintools.ext.isLollipopOrMore
+import fr.openium.kotlintools.ext.startActivity
+import fr.openium.kotlintools.ext.toUnixTimestamp
+import fr.openium.rxtools.ext.fromIOToMain
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -111,10 +115,10 @@ class FragmentCarouselWebcam : AbstractFragment() {
         oneTimeSubscriptions.add(Events.eventCameraFavoris.obs
                 .fromIOToMain()
                 .subscribe {
-                    initAdapter(PreferencesAW.getLastUpdateWebcamsTimestamp(applicationContext))
+                    initAdapter(PreferencesAW.getLastUpdateWebcamsTimestamp(applicationContext!!))
                 })
 
-        initAdapter(PreferencesAW.getLastUpdateWebcamsTimestamp(applicationContext))
+        initAdapter(PreferencesAW.getLastUpdateWebcamsTimestamp(applicationContext!!))
     }
 
     override fun onStart() {
@@ -149,7 +153,7 @@ class FragmentCarouselWebcam : AbstractFragment() {
             //Analytics
             AnalyticsUtils.buttonSettingsClicked(context!!)
 
-            val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
+            val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext!!, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
             startActivity(Intent(applicationContext, ActivitySettings::class.java), bundle)
             return true
         } else {
@@ -164,17 +168,17 @@ class FragmentCarouselWebcam : AbstractFragment() {
     // --- Start delay to refresh data ---
 
     private fun startDelayRefreshWebcams() {
-        val delay = PreferencesAW.getWebcamsDelayRefreshValue(applicationContext)
-        if (PreferencesAW.isWebcamsDelayRefreshActive(applicationContext)) {
+        val delay = PreferencesAW.getWebcamsDelayRefreshValue(applicationContext!!)
+        if (PreferencesAW.isWebcamsDelayRefreshActive(applicationContext!!)) {
             oneTimeSubscriptions.add(Observable.timer(delay.toLong(), TimeUnit.MINUTES)
                     .fromIOToMain()
                     .subscribe {
-                        PreferencesAW.setLastUpdateTimestamp(applicationContext, System.currentTimeMillis().toUnixTimestamp())
-                        initAdapter(PreferencesAW.getLastUpdateWebcamsTimestamp(applicationContext))
+                        PreferencesAW.setLastUpdateTimestamp(applicationContext!!, System.currentTimeMillis().toUnixTimestamp())
+                        initAdapter(PreferencesAW.getLastUpdateWebcamsTimestamp(applicationContext!!))
                         startDelayRefreshWebcams()
                     })
         } else {
-            PreferencesAW.setLastUpdateTimestamp(applicationContext, System.currentTimeMillis().toUnixTimestamp())
+            PreferencesAW.setLastUpdateTimestamp(applicationContext!!, System.currentTimeMillis().toUnixTimestamp())
         }
     }
 
@@ -183,10 +187,12 @@ class FragmentCarouselWebcam : AbstractFragment() {
         oneTimeSubscriptions.add(Observable.timer(delay.toLong(), TimeUnit.SECONDS)
                 .fromIOToMain()
                 .subscribe {
-                    Timber.d("UPDATE")
-                    PreferencesAW.setLastUpdateWeatherTimestamp(applicationContext, System.currentTimeMillis().toUnixTimestamp())
-                    initWeather()
-                    startDelayRefreshWeather()
+                    if(isAlive) {
+                        Timber.d("UPDATE")
+                        PreferencesAW.setLastUpdateWeatherTimestamp(applicationContext!!, System.currentTimeMillis().toUnixTimestamp())
+                        initWeather()
+                        startDelayRefreshWeather()
+                    }
                 })
     }
 
@@ -300,7 +306,7 @@ class FragmentCarouselWebcam : AbstractFragment() {
                     activity?.runOnUiThread {
                         Glide.get(applicationContext).clearMemory()
                         initAdapter(PreferencesAW.getLastUpdateWebcamsTimestamp(context!!))
-                        PreferencesAW.setLastUpdateTimestamp(applicationContext, System.currentTimeMillis().toUnixTimestamp())
+                        PreferencesAW.setLastUpdateTimestamp(applicationContext!!, System.currentTimeMillis().toUnixTimestamp())
                     }
                 })
     }
@@ -315,7 +321,7 @@ class FragmentCarouselWebcam : AbstractFragment() {
             putExtra(Constants.KEY_ID, webcam.uid)
             putExtra(Constants.KEY_TYPE, webcam.type)
         }
-        val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
+        val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext!!, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
         startActivity(intent, bundle)
     }
 

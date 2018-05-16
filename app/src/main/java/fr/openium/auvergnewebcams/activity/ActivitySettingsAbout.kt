@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import fr.openium.auvergnewebcams.R
-import fr.openium.auvergnewebcams.ext.gone
+import fr.openium.kotlintools.ext.gone
 import kotlinx.android.synthetic.main.activity_settings_about.*
 
 /**

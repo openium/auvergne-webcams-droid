@@ -13,12 +13,12 @@ import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.activity.ActivityWebcam
 import fr.openium.auvergnewebcams.adapter.AdapterWebcams
-import fr.openium.auvergnewebcams.ext.applicationContext
-import fr.openium.auvergnewebcams.ext.gone
-import fr.openium.auvergnewebcams.ext.show
 import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
-import io.reactivex.android.schedulers.AndroidSchedulers
+import fr.openium.kotlintools.ext.applicationContext
+import fr.openium.kotlintools.ext.gone
+import fr.openium.kotlintools.ext.show
+import fr.openium.rxtools.ext.fromIOToMain
 import kotlinx.android.synthetic.main.fragment_search.*
 import timber.log.Timber
 import java.util.*
@@ -44,14 +44,18 @@ class FragmentSearch : AbstractFragment() {
         oneTimeSubscriptions.add(RxSearchView.queryTextChangeEvents(textViewSearch)
                 .skip(1)
                 .debounce(2, TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
+                .fromIOToMain()
                 .subscribe({
-                    initSearchAdapter(it.queryText().toString())
+                    if (isAlive) {
+                        initSearchAdapter(it.queryText().toString())
 
-                    view?.postDelayed({
-                        //Analytics
-                        AnalyticsUtils.searchRequestDone(context!!, it.queryText().toString())
-                    }, 1000)
+                        view?.postDelayed({
+                            //Analytics
+                            if (isAlive) {
+                                AnalyticsUtils.searchRequestDone(applicationContext!!, it.queryText().toString())
+                            }
+                        }, 1000)
+                    }
                 }, { error ->
                     Timber.e(error)
                 }))
@@ -80,12 +84,12 @@ class FragmentSearch : AbstractFragment() {
 
         if (recyclerViewSearch.adapter == null) {
             recyclerViewSearch.layoutManager = LinearLayoutManager(applicationContext)
-            recyclerViewSearch.adapter = AdapterWebcams(applicationContext, webcamsAdapter, { webcam ->
+            recyclerViewSearch.adapter = AdapterWebcams(applicationContext!!, webcamsAdapter, { webcam ->
                 val intent: Intent = Intent(context, ActivityWebcam::class.java).apply {
                     putExtra(Constants.KEY_ID, webcam.uid)
                     putExtra(Constants.KEY_TYPE, webcam.type)
                 }
-                val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
+                val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext!!, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
                 startActivity(intent, bundle)
             }, oneTimeSubscriptions, realm = realm!!)
         } else {
@@ -99,15 +103,15 @@ class FragmentSearch : AbstractFragment() {
             textViewResultSearch.show()
             val result = getString(R.string.search_result_none, search)
             val spannable = SpannableString(result)
-            spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(applicationContext, R.color.white)), 0, result.length - search.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(applicationContext, R.color.blue)), result.length - search.length, result.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+            spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(applicationContext!!, R.color.white)), 0, result.length - search.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(applicationContext!!, R.color.blue)), result.length - search.length, result.length, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
             textViewResultSearch.setText(spannable)
         } else {
             textViewResultSearch.show()
             val nbResult = getString(R.string.search_result, webcamsAdapter.size)
             val spannable = SpannableString(String.format("%s %s", nbResult, search))
-            spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(applicationContext, R.color.white)), 0, nbResult.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(applicationContext, R.color.blue)), nbResult.length, nbResult.length + search.length + 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+            spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(applicationContext!!, R.color.white)), 0, nbResult.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            spannable.setSpan(ForegroundColorSpan(ContextCompat.getColor(applicationContext!!, R.color.blue)), nbResult.length, nbResult.length + search.length + 1, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
             textViewResultSearch.setText(spannable)
         }
     }

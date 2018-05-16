@@ -16,6 +16,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by t.coulange on 07/12/2016.
@@ -46,7 +47,10 @@ object Modules {
         }
 
         bind<OkHttpClient>() with provider {
-            OkHttpClient.Builder().cache(instance()).build()
+            OkHttpClient.Builder()
+                    .readTimeout(20, TimeUnit.SECONDS)
+                    .cache(instance())
+                    .build()
         }
 
         bind<Retrofit>() with singleton {

@@ -18,7 +18,7 @@ object LoadWebCamUtils {
             val bufferedReader = BufferedReader(InputStreamReader(url.openStream()))
 
             var line = bufferedReader.readLine()
-            while (line != null) {
+            while (line != null && line.isNotBlank()) {
                 media += line
                 line = bufferedReader.readLine()
             }

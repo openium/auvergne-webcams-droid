@@ -19,9 +19,6 @@ import com.like.LikeButton
 import com.like.OnLikeListener
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.event.Events
-import fr.openium.auvergnewebcams.ext.fromIOToMain
-import fr.openium.auvergnewebcams.ext.gone
-import fr.openium.auvergnewebcams.ext.show
 import fr.openium.auvergnewebcams.injection.GlideApp
 import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.Weather
@@ -29,6 +26,9 @@ import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import fr.openium.auvergnewebcams.utils.PreferencesAW
 import fr.openium.auvergnewebcams.utils.WeatherUtils
+import fr.openium.kotlintools.ext.gone
+import fr.openium.kotlintools.ext.show
+import fr.openium.rxtools.ext.fromIOToMain
 import io.reactivex.disposables.CompositeDisposable
 import io.realm.Realm
 import kotlinx.android.synthetic.main.header_list_webcam.view.*

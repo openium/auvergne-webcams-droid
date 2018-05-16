@@ -35,13 +35,13 @@ class ServiceUploadFile : Service() {
 
         private const val ACTION_RETRY = "retry_upload"
 
-        fun startServiceUploadFile(context: Context, url: String, isPhoto: Boolean, fileName: String) {
+        fun startServiceUploadFile(context: Context?, url: String, isPhoto: Boolean, fileName: String) {
             val intent = Intent(context, ServiceUploadFile::class.java).apply {
                 putExtra(ARG_PATH_URL, url)
                 putExtra(ARG_IS_PHOTO, isPhoto)
                 putExtra(ARG_FILENAME, fileName)
             }
-            context.startService(intent)
+            context?.startService(intent)
         }
     }
 
