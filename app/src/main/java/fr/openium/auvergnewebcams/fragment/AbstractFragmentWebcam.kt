@@ -24,10 +24,10 @@ import fr.openium.kotlintools.ext.applicationContext
 import fr.openium.kotlintools.ext.gone
 import fr.openium.kotlintools.ext.show
 import fr.openium.kotlintools.ext.snackbar
+import fr.openium.rxtools.ext.fromIOToMain
 import hasNetwork
 import io.reactivex.Observable
-import io.reactivex.schedulers.Schedulers
-import io.realm.Realm
+import io.reactivex.functions.BiFunction
 import kotlinx.android.synthetic.main.fragment_webcam.*
 import kotlinx.android.synthetic.main.header_detail_camera.*
 
@@ -129,15 +129,14 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     // =================================================================================================================
 
     private fun checkPermissionSaveFile() {
-        val rxPermission = RxPermissions(activity!!)
-        rxPermission.request(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        oneTimeDisposables.add(RxPermissions(activity!!).request(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .subscribe { granted ->
                     if (granted) {
                         saveWebCamPicture()
                     } else {
                         this.snackbar(getString(R.string.error_no_permisson), Snackbar.LENGTH_SHORT)
                     }
-                }
+                })
     }
 
     private fun saveWebCamPicture() {
@@ -185,31 +184,29 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
             showProgress()
             itemMenuRefresh?.isEnabled = false
 
-            Observable.just(1)
-                    .observeOn(Schedulers.io())
-                    .subscribeOn(Schedulers.io())
-                    .subscribe {
-                        val id = arguments?.getLong(Constants.KEY_ID) ?: 0
-                        Realm.getDefaultInstance().use {
-                            it.executeTransaction {
-                                val webcamDB = it.where(Webcam::class.java)
-                                        .equalTo(Webcam::uid.name, id)
-                                        .findFirst()
-                                if (webcamDB != null) {
-                                    if (webcamDB.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
-                                        // load media ld
-                                        webcamDB.mediaViewSurfLD = LoadWebCamUtils.getMediaViewSurf(webcamDB.viewsurfLD)
-                                        webcamDB.mediaViewSurfHD = LoadWebCamUtils.getMediaViewSurf(webcamDB.viewsurfHD)
-                                    }
-                                    it.insertOrUpdate(webcamDB)
-                                }
-                            }
-                        }
+            val id = arguments?.getLong(Constants.KEY_ID) ?: 0
+            val webcamDB = realm?.where(Webcam::class.java)
+                    ?.equalTo(Webcam::uid.name, id)
+                    ?.findFirst()
 
-                        activity?.runOnUiThread {
-                            initWebCam()
-                        }
-                    }
+            if (webcamDB != null) {
+                if (webcamDB.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
+                    oneTimeDisposables.add(Observable.zip(Observable.just(LoadWebCamUtils.getMediaViewSurf(webcamDB.viewsurfLD)),
+                            Observable.just(LoadWebCamUtils.getMediaViewSurf(webcamDB.viewsurfHD)),
+                            BiFunction { t1: String, t2: String ->
+                                t1.to(t2)
+                            }).fromIOToMain()
+                            .subscribe { pair ->
+                                realm?.executeTransaction {
+                                    webcamDB.mediaViewSurfLD = pair.first
+                                    webcamDB.mediaViewSurfHD = pair.second
+                                }
+                                initWebCam()
+                            })
+                }else {
+                    initWebCam()
+                }
+            }
         }
     }
 

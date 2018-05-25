@@ -8,12 +8,13 @@ import com.github.piasy.biv.BigImageViewer
 import com.github.salomonbrys.kodein.*
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
-import fr.openium.auvergnewebcams.event.Events
 import fr.openium.auvergnewebcams.injection.Modules
 import fr.openium.auvergnewebcams.log.CrashReportingTree
 import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.utils.CustomGlideImageLoader
 import io.fabric.sdk.android.Fabric
+import io.reactivex.exceptions.UndeliverableException
+import io.reactivex.plugins.RxJavaPlugins
 import io.realm.Realm
 import io.realm.RealmConfiguration
 import okhttp3.OkHttpClient
@@ -60,6 +61,13 @@ abstract class ApplicationBase : MultiDexApplication(), KodeinAware {
                 .setDefaultFontPath("fonts/ProximaNova-Sbold.otf")
                 .setFontAttrId(R.attr.fontPath).build())
 
+        RxJavaPlugins.setErrorHandler { e ->
+            if (e is UndeliverableException || e is InterruptedException) {
+                Timber.e(e)
+                Crashlytics.logException(e)
+            }
+        }
+
         val client = OkHttpClient.Builder()
                 .retryOnConnectionFailure(true)
                 .addInterceptor {
@@ -100,14 +108,13 @@ abstract class ApplicationBase : MultiDexApplication(), KodeinAware {
 
                                 if (webcam != null) {
                                     val lastModified = response.header("Last-Modified")
-                                    if (lastModified != null && !lastModified.isEmpty()) {
+                                    if (!lastModified.isNullOrEmpty()) {
                                         val dateFormat = SimpleDateFormat("E, d MMM yyyy HH:mm:ss 'GMT'", Locale.US)
                                         dateFormat.timeZone = TimeZone.getTimeZone("GMT")
                                         val newTime = dateFormat.parse(lastModified).time
 //                                    Timber.e("APP update date $newTime   ${webcam.title}")
                                         if (webcam.lastUpdate == null || newTime != webcam.lastUpdate!!) {
                                             webcam.lastUpdate = newTime
-                                            Events.eventCameraDateUpdate.set(webcam.uid)
                                         }
                                     }
                                 }

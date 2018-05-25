@@ -17,8 +17,7 @@ import io.realm.Realm
 abstract class AbstractFragment : Fragment() {
     protected abstract val layoutId: Int
 
-    protected var oneTimeSubscriptions: CompositeDisposable = CompositeDisposable() //only subscribe one time and unsubscribe later
-    protected var rebindSubscriptions: CompositeDisposable = CompositeDisposable() //Resubscribe in onstart
+    protected var oneTimeDisposables: CompositeDisposable = CompositeDisposable() //only subscribe one time and unsubscribe later
 
     protected var isAlive: Boolean = false
     protected var realm: Realm? = null
@@ -54,23 +53,13 @@ abstract class AbstractFragment : Fragment() {
         return view
     }
 
-    override fun onStart() {
-        super.onStart()
-        startSubscription(rebindSubscriptions)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        rebindSubscriptions.clear()
-    }
-
     protected open fun startSubscription(onStartSubscriptions: CompositeDisposable) {
 
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        oneTimeSubscriptions.clear()
+        oneTimeDisposables.clear()
     }
 
     override fun onDestroy() {
@@ -78,7 +67,7 @@ abstract class AbstractFragment : Fragment() {
 //        if (shoudWatchLeak) {
 //            getApplicationBase()?.refWatcher?.watch(this)
 //        }
-        oneTimeSubscriptions.clear()
+        oneTimeDisposables.clear()
     }
 
     override fun onDetach() {

@@ -38,10 +38,12 @@ import java.util.*
 /**
  * Created by laura on 05/12/2017.
  */
-class AdapterWebcams(val context: Context, var items: List<Webcam>, val listener: ((Webcam) -> Unit)? = null, val composites: CompositeDisposable, var headerSection: Section? = null, val realm: Realm) : RecyclerView.Adapter<AdapterWebcams.ViewHolder>() {
+class AdapterWebcams(val context: Context, var items: List<Webcam>, val listener: ((Webcam) -> Unit)? = null, var headerSection: Section? = null, val realm: Realm) : RecyclerView.Adapter<AdapterWebcams.ViewHolder>() {
 
     val heightImage: Int
     val widthScreen: Int
+
+    val composites = CompositeDisposable()
 
     init {
 
@@ -59,32 +61,23 @@ class AdapterWebcams(val context: Context, var items: List<Webcam>, val listener
             val imageName = headerSection?.imageName?.replace("-", "_") ?: ""
             val resourceId = context.resources.getIdentifier(imageName, "drawable", context.getPackageName())
             if (resourceId != -1 && resourceId != 0) {
-                Glide.with(context).load(resourceId).into(holder.itemView?.imageViewSection)
+                Glide.with(context).load(resourceId).into(holder.itemView.imageViewSection)
             } else {
-                Glide.with(context).load(R.drawable.pdd_landscape).into(holder.itemView?.imageViewSection)
+                Glide.with(context).load(R.drawable.pdd_landscape).into(holder.itemView.imageViewSection)
             }
             holder.itemView?.textViewNameSection?.text = headerSection?.title ?: ""
             holder.itemView?.textViewNbCameras?.text = String.format(Locale.getDefault(),
-                    context.resources.getQuantityString(R.plurals.nb_cameras_format, headerSection?.webcams?.count()
-                            ?: 0, headerSection?.webcams?.count() ?: 0))
+                    context.resources.getQuantityString(R.plurals.nb_cameras_format, items.count(), items.count()))
 
             //Weather
             val weather = realm.where(Weather::class.java).equalTo(Weather::lat.name, headerSection?.latitude).equalTo(Weather::lon.name, headerSection?.longitude).findFirst()
             if (weather != null && PreferencesAW.getIfWeatherCouldBeDisplayed(context)) {
                 //Set weather
-                Glide.with(context).load(WeatherUtils.weatherImage(weather.id)).into(holder.itemView?.imageViewSectionWeather)
+                Glide.with(context).load(WeatherUtils.weatherImage(weather.id)).into(holder.itemView.imageViewSectionWeather)
                 holder.itemView?.textViewSectionWeather?.setText(context.getString(R.string.weather_celcius, WeatherUtils.convertKelvinToCelcius(weather.temp)))
             }
         } else {
             val webcam = items.get(position - if (headerSection != null) 1 else 0)
-            composites.add(Events.eventCameraDateUpdate
-                    .obs
-                    .fromIOToMain()
-                    .subscribe {
-                        if (it == webcam.uid) {
-                            this.notifyItemChanged(position)
-                        }
-                    })
 
             holder.itemView?.textViewNameWebcam?.text = webcam.title ?: ""
 
@@ -123,7 +116,7 @@ class AdapterWebcams(val context: Context, var items: List<Webcam>, val listener
                     })
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .skipMemoryCache(true)
-                    .into(holder.itemView?.imageViewCamera)
+                    .into(holder.itemView.imageViewCamera)
 
             holder.itemView?.setOnClickListener {
                 listener?.invoke(webcam)
@@ -155,7 +148,8 @@ class AdapterWebcams(val context: Context, var items: List<Webcam>, val listener
                         Events.eventCameraFavoris.set(webcam.uid)
 
                         //Analytics
-                        AnalyticsUtils.buttonFavoriteClicked(context, webcam.title ?: "", true)
+                        AnalyticsUtils.buttonFavoriteFromSectionClicked(context, webcam.title
+                                ?: "", true)
                     }
                 }
 
@@ -167,7 +161,8 @@ class AdapterWebcams(val context: Context, var items: List<Webcam>, val listener
                         Events.eventCameraFavoris.set(webcam.uid)
 
                         //Analytics
-                        AnalyticsUtils.buttonFavoriteClicked(context, webcam.title ?: "", false)
+                        AnalyticsUtils.buttonFavoriteFromSectionClicked(context, webcam.title
+                                ?: "", true)
                     }
                 }
             })

@@ -9,8 +9,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,8 +21,6 @@ import fr.openium.auvergnewebcams.carousel.util.ScrollListenerAdapter;
  */
 @SuppressWarnings("unchecked")
 public class DiscreteScrollView extends RecyclerView {
-
-    public static final int NO_POSITION = DiscreteScrollLayoutManager.NO_POSITION;
 
     private static final int DEFAULT_ORIENTATION = fr.openium.auvergnewebcams.carousel.Orientation.HORIZONTAL.ordinal();
 
@@ -287,5 +283,13 @@ public class DiscreteScrollView extends RecyclerView {
          * If data set is empty, viewHolder will be null and adapterPosition will be NO_POSITION
          */
         void onItemSelectedChanged(int position);
+    }
+
+    public interface OnListLoadedListener {
+        /*
+         * This method will be also triggered when view appears on the screen for the first time.
+         * If data set is empty, viewHolder will be null and adapterPosition will be NO_POSITION
+         */
+        void onListLoaded();
     }
 }

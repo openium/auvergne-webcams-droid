@@ -36,5 +36,4 @@
         app:like_drawable="@drawable/ic_favorite"
         app:unlike_drawable="@drawable/ic_not_favorite" />
 
-
 </FrameLayout>

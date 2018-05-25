@@ -46,7 +46,7 @@ class FragmentSettings : AbstractFragment() {
         switch_refresh_delay.isChecked = PreferencesAW.isWebcamsDelayRefreshActive(applicationContext!!)
         showDelayRefresh(PreferencesAW.isWebcamsDelayRefreshActive(applicationContext!!))
 
-        oneTimeSubscriptions.add(Events.eventNewValueDelay
+        oneTimeDisposables.add(Events.eventNewValueDelay
                 .obs
                 .fromIOToMain()
                 .subscribe {

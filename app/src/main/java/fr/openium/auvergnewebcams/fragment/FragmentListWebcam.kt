@@ -34,7 +34,7 @@ class FragmentListWebcam : AbstractFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         initSection()
-        oneTimeSubscriptions.add(Events.eventCameraFavoris.obs
+        oneTimeDisposables.add(Events.eventCameraFavoris.obs
                 .fromIOToMain()
                 .subscribe({
                     if (isAlive && section.uid == -1L) {
@@ -51,11 +51,12 @@ class FragmentListWebcam : AbstractFragment() {
 
     private fun initSection() {
         val uidSection = arguments?.getLong(Constants.ARG_SECTION_UID) ?: -1L
+        //Because SectionFav is not in realm
         val realmSection = realm!!.where(Section::class.java)
                 .equalTo(Section::uid.name, uidSection)
                 .findFirst()
         if (realmSection == null) {
-            section = Section(title = getString(R.string.favoris_section_title), imageName = "star")
+            section = Section(uid = Constants.FAVORI_SECTION_ID, title = getString(R.string.favoris_section_title), imageName = "star")
             section.webcams.addAll(realm!!.where(Webcam::class.java)
                     .equalTo(Webcam::isFavoris.name, true)
                     .findAll())
@@ -87,7 +88,7 @@ class FragmentListWebcam : AbstractFragment() {
                     }
                     val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext!!, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
                     startActivity(intent, bundle)
-                }, oneTimeSubscriptions, section, realm!!)
+                }, section, realm!!)
             } else {
                 (recyclerView.adapter as AdapterWebcams).items = webcamsList
                 (recyclerView.adapter as AdapterWebcams).headerSection = section

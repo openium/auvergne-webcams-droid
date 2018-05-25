@@ -1,6 +1,5 @@
 package fr.openium.auvergnewebcams.adapter
 
-import android.content.Context
 import android.graphics.drawable.Drawable
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -14,57 +13,30 @@ import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.signature.MediaStoreSignature
 import fr.openium.auvergnewebcams.BuildConfig
 import fr.openium.auvergnewebcams.R
-import fr.openium.auvergnewebcams.event.Events
 import fr.openium.auvergnewebcams.injection.GlideApp
 import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.utils.DateUtils
+import fr.openium.auvergnewebcams.utils.PreferencesAW
 import fr.openium.kotlintools.ext.gone
 import fr.openium.kotlintools.ext.show
-import fr.openium.rxtools.ext.fromIOToMain
-import io.reactivex.disposables.CompositeDisposable
 import io.realm.RealmList
-import io.realm.RealmObject
 import kotlinx.android.synthetic.main.item_carousel_webcam.view.*
 
 
 /**
  * Created by laura on 23/03/2017.
  */
-class AdapterWebcamsCarousel(val context: Context,
-                             val listener: ((Webcam, Int) -> Unit)? = null,
-                             var webcams: RealmList<Webcam>,
-                             val composites: CompositeDisposable,
-                             var lastUpdate: Long)
-    : RecyclerView.Adapter<AdapterWebcamsCarousel.WebcamHolder>() {
-
-    val heightImage: Int
-    val widthImage: Int
-
-    init {
-        heightImage = context.resources.getDimensionPixelOffset(R.dimen.height_image_list)
-        widthImage = context.resources.getDimensionPixelOffset(R.dimen.width_image_list)
-    }
+class AdapterWebcamsCarousel(val listener: ((Webcam, Int) -> Unit)? = null,
+                             var webcams: RealmList<Webcam>) : RecyclerView.Adapter<AdapterWebcamsCarousel.WebcamHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WebcamHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_carousel_webcam, parent, false)
-        return WebcamHolder(view)
-//                .apply {
-//            layoutParams = ViewGroup.LayoutParams(widthImage, heightImage)
-//        }
+        return WebcamHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_carousel_webcam, parent, false))
     }
 
     override fun onBindViewHolder(holder: WebcamHolder, position: Int) {
         val item = webcams.get(position)
-        composites.add(Events.eventCameraDateUpdate
-                .obs
-                .fromIOToMain()
-                .subscribe {
-                    if (item != null && RealmObject.isValid(item) && it == item.uid) {
-                        item.realm?.refresh()
-                        //    Timber.e("uid = ${item.uid}")
-                        this.notifyItemChanged(position)
-                    }
-                })
+
+        val context = holder.itemView.context
 
         val urlWebCam: String = item?.getUrlForWebcam(false, false) ?: ""
         val isUp = item?.isUpToDate() ?: true
@@ -75,10 +47,8 @@ class AdapterWebcamsCarousel(val context: Context,
             holder.itemView.textviewWebcamNotUpdate.setText(context.getString(R.string.generic_not_up_to_date))
             holder.itemView.textviewWebcamNotUpdate.show()
         }
-
         holder.itemView.progressbar.show()
 
-//        Timber.e("load image section ${section.uid}    $position => $urlWebCam")
         val listenerGlide = object : RequestListener<Drawable> {
             override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
                 holder.itemView.textviewWebcamNotUpdate.setText(context.getString(R.string.load_webcam_error))
@@ -99,30 +69,15 @@ class AdapterWebcamsCarousel(val context: Context,
                 holder.itemView.progressbar.gone()
                 return false
             }
-
         }
 
-        // Timber.e("DATE UPDATE $lastUpdate")
-//        if (lastUpdate == 0L) { // no cache
-//            GlideApp.with(context)
-//                    .load(urlWebCam)
-//                    .error(R.drawable.broken_camera)
-//                    .listener(listenerGlide)
-//                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-//                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-//                    .skipMemoryCache(true)
-//                    .override(widthImage, heightImage)
-//                    .into(holder.itemView.imageViewCamera)
-//        } else {
         GlideApp.with(context)
                 .load(urlWebCam)
                 .error(R.drawable.broken_camera)
                 .listener(listenerGlide)
-                .signature(MediaStoreSignature("", lastUpdate, 0))
-                .override(widthImage, heightImage)
+                .signature(MediaStoreSignature("", PreferencesAW.getLastUpdateWebcamsTimestamp(context), 0))
+                .override(context.resources.getDimensionPixelOffset(R.dimen.width_image_list), context.resources.getDimensionPixelOffset(R.dimen.height_image_list))
                 .into(holder.itemView.imageViewCamera)
-//        }
-
 
         holder.itemView.setOnClickListener {
             if (item != null)

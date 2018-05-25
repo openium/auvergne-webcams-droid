@@ -1,9 +1,14 @@
 package fr.openium.auvergnewebcams.rest
 
 import android.content.Context
+import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.SectionList
+import fr.openium.auvergnewebcams.model.Weather
 import fr.openium.auvergnewebcams.model.Webcam
+import fr.openium.auvergnewebcams.model.rest.WeatherRest
 import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
+import fr.openium.rxtools.ext.fromIOToMain
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import io.realm.Realm
@@ -14,7 +19,7 @@ import timber.log.Timber
 /**
  * Created by godart on 29/11/2017.
  */
-class ApiHelper(val context: Context, val api: AWApi) {
+class ApiHelper(val context: Context, val api: AWApi, val apiWeather: AWWeatherApi) {
 
     // --------------------- FLUX --------------------- //
 
@@ -24,7 +29,6 @@ class ApiHelper(val context: Context, val api: AWApi) {
                 Realm.getDefaultInstance().use {
                     it.executeTransaction {
                         result.response()?.body()?.let { sections ->
-                            val listId = arrayListOf<Long>()
 
                             for (section in sections.sections) {
 
@@ -55,15 +59,11 @@ class ApiHelper(val context: Context, val api: AWApi) {
                                 section.webcams = RealmList<Webcam>().apply {
                                     addAll(section.webcams.filter { it.hidden == false })
                                 }
-
-                                listId.add(section.uid)
                             }
 
-                            //it.where(Section::class.java).findAll().deleteAllFromRealm()
-                            //it.where(Webcam::class.java).findAll().deleteAllFromRealm()
+                            it.where(Section::class.java).findAll().deleteAllFromRealm()
+                            it.where(Webcam::class.java).findAll().deleteAllFromRealm()
 
-                            //val item = it.where(Section::class.java).not().`in`(Section::uid.name, listId.toTypedArray()).findAll()
-                            //item.deleteAllFromRealm()
                             it.insertOrUpdate(sections.sections)
                         }
                     }
@@ -73,6 +73,46 @@ class ApiHelper(val context: Context, val api: AWApi) {
             Timber.d("Error getting sections")
         }
     }
+
+    fun getWeatherForSection(context: Context, section: Section): Single<Result<WeatherRest>>? {
+        return if (section.latitude != 0.0 || section.longitude != 0.0) {
+            startQueryLogged(apiWeather.queryByGeographicCoordinates(section.latitude, section.longitude, context.getString(R.string.app_weather_id))
+                    .fromIOToMain()
+                    .doOnSuccess { weatherRest ->
+                        Realm.getDefaultInstance().use {
+                            weatherRest.response()?.body()?.let { body ->
+                                it.executeTransaction {
+                                    it.where(Weather::class.java).equalTo(Weather::lat.name, body.coord?.lat).equalTo(Weather::lon.name, body.coord?.lon).findAll().deleteAllFromRealm()
+
+                                    val weather = Weather(body.weather?.get(0)?.id, body.main?.temp, body.coord?.lon
+                                            ?: 0.0, body.coord?.lat ?: 0.0)
+                                    it.insertOrUpdate(weather)
+                                }
+                            }
+                        }
+                    }.doOnError { e ->
+                        Timber.e("Error init weather ${e.message}")
+                    })
+        } else {
+            null
+        }
+    }
+
+    fun getWeatherForAllSections(context: Context) {
+        val sections = Realm.getDefaultInstance().use {
+            it.where(Section::class.java)
+                    .sort(Section::order.name)
+                    .isNotEmpty(Section::webcams.name)
+                    .findAll()
+        }
+
+        if (sections != null) {
+            for (section in sections) {
+                getWeatherForSection(context, section)
+            }
+        }
+    }
+
 // ----------------- OTHER METHODS ---------------- //
 
     fun <T> startQueryLogged(query: Single<T>): Single<T> {

@@ -8,8 +8,6 @@ import com.github.salomonbrys.kodein.instance
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.SectionList
-import fr.openium.auvergnewebcams.model.Weather
-import fr.openium.auvergnewebcams.rest.AWWeatherApi
 import fr.openium.auvergnewebcams.rest.ApiHelper
 import fr.openium.auvergnewebcams.utils.PreferencesAW
 import fr.openium.kotlintools.ext.toUnixTimestamp
@@ -31,7 +29,6 @@ import java.util.concurrent.atomic.AtomicInteger
  */
 class ActivitySplash : AbstractActivity() {
 
-    private val apiWeather: AWWeatherApi by kodeinInjector.instance()
     private val apiHelper: ApiHelper by kodeinInjector.instance()
 
     override val layoutId: Int
@@ -45,6 +42,7 @@ class ActivitySplash : AbstractActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         if (applicationContext.hasNetwork) {
             disposables.add(Single.zip(Observable.timer(2, TimeUnit.SECONDS).singleOrError(), apiHelper.getSections(), BiFunction { time: Long, list: Result<SectionList> ->
                 if (list.isError || list.response()?.body() == null) {
@@ -89,27 +87,16 @@ class ActivitySplash : AbstractActivity() {
                 }
 
                 for (section in sections) {
-                    if (section.latitude != 0.0 || section.longitude != 0.0) {
-                        disposables.add(apiWeather.queryByGeographicCoordinates(section.latitude, section.longitude, getString(R.string.app_weather_id)).fromIOToMain().subscribe({ weatherRest ->
-                            Realm.getDefaultInstance().use {
-                                weatherRest.response()?.body()?.let { body ->
-                                    it.executeTransaction {
-                                        it.where(Weather::class.java).equalTo(Weather::lat.name, body.coord?.lat).equalTo(Weather::lon.name, body.coord?.lon).findAll().deleteAllFromRealm()
-
-                                        val weather = Weather(body.weather?.get(0)?.id, body.main?.temp, body.coord?.lon
-                                                ?: 0.0, body.coord?.lat
-                                                ?: 0.0)
-                                        it.insertOrUpdate(weather)
-                                    }
-                                }
-                                nbRemainingRequests?.decrementAndGet()
-                                if (nbRemainingRequests?.get() == 0) {
-                                    startActivityMain()
-                                }
-                            }
-                        }, { e ->
-                            Timber.e("Error init weather ${e.message}")
-                        }))
+                    val weatherDisposable = apiHelper.getWeatherForSection(applicationContext, section)?.fromIOToMain()?.subscribe({ weatherRest ->
+                        nbRemainingRequests?.decrementAndGet()
+                        if (nbRemainingRequests?.get() == 0) {
+                            startActivityMain()
+                        }
+                    }, { e ->
+                        Timber.e("Error init weather ${e.message}")
+                    })
+                    if (weatherDisposable != null) {
+                        disposables.add(weatherDisposable)
                     }
                 }
             }

@@ -97,6 +97,8 @@ object AnalyticsUtils {
     private const val KEY_SPECIAL_EVENTS_CONTENT_TYPE_FAVORITE = "favorite"
     private const val KEY_SPECIAL_EVENTS_CONTENT_TYPE_IS_FAVORITE = "favorite"
     private const val KEY_SPECIAL_EVENTS_CONTENT_TYPE_IS_NOT_FAVORITE = "unfavorite"
+    private const val KEY_SPECIAL_EVENTS_CONTENT_TYPE_IS_FAVORITE_FROM_SECTION = "favorite_from_section"
+    private const val KEY_SPECIAL_EVENTS_CONTENT_TYPE_IS_NOT_FAVORITE_FROM_SECTION = "unfavorite_from_section"
     private const val KEY_SPECIAL_EVENTS_CONTENT_TYPE_PROPOSE_WEBCAM = "propose_webcam"
 
     // ========= FIREBASE METHODS =========
@@ -148,6 +150,20 @@ object AnalyticsUtils {
         firebaseAnalytics.logEvent(KEY_SPECIAL_EVENTS_CONTENT_TYPE_FAVORITE, bundle)
     }
 
+    // --- Ajout/Suppression d'une webcam aux favoris ---
+    private fun sendFirebaseLogEventFavoriteFromSection(firebaseAnalytics: FirebaseAnalytics, webcamName: String, isBecomeFavorite: Boolean) {
+        val bundle = Bundle().apply {
+            putString(FirebaseAnalytics.Param.CONTENT_TYPE, if (isBecomeFavorite) {
+                KEY_SPECIAL_EVENTS_CONTENT_TYPE_IS_FAVORITE_FROM_SECTION
+            } else {
+                KEY_SPECIAL_EVENTS_CONTENT_TYPE_IS_NOT_FAVORITE_FROM_SECTION
+            })
+            putString(FirebaseAnalytics.Param.ITEM_ID, webcamName)
+        }
+
+        firebaseAnalytics.logEvent(KEY_SPECIAL_EVENTS_CONTENT_TYPE_FAVORITE, bundle)
+    }
+
     // --- Proposition d'une nouvelle webcam  ---
     private fun sendFirebaseLogEventNewWebcam(firebaseAnalytics: FirebaseAnalytics) {
         firebaseAnalytics.logEvent(KEY_SPECIAL_EVENTS_CONTENT_TYPE_PROPOSE_WEBCAM, null)
@@ -186,6 +202,18 @@ object AnalyticsUtils {
                     KEY_SPECIAL_EVENTS_CONTENT_TYPE_IS_FAVORITE
                 } else {
                     KEY_SPECIAL_EVENTS_CONTENT_TYPE_IS_NOT_FAVORITE
+                })
+                .putContentId(webcamName))
+    }
+
+    // --- Ajout/Suppression d'une webcam aux favoris ---
+    private fun sendFabricLogEventFavoriteFromSection(answersAnalytics: Answers, webcamName: String, isBecomeFavorite: Boolean) {
+        answersAnalytics.logContentView(ContentViewEvent()
+                .putContentName(KEY_SPECIAL_EVENTS_CONTENT_TYPE_FAVORITE)
+                .putContentType(if (isBecomeFavorite) {
+                    KEY_SPECIAL_EVENTS_CONTENT_TYPE_IS_FAVORITE_FROM_SECTION
+                } else {
+                    KEY_SPECIAL_EVENTS_CONTENT_TYPE_IS_NOT_FAVORITE_FROM_SECTION
                 })
                 .putContentId(webcamName))
     }
@@ -354,4 +382,8 @@ object AnalyticsUtils {
         AnalyticsUtils.sendFabricLogEventNewWebcam(Answers.getInstance())
     }
 
+    fun buttonFavoriteFromSectionClicked(context: Context, webcamTitle: String, isBecomeFavorite: Boolean) {
+        AnalyticsUtils.sendFirebaseLogEventFavoriteFromSection(FirebaseAnalytics.getInstance(context), webcamTitle, isBecomeFavorite)
+        AnalyticsUtils.sendFabricLogEventFavoriteFromSection(Answers.getInstance(), webcamTitle, isBecomeFavorite)
+    }
 }

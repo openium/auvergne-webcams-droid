@@ -41,7 +41,7 @@ class FragmentSearch : AbstractFragment() {
         textViewSearch.setIconifiedByDefault(false)
         textViewSearch.requestFocus()
 
-        oneTimeSubscriptions.add(RxSearchView.queryTextChangeEvents(textViewSearch)
+        oneTimeDisposables.add(RxSearchView.queryTextChangeEvents(textViewSearch)
                 .skip(1)
                 .debounce(2, TimeUnit.MILLISECONDS)
                 .fromIOToMain()
@@ -91,7 +91,7 @@ class FragmentSearch : AbstractFragment() {
                 }
                 val bundle = ActivityOptionsCompat.makeCustomAnimation(applicationContext!!, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
                 startActivity(intent, bundle)
-            }, oneTimeSubscriptions, realm = realm!!)
+            }, realm = realm!!)
         } else {
             (recyclerViewSearch.adapter as AdapterWebcams).items = webcamsAdapter
             recyclerViewSearch.adapter.notifyDataSetChanged()

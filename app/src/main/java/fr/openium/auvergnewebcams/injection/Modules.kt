@@ -67,7 +67,7 @@ object Modules {
         }
 
         bind<ApiHelper>() with singleton {
-            ApiHelper(instance(), instance())
+            ApiHelper(instance(), instance(), instance())
         }
     }
 

@@ -50,10 +50,6 @@ class InfiniteScrollAdapter<T : RecyclerView.ViewHolder>(val wrapped: RecyclerVi
     }
 
     fun getRealPosition(position: Int): Int {
-        return getRealRealPosition(position)
-    }
-
-    fun getRealRealPosition(position: Int): Int {
         return Math.abs(position % wrapped.itemCount)
     }
 
