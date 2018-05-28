@@ -191,11 +191,20 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
 
             if (webcamDB != null) {
                 if (webcamDB.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
-                    oneTimeDisposables.add(Observable.zip(Observable.just(LoadWebCamUtils.getMediaViewSurf(webcamDB.viewsurfLD)),
-                            Observable.just(LoadWebCamUtils.getMediaViewSurf(webcamDB.viewsurfHD)),
+                    val urlLD = webcamDB.viewsurfLD
+                    val urlHD = webcamDB.viewsurfHD
+
+                    oneTimeDisposables.add(Observable.zip(Observable
+                            .fromCallable {
+                                LoadWebCamUtils.getMediaViewSurf(urlLD)
+                            },
+                            Observable.fromCallable {
+                                LoadWebCamUtils.getMediaViewSurf(urlHD)
+                            },
                             BiFunction { t1: String, t2: String ->
                                 t1.to(t2)
-                            }).fromIOToMain()
+                            })
+                            .fromIOToMain()
                             .subscribe { pair ->
                                 realm?.executeTransaction {
                                     webcamDB.mediaViewSurfLD = pair.first
@@ -203,7 +212,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
                                 }
                                 initWebCam()
                             })
-                }else {
+                } else {
                     initWebCam()
                 }
             }
