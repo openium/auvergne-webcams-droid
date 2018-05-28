@@ -252,8 +252,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     }
 
     private fun initDateLastUpdate() {
-        if (isAlive) {
-
+        if (isAlive && webcam?.isValid == true) {
             if (webcam?.isUpToDate() == true) {
                 textviewWebcamNotUpdate?.gone()
             } else {
