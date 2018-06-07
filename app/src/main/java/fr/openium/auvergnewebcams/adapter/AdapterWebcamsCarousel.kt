@@ -13,6 +13,7 @@ import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.signature.MediaStoreSignature
 import fr.openium.auvergnewebcams.BuildConfig
 import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.fragment.FragmentCarouselWebcam
 import fr.openium.auvergnewebcams.injection.GlideApp
 import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.utils.DateUtils
@@ -26,8 +27,7 @@ import kotlinx.android.synthetic.main.item_carousel_webcam.view.*
 /**
  * Created by laura on 23/03/2017.
  */
-class AdapterWebcamsCarousel(val listener: ((Webcam, Int) -> Unit)? = null,
-                             var webcams: RealmList<Webcam>) : RecyclerView.Adapter<AdapterWebcamsCarousel.WebcamHolder>() {
+class AdapterWebcamsCarousel(var webcams: RealmList<Webcam>) : RecyclerView.Adapter<AdapterWebcamsCarousel.WebcamHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WebcamHolder {
         return WebcamHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_carousel_webcam, parent, false))
@@ -81,7 +81,7 @@ class AdapterWebcamsCarousel(val listener: ((Webcam, Int) -> Unit)? = null,
 
         holder.itemView.setOnClickListener {
             if (item != null)
-                listener?.invoke(item, position)
+                FragmentCarouselWebcam.startActivityDetailCamera(context, item)
         }
 
         if (BuildConfig.DEBUG) {

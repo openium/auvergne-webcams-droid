@@ -11,9 +11,10 @@ import fr.openium.auvergnewebcams.carousel.DiscreteScrollView
 import fr.openium.auvergnewebcams.carousel.InfiniteScrollAdapter
 import fr.openium.auvergnewebcams.carousel.transform.Pivot
 import fr.openium.auvergnewebcams.carousel.transform.ScaleTransformer
+import fr.openium.auvergnewebcams.fragment.FragmentCarouselWebcam.Companion.startActivityDetailCamera
+import fr.openium.auvergnewebcams.fragment.FragmentCarouselWebcam.Companion.startActivityListWebcam
 import fr.openium.auvergnewebcams.model.Section
 import fr.openium.auvergnewebcams.model.Weather
-import fr.openium.auvergnewebcams.model.Webcam
 import fr.openium.auvergnewebcams.utils.PreferencesAW
 import fr.openium.auvergnewebcams.utils.WeatherUtils
 import fr.openium.kotlintools.ext.gone
@@ -29,10 +30,8 @@ import kotlin.collections.HashMap
 /**
  * Created by laura on 23/03/2017.
  */
-class AdapterCarousels(val onClickWebcamListener: ((Webcam, Int) -> Unit)? = null,
-                       var sections: RealmResults<Section>,
+class AdapterCarousels(var sections: RealmResults<Section>,
                        var sectionFav: Section? = null,
-                       val onClickSectionListener: ((Section) -> Unit),
                        var weatherList: RealmResults<Weather>? = null) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var positionsAdapters = HashMap<Long, Int>()
@@ -101,7 +100,7 @@ class AdapterCarousels(val onClickWebcamListener: ((Webcam, Int) -> Unit)? = nul
 
             //Set on click on Section part
             holder.itemView.linearLayoutSection.setOnClickListener {
-                onClickSectionListener.invoke(item)
+                startActivityListWebcam(context, item)
             }
 
             //Set on click on any title of webcam (to do the same as if we click on the webcam)
@@ -109,13 +108,13 @@ class AdapterCarousels(val onClickWebcamListener: ((Webcam, Int) -> Unit)? = nul
                 val pos = (holder.itemView.scrollView.adapter as InfiniteScrollAdapter).getRealPosition(holder.itemView.scrollView.currentItem)
                 val webcam = item.webcams.get(pos)
                 if (webcam != null) {
-                    onClickWebcamListener?.invoke(webcam, position)
+                    startActivityDetailCamera(context, webcam)
                 }
             }
 
             //Set adapter of Horizontal scrollView
             if (holder.itemView.scrollView.adapter == null) {
-                val adapter = AdapterWebcamsCarousel(onClickWebcamListener, item.webcams)
+                val adapter = AdapterWebcamsCarousel(item.webcams)
                 val infiniteAdapter = InfiniteScrollAdapter.wrap(adapter)
                 holder.itemView.scrollView.adapter = infiniteAdapter
             } else {

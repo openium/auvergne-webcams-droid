@@ -1,5 +1,6 @@
 package fr.openium.auvergnewebcams.fragment
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.ActivityOptionsCompat
@@ -45,12 +46,6 @@ import java.util.concurrent.TimeUnit
  * Created by t.coulange on 09/12/2016.
  */
 class FragmentCarouselWebcam : AbstractFragment() {
-
-    companion object {
-        private const val POSITION_LISTE = "POSITION_LISTE"
-        private const val POSITION_ADAPTER_KEYS_LISTE = "POSITION_ADAPTER_KEYS_LISTE"
-        private const val POSITION_ADAPTER_VALUES_LISTE = "POSITION_ADAPTER_VALUES_LISTE"
-    }
 
     protected val apiHelper: ApiHelper by kodeinInjector.instance()
 
@@ -232,11 +227,7 @@ class FragmentCarouselWebcam : AbstractFragment() {
 
                 if (recyclerView.adapter == null) {
                     recyclerView.layoutManager = LinearLayoutManager(context)
-                    recyclerView.adapter = AdapterCarousels({ webcam, _ ->
-                        startActivityDetailCamera(webcam)
-                    }, sections, sectionFavoris, onClickSectionListener = { section ->
-                        startActivityListWebcam(section)
-                    }, weatherList = weatherList)
+                    recyclerView.adapter = AdapterCarousels(sections, sectionFavoris, weatherList)
 
                     positionAdapters?.let {
                         (recyclerView.adapter as AdapterCarousels).setPositionOfAllWebcams(it)
@@ -306,5 +297,34 @@ class FragmentCarouselWebcam : AbstractFragment() {
         //Analytics
         AnalyticsUtils.appIsOpen(context!!)
         AnalyticsUtils.sendAllUserPreferences(context!!)
+    }
+
+    companion object {
+        private const val POSITION_LISTE = "POSITION_LISTE"
+        private const val POSITION_ADAPTER_KEYS_LISTE = "POSITION_ADAPTER_KEYS_LISTE"
+        private const val POSITION_ADAPTER_VALUES_LISTE = "POSITION_ADAPTER_VALUES_LISTE"
+
+        fun startActivityDetailCamera(context: Context, webcam: Webcam) {
+            //Analytics
+            AnalyticsUtils.selectWebcamDetails(context, webcam.title ?: "")
+
+            val intent: Intent = Intent(context, ActivityWebcam::class.java).apply {
+                putExtra(Constants.KEY_ID, webcam.uid)
+                putExtra(Constants.KEY_TYPE, webcam.type)
+            }
+            val bundle = ActivityOptionsCompat.makeCustomAnimation(context, R.anim.animation_from_right, R.anim.animation_to_left).toBundle()
+            context.startActivity(intent, bundle)
+        }
+
+        fun startActivityListWebcam(context: Context, section: Section) {
+            //Analytics
+            AnalyticsUtils.selectSectionDetails(context, section.title ?: "")
+
+            val intent: Intent = Intent(context, ActivityListWebcam::class.java).apply {
+                putExtra(Constants.ARG_SECTION_UID, section.uid)
+            }
+
+            context.startActivity(intent)
+        }
     }
 }

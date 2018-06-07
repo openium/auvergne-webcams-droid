@@ -3,6 +3,7 @@ package fr.openium.auvergnewebcams
 import android.content.Context
 import android.support.multidex.MultiDexApplication
 import com.crashlytics.android.Crashlytics
+import com.crashlytics.android.answers.Answers
 import com.crashlytics.android.core.CrashlyticsCore
 import com.github.piasy.biv.BigImageViewer
 import com.github.salomonbrys.kodein.*
@@ -49,7 +50,7 @@ abstract class ApplicationBase : MultiDexApplication(), KodeinAware {
             Timber.plant(CrashReportingTree())
         }
 
-        initializeCrashlytics()
+        initializeFabric()
         Realm.init(this)
         val configuration = RealmConfiguration.Builder()
                 .schemaVersion(1)
@@ -131,9 +132,10 @@ abstract class ApplicationBase : MultiDexApplication(), KodeinAware {
         BigImageViewer.initialize(CustomGlideImageLoader.with(applicationContext, client))
     }
 
-    open fun initializeCrashlytics() {
+    open fun initializeFabric() {
         val core = CrashlyticsCore.Builder().build()
         val crashlytics = Crashlytics.Builder().core(core).build()
-        Fabric.with(this, crashlytics)
+        val answer = Answers()
+        Fabric.with(this, crashlytics, answer)
     }
 }

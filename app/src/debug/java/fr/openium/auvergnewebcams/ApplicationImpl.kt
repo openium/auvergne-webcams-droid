@@ -22,7 +22,7 @@ class ApplicationImpl : ApplicationBase() {
         super.onCreate()
     }
 
-    override fun initializeCrashlytics() {
+    override fun initializeFabric() {
         val core = CrashlyticsCore.Builder().disabled(true).build()
         val crashlytics = Crashlytics.Builder().core(core).build()
         Fabric.with(this, crashlytics)
