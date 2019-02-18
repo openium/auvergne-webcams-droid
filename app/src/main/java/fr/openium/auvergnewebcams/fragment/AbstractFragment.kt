@@ -1,79 +1,70 @@
 package fr.openium.auvergnewebcams.fragment
 
-import android.content.Context
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.Toolbar
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.crashlytics.android.answers.Answers
-import com.github.salomonbrys.kodein.KodeinInjector
-import com.github.salomonbrys.kodein.android.appKodein
-import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.android.material.snackbar.Snackbar
+import com.squareup.picasso.Picasso
 import io.reactivex.disposables.CompositeDisposable
-import io.realm.Realm
+import org.kodein.di.Kodein
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.x.closestKodein
+import org.kodein.di.generic.instance
 
-abstract class AbstractFragment : Fragment() {
+/**
+ * Created by Openium on 20/03/2018.
+ */
+
+abstract class AbstractFragment : androidx.fragment.app.Fragment(), KodeinAware {
+
+    protected val disposables: CompositeDisposable = CompositeDisposable()
+    protected val rebindDisposables: CompositeDisposable = CompositeDisposable() //Resubscribe in onstart
+
+    protected val picasso: Picasso by instance()
+
+    override val kodein: Kodein by closestKodein()
+
     protected abstract val layoutId: Int
-
-    protected var oneTimeDisposables: CompositeDisposable = CompositeDisposable() //only subscribe one time and unsubscribe later
-
-    protected var isAlive: Boolean = false
-    protected var realm: Realm? = null
-
-    protected var mFirebaseAnalytics: FirebaseAnalytics? = null
-    protected var mAnswersAnalytics: Answers? = null
-
-    open protected val customToolbarFragment: Toolbar? = null
-
-    open protected val shoudWatchLeak: Boolean = true
-
-    open val overrideTheme: Int = 0
-
-    protected val kodeinInjector = KodeinInjector()
 
     // =================================================================================================================
     // Life cycle
     // =================================================================================================================
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        realm = Realm.getDefaultInstance()
-        isAlive = true
-        // Obtain the FirebaseAnalytics instance.
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(context)
-        mAnswersAnalytics = Answers.getInstance()
-        kodeinInjector.inject(appKodein())
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val layoutId = layoutId
-        val view: View = inflater.inflate(layoutId, container, false)
-        return view
+        return inflater.inflate(layoutId, container, false)
     }
 
-    protected open fun startSubscription(onStartSubscriptions: CompositeDisposable) {
+    override fun onStart() {
+        super.onStart()
+
+        startSubscription(rebindDisposables)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        rebindDisposables.clear()
+    }
+
+    protected open fun startSubscription(onStartDisposables: CompositeDisposable) {
 
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        oneTimeDisposables.clear()
+        disposables.clear()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-//        if (shoudWatchLeak) {
-//            getApplicationBase()?.refWatcher?.watch(this)
-//        }
-        oneTimeDisposables.clear()
+        disposables.clear()
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        realm?.close()
-        realm = null
-        isAlive = false
+    protected fun showMessage(text: Int, duration: Int) {
+        Snackbar.make(view!!, text, duration).show()
+    }
+
+    protected fun showMessage(text: String, duration: Int) {
+        Snackbar.make(view!!, text, duration).show()
     }
 }

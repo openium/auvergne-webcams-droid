@@ -7,7 +7,7 @@ import retrofit2.mock.BehaviorDelegate
 import retrofit2.mock.Calls
 
 /**
- * Created by t.coulange on 27/01/2017.
+ * Created by Openium on 20/03/2018.
  */
 open class MockApi : AWApi {
     lateinit var delegate: BehaviorDelegate<AWApi>

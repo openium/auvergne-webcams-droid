@@ -1,14 +1,5 @@
 package fr.openium.auvergnewebcams
 
 /**
- * Created by t.coulange on 09/12/2016.
+ * Created by Openium on 20/03/2018.
  */
-object Constants {
-
-    const val KEY_ID = "KEY_ID"
-    const val KEY_TYPE = "KEY_TYPE"
-    const val ARG_SECTION_UID = "ARG_SECTION_UID"
-    const val ARG_DELAY_VALUE = "ARG_DELAY_VALUE"
-
-    const val FAVORI_SECTION_ID = -1L
-}

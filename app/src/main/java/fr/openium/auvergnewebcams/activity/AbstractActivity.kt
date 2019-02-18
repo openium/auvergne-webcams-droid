@@ -1,34 +1,31 @@
 package fr.openium.auvergnewebcams.activity
 
-import android.content.Context
 import android.os.Bundle
-import android.support.v7.app.ActionBar
-import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
-import com.github.salomonbrys.kodein.KodeinInjector
-import com.github.salomonbrys.kodein.android.appKodein
+import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.snackbar.Snackbar
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.fragment.OnBackPressedListener
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.toolbar.*
-import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
+import org.kodein.di.Kodein
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.closestKodein
 
+/**
+ * Created by Openium on 20/03/2018.
+ */
 
-abstract class AbstractActivity : AppCompatActivity() {
+abstract class AbstractActivity : AppCompatActivity(), KodeinAware {
+    override val kodein: Kodein by closestKodein()
 
     protected val disposables: CompositeDisposable = CompositeDisposable()
+    protected var rebindDisposables: CompositeDisposable = CompositeDisposable() //Resubscribe in onstart
 
     protected open val handleFragmentBackPressed: Boolean = true
-    protected val kodeinInjector = KodeinInjector()
-
-    override fun attachBaseContext(newBase: Context) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase))
-    }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        kodeinInjector.inject(appKodein())
 
         beforeSetContentView()
         setContentView(layoutId)
@@ -36,15 +33,31 @@ abstract class AbstractActivity : AppCompatActivity() {
             setSupportActionBar(toolbar)
         }
 
-        if (showHomeAsUp) {
-            if (supportActionBar != null) {
-                (supportActionBar as ActionBar).setDisplayHomeAsUpEnabled(true)
-                (supportActionBar as ActionBar).setHomeButtonEnabled(true)
-            }
+        setHomeAsUp(showHomeAsUp)
+    }
+
+    protected fun setHomeAsUp(enabled: Boolean = true) {
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(enabled)
+            setHomeButtonEnabled(enabled)
         }
     }
 
-    open protected fun beforeSetContentView() {
+    override fun onStart() {
+        super.onStart()
+        startDisposable(rebindDisposables)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        rebindDisposables.clear()
+    }
+
+    protected open fun startDisposable(onStartDisposables: CompositeDisposable) {
+
+    }
+
+    protected open fun beforeSetContentView() {
 
     }
 
@@ -54,24 +67,22 @@ abstract class AbstractActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == android.R.id.home) {
+        return if (item.itemId == android.R.id.home) {
             onArrowPressed()
-            return true
+            true
         } else {
-            return super.onOptionsItemSelected(item)
+            super.onOptionsItemSelected(item)
         }
     }
-
 
     open fun onArrowPressed() {
         onBackPressed()
     }
 
-
     override fun onBackPressed() {
         if (handleFragmentBackPressed) {
             val currentFragment = supportFragmentManager.findFragmentById(R.id.container_framelayout)
-            if (!(currentFragment is OnBackPressedListener) || !currentFragment.onBackPressed()) {
+            if (currentFragment !is OnBackPressedListener || !currentFragment.onBackPressed()) {
                 super.onBackPressed()
             }
         } else {
@@ -79,9 +90,17 @@ abstract class AbstractActivity : AppCompatActivity() {
         }
     }
 
+    protected fun showMessage(text: Int, duration: Int) {
+        Snackbar.make(window.decorView.rootView, text, duration).show()
+    }
+
+    protected fun showMessage(text: String, duration: Int) {
+        Snackbar.make(window.decorView.rootView, text, duration).show()
+    }
+
     // Si true la fleche back est affichée
     protected open val showHomeAsUp: Boolean = false
 
     // Retourne le layout qui est associé à l'activité
-    protected open val layoutId: Int = R.layout.container
+    protected open val layoutId: Int = R.layout.container_toolbar
 }

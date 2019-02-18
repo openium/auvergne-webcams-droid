@@ -1,14 +1,6 @@
 package fr.openium.auvergnewebcams.event
 
 /**
- * Created by laura on 08/12/2017.
+ * Created by Openium on 20/03/2018.
  */
 
-class EventCameraFavoris : PublishEvents<Long>()
-
-class EventNewValueDelay : PublishEvents<Int>()
-
-object Events {
-    val eventCameraFavoris = EventCameraFavoris()
-    val eventNewValueDelay = EventNewValueDelay()
-}

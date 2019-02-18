@@ -8,7 +8,7 @@ import java.util.*
  */
 object DateUtils {
 
-    private val HOUR_48_MILLISECONDS = 172800000
+    private const val HOUR_48_MILLISECONDS = 172800000
 
     private val dateFormatDateHour = SimpleDateFormat("dd.MM.yy - HH'h'mm", Locale.getDefault())
 
@@ -16,10 +16,9 @@ object DateUtils {
         return dateFormatDateHour.format(Date(date))
     }
 
-    fun isMoreThan48Hour(time: Long) : Boolean {
+    fun isMoreThan48Hour(time: Long): Boolean {
         val currentTime = System.currentTimeMillis()
         val diff = currentTime - time
         return diff > HOUR_48_MILLISECONDS
     }
-
 }

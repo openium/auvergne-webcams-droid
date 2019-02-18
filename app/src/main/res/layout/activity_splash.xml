@@ -9,6 +9,7 @@
     tools:ignore="ContentDescription">
 
     <FrameLayout
+        android:id="@+id/frameLayoutAWLogoLoading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -83,7 +84,7 @@
     </FrameLayout>
 
     <TextView
-        style="@style/font_proxima_regular"
+        style="@style/FontStyleRegular"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"

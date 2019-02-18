@@ -2,7 +2,6 @@ package fr.openium.auvergnewebcams.rest
 
 import fr.openium.auvergnewebcams.model.SectionList
 import io.reactivex.Single
-import retrofit2.adapter.rxjava2.Result
 import retrofit2.http.GET
 
 /**
@@ -11,8 +10,7 @@ import retrofit2.http.GET
 interface AWApi {
 
     @GET("resources/json/v2/aw-config.json")
-    fun getSections(): Single<Result<SectionList>> {
+    fun getSections(): Single<SectionList> {
         error("Not implemented")
     }
-
 }

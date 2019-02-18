@@ -3,41 +3,25 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/dark_grey</item>
-        <item name="colorPrimaryDark">@color/black</item>
-        <item name="colorAccent">@color/white</item>
-        <item name="colorControlNormal">@color/white</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="font_proxima_bold">
-        <item name="fontPath">fonts/ProximaNova-Bold.otf</item>
+    <style name="FontStyleRegular" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/proxima_nova_regular</item>
     </style>
 
-    <style name="font_proxima_regular">
-        <item name="fontPath">fonts/ProximaNova-Regular.otf</item>
+    <style name="FontStyleRegularItalic" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/proxima_nova_regular_italic</item>
     </style>
 
-    <style name="font_proxima_regular_italic">
-        <item name="fontPath">fonts/ProximaNova-RegularItalic.otf</item>
+    <style name="FontStyleSemiBold" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/proxima_nova_sbold</item>
     </style>
 
-    <style name="font_proxima_semi_bold">
-        <item name="fontPath">fonts/ProximaNova-Sbold.otf</item>
-    </style>
-
-
-    <style name="search_view" parent="Widget.AppCompat.SearchView">
-        <item name="searchIcon">@drawable/ic_search</item>
-        <item name="android:queryHint">@string/search_hint</item>
-    </style>
-
-    <style name="SwitchStyle" parent="Theme.AppCompat.Light">
-        <item name="colorControlActivated">@color/blue</item>
-        <item name="colorSwitchThumbNormal">@color/grey_text</item>
-    </style>
-
-    <style name="dialog_style" parent="AlertDialog.AppCompat">
-
+    <style name="FontStyleBold" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/proxima_nova_bold</item>
     </style>
 
 </resources>

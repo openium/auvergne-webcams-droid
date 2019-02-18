@@ -8,10 +8,23 @@
 
     <string name="splash_loading_cameras">Chargement des webcams</string>
 
-    <string name="url_prod">https://raw.githubusercontent.com/Drusy/auvergne-webcams-ios/master/</string>
+    <!-- URL -->
+    <string name="url_dev" translatable="false">https://raw.githubusercontent.com/Drusy/auvergne-webcams-ios/master/</string>
+    <string name="url_prod" translatable="false">https://raw.githubusercontent.com/Drusy/auvergne-webcams-ios/master/</string>
+
+    <!-- Weather -->
     <string name="url_weather">http://api.openweathermap.org/data/2.5/</string>
     <string name="app_weather_id">42d33e867dce175dc8e99755ad62b66f</string>
+    <string name="weather_celcius">%d°C</string>
 
+    <!-- Generic -->
+    <string name="generic_last_update">Mise à jour le %s</string>
+    <string name="generic_not_up_to_date">Cette webcam ne semble pas être à jour</string>
+    <string name="generic_no_application_for_action">Aucune application installée sur votre appareil ne permet d\&#39;effectuer cette action.</string>
+    <string name="generic_ok">OK</string>
+    <string name="generic_cancel">Annuler</string>
+
+    <!-- Settings -->
     <string name="settings_title">Paramètres</string>
 
     <string name="settings_global_title">Général</string>
@@ -33,18 +46,19 @@
     <string name="settings__send_new_webcam_email_message">J\'ai connaissance d\'une webcam non disponible dans l\'application.\n\nNom du lieu:\nLien vers la webcam:\n</string>
     <string name="settings__send_new_webcam_email_no_app_found">Aucune application mail n\'est disponible sur cet appareil</string>
 
+    <!-- About -->
     <string name="url_openium">https://openium.fr</string>
     <string name="url_pirates">http://agencelespirates.com/</string>
     <string name="url_note">market://details?id=%s</string>
 
-    <string name="weather_celcius">%d°C</string>
-
+    <!-- Search -->
     <string name="transition_search_name">SearchTransition</string>
     <string name="search_hint">Rechercher une webcam</string>
     <string name="search_title">Rechercher</string>
     <string name="search_result">%d résultats pour</string>
     <string name="search_result_none">Aucun résultat pour %s </string>
 
+    <!-- Detail -->
     <string name="detail_refresh_menu">Mettre à jour</string>
     <string name="detail_share_menu">Partager</string>
     <string name="detail_save_menu">Sauvegarder</string>
@@ -62,20 +76,12 @@
     <string name="detail_save_video_progress">Enregistrement de la vidéo</string>
     <string name="detail_save_file_retry">Réessayer</string>
 
-    <string name="generic_last_update">Mise à jour le %s</string>
-    <string name="generic_not_up_to_date">Cette webcam ne semble pas être à jour</string>
-
+    <!-- Error -->
     <string name="load_webcam_error">Cette webcam ne semble pas fonctionner</string>
-
     <string name="error_no_permisson">Veuillez activer les permissions dans les paramètres de l\'application</string>
 
+    <!-- Other -->
     <string name="favoris_section_title">Favoris</string>
-
-    <string name="generic_no_application_for_action">Aucune application installée sur votre appareil ne permet d\&#39;effectuer cette action.</string>
-
-    <string name="generic_ok">OK</string>
-    <string name="generic_cancel">Annuler</string>
-
     <string name="webcam_only_available_low_quality">Cette webcam est disponible en basse qualité uniquement</string>
 
 </resources>

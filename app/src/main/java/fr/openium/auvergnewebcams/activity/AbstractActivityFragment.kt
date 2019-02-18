@@ -1,15 +1,18 @@
 package fr.openium.auvergnewebcams.activity
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import fr.openium.auvergnewebcams.R
+
+/**
+ * Created by Openium on 20/03/2018.
+ */
 
 abstract class AbstractActivityFragment : AbstractActivity() {
     protected var fragment: Fragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         addDefaultFragment()
     }
 
@@ -20,7 +23,7 @@ abstract class AbstractActivityFragment : AbstractActivity() {
         if (fragment == null) {
             fragment = getDefaultFragment()
             fragment?.arguments = intent?.extras
-            fragmentManager.beginTransaction().replace(containerId, fragment).commit()
+            fragmentManager.beginTransaction().replace(containerId, fragment!!).commit()
         }
     }
 
