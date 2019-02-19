@@ -30,7 +30,7 @@ import java.io.InputStreamReader
 import java.util.concurrent.TimeUnit
 
 /**
- * Created by Openium on 20/03/2018.
+ * Created by Skyle on 19/02/2019.
  */
 object DebugModules {
     const val mock = false

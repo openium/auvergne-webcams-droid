@@ -7,7 +7,7 @@ import io.realm.annotations.PrimaryKey
 import io.realm.annotations.RealmClass
 
 /**
- * Created by t.coulange on 09/12/2016.
+ * Created by Skyle on 19/02/2019.
  */
 @RealmClass
 open class Webcam(

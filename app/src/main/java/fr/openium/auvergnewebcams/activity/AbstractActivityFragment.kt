@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment
 import fr.openium.auvergnewebcams.R
 
 /**
- * Created by Openium on 20/03/2018.
+ * Created by Skyle on 19/02/2019.
  */
 
 abstract class AbstractActivityFragment : AbstractActivity() {

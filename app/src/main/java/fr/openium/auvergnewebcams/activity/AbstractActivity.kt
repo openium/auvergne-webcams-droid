@@ -13,7 +13,7 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 
 /**
- * Created by Openium on 20/03/2018.
+ * Created by Skyle on 19/02/2019.
  */
 
 abstract class AbstractActivity : AppCompatActivity(), KodeinAware {

@@ -6,6 +6,7 @@ import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.answers.Answers
 import fr.openium.auvergnewebcams.injection.Modules
 import fr.openium.auvergnewebcams.log.CrashReportingTree
+import fr.openium.auvergnewebcams.utils.DateUtils
 import io.fabric.sdk.android.Fabric
 import io.realm.Realm
 import io.realm.RealmConfiguration
@@ -14,9 +15,10 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.singleton
 import timber.log.Timber
+import java.util.concurrent.Executors
 
 /**
- * Created by Openium on 20/03/2018.
+ * Created by Skyle on 19/02/2019.
  */
 
 abstract class CustomApplication : Application(), KodeinAware {
@@ -28,6 +30,8 @@ abstract class CustomApplication : Application(), KodeinAware {
         import(Modules.serviceModule)
     }
 
+    private val backgroundExecutor = Executors.newCachedThreadPool()
+
     override fun onCreate() {
         super.onCreate()
 
@@ -35,6 +39,10 @@ abstract class CustomApplication : Application(), KodeinAware {
         val builder = RealmConfiguration.Builder()
         val config = initRealm(builder).build()
         Realm.setDefaultConfiguration(config)
+
+        backgroundExecutor.submit {
+            DateUtils.init(applicationContext)
+        }
 
         initializeCrashlytics()
 

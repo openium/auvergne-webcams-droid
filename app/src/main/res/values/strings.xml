@@ -8,6 +8,9 @@
 
     <string name="splash_loading_cameras">Chargement des webcams</string>
 
+    <!-- Date/Time Format -->
+    <string name="date_full_format">"dd.MM.yy - HH'h'mm"</string>
+
     <!-- URL -->
     <string name="url_dev" translatable="false">https://raw.githubusercontent.com/Drusy/auvergne-webcams-ios/master/</string>
     <string name="url_prod" translatable="false">https://raw.githubusercontent.com/Drusy/auvergne-webcams-ios/master/</string>

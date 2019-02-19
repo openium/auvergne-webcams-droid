@@ -1,6 +1,6 @@
 package fr.openium.auvergnewebcams.event
 
 /**
- * Created by Openium on 20/03/2018.
+ * Created by Skyle on 19/02/2019.
  */
 

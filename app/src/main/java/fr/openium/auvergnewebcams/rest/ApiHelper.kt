@@ -12,7 +12,7 @@ import retrofit2.HttpException
 import timber.log.Timber
 
 /**
- * Created by godart on 29/11/2017.
+ * Created by Skyle on 19/02/2019.
  */
 class ApiHelper(val context: Context, val api: AWApi) {
 

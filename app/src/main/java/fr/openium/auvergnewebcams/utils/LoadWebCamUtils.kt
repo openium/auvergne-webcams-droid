@@ -4,9 +4,8 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URL
 
-
 /**
- * Created by laura on 01/12/2017.
+ * Created by Skyle on 19/02/2019.
  */
 object LoadWebCamUtils {
 

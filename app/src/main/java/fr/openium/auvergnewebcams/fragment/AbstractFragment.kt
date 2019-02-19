@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
 import io.reactivex.disposables.CompositeDisposable
@@ -13,10 +14,10 @@ import org.kodein.di.android.x.closestKodein
 import org.kodein.di.generic.instance
 
 /**
- * Created by Openium on 20/03/2018.
+ * Created by Skyle on 19/02/2019.
  */
 
-abstract class AbstractFragment : androidx.fragment.app.Fragment(), KodeinAware {
+abstract class AbstractFragment : Fragment(), KodeinAware {
 
     protected val disposables: CompositeDisposable = CompositeDisposable()
     protected val rebindDisposables: CompositeDisposable = CompositeDisposable() //Resubscribe in onstart

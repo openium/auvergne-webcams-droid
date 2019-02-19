@@ -6,7 +6,7 @@ import io.realm.annotations.PrimaryKey
 import io.realm.annotations.RealmClass
 
 /**
- * Created by laura on 20/03/2017.
+ * Created by Skyle on 19/02/2019.
  */
 @RealmClass
 open class Section(

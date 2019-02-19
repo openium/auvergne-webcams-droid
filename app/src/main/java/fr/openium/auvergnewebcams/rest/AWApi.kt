@@ -5,7 +5,7 @@ import io.reactivex.Single
 import retrofit2.http.GET
 
 /**
- * Created by laura on 01/12/2017.
+ * Created by Skyle on 19/02/2019.
  */
 interface AWApi {
 

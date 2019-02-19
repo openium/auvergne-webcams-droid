@@ -1,24 +1,30 @@
 package fr.openium.auvergnewebcams.utils
 
+import android.content.Context
+import fr.openium.auvergnewebcams.R
 import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * Created by laura on 07/12/2017.
+ * Created by Skyle on 19/02/2019.
  */
 object DateUtils {
 
-    private const val HOUR_48_MILLISECONDS = 172800000
+    private const val MILLISECONDS_OF_48_HOURS = 172800000L
 
-    private val dateFormatDateHour = SimpleDateFormat("dd.MM.yy - HH'h'mm", Locale.getDefault())
+    private lateinit var dateFullFormat: SimpleDateFormat
 
-    fun getDateFormatDateHour(date: Long): String {
-        return dateFormatDateHour.format(Date(date))
+    fun init(context: Context) {
+        dateFullFormat = SimpleDateFormat(context.getString(R.string.date_full_format), Locale.getDefault())
+    }
+
+    fun getDateInFullFormat(date: Long): String {
+        return dateFullFormat.format(Date(date))
     }
 
     fun isMoreThan48Hour(time: Long): Boolean {
         val currentTime = System.currentTimeMillis()
         val diff = currentTime - time
-        return diff > HOUR_48_MILLISECONDS
+        return diff > MILLISECONDS_OF_48_HOURS
     }
 }
