@@ -18,9 +18,8 @@ class ActivitySplash : AbstractActivity() {
     override val layoutId: Int
         get() = R.layout.activity_splash
 
-    // ------------------------------------
-    // --- Life cycle ---
-    // ------------------------------------
+    // --- LIFE CYCLE ---
+    // ---------------------------------------------------
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,9 +47,8 @@ class ActivitySplash : AbstractActivity() {
         mCloud7.startAnimation(animation)
     }
 
-    // ------------------------------------
-    // --- Other methods ---
-    // ------------------------------------
+    // --- OTHER ---
+    // ---------------------------------------------------
 
     private fun startActivityMain() {
         startActivity<ActivityMain>()

@@ -1,0 +1,17 @@
+@font-face {
+    font-family: 'proxima';
+    src: url('fonts/ProximaNova-Regular.otf');
+}
+
+body
+{
+    font-family: 'proxima';
+    font-size: 16px;
+    color:#FFFFFF;
+    line-height: 18px;
+}
+
+a {
+    text-decoration: none;
+    color: #52A4FF;
+}

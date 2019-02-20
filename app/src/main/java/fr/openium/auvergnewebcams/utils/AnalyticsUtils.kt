@@ -406,7 +406,7 @@ object AnalyticsUtils {
         AnalyticsUtils.sendFabricLogEventSelectContent(Answers.getInstance(), AnalyticsUtils.KEY_BUTTON_RATE_APP)
     }
 
-    fun buttonProposeWebcamClicked(context: Context) {
+    fun buttonSuggestWebcamClicked(context: Context) {
         AnalyticsUtils.sendFirebaseLogEventNewWebcam(FirebaseAnalytics.getInstance(context))
         AnalyticsUtils.sendFabricLogEventNewWebcam(Answers.getInstance())
     }

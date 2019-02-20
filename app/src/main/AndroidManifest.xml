@@ -29,6 +29,16 @@
             android:name=".activity.ActivityMain"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
+        <activity
+            android:name=".activity.ActivitySettings"
+            android:label="@string/settings_title"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+
+        <activity
+            android:name=".activity.ActivitySettingsAbout"
+            android:label="@string/settings_credits_about"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="7cc7cb6974a476c88eaefd8f8f18727ed0ba945a" />

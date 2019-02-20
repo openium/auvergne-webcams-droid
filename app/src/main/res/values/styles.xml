@@ -1,12 +1,13 @@
 <resources>
 
-    <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlNormal">@color/white</item>
     </style>
+
+    <!-- FONTS -->
 
     <style name="FontStyleRegular" parent="TextAppearance.AppCompat">
         <item name="android:fontFamily">@font/proxima_nova_regular</item>
@@ -22,6 +23,13 @@
 
     <style name="FontStyleBold" parent="TextAppearance.AppCompat">
         <item name="android:fontFamily">@font/proxima_nova_bold</item>
+    </style>
+
+    <!-- OTHER -->
+
+    <style name="SwitchStyle" parent="Theme.AppCompat.Light">
+        <item name="colorControlActivated">@color/blue</item>
+        <item name="colorSwitchThumbNormal">@color/grey_text</item>
     </style>
 
 </resources>
