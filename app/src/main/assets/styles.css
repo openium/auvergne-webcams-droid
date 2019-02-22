@@ -1,13 +1,13 @@
 @font-face {
-    font-family: 'proxima';
-    src: url('fonts/ProximaNova-Regular.otf');
+    font-family: 'Proxima Nova';
+    src: url('file:///android_res/font/proxima_nova_regular.otf');
 }
 
 body
 {
-    font-family: 'proxima';
+    font-family: 'Proxima Nova';
     font-size: 16px;
-    color:#FFFFFF;
+    color: #FFFFFF;
     line-height: 18px;
 }
 

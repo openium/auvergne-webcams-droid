@@ -9,6 +9,9 @@ import fr.openium.auvergnewebcams.fragment.FragmentSettings
  */
 class ActivitySettings : AbstractActivityFragment() {
 
+    override val layoutId: Int
+        get() = R.layout.container_toolbar
+
     override val showHomeAsUp: Boolean
         get() = true
 
