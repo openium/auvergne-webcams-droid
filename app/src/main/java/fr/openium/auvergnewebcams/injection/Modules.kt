@@ -1,9 +1,9 @@
 package fr.openium.auvergnewebcams.injection
 
 import android.content.Context
+import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.squareup.picasso.Picasso
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.rest.AWApi
 import fr.openium.auvergnewebcams.rest.ApiHelper
@@ -30,8 +30,8 @@ object Modules {
     }
 
     val serviceModule = Kodein.Module("Service Module") {
-        bind<Picasso>() with singleton {
-            Picasso.Builder(instance()).build()
+        bind<Glide>() with singleton {
+            Glide.get(instance())
         }
     }
 

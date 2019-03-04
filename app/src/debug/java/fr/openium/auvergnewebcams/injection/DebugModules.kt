@@ -5,7 +5,6 @@ import com.google.gson.ExclusionStrategy
 import com.google.gson.FieldAttributes
 import com.google.gson.GsonBuilder
 import com.grapesnberries.curllogger.CurlLoggerInterceptor
-import com.squareup.picasso.Picasso
 import fr.openium.auvergnewebcams.model.SectionList
 import fr.openium.auvergnewebcams.rest.AWApi
 import fr.openium.auvergnewebcams.rest.MockApi
@@ -40,9 +39,7 @@ object DebugModules {
     }
 
     val serviceModule = Kodein.Module("Service module") {
-        bind<Picasso>(overrides = true) with singleton {
-            Picasso.Builder(instance()).loggingEnabled(true).build()
-        }
+        
     }
 
     val restModule = Kodein.Module("REST module") {

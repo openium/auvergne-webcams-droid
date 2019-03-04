@@ -80,11 +80,12 @@
     <string name="detail_save_file_retry">Réessayer</string>
 
     <!-- Error -->
-    <string name="load_webcam_error">Cette webcam ne semble pas fonctionner</string>
+    <string name="load_webcam_error">La webcam ne semble pas fonctionelle</string>
     <string name="error_no_permisson">Veuillez activer les permissions dans les paramètres de l\'application</string>
 
     <!-- Other -->
     <string name="favoris_section_title">Favoris</string>
-    <string name="webcam_only_available_low_quality">Cette webcam est disponible en basse qualité uniquement</string>
+    <string name="webcam_only_available_low_quality">La webcam n\'est disponible qu\'en basse qualité</string>
+    <string name="webcam_signal_problem">Toucher l\'écran pour signaler la caméra</string>
 
 </resources>

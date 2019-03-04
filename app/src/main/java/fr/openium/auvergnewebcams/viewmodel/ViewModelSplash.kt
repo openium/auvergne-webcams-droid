@@ -17,12 +17,12 @@ import java.util.concurrent.TimeUnit
 class ViewModelSplash(app: Application) : AbstractViewModel(app) {
 
     companion object {
-        const val SECONDS_TO_WAIT = 2L
+        const val MINIMUM_SECONDS_TO_WAIT = 2L
     }
 
     //Update all the data the app needs
     fun updateData(): Completable {
-        return Completable.timer(SECONDS_TO_WAIT, TimeUnit.SECONDS).fromIOToMain().mergeWith(
+        return Completable.timer(MINIMUM_SECONDS_TO_WAIT, TimeUnit.SECONDS).fromIOToMain().mergeWith(
             if (context.hasNetwork) {
                 apiHelper.getSections().doOnSuccess {
                     Timber.d("Loading from network")
@@ -42,7 +42,7 @@ class ViewModelSplash(app: Application) : AbstractViewModel(app) {
     private fun loadFromJson(realm: Realm) {
         Timber.d("Loading local.json")
 
-        //Check if there is no Section in Realm before load these
+        //Check if there is no Section in Realm before loading these
         val isRealmSectionEmpty = realm.where(Section::class.java).findAll().count() == 0
 
         if (isRealmSectionEmpty) {

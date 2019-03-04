@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="220dp"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:layout_height="200dp">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imageViewSectionWebcamsImage"
+            android:layout_width="match_parent"
+            android:layout_height="150dp" />
+
+        <ProgressBar
+            android:id="@+id/progressBarSectionWebcams"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:id="@+id/textViewSectionWebcamsError"
+            style="@style/FontStyleRegular"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@color/dark_grey_transparent"
+            android:gravity="center"
+            android:padding="5dp"
+            android:textColor="@color/grey_text"
+            android:textSize="14sp"
+            tools:text="@string/generic_not_up_to_date" />
+
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

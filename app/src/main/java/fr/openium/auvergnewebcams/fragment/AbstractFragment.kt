@@ -5,8 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
-import com.squareup.picasso.Picasso
 import io.reactivex.disposables.CompositeDisposable
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -22,7 +22,7 @@ abstract class AbstractFragment : Fragment(), KodeinAware {
     protected val disposables: CompositeDisposable = CompositeDisposable()
     protected val rebindDisposables: CompositeDisposable = CompositeDisposable() //Resubscribe in onstart
 
-    protected val picasso: Picasso by instance()
+    protected val glide: Glide by instance()
 
     override val kodein: Kodein by closestKodein()
 

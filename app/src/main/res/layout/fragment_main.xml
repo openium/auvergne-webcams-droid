@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/swipeRefreshLayoutWebcams"
+    android:id="@+id/swipeRefreshLayoutSections"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/dark_grey">
@@ -27,7 +27,7 @@
             android:transitionName="@string/transition_search_name" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+            android:id="@+id/recyclerViewSections"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
