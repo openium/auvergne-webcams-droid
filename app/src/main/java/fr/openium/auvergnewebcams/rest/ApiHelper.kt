@@ -38,13 +38,17 @@ class ApiHelper(val context: Context, val api: AWApi, val apiWeather: AWWeatherA
                                 for (webcam in section.webcams) {
                                     if (webcam.type == Webcam.WEBCAM_TYPE.VIEWSURF.nameType) {
                                         // load media ld
-                                        webcam.mediaViewSurfLD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfLD)
-                                        webcam.mediaViewSurfHD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfHD)
+                                        try {
+                                            webcam.mediaViewSurfLD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfLD)
+                                            webcam.mediaViewSurfHD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfHD)
+                                        } catch (e: Exception) {
+                                            Timber.e(e)
+                                        }
                                     }
 
                                     val webcamDB = it.where(Webcam::class.java)
-                                            .equalTo(Webcam::uid.name, webcam.uid)
-                                            .findFirst()
+                                        .equalTo(Webcam::uid.name, webcam.uid)
+                                        .findFirst()
                                     if (webcamDB != null) {
                                         if (webcamDB.lastUpdate != null) {
                                             webcam.lastUpdate = webcamDB.lastUpdate
@@ -70,29 +74,36 @@ class ApiHelper(val context: Context, val api: AWApi, val apiWeather: AWWeatherA
                 }
             }
         }.doOnError {
-            Timber.d("Error getting sections")
+            Timber.e(it, "Error getting sections")
         }
     }
 
     fun getWeatherForSection(context: Context, section: Section): Single<Result<WeatherRest>>? {
         return if (section.latitude != 0.0 || section.longitude != 0.0) {
-            startQueryLogged(apiWeather.queryByGeographicCoordinates(section.latitude, section.longitude, context.getString(R.string.app_weather_id))
-                    .fromIOToMain()
-                    .doOnSuccess { weatherRest ->
-                        Realm.getDefaultInstance().use {
-                            weatherRest.response()?.body()?.let { body ->
-                                it.executeTransaction {
-                                    it.where(Weather::class.java).equalTo(Weather::lat.name, body.coord?.lat).equalTo(Weather::lon.name, body.coord?.lon).findAll().deleteAllFromRealm()
+            startQueryLogged(apiWeather.queryByGeographicCoordinates(
+                section.latitude,
+                section.longitude,
+                context.getString(R.string.app_weather_id)
+            )
+                .fromIOToMain()
+                .doOnSuccess { weatherRest ->
+                    Realm.getDefaultInstance().use {
+                        weatherRest.response()?.body()?.let { body ->
+                            it.executeTransaction {
+                                it.where(Weather::class.java).equalTo(Weather::lat.name, body.coord?.lat)
+                                    .equalTo(Weather::lon.name, body.coord?.lon).findAll().deleteAllFromRealm()
 
-                                    val weather = Weather(body.weather?.get(0)?.id, body.main?.temp, body.coord?.lon
-                                            ?: 0.0, body.coord?.lat ?: 0.0)
-                                    it.insertOrUpdate(weather)
-                                }
+                                val weather = Weather(
+                                    body.weather?.get(0)?.id, body.main?.temp, body.coord?.lon
+                                            ?: 0.0, body.coord?.lat ?: 0.0
+                                )
+                                it.insertOrUpdate(weather)
                             }
                         }
-                    }.doOnError { e ->
-                        Timber.e("Error init weather ${e.message}")
-                    })
+                    }
+                }.doOnError { e ->
+                    Timber.e("Error init weather ${e.message}")
+                })
         } else {
             null
         }
@@ -101,9 +112,9 @@ class ApiHelper(val context: Context, val api: AWApi, val apiWeather: AWWeatherA
     fun getWeatherForAllSections(context: Context) {
         val sections = Realm.getDefaultInstance().use {
             it.where(Section::class.java)
-                    .sort(Section::order.name)
-                    .isNotEmpty(Section::webcams.name)
-                    .findAll()
+                .sort(Section::order.name)
+                .isNotEmpty(Section::webcams.name)
+                .findAll()
         }
 
         if (sections != null) {
