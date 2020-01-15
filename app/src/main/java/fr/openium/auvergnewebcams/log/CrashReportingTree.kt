@@ -5,7 +5,7 @@ import com.crashlytics.android.Crashlytics
 import timber.log.Timber
 
 /**
- * Created by Skyle on 19/02/2019.
+ * Created by Openium on 19/02/2019.
  */
 
 class CrashReportingTree : Timber.Tree() {

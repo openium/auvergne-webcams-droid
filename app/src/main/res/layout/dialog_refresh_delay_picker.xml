@@ -16,6 +16,7 @@
 
     <Button
         android:id="@+id/buttonCancelDialogRefreshDelay"
+        style="@style/BaseUnelevatedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -32,10 +33,10 @@
 
     <Button
         android:id="@+id/buttonOkDialogRefreshDelay"
+        style="@style/BaseUnelevatedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:background="@android:color/transparent"
         android:minWidth="100dp"
         android:text="@string/generic_ok"
         android:textColor="@color/selector_color_white_to_grey"

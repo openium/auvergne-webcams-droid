@@ -7,7 +7,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 /**
- * Created by Skyle on 19/02/2019.
+ * Created by Openium on 19/02/2019.
  */
 interface AWWeatherApi {
 

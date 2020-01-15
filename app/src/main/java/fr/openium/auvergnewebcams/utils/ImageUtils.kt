@@ -2,14 +2,14 @@ package fr.openium.auvergnewebcams.utils
 
 import android.content.Context
 import fr.openium.auvergnewebcams.R
-import fr.openium.auvergnewebcams.model.Section
+import fr.openium.auvergnewebcams.model.entity.Section
 
 /**
- * Created by Skyle on 19/02/2019.
+ * Created by Openium on 19/02/2019.
  */
 object ImageUtils {
 
-    //Return 0 if there is no image associated
+    // Return 0 if there is no image associated
     fun getImageResourceAssociatedToSection(context: Context, item: Section): Int {
         val imageName = item.imageName?.replace("-", "_") ?: ""
 

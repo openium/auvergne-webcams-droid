@@ -1,0 +1,181 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'fr.openium.version'
+apply plugin: 'io.fabric'
+apply plugin: 'com.google.gms.google-services'
+
+android {
+    compileSdkVersion 29
+
+    defaultConfig {
+        applicationId 'fr.openium.auvergnewebcams'
+        minSdkVersion 21
+        targetSdkVersion 29
+
+        versionCode openiumVersion.versionCode
+        versionName '1.4'
+
+        renderscriptTargetApi 21
+        renderscriptSupportModeEnabled = true
+
+        testInstrumentationRunner 'fr.openium.ddiv2.CustomInstrumentationRunner'
+
+        multiDexEnabled true
+        ndk {
+            abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86', 'x86_64'
+        }
+    }
+
+    signingConfigs {
+        debubg {
+            storeFile file("keys/debug.keystore")
+        }
+
+        release {
+            storeFile file('keys/release.keystore')
+            storePassword 'AWCOpenium'
+            keyAlias 'AuvergneWebCamsOpenium'
+            keyPassword 'AWCOpenium'
+        }
+    }
+
+    buildTypes {
+        debug {
+            // Configuration
+            minifyEnabled false
+            ext.enableCrashlytics = false
+            ext.alwaysUpdateBuildId = false
+
+            // Needed
+            versionNameSuffix '-debug'
+            applicationIdSuffix '.debug'
+            signingConfig signingConfigs.debug
+        }
+        release {
+            // Configuration
+            minifyEnabled false
+            ext.enableCrashlytics = false
+
+            // Needed
+            signingConfig signingConfigs.release
+        }
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    testOptions {
+        execution 'ANDROIDX_TEST_ORCHESTRATOR'
+        animationsDisabled true
+
+        unitTests.all {
+            setIgnoreFailures(true)
+        }
+    }
+}
+
+repositories {
+    maven { url 'https://maven.openium.fr' }
+    maven { url 'https://maven.fabric.io/public' }
+    maven { url 'https://jitpack.io' }
+    mavenCentral()
+    google()
+    jcenter()
+
+    flatDir {
+        dirs 'libs'
+    }
+}
+
+kapt { useBuildCache = true }
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    // --- Kotlin ---
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    // --- Android support ---
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
+    implementation 'com.google.android.material:material:1.2.0-alpha03'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
+//    implementation 'androidx.multidex:multidex:2.0.1'
+
+    // --- Firebase ---
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+    implementation 'com.google.firebase:firebase-core:17.2.1'
+
+    // --- Android Tools ---
+    implementation 'fr.openium:kotlin-tools:1.0.7'
+    implementation 'fr.openium:rx-tools:1.0.4'
+    implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
+
+    // --- KTX ---
+    implementation 'androidx.core:core-ktx:1.1.0'
+
+    // --- Kodein ---
+    implementation 'org.kodein.di:kodein-di-generic-jvm:6.3.1'
+    implementation 'org.kodein.di:kodein-di-framework-android-x:6.3.1'
+
+    // --- Rx ---
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.15'
+    implementation 'com.jakewharton.rxbinding3:rxbinding:3.1.0'
+    implementation 'com.jakewharton.rxbinding3:rxbinding-appcompat:3.1.0'
+    implementation 'com.jakewharton.rxrelay2:rxrelay:2.1.1'
+
+    // --- Retrofit ---
+    implementation 'com.squareup.retrofit2:retrofit:2.6.2'
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.2'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.6.2'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.2.2'
+    debugImplementation 'com.squareup.retrofit2:retrofit-mock:2.6.2'
+
+    // --- Log ---
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+
+    // --- Crashlytics ---
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
+    implementation 'com.crashlytics.sdk.android:answers:1.4.7'
+
+    // --- Test ---
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test:core:1.2.0'
+    androidTestImplementation 'androidx.test:core-ktx:1.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestUtil 'androidx.test:orchestrator:1.2.0' // Really important to prevent "Empty test suite"
+
+    // --- ARCH ---
+    implementation 'android.arch.lifecycle:extensions:2.0.0'
+    implementation 'android.arch.lifecycle:viewmodel:2.0.0'
+    implementation 'android.arch.lifecycle:common-java8:2.0.0'
+
+    // --- Room ---
+    implementation 'androidx.room:room-runtime:2.2.3'
+    kapt 'androidx.room:room-compiler:2.2.3'
+    implementation 'androidx.room:room-rxjava2:2.2.3'
+
+    // --- Specific lib of the app ---
+
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.10.0'
+    kapt 'com.github.bumptech.glide:compiler:4.10.0'
+    implementation 'com.github.bumptech.glide:okhttp3-integration:4.9.0'
+
+    // BigImageViewer
+    implementation 'com.github.piasy:BigImageViewer:1.5.6'
+    implementation 'com.github.piasy:GlideImageLoader:1.5.6'
+
+    // Like button (Twitter)
+    implementation 'com.github.jd-alexander:LikeButton:0.2.3'
+
+    // Alternative LayoutManager
+    implementation 'rouchuan.viewpagerlayoutmanager:viewpagerlayoutmanager:2.0.22'
+
+    // ExoPlayer
+    implementation 'com.google.android.exoplayer:exoplayer:2.11.1'
+}

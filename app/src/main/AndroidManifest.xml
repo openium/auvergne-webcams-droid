@@ -14,10 +14,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true"
         tools:replace="android:allowBackup">
 
         <activity
-            android:name=".activity.ActivitySplash"
+            android:name=".ui.splash.ActivitySplash"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,17 +27,22 @@
         </activity>
 
         <activity
-            android:name=".activity.ActivityMain"
+            android:name=".ui.main.ActivityMain"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
         <activity
-            android:name=".activity.ActivitySettings"
+            android:name=".ui.settings.ActivitySettings"
             android:label="@string/settings_title"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
         <activity
-            android:name=".activity.ActivitySettingsAbout"
+            android:name=".ui.about.ActivitySettingsAbout"
             android:label="@string/settings_credits_about"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+
+        <activity
+            android:name=".ui.webcamdetail.ActivityWebcam"
+            android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
         <meta-data

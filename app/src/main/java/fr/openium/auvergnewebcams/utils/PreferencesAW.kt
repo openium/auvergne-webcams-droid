@@ -6,7 +6,7 @@ import fr.openium.kotlintools.ext.toUnixTimestamp
 import java.util.*
 
 /**
- * Created by laura on 04/01/2018.
+ * Created by Openium on 19/02/2019.
  */
 object PreferencesAW {
 
