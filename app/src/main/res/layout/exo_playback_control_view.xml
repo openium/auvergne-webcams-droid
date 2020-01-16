@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:layout_marginTop="4dp"
+    android:background="#CC000000"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <ImageButton
+        android:id="@id/exo_play"
+        style="@style/ExoMediaButton.Play" />
+
+    <ImageButton
+        android:id="@id/exo_pause"
+        style="@style/ExoMediaButton.Pause" />
+
+    <TextView
+        android:id="@id/exo_position"
+        style="@style/FontStyleSemiBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        android:textColor="@color/white"
+        android:textSize="14sp" />
+
+    <com.google.android.exoplayer2.ui.DefaultTimeBar
+        android:id="@id/exo_progress"
+        android:layout_width="0dp"
+        android:layout_height="26dp"
+        android:layout_weight="1" />
+
+    <TextView
+        android:id="@id/exo_duration"
+        style="@style/FontStyleSemiBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="4dp"
+        android:paddingEnd="8dp"
+        android:textColor="@color/white"
+        android:textSize="14sp" />
+
+</LinearLayout>

@@ -1,14 +1,11 @@
 package fr.openium.auvergnewebcams.ui.main
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
-import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractFragment
 import fr.openium.auvergnewebcams.model.entity.Section
@@ -143,9 +140,12 @@ class FragmentMain : AbstractFragment() {
     private fun startActivityWebcamDetail(webcam: Webcam) {
         AnalyticsUtils.webcamDetailsClicked(requireContext(), webcam.title ?: "")
 
-        requireContext().startActivity(Intent(context, ActivityWebcam::class.java).apply {
-            putExtra(Constants.KEY_ID, webcam.uid)
-            putExtra(Constants.KEY_TYPE, webcam.type)
-        }, ActivityOptionsCompat.makeCustomAnimation(requireContext(), R.anim.animation_from_right, R.anim.animation_to_left).toBundle())
+        requireContext().startActivity(
+            ActivityWebcam.getIntent(
+                requireContext(),
+                webcam
+            )
+        )
+        activity?.overridePendingTransition(R.anim.animation_from_right, R.anim.animation_to_left)
     }
 }

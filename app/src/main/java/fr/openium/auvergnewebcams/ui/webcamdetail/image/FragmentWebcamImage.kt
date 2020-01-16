@@ -2,7 +2,6 @@ package fr.openium.auvergnewebcams.ui.webcamdetail.image
 
 import android.content.Intent
 import android.content.res.Configuration
-import android.graphics.Point
 import android.net.Uri
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
@@ -12,11 +11,11 @@ import com.github.piasy.biv.view.BigImageView
 import com.google.android.material.snackbar.Snackbar
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractFragmentWebcam
-import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.utils.PreferencesAW
 import fr.openium.kotlintools.ext.gone
 import fr.openium.kotlintools.ext.show
 import fr.openium.kotlintools.ext.snackbar
+import kotlinx.android.synthetic.main.footer_webcam_detail.*
 import kotlinx.android.synthetic.main.fragment_webcam_image.*
 import java.io.File
 
@@ -35,96 +34,56 @@ class FragmentWebcamImage : AbstractFragmentWebcam() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
 
-        updateDisplay()
-
-//        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-//            frameLayoutWebcamDetailHeader.show()
-//
-//            if (webcam.imageHD.isNullOrEmpty()) {
-//                textViewWebcamImageLowQualityOnly.show()
-//            } else {
-//                textViewWebcamImageLowQualityOnly.gone()
-//            }
-//
-//            if (webcam.isUpToDate()) {
-//                textViewWebcamDetailErrorMessage.gone()
-//            } else {
-//                textViewWebcamDetailErrorMessage.text = getString(R.string.generic_not_up_to_date)
-//                textViewWebcamDetailErrorMessage.show()
-//            }
-//        } else {
-//            textViewWebcamImageLowQualityOnly.gone()
-//            frameLayoutWebcamDetailHeader.gone()
-//            textViewWebcamDetailErrorMessage.gone()
-//        }
+        if (newConfig.orientation != Configuration.ORIENTATION_LANDSCAPE && webcam.imageHD.isNullOrEmpty()) {
+            textViewWebcamLowQualityOnly.show()
+        } else {
+            textViewWebcamLowQualityOnly.gone()
+        }
     }
 
     // --- Methods
     // ---------------------------------------------------
 
-    override fun updateDisplay(forcedState: State?) {
-        super.updateDisplay(forcedState)
-
-        if (webcam.imageHD.isNullOrEmpty()) {
-            textViewWebcamImageLowQualityOnly.show()
-        } else {
-            textViewWebcamImageLowQualityOnly.gone()
-        }
-
-        bigImageViewWebcamImage.setFailureImage(ContextCompat.getDrawable(requireContext(), R.drawable.broken_camera))
-        bigImageViewWebcamImage.setFailureImageInitScaleType(ImageView.ScaleType.FIT_CENTER)
-
-        bigImageViewWebcamImage.setImageLoaderCallback(object : ImageLoader.Callback {
-            override fun onSuccess(image: File?) {
-                progressBarWebcamImageDetail?.gone()
-                itemMenuRefresh?.isEnabled = true
-            }
-
-            override fun onFail(error: Exception?) {
-                updateDisplay(State.NOT_WORKING)
-                progressBarWebcamImageDetail?.gone()
-                itemMenuRefresh?.isEnabled = true
-            }
-
-            override fun onCacheHit(imageType: Int, image: File?) {}
-            override fun onCacheMiss(imageType: Int, image: File?) {}
-            override fun onProgress(progress: Int) {}
-            override fun onStart() {}
-            override fun onFinish() {}
-        })
-
-        val display = activity?.windowManager?.defaultDisplay
-        val size = Point()
-        display?.getSize(size)
-
+    override fun initWebcam() {
         var scaleType: Int? = null
         var thumbnail: Uri? = null
-        var image: Uri? = null
+        var imageURL: Uri? = null
 
-        if (webcam.type == Webcam.WebcamType.VIEWSURF.nameType) {
+        // TODO
+        if (PreferencesAW.isWebcamsHighQuality(requireContext()) && !webcam.imageHD.isNullOrBlank()) {
             scaleType = BigImageView.INIT_SCALE_TYPE_CENTER_CROP
-            if (PreferencesAW.isWebcamsHighQuality(requireContext()) && !webcam.mediaViewSurfHD.isNullOrEmpty() && !webcam.viewsurfHD.isNullOrEmpty()) {
-                image = Uri.parse(String.format("%s/%s.jpg", webcam.viewsurfHD, webcam.mediaViewSurfHD))
-            } else if (!webcam.mediaViewSurfLD.isNullOrEmpty() && !webcam.viewsurfLD.isNullOrEmpty()) {
-                image = Uri.parse(String.format("%s/%s.jpg", webcam.viewsurfLD, webcam.mediaViewSurfLD))
-            }
-        } else {
-            if (PreferencesAW.isWebcamsHighQuality(requireContext()) && !webcam.imageHD.isNullOrBlank()) {
-                scaleType = BigImageView.INIT_SCALE_TYPE_CENTER_CROP
-                thumbnail = Uri.parse(webcam.imageLD)
-                image = Uri.parse(webcam.imageHD)
-            } else if (!webcam.imageLD.isNullOrBlank()) {
-                image = Uri.parse(webcam.imageLD)
-                scaleType = BigImageView.INIT_SCALE_TYPE_CENTER_INSIDE
-            }
+            thumbnail = Uri.parse(webcam.getUrlForWebcam(canBeHD = false, canBeVideo = false))
+            imageURL = Uri.parse(webcam.getUrlForWebcam(canBeHD = true, canBeVideo = false))
+        } else if (!webcam.imageLD.isNullOrBlank()) {
+            scaleType = BigImageView.INIT_SCALE_TYPE_CENTER_INSIDE
+            imageURL = Uri.parse(webcam.getUrlForWebcam(canBeHD = false, canBeVideo = false))
         }
 
-        scaleType?.also { bigImageViewWebcamImage.setInitScaleType(it) }
+        bigImageViewWebcamImage.apply {
+            setFailureImage(ContextCompat.getDrawable(requireContext(), R.drawable.broken_camera))
+            setFailureImageInitScaleType(ImageView.ScaleType.FIT_CENTER)
+            setImageLoaderCallback(object : ImageLoader.Callback {
+                override fun onSuccess(image: File?) {
+                    progressBarWebcamImageDetail?.gone()
+                }
 
-        image?.also {
-            thumbnail?.also {
-                bigImageViewWebcamImage.showImage(thumbnail, image)
-            } ?: bigImageViewWebcamImage.showImage(image)
+                override fun onFail(error: Exception?) {
+                    updateDisplay(State.NOT_WORKING)
+                    progressBarWebcamImageDetail?.gone()
+                }
+
+                override fun onCacheHit(imageType: Int, image: File?) {}
+                override fun onCacheMiss(imageType: Int, image: File?) {}
+                override fun onProgress(progress: Int) {}
+                override fun onStart() {}
+                override fun onFinish() {}
+            })
+            scaleType?.also { setInitScaleType(it) }
+            imageURL?.also {
+                thumbnail?.also {
+                    showImage(thumbnail, imageURL)
+                } ?: showImage(imageURL)
+            }
         }
     }
 
@@ -152,7 +111,15 @@ class FragmentWebcamImage : AbstractFragmentWebcam() {
         }
     }
 
-    override fun showProgress() {
-        progressBarWebcamImageDetail.show()
+    override fun saveWebcam() {
+        // TODO
     }
+
+    override fun refreshWebcam() {
+        // TODO
+    }
+
+//    override fun showProgress() {
+//        progressBarWebcamImageDetail.show()
+//    }
 }

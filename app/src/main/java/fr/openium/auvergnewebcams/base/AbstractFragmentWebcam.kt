@@ -1,6 +1,7 @@
 package fr.openium.auvergnewebcams.base
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -22,7 +23,9 @@ import fr.openium.kotlintools.ext.gone
 import fr.openium.kotlintools.ext.setTitle
 import fr.openium.kotlintools.ext.show
 import fr.openium.kotlintools.ext.snackbar
+import fr.openium.rxtools.ext.fromIOToMain
 import io.reactivex.rxkotlin.addTo
+import kotlinx.android.synthetic.main.footer_webcam_detail.*
 import kotlinx.android.synthetic.main.header_webcam_detail.*
 import timber.log.Timber
 
@@ -86,17 +89,23 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
         }
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        updateDisplay()
+    }
+
     // --- Methods
     // ---------------------------------------------------
 
     private fun setListener(webcamId: Long) {
         viewModelWebcam.getWebcamObs(webcamId)
+            .fromIOToMain()
             .subscribe({
                 it.value?.let {
                     webcam = it
 
                     updateDisplay()
-
+                    initWebcam()
                 } ?: activity?.finish()
             }, {
                 Timber.e(it, "Error getting webcam from DB")
@@ -125,6 +134,11 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
         else -> State.LOADED_NOT_UP_TO_DATE
     }
 
+    private fun getRotationState(): RotationState = when (resources.configuration.orientation) {
+        Configuration.ORIENTATION_LANDSCAPE -> RotationState.LANDSCAPE
+        else -> RotationState.PORTRAIT
+    }
+
     open fun updateDisplay(forcedState: State? = null) {
         // Screen title
         setTitle(webcam.title ?: "")
@@ -142,18 +156,23 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
             textViewWebcamDetailLastUpdate.gone()
         }
 
-        // Error messages
-        when ((forcedState ?: getState()) to) {
-            State.LOADED_UP_TO_DATE -> {
+        when (getRotationState() to (forcedState ?: getState())) {
+            RotationState.PORTRAIT to State.LOADED_UP_TO_DATE -> {
                 textViewWebcamDetailErrorMessage.gone()
             }
-            State.LOADED_NOT_UP_TO_DATE -> {
+            RotationState.PORTRAIT to State.LOADED_NOT_UP_TO_DATE -> {
                 textViewWebcamDetailErrorMessage.text = getString(R.string.generic_not_up_to_date)
                 textViewWebcamDetailErrorMessage.show()
             }
-            State.NOT_WORKING -> {
+            RotationState.PORTRAIT to State.NOT_WORKING -> {
                 textViewWebcamDetailErrorMessage.text = getString(R.string.load_webcam_error)
                 textViewWebcamDetailErrorMessage.show()
+            }
+            RotationState.LANDSCAPE to State.LOADED_UP_TO_DATE,
+            RotationState.LANDSCAPE to State.LOADED_NOT_UP_TO_DATE,
+            RotationState.LANDSCAPE to State.NOT_WORKING -> {
+                frameLayoutWebcamDetailHeader.gone()
+                textViewWebcamDetailErrorMessage.gone()
             }
         }
     }
@@ -216,7 +235,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
 
     private fun getLastPictureOrVideoOfWebcam() {
         if (requireContext().hasNetwork) {
-            showProgress()
+//            showProgress()
             itemMenuRefresh?.isEnabled = false
 
 //            if (webcam.type == Webcam.WebcamType.VIEWSURF.nameType) {
@@ -255,6 +274,8 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
         PORTRAIT,
         LANDSCAPE
     }
+
+    abstract fun initWebcam()
 
     abstract fun shareWebCam()
 

@@ -1,5 +1,7 @@
 package fr.openium.auvergnewebcams.ui.webcamdetail
 
+import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -10,6 +12,7 @@ import fr.openium.auvergnewebcams.ext.hideSystemUI
 import fr.openium.auvergnewebcams.ext.showSystemUI
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.ui.webcamdetail.image.FragmentWebcamImage
+import fr.openium.auvergnewebcams.ui.webcamdetail.video.FragmentWebcamVideo
 import fr.openium.kotlintools.ext.gone
 import fr.openium.kotlintools.ext.show
 import kotlinx.android.synthetic.main.toolbar.*
@@ -20,25 +23,24 @@ import kotlinx.android.synthetic.main.toolbar.*
  */
 class ActivityWebcam : AbstractActivityFragment() {
 
-    private var typeWebcam: String? = null
-
     override val showHomeAsUp: Boolean = true
 
     override fun getDefaultFragment(): Fragment? {
         return if (typeWebcam == Webcam.WebcamType.VIEWSURF.nameType) {
-            //            return FragmentWebcamVideo()
-            FragmentWebcamImage() // TODO
+            FragmentWebcamVideo()
         } else {
             FragmentWebcamImage()
         }
     }
 
+    private var typeWebcam: String? = null
+
     // --- Life cycle
     // ---------------------------------------------------
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         typeWebcam = intent?.getStringExtra(Constants.KEY_TYPE)
+        super.onCreate(savedInstanceState)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -55,5 +57,18 @@ class ActivityWebcam : AbstractActivityFragment() {
     override fun finish() {
         super.finish()
         overridePendingTransition(R.anim.animation_from_left, R.anim.animation_to_right)
+    }
+
+    // --- Other method
+    // ---------------------------------------------------
+
+    companion object {
+
+        fun getIntent(context: Context, webcam: Webcam): Intent {
+            return Intent(context, ActivityWebcam::class.java).apply {
+                putExtra(Constants.KEY_ID, webcam.uid)
+                putExtra(Constants.KEY_TYPE, webcam.type)
+            }
+        }
     }
 }

@@ -14,10 +14,10 @@ import timber.log.Timber
 
 class ActivitySplash : AbstractActivity() {
 
-    private lateinit var viewModelSplash: ViewModelSplash
-
     override val layoutId: Int
         get() = R.layout.activity_splash
+
+    private lateinit var viewModelSplash: ViewModelSplash
 
     // --- Life cycle
     // ---------------------------------------------------

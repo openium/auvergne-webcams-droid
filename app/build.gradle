@@ -63,10 +63,6 @@ android {
         }
     }
 
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
-
     testOptions {
         execution 'ANDROIDX_TEST_ORCHESTRATOR'
         animationsDisabled true
@@ -74,6 +70,17 @@ android {
         unitTests.all {
             setIgnoreFailures(true)
         }
+    }
+
+
+    // Needed for tests purposes and for exoPlayer
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
 }
 
@@ -107,7 +114,7 @@ dependencies {
 
     // --- Firebase ---
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
-    implementation 'com.google.firebase:firebase-core:17.2.1'
+    implementation 'com.google.firebase:firebase-core:17.2.2'
 
     // --- Android Tools ---
     implementation 'fr.openium:kotlin-tools:1.0.7'

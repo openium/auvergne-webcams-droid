@@ -14,11 +14,11 @@ import kotlinx.android.synthetic.main.activity_about.*
  */
 class ActivitySettingsAbout : AbstractActivity() {
 
-    override val showHomeAsUp: Boolean
-        get() = true
-
     override val layoutId: Int
         get() = R.layout.activity_about
+
+    override val showHomeAsUp: Boolean
+        get() = true
 
     // --- LIFE CYCLE ---
     // ---------------------------------------------------

@@ -34,7 +34,7 @@ class Webcam {
         if (type == WebcamType.VIEWSURF.nameType) {
             val format = if (canBeVideo) "%s/%s.mp4" else "%s/%s.jpg"
 
-            // Load LD/HD image/video
+            // Load LD/HD video
             if (canBeHD && !mediaViewSurfHD.isNullOrEmpty() && !viewsurfHD.isNullOrEmpty()) {
                 String.format(format, viewsurfHD, mediaViewSurfHD)
             } else String.format(format, viewsurfLD, mediaViewSurfLD)

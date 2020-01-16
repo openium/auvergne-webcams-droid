@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/dark_grey"
@@ -28,34 +27,7 @@
 
     </FrameLayout>
 
-    <TextView
-        android:id="@+id/textViewWebcamImageDetailErrorMessage"
-        style="@style/FontStyleRegular"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/dark_grey_transparent"
-        android:gravity="center"
-        android:padding="10dp"
-        android:textColor="@color/grey_text"
-        android:textSize="14sp"
-        android:visibility="gone"
-        tools:text="@string/generic_not_up_to_date"
-        tools:visibility="visible" />
-
-    <TextView
-        android:id="@+id/textViewWebcamImageLowQualityOnly"
-        style="@style/FontStyleRegular"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:background="@color/dark_grey_transparent"
-        android:gravity="center"
-        android:padding="10dp"
-        android:text="@string/webcam_only_available_low_quality"
-        android:textColor="@color/grey_text"
-        android:textSize="14sp"
-        android:visibility="gone"
-        tools:visibility="visible" />
+    <include layout="@layout/footer_webcam_detail" />
 
 </LinearLayout>
 
