@@ -2,7 +2,6 @@ package fr.openium.auvergnewebcams.model.dao
 
 import androidx.room.*
 import fr.openium.auvergnewebcams.model.entity.Webcam
-import io.reactivex.Completable
 import io.reactivex.Observable
 
 
@@ -50,6 +49,6 @@ abstract class WebcamDao {
     @Delete
     abstract fun delete(webcams: List<Webcam>)
 
-    @Query("DELETE FROM Webcam WHERE uid NOT IN (:map) AND sectionUid == :sectionUid")
-    abstract fun deleteAllNoMoreInSection(map: List<Long>, sectionUid: Long): Completable
+    @Query("DELETE FROM Webcam WHERE (uid NOT IN (:map)) AND sectionUid == :sectionUid")
+    abstract fun deleteAllNoMoreInSection(map: List<Long>, sectionUid: Long)
 }

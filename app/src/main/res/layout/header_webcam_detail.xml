@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/frameLayoutWebcamDetailHeader"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/grey_very_dark">
 
     <com.like.LikeButton
         android:id="@+id/buttonWebcamDetailFavorite"
@@ -22,7 +23,8 @@
         app:icon_type="Star"
         app:is_enabled="false"
         app:like_drawable="@drawable/ic_favorite"
-        app:unlike_drawable="@drawable/ic_not_favorite" />
+        app:unlike_drawable="@drawable/ic_not_favorite"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/textViewWebcamDetailLastUpdate"
@@ -30,7 +32,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:background="@color/dark_grey"
         android:gravity="center"
         android:padding="10dp"
         android:textColor="@color/grey_text"

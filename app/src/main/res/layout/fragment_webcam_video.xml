@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/dark_grey"
+    android:background="@color/grey_dark"
+    android:keepScreenOn="true"
     android:orientation="vertical">
 
     <include layout="@layout/header_webcam_detail" />
@@ -11,14 +12,18 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:background="@color/black">
 
         <com.google.android.exoplayer2.ui.PlayerView
             android:id="@+id/playerViewWebcamVideo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:focusable="true" />
+            android:background="@color/grey_medium"
+            android:focusable="true"
+            app:show_buffering="always"
+            app:shutter_background_color="@color/grey_medium" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imageViewWebcamVideoLoadingError"
@@ -28,12 +33,6 @@
             android:padding="24dp"
             android:visibility="gone"
             app:srcCompat="@drawable/broken_camera" />
-
-        <ProgressBar
-            android:id="@+id/progressBarWebcamVideo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center" />
 
     </FrameLayout>
 

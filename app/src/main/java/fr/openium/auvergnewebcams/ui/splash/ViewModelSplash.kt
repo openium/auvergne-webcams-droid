@@ -24,8 +24,8 @@ class ViewModelSplash(app: Application) : AbstractViewModel(app) {
     }
 
     // Update all the data the app needs
-    fun updateData(): Completable {
-        return Completable.timer(MINIMUM_SECONDS_TO_WAIT, TimeUnit.SECONDS).fromIOToMain().mergeWith(
+    fun updateData(): Completable =
+        Completable.timer(MINIMUM_SECONDS_TO_WAIT, TimeUnit.SECONDS).fromIOToMain().mergeWith(
             if (context.hasNetwork) {
                 sectionRepository.fetch().doOnSuccess {
                     Timber.d("Loading from network")
@@ -39,7 +39,6 @@ class ViewModelSplash(app: Application) : AbstractViewModel(app) {
                 }
             }
         ).fromIOToMain()
-    }
 
     // If there is no access to the online content, just load the local one
     private fun loadFromJson() {

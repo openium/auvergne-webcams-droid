@@ -2,6 +2,7 @@ package fr.openium.auvergnewebcams.repository
 
 import fr.openium.auvergnewebcams.model.CustomClient
 import fr.openium.auvergnewebcams.model.entity.Webcam
+import fr.openium.auvergnewebcams.utils.DateUtils
 import fr.openium.auvergnewebcams.utils.Optional
 import io.reactivex.Observable
 
@@ -54,5 +55,18 @@ class WebcamRepository(private val client: CustomClient) {
 
     fun deleteAllNoMoreInSection(map: List<Long>, sectionUid: Long) {
         client.database.webcamDao().deleteAllNoMoreInSection(map, sectionUid)
+    }
+
+    fun updateLastUpdateDate(lastModified: String, urlMedia: String) {
+        getWebcamWithPartialUrl(urlMedia)?.let {
+            if (!lastModified.isBlank()) {
+                val newTime = DateUtils.parseDateGMT(lastModified)
+
+                if (it.lastUpdate == null || newTime != it.lastUpdate!!) {
+                    it.lastUpdate = newTime
+                    update(it)
+                }
+            }
+        }
     }
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="220dp"
+    android:layout_width="290dp"
     android:layout_height="150dp">
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -21,11 +21,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="@color/dark_grey_transparent"
+        android:background="@color/grey_very_dark_transparent"
         android:gravity="center"
         android:padding="5dp"
         android:textColor="@color/grey_text"
-        android:textSize="12sp"
+        android:textSize="13sp"
         tools:text="@string/generic_not_up_to_date" />
 
 </androidx.cardview.widget.CardView>

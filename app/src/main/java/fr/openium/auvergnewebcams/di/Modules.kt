@@ -1,15 +1,18 @@
 package fr.openium.auvergnewebcams.di
 
 import android.content.Context
+import androidx.lifecycle.LifecycleObserver
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.event.ForegroundBackgroundListener
 import fr.openium.auvergnewebcams.model.CustomClient
 import fr.openium.auvergnewebcams.repository.SectionRepository
 import fr.openium.auvergnewebcams.repository.WebcamRepository
 import fr.openium.auvergnewebcams.rest.AWApi
 import fr.openium.auvergnewebcams.rest.ApiHelper
+import fr.openium.auvergnewebcams.utils.PreferencesUtils
 import okhttp3.Cache
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
@@ -36,6 +39,14 @@ object Modules {
         bind<Glide>() with singleton {
             Glide.get(instance())
         }
+
+        bind<LifecycleObserver>("foregroundListener") with provider {
+            ForegroundBackgroundListener(instance())
+        }
+    }
+
+    val preferenceModule = Kodein.Module("Preference Module") {
+        bind<PreferencesUtils>() with singleton { PreferencesUtils(instance()) }
     }
 
     val databaseService = Kodein.Module("Database Module") {
@@ -79,7 +90,7 @@ object Modules {
         }
 
         bind<ApiHelper>() with singleton {
-            ApiHelper(instance(), instance(), instance())
+            ApiHelper(instance(), instance())
         }
     }
 

@@ -20,7 +20,7 @@ class ActivitySettingsAbout : AbstractActivity() {
     override val showHomeAsUp: Boolean
         get() = true
 
-    // --- LIFE CYCLE ---
+    // --- Life cycle
     // ---------------------------------------------------
 
     override fun onCreate(savedInstanceState: Bundle?) {

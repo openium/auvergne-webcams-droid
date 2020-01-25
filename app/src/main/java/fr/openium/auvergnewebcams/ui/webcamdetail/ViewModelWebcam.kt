@@ -13,11 +13,7 @@ class ViewModelWebcam(app: Application) : AbstractViewModel(app) {
 
     private val webcamRepository: WebcamRepository by instance()
 
-    fun getWebcamObs(webcamId: Long): Observable<Optional<Webcam>> {
-        return webcamRepository.getWebcamObs(webcamId)
-    }
+    fun getWebcamObs(webcamId: Long): Observable<Optional<Webcam>> = webcamRepository.getWebcamObs(webcamId)
 
-    fun updateWebcam(webcam: Webcam): Int {
-        return webcamRepository.update(webcam)
-    }
+    fun updateWebcam(webcam: Webcam): Int = webcamRepository.update(webcam)
 }

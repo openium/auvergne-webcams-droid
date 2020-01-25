@@ -11,8 +11,6 @@ import fr.openium.auvergnewebcams.base.AbstractActivityFragment
 import fr.openium.auvergnewebcams.ext.hideSystemUI
 import fr.openium.auvergnewebcams.ext.showSystemUI
 import fr.openium.auvergnewebcams.model.entity.Webcam
-import fr.openium.auvergnewebcams.ui.webcamdetail.image.FragmentWebcamImage
-import fr.openium.auvergnewebcams.ui.webcamdetail.video.FragmentWebcamVideo
 import fr.openium.kotlintools.ext.gone
 import fr.openium.kotlintools.ext.show
 import kotlinx.android.synthetic.main.toolbar.*

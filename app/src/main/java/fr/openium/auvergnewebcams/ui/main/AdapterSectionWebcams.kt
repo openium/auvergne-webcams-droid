@@ -10,16 +10,21 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.signature.MediaStoreSignature
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.model.entity.Webcam
-import fr.openium.auvergnewebcams.utils.PreferencesAW
-import fr.openium.kotlintools.ext.dip
+import fr.openium.auvergnewebcams.utils.PreferencesUtils
 import fr.openium.kotlintools.ext.gone
 import fr.openium.kotlintools.ext.show
 import kotlinx.android.synthetic.main.item_section_webcams.view.*
+import org.kodein.di.Kodein
+import org.kodein.di.KodeinAware
+import org.kodein.di.android.closestKodein
+import org.kodein.di.generic.instance
 
 
 /**
@@ -29,10 +34,12 @@ class AdapterSectionWebcams(
     private val context: Context,
     private var webcams: List<Webcam>,
     private val onWebcamClicked: ((Webcam) -> Unit)
-) :
-    RecyclerView.Adapter<AdapterSectionWebcams.WebcamHolder>() {
+) : RecyclerView.Adapter<AdapterSectionWebcams.WebcamHolder>(), KodeinAware {
 
-    var mediaStoreSignature = MediaStoreSignature("", PreferencesAW.getLastUpdateWebcamsTimestamp(context), 0)
+    override val kodein: Kodein by closestKodein(context)
+    private val preferencesUtils: PreferencesUtils by instance()
+
+    var mediaStoreSignature = MediaStoreSignature("", preferencesUtils.lastUpdateWebcamsTimestamp, 0)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WebcamHolder {
         return WebcamHolder(
@@ -62,7 +69,6 @@ class AdapterSectionWebcams(
                 dataSource: DataSource?,
                 isFirstResource: Boolean
             ): Boolean {
-                // Show error text if needed
                 updateErrorText(webcam, holder)
 
                 holder.itemView.imageViewSectionWebcamsImage.scaleType = ImageView.ScaleType.CENTER_CROP
@@ -82,14 +88,18 @@ class AdapterSectionWebcams(
             }
         }
 
-        val urlWebCam: String = webcam.getUrlForWebcam(canBeHD = false, canBeVideo = false)
-        Glide.with(context)
-            .load(urlWebCam)
-            .thumbnail(0.5f)
-            .override(dip(context, 220f).toInt(), dip(context, 150f).toInt())
-            .signature(mediaStoreSignature)
+        val options: RequestOptions = RequestOptions()
+            .centerInside()
             .error(R.drawable.broken_camera)
+
+        Glide.with(context)
+            .load(webcam.getUrlForWebcam(canBeHD = false, canBeVideo = false))
+            .centerCrop()
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .signature(mediaStoreSignature)
+            .apply(options)
             .listener(listenerGlide)
+            .dontAnimate()
             .into(holder.itemView.imageViewSectionWebcamsImage)
 
         holder.itemView.setOnClickListener {

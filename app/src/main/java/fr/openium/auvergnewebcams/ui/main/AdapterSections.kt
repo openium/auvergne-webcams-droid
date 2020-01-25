@@ -7,8 +7,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.leochuan.ScaleLayoutManager
 import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.custom.CustomScaleLayoutManager
 import fr.openium.auvergnewebcams.custom.SnapOnScrollListener
 import fr.openium.auvergnewebcams.ext.attachSnapHelperWithListener
 import fr.openium.auvergnewebcams.model.entity.Section
@@ -50,7 +53,9 @@ class AdapterSections(
         // Set the right section icon
         Glide.with(context)
             .load(imageResourceID)
+            .transition(DrawableTransitionOptions.withCrossFade())
             .override(dip(context, 50f).toInt(), dip(context, 50f).toInt())
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
             .into(holder.itemView.imageViewSection)
 
         // Set the number of camera to show in the subtitle
@@ -74,15 +79,19 @@ class AdapterSections(
             // Applying all settings to the RecyclerView
             holder.itemView.recyclerViewWebcams.apply {
                 adapter = adapterSectionWebcams
-                layoutManager = ScaleLayoutManager(context, dip(-10f).toInt(), ScaleLayoutManager.HORIZONTAL).apply {
+                layoutManager = CustomScaleLayoutManager(context, dip(-50f).toInt(), 5f, ScaleLayoutManager.HORIZONTAL).apply {
+                    minScale = 0.7f
                     minAlpha = 0.5f
                     maxAlpha = 1f
                     maxVisibleItemCount = 3
                     infinite = true
+                    enableBringCenterToFront = true
+                    initialPrefetchItemCount = 3
                 }
 
                 // Some optimization
                 setHasFixedSize(true)
+                setItemViewCacheSize(3)
 
                 setRecycledViewPool(viewPool)
             }

@@ -24,25 +24,16 @@ class ViewModelMain(app: Application) : AbstractViewModel(app) {
     }
 
     // Update all the data the app needs
-    fun updateData(): Completable {
-        return Completable.timer(MINIMUM_SECONDS_TO_WAIT, TimeUnit.SECONDS).mergeWith(
+    fun updateData(): Completable =
+        Completable.timer(MINIMUM_SECONDS_TO_WAIT, TimeUnit.SECONDS).mergeWith(
             sectionRepository.fetch().doOnSuccess {
                 Timber.d("Loading from network: OK")
             }.doOnError {
                 Timber.e(it, "Loading from network: KO")
             }.ignoreElement()
         ).fromIOToMain()
-    }
 
-    fun getSectionsObs(): Observable<List<Section>> {
-        return sectionRepository.getSectionsObs()
-    }
+    fun getSectionsObs(): Observable<List<Section>> = sectionRepository.getSectionsObs()
 
-    fun getWebcamsObs(): Observable<List<Webcam>> {
-        return webcamRepository.getWebcamsObs()
-    }
-
-    fun getWebcams(sectionID: String): Observable<List<Webcam>> {
-        return webcamRepository.getWebcamsObs(sectionID)
-    }
+    fun getWebcamsObs(): Observable<List<Webcam>> = webcamRepository.getWebcamsObs()
 }

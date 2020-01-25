@@ -1,7 +1,6 @@
 package fr.openium.auvergnewebcams.rest
 
 import android.content.Context
-import fr.openium.auvergnewebcams.model.CustomClient
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.repository.SectionRepository
 import fr.openium.auvergnewebcams.repository.WebcamRepository
@@ -13,7 +12,7 @@ import timber.log.Timber
 /**
  * Created by Openium on 19/02/2019.
  */
-class ApiHelper(val context: Context, val api: AWApi, val client: CustomClient) {
+class ApiHelper(val context: Context, val api: AWApi) {
 
     companion object {
         private const val TAG = "[AW]"
@@ -56,12 +55,20 @@ class ApiHelper(val context: Context, val api: AWApi, val client: CustomClient) 
                             webcam.isFavoris = wdb.isFavoris
                         }
 
-                        webcam.hidden = webcam.hidden ?: false
+                        if (webcam.title?.contains("Guéry") == true) {
+                            Timber.d("TEST webcam hidden ${webcam.hidden}")
+                            Timber.d("TEST webcam hidden ${webcam.hidden}")
+                        }
+
+                        if (webcam.hidden == null) {
+                            webcam.hidden = false
+                        }
                     }
 
-                    val rowsWebcam = webcamRepo.insert(section.webcams)
-                    Timber.d("${rowsWebcam.count()} webcams inserted for section ${section.title}")
-                    webcamRepo.deleteAllNoMoreInSection(section.webcams.map { it.uid }, section.uid)
+                    val webcamsSectionFiltered = section.webcams.filter { it.hidden == false }
+                    val rowsWebcam = webcamRepo.insert(webcamsSectionFiltered)
+                    Timber.d("${rowsWebcam.count()} webcams inserted for section ${section.title} | ${section.webcams.count() - webcamsSectionFiltered.count()} are hidden")
+                    webcamRepo.deleteAllNoMoreInSection(webcamsSectionFiltered.map { it.uid }, section.uid)
                 }
 
                 val rowsSection = sectionRepo.insert(sectionsList.sections)

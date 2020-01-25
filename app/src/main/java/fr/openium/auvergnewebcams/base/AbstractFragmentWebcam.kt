@@ -7,6 +7,9 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.lifecycle.ViewModelProviders
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.google.android.material.snackbar.Snackbar
 import com.like.LikeButton
 import com.like.OnLikeListener
@@ -14,8 +17,10 @@ import com.tbruyelle.rxpermissions2.RxPermissions
 import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.event.eventCameraFavoris
+import fr.openium.auvergnewebcams.event.eventHasNetwork
 import fr.openium.auvergnewebcams.ext.hasNetwork
 import fr.openium.auvergnewebcams.model.entity.Webcam
+import fr.openium.auvergnewebcams.service.DownloadWorker
 import fr.openium.auvergnewebcams.ui.webcamdetail.ViewModelWebcam
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import fr.openium.auvergnewebcams.utils.DateUtils
@@ -105,7 +110,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
                     webcam = it
 
                     updateDisplay()
-                    initWebcam()
+                    setWebcam()
                 } ?: activity?.finish()
             }, {
                 Timber.e(it, "Error getting webcam from DB")
@@ -119,6 +124,12 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
 
             override fun unLiked(likeButton: LikeButton) = setFavChanged(false)
         })
+
+        eventHasNetwork.filter { it }.fromIOToMain().subscribe({
+            if (::webcam.isInitialized) {
+                refreshWebcam()
+            }
+        }, { Timber.e(it, "Error when listening for network state changing") }).addTo(disposables)
     }
 
     private fun setFavChanged(isLiked: Boolean) {
@@ -159,14 +170,22 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
         when (getRotationState() to (forcedState ?: getState())) {
             RotationState.PORTRAIT to State.LOADED_UP_TO_DATE -> {
                 textViewWebcamDetailErrorMessage.gone()
+                frameLayoutWebcamDetailHeader.show()
             }
             RotationState.PORTRAIT to State.LOADED_NOT_UP_TO_DATE -> {
                 textViewWebcamDetailErrorMessage.text = getString(R.string.generic_not_up_to_date)
                 textViewWebcamDetailErrorMessage.show()
+                frameLayoutWebcamDetailHeader.show()
             }
             RotationState.PORTRAIT to State.NOT_WORKING -> {
-                textViewWebcamDetailErrorMessage.text = getString(R.string.load_webcam_error)
+                if (requireContext().hasNetwork) {
+                    textViewWebcamDetailErrorMessage.text = getString(R.string.load_webcam_error)
+                } else {
+                    textViewWebcamDetailErrorMessage.text = getString(R.string.generic_no_network)
+                }
+
                 textViewWebcamDetailErrorMessage.show()
+                frameLayoutWebcamDetailHeader.show()
             }
             RotationState.LANDSCAPE to State.LOADED_UP_TO_DATE,
             RotationState.LANDSCAPE to State.LOADED_NOT_UP_TO_DATE,
@@ -183,7 +202,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
                 .subscribe { permission ->
                     when {
                         permission.granted -> {
-                            saveWebcamPicture()
+                            saveWebcam()
                         }
                         permission.shouldShowRequestPermissionRationale -> {
                             // We can ask again // TODO
@@ -194,27 +213,6 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
                         }
                     }
                 })
-    }
-
-    private fun saveWebcamPicture() {
-        val urlSrc = webcam.getUrlForWebcam(canBeHD = true, canBeVideo = true)
-        val fileName: String
-        val isImage: Boolean
-
-        if (requireContext().hasNetwork) {
-            if (webcam.type == Webcam.WebcamType.VIEWSURF.nameType) {
-                fileName = String.format("%s_%s.mp4", webcam.title ?: "", System.currentTimeMillis().toString())
-                isImage = false
-            } else {
-                fileName = String.format("%s_%s.jpg", webcam.title ?: "", System.currentTimeMillis().toString())
-                isImage = true
-            }
-
-            // TODO
-//            ServiceDownloadFile.startServiceDownloadFile(applicationContext, urlSrc, isImage, fileName)
-        } else {
-            // TODO
-        }
     }
 
     private fun signalProblem() {
@@ -233,6 +231,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
         } ?: snackbar(R.string.generic_no_email_app, Snackbar.LENGTH_SHORT)
     }
 
+    // TODO
     private fun getLastPictureOrVideoOfWebcam() {
         if (requireContext().hasNetwork) {
 //            showProgress()
@@ -264,6 +263,22 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
         }
     }
 
+    protected fun startService(urlSrc: String, isPhoto: Boolean, fileName: String) {
+        if (requireContext().hasNetwork) {
+            WorkManager.getInstance(requireContext()).enqueue(
+                OneTimeWorkRequestBuilder<DownloadWorker>().apply {
+                    setInputData(Data.Builder().apply {
+                        putString(DownloadWorker.KEY_PATH_URL, urlSrc)
+                        putBoolean(DownloadWorker.KEY_IS_PHOTO, isPhoto)
+                        putString(DownloadWorker.KEY_FILENAME, fileName)
+                    }.build())
+                }.build()
+            )
+        } else {
+            snackbar(R.string.generic_no_network, Snackbar.LENGTH_SHORT)
+        }
+    }
+
     enum class State {
         LOADED_UP_TO_DATE,
         LOADED_NOT_UP_TO_DATE,
@@ -275,13 +290,13 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
         LANDSCAPE
     }
 
-    abstract fun initWebcam()
+    abstract fun setWebcam()
+
+    abstract fun refreshWebcam()
 
     abstract fun shareWebCam()
 
     abstract fun saveWebcam()
-
-    abstract fun refreshWebcam()
 }
 
 

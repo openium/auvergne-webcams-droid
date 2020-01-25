@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/dark_grey">
+    android:background="@color/grey_dark">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,19 +19,19 @@
             style="@style/FontStyleRegular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="10dp"
             android:text="@string/settings_global_title"
             android:textAllCaps="true"
             android:textColor="@color/grey"
-            android:textSize="14sp" />
+            android:textSize="13sp" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/switchSettingsRefreshDelay"
             style="@style/FontStyleRegular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:text="@string/settings_global_refresh"
             android:textColor="@color/selector_color_white_to_grey"
             android:textSize="16sp"
@@ -41,8 +41,8 @@
             android:id="@+id/linearLayoutSettingsDelayRefresh"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:orientation="horizontal">
 
             <TextView
@@ -72,8 +72,8 @@
             style="@style/FontStyleRegular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:text="@string/settings_global_quality_high"
             android:textColor="@color/selector_color_white_to_grey"
             android:textSize="16sp"
@@ -83,20 +83,20 @@
             style="@style/FontStyleRegular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="32dp"
             android:layout_marginBottom="12dp"
             android:text="@string/settings_credits_title"
             android:textAllCaps="true"
             android:textColor="@color/grey"
-            android:textSize="14sp" />
+            android:textSize="13sp" />
 
         <TextView
             android:id="@+id/textViewSettingsAbout"
             style="@style/FontStyleRegular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:drawableEnd="@drawable/selector_arrow_white_to_grey"
             android:gravity="center_vertical"
             android:text="@string/settings_credits_about"
@@ -108,8 +108,8 @@
             style="@style/FontStyleRegular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:drawableEnd="@drawable/selector_arrow_white_to_grey"
             android:gravity="center_vertical"
             android:text="@string/settings_credits_openium"
@@ -121,8 +121,8 @@
             style="@style/FontStyleRegular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:drawableEnd="@drawable/selector_arrow_white_to_grey"
             android:gravity="center_vertical"
             android:text="@string/settings_credits_pirates"
@@ -134,8 +134,8 @@
             style="@style/FontStyleRegular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:drawableEnd="@drawable/selector_arrow_white_to_grey"
             android:gravity="center_vertical"
             android:text="@string/settings_send_new_webcam"
@@ -147,8 +147,8 @@
             style="@style/FontStyleRegular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:drawableEnd="@drawable/selector_arrow_white_to_grey"
             android:gravity="center_vertical"
             android:text="@string/settings_credits_note"
@@ -160,10 +160,10 @@
             style="@style/FontStyleRegular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
             android:gravity="center_vertical|end"
             android:textColor="@color/grey"
-            android:textSize="14sp"
+            android:textSize="13sp"
             tools:text="Version 1.0 (1)" />
 
     </LinearLayout>

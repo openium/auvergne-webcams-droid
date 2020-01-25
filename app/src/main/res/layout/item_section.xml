@@ -9,7 +9,7 @@
     <LinearLayout
         android:id="@+id/linearLayoutSection"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="74dp"
         android:orientation="horizontal"
         android:padding="12dp">
 
@@ -37,7 +37,7 @@
                 android:layout_height="wrap_content"
                 android:textAllCaps="true"
                 android:textColor="@color/white"
-                android:textSize="14sp"
+                android:textSize="15sp"
                 tools:text="Puy de dome" />
 
             <TextView
@@ -46,6 +46,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
+                android:drawableEnd="@drawable/ic_arrow_right_grey_thin"
+                android:gravity="center"
                 android:textColor="@color/grey_text"
                 android:textSize="12sp"
                 tools:text="2 webcams" />
@@ -57,15 +59,15 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewWebcams"
         android:layout_width="match_parent"
-        android:layout_height="150dp" />
+        android:layout_height="165dp"
+        android:clipToPadding="false"
+        android:paddingBottom="5dp" />
 
     <TextView
         android:id="@+id/textViewWebcamName"
         style="@style/FontStyleRegular"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="5dp"
         android:gravity="center"
         android:lines="3"
         android:textColor="@color/grey_text"

@@ -12,7 +12,6 @@ import fr.openium.auvergnewebcams.event.eventNewRefreshDelayValue
 import fr.openium.auvergnewebcams.ui.about.ActivitySettingsAbout
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import fr.openium.auvergnewebcams.utils.FirebaseUtils
-import fr.openium.auvergnewebcams.utils.PreferencesAW
 import fr.openium.kotlintools.ext.gone
 import fr.openium.kotlintools.ext.show
 import fr.openium.kotlintools.ext.snackbar
@@ -38,41 +37,41 @@ class FragmentSettings : AbstractFragment() {
 
         setListeners()
 
-        showDelayRefresh(PreferencesAW.isWebcamsDelayRefreshActive(requireContext()))
+        showDelayRefresh(preferencesUtils.isWebcamsDelayRefreshActive)
 
         initVersion()
     }
 
     private fun setListeners() {
         // Auto refresh
-        switchSettingsRefreshDelay.isChecked = PreferencesAW.isWebcamsDelayRefreshActive(requireContext())
+        switchSettingsRefreshDelay.isChecked = preferencesUtils.isWebcamsDelayRefreshActive
         switchSettingsRefreshDelay.setOnCheckedChangeListener { _, isChecked ->
             FirebaseUtils.setUserPropertiesRefreshPreferences(requireContext(), isChecked)
-            PreferencesAW.setWebcamsDelayRefreshActive(requireContext(), isChecked)
+            preferencesUtils.isWebcamsDelayRefreshActive = isChecked
             showDelayRefresh(isChecked)
         }
 
         // Auto refresh delay
         linearLayoutSettingsDelayRefresh.setOnClickListener {
-            val numberPickerDialog = RefreshDelayPickerDialog.newInstance(PreferencesAW.getWebcamsDelayRefreshValue(requireContext()))
+            val numberPickerDialog = RefreshDelayPickerDialog.newInstance(preferencesUtils.webcamsDelayRefreshValue)
             childFragmentManager.beginTransaction()
                 .add(numberPickerDialog, "dialog_picker")
                 .commitAllowingStateLoss()
         }
-        textViewSettingsDelayValue.text = PreferencesAW.getWebcamsDelayRefreshValue(requireContext()).toString()
+        textViewSettingsDelayValue.text = preferencesUtils.webcamsDelayRefreshValue.toString()
 
         eventNewRefreshDelayValue.subscribe {
             FirebaseUtils.setUserPropertiesRefreshIntervalPreferences(requireContext(), it)
-            PreferencesAW.setWebcamsDelayRefreshValue(requireContext(), it)
+            preferencesUtils.webcamsDelayRefreshValue = it
             textViewSettingsDelayValue.text = it.toString()
         }.addTo(disposables)
 
         // Webcams quality
         switchSettingsQualityWebcams.setOnCheckedChangeListener { _, isChecked ->
             FirebaseUtils.setUserPropertiesWebcamQualityPreferences(requireContext(), if (isChecked) "high" else "low")
-            PreferencesAW.setWebcamsHighQuality(requireContext(), isChecked)
+            preferencesUtils.isWebcamsHighQuality = isChecked
         }
-        switchSettingsQualityWebcams.isChecked = PreferencesAW.isWebcamsHighQuality(requireContext())
+        switchSettingsQualityWebcams.isChecked = preferencesUtils.isWebcamsHighQuality
 
         // About screen
         textViewSettingsAbout.setOnClickListener {
@@ -120,6 +119,7 @@ class FragmentSettings : AbstractFragment() {
             data = Uri.parse("mailto:${getString(R.string.detail_signal_problem_email)}")
             putExtra(Intent.EXTRA_SUBJECT, getString(R.string.settings_send_new_webcam_email_title))
             putExtra(Intent.EXTRA_TEXT, getString(R.string.settings_send_new_webcam_email_message))
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
 
         val chooser = Intent.createChooser(intentEmail, getString(R.string.generic_chooser))

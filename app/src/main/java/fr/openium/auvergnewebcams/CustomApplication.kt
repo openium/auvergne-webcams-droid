@@ -2,10 +2,12 @@ package fr.openium.auvergnewebcams
 
 import android.app.Application
 import android.content.Context
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.ProcessLifecycleOwner
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.answers.Answers
 import com.github.piasy.biv.BigImageViewer
-import com.github.piasy.biv.loader.glide.GlideCustomImageLoader
+import fr.openium.auvergnewebcams.custom.CustomGlideImageLoader
 import fr.openium.auvergnewebcams.di.Modules
 import fr.openium.auvergnewebcams.log.CrashReportingTree
 import fr.openium.auvergnewebcams.repository.WebcamRepository
@@ -30,10 +32,11 @@ abstract class CustomApplication : Application(), KodeinAware {
     override val kodein = Kodein.lazy {
         bind<Context>() with singleton { applicationContext }
         import(Modules.configModule)
+        import(Modules.serviceModule)
+        import(Modules.preferenceModule)
+        import(Modules.databaseService)
         import(Modules.restModule)
         import(Modules.repositoryModule)
-        import(Modules.serviceModule)
-        import(Modules.databaseService)
     }
 
     private val backgroundExecutor = Executors.newCachedThreadPool()
@@ -48,6 +51,9 @@ abstract class CustomApplication : Application(), KodeinAware {
 
         initializeCrashlytics()
         plantTimber()
+
+        val foregroundListener by instance<LifecycleObserver>("foregroundListener")
+        ProcessLifecycleOwner.get().lifecycle.addObserver(foregroundListener)
 
         initBigImageViewer()
     }
@@ -76,16 +82,7 @@ abstract class CustomApplication : Application(), KodeinAware {
                     // Remove file extension for incoming search
                     val urlMedia = argsSplit.lastOrNull()?.replace(".jpg", "") ?: ""
 
-                    webcamRepository.getWebcamWithPartialUrl(urlMedia)?.let {
-                        if (!lastModified.isNullOrEmpty()) {
-                            val newTime = DateUtils.parseDateGMT(lastModified)
-
-                            // TODO debug it cause message is not appearing to say that is not up to date
-                            if (it.lastUpdate == null || newTime != it.lastUpdate!!) {
-                                it.lastUpdate = newTime
-                            }
-                        }
-                    }
+                    webcamRepository.updateLastUpdateDate(lastModified, urlMedia)
                 }
 
                 response
@@ -96,6 +93,6 @@ abstract class CustomApplication : Application(), KodeinAware {
 
 
         // This is needed to be done once at beginning to allow app to use this lib
-        BigImageViewer.initialize(GlideCustomImageLoader.with(applicationContext, client))
+        BigImageViewer.initialize(CustomGlideImageLoader.with(applicationContext, client))
     }
 }

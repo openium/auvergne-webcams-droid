@@ -2,6 +2,7 @@ package fr.openium.auvergnewebcams.utils
 
 import android.content.Context
 import fr.openium.auvergnewebcams.R
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -23,5 +24,10 @@ object DateUtils {
 
     fun isMoreThan48Hour(time: Long): Boolean = System.currentTimeMillis() - time > 2 * 24 * 60 * 60 * 1000
 
-    fun parseDateGMT(date: String): Long? = dateFormatGMT.parse(date)?.time
+    fun parseDateGMT(date: String): Long? = try {
+        dateFormatGMT.parse(date)?.time
+    } catch (e: Exception) {
+        Timber.e(e, "date $date")
+        null
+    }
 }

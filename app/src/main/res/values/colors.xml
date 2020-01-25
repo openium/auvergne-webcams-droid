@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">@color/dark_grey</color>
-    <color name="colorPrimaryDark">@color/black</color>
+    <color name="colorPrimary">@color/black</color>
+    <color name="colorPrimaryDark">@color/grey_medium</color>
     <color name="colorAccent">@color/white</color>
 
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
-    <color name="dark_grey">#303030</color>
-    <color name="dark_grey_transparent">#BB303030</color>
+    <color name="grey_medium">#333535</color>
+    <color name="grey_medium_transparent">#D9333535</color>
+    <color name="grey_dark">#2F3031</color>
+    <color name="grey_very_dark">#202123</color>
+    <color name="grey_very_dark_transparent">#D9202123</color>
     <color name="grey">#606060</color>
+    <color name="grey_light">#727374</color>
+    <color name="grey_very_light">#999A9B</color>
     <color name="grey_text">#9B9B9B</color>
     <color name="blue">#52A4FF</color>
 </resources>

@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
+import fr.openium.auvergnewebcams.utils.PreferencesUtils
 import io.reactivex.disposables.CompositeDisposable
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -24,6 +25,7 @@ abstract class AbstractFragment : Fragment(), KodeinAware {
     protected val glide: Glide by instance()
 
     override val kodein: Kodein by closestKodein()
+    protected val preferencesUtils: PreferencesUtils by instance()
 
     protected abstract val layoutId: Int
 

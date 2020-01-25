@@ -8,7 +8,7 @@ import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractDialog
 import fr.openium.auvergnewebcams.event.eventNewRefreshDelayValue
-import fr.openium.auvergnewebcams.utils.PreferencesAW
+import fr.openium.auvergnewebcams.utils.PreferencesUtils
 
 /**
  * Created by Openium on 19/02/2019.
@@ -20,7 +20,7 @@ class RefreshDelayPickerDialog : AbstractDialog() {
         dialog.setContentView(R.layout.dialog_refresh_delay_picker)
 
         val numberPicker = dialog.findViewById<NumberPicker>(R.id.numberPickerDialogRefreshDelay)
-        val value = arguments?.getInt(Constants.ARG_DELAY_VALUE, PreferencesAW.DEFAULT_TIME_DELAY) ?: PreferencesAW.DEFAULT_TIME_DELAY
+        val value = arguments?.getInt(Constants.ARG_DELAY_VALUE, PreferencesUtils.DEFAULT_TIME_DELAY) ?: PreferencesUtils.DEFAULT_TIME_DELAY
 
         numberPicker.postDelayed({
             numberPicker.value = value

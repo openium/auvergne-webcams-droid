@@ -86,12 +86,10 @@ class FragmentMain : AbstractFragment() {
                     section.webcams = sectionsToWebcams.second.filter { it.sectionUid == section.uid }
                 }
 
-                Timber.d("list count ${sectionsToWebcams.first.count()}")
-
                 // Update data display
                 adapter?.refreshData(sectionsToWebcams.first)
             }, {
-                Timber.e(it, "Error on getting Sections/webcams from realm")
+                Timber.e(it, "Error on getting Sections/webcams from DB")
             }).addTo(disposables)
     }
 
@@ -118,10 +116,10 @@ class FragmentMain : AbstractFragment() {
 
             // Some optimizations
             setHasFixedSize(true)
-            setItemViewCacheSize(3)
+            setItemViewCacheSize(5)
 
             (layoutManager as? LinearLayoutManager)?.also {
-                it.initialPrefetchItemCount = 3
+                it.initialPrefetchItemCount = 5
             }
         }
     }

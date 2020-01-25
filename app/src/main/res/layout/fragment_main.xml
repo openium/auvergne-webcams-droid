@@ -3,7 +3,7 @@
     android:id="@+id/swipeRefreshLayoutSections"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/dark_grey">
+    android:background="@color/grey_dark">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,14 +15,14 @@
             style="@style/FontStyleRegularItalic"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:background="@color/grey"
+            android:background="@color/grey_light"
             android:drawableStart="@drawable/ic_search"
-            android:drawablePadding="10dp"
+            android:drawablePadding="20dp"
             android:gravity="center_vertical"
-            android:paddingStart="32dp"
-            android:paddingEnd="32dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
             android:text="@string/search_hint"
-            android:textColor="@color/grey_text"
+            android:textColor="@color/grey_very_light"
             android:textSize="14sp"
             android:transitionName="@string/transition_search_name" />
 
