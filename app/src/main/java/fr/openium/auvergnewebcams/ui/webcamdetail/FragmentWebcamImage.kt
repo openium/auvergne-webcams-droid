@@ -21,7 +21,7 @@ import java.io.File
 
 
 /**
- * Created by Openium on 09/12/2016.
+ * Created by Openium on 19/02/2019.
  */
 class FragmentWebcamImage : AbstractFragmentWebcam() {
 

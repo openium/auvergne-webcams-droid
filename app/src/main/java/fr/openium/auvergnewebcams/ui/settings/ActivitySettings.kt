@@ -5,7 +5,7 @@ import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractActivityFragment
 
 /**
- * Created by Openium on 20/02/2019.
+ * Created by Openium on 19/02/2019.
  */
 class ActivitySettings : AbstractActivityFragment() {
 

@@ -9,7 +9,7 @@ import com.bumptech.glide.request.RequestOptions
 
 
 /**
- * Created by t.coulange on 10/11/2017.
+ * Created by Openium on 19/02/2019.
  */
 @GlideModule
 class CustomGlideModule : AppGlideModule() {

@@ -26,7 +26,7 @@ import kotlinx.android.synthetic.main.fragment_webcam_video.*
 import timber.log.Timber
 
 /**
- * Created by laura on 01/12/2017.
+ * Created by Openium on 19/02/2019.
  */
 class FragmentWebcamVideo : AbstractFragmentWebcam() {
 
@@ -151,7 +151,8 @@ class FragmentWebcamVideo : AbstractFragmentWebcam() {
 
     override fun saveWebcam() {
         val urlSrc = webcam.getUrlForWebcam(canBeHD = true, canBeVideo = true)
-        val fileName = String.format("%s_%s.mp4", webcam.title ?: "", System.currentTimeMillis().toString())
+        val fileName = String.format("%s_%s.mp4", webcam.title
+                ?: "", System.currentTimeMillis().toString())
 
         startService(urlSrc, false, fileName)
     }

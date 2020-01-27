@@ -36,7 +36,7 @@ import timber.log.Timber
 
 
 /**
- * Created by Openium on 01/12/2017.
+ * Created by Openium on 19/02/2019.
  */
 abstract class AbstractFragmentWebcam : AbstractFragment() {
 

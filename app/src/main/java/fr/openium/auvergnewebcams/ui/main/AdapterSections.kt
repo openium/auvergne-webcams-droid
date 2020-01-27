@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.leochuan.ScaleLayoutManager
 import fr.openium.auvergnewebcams.R
@@ -26,10 +25,10 @@ import java.util.*
  * Created by Openium on 19/02/2019.
  */
 class AdapterSections(
-    private val context: Context,
-    private var sections: List<Section>,
-    private val onSectionClicked: ((Section) -> Unit),
-    private val onWebcamClicked: ((Webcam) -> Unit)
+        private val context: Context,
+        private var sections: List<Section>,
+        private val onSectionClicked: ((Section) -> Unit),
+        private val onWebcamClicked: ((Webcam) -> Unit)
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val viewPool = RecyclerView.RecycledViewPool()
@@ -52,16 +51,14 @@ class AdapterSections(
 
         // Set the right section icon
         Glide.with(context)
-            .load(imageResourceID)
-            .transition(DrawableTransitionOptions.withCrossFade())
-            .override(dip(context, 50f).toInt(), dip(context, 50f).toInt())
-            .diskCacheStrategy(DiskCacheStrategy.NONE)
-            .into(holder.itemView.imageViewSection)
+                .load(imageResourceID)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(holder.itemView.imageViewSection)
 
         // Set the number of camera to show in the subtitle
         val nbWebCams = String.format(
-            Locale.getDefault(),
-            context.resources.getQuantityString(R.plurals.nb_cameras_format, item.webcams.count(), item.webcams.count())
+                Locale.getDefault(),
+                context.resources.getQuantityString(R.plurals.nb_cameras_format, item.webcams.count(), item.webcams.count())
         )
         holder.itemView.textViewSectionNbCameras.text = nbWebCams
 
@@ -86,7 +83,6 @@ class AdapterSections(
                     maxVisibleItemCount = 3
                     infinite = true
                     enableBringCenterToFront = true
-                    initialPrefetchItemCount = 3
                 }
 
                 // Some optimization
@@ -108,13 +104,13 @@ class AdapterSections(
 
         // This is needed to scroll 1 by 1, and get notified about position changing
         holder.itemView.recyclerViewWebcams.attachSnapHelperWithListener(
-            PagerSnapHelper(),
-            SnapOnScrollListener.Behavior.NOTIFY_ON_SCROLL,
-            object : SnapOnScrollListener.OnSnapPositionChangeListener {
-                override fun onSnapPositionChange(position: Int) {
-                    holder.itemView.textViewWebcamName.text = item.webcams[position].title
+                PagerSnapHelper(),
+                SnapOnScrollListener.Behavior.NOTIFY_ON_SCROLL,
+                object : SnapOnScrollListener.OnSnapPositionChangeListener {
+                    override fun onSnapPositionChange(position: Int) {
+                        holder.itemView.textViewWebcamName.text = item.webcams[position].title
+                    }
                 }
-            }
         )
     }
 

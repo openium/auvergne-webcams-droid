@@ -7,7 +7,7 @@ import fr.openium.auvergnewebcams.utils.Optional
 import io.reactivex.Observable
 
 /**
- * Created by Openium on 18/04/2018.
+ * Created by Openium on 19/02/2019.
  */
 class WebcamRepository(private val client: CustomClient) {
 
