@@ -121,7 +121,7 @@ class FragmentWebcamVideo : AbstractFragmentWebcam() {
     }
 
     override fun setWebcam() {
-        val url = webcam.getUrlForWebcam(preferencesUtils.isWebcamsHighQuality, true)
+        val url = webcam.getUrlForWebcam(prefUtils.isWebcamsHighQuality, true)
         val mediaSource = ProgressiveMediaSource.Factory(mediaDataSourceFactory).createMediaSource(Uri.parse(url))
         player.prepare(mediaSource)
         player.playWhenReady = true
@@ -151,8 +151,10 @@ class FragmentWebcamVideo : AbstractFragmentWebcam() {
 
     override fun saveWebcam() {
         val urlSrc = webcam.getUrlForWebcam(canBeHD = true, canBeVideo = true)
-        val fileName = String.format("%s_%s.mp4", webcam.title
-                ?: "", System.currentTimeMillis().toString())
+        val fileName = String.format(
+            "%s_%s.mp4", webcam.title
+                ?: "", System.currentTimeMillis().toString()
+        )
 
         startService(urlSrc, false, fileName)
     }

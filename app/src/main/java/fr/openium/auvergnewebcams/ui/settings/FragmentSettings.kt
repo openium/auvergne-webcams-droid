@@ -37,41 +37,41 @@ class FragmentSettings : AbstractFragment() {
 
         setListeners()
 
-        showDelayRefresh(preferencesUtils.isWebcamsDelayRefreshActive)
+        showDelayRefresh(prefUtils.isWebcamsDelayRefreshActive)
 
         initVersion()
     }
 
     private fun setListeners() {
         // Auto refresh
-        switchSettingsRefreshDelay.isChecked = preferencesUtils.isWebcamsDelayRefreshActive
+        switchSettingsRefreshDelay.isChecked = prefUtils.isWebcamsDelayRefreshActive
         switchSettingsRefreshDelay.setOnCheckedChangeListener { _, isChecked ->
             FirebaseUtils.setUserPropertiesRefreshPreferences(requireContext(), isChecked)
-            preferencesUtils.isWebcamsDelayRefreshActive = isChecked
+            prefUtils.isWebcamsDelayRefreshActive = isChecked
             showDelayRefresh(isChecked)
         }
 
         // Auto refresh delay
         linearLayoutSettingsDelayRefresh.setOnClickListener {
-            val numberPickerDialog = RefreshDelayPickerDialog.newInstance(preferencesUtils.webcamsDelayRefreshValue)
+            val numberPickerDialog = RefreshDelayPickerDialog.newInstance(prefUtils.webcamsDelayRefreshValue)
             childFragmentManager.beginTransaction()
                 .add(numberPickerDialog, "dialog_picker")
                 .commitAllowingStateLoss()
         }
-        textViewSettingsDelayValue.text = preferencesUtils.webcamsDelayRefreshValue.toString()
+        textViewSettingsDelayValue.text = prefUtils.webcamsDelayRefreshValue.toString()
 
         eventNewRefreshDelayValue.subscribe {
             FirebaseUtils.setUserPropertiesRefreshIntervalPreferences(requireContext(), it)
-            preferencesUtils.webcamsDelayRefreshValue = it
+            prefUtils.webcamsDelayRefreshValue = it
             textViewSettingsDelayValue.text = it.toString()
         }.addTo(disposables)
 
         // Webcams quality
         switchSettingsQualityWebcams.setOnCheckedChangeListener { _, isChecked ->
             FirebaseUtils.setUserPropertiesWebcamQualityPreferences(requireContext(), if (isChecked) "high" else "low")
-            preferencesUtils.isWebcamsHighQuality = isChecked
+            prefUtils.isWebcamsHighQuality = isChecked
         }
-        switchSettingsQualityWebcams.isChecked = preferencesUtils.isWebcamsHighQuality
+        switchSettingsQualityWebcams.isChecked = prefUtils.isWebcamsHighQuality
 
         // About screen
         textViewSettingsAbout.setOnClickListener {

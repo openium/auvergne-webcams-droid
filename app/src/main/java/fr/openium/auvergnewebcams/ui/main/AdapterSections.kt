@@ -1,6 +1,5 @@
 package fr.openium.auvergnewebcams.ui.main
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +15,7 @@ import fr.openium.auvergnewebcams.ext.attachSnapHelperWithListener
 import fr.openium.auvergnewebcams.model.entity.Section
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.utils.ImageUtils
+import fr.openium.auvergnewebcams.utils.PreferencesUtils
 import fr.openium.kotlintools.ext.dip
 import kotlinx.android.synthetic.main.item_section.view.*
 import java.util.*
@@ -25,10 +25,10 @@ import java.util.*
  * Created by Openium on 19/02/2019.
  */
 class AdapterSections(
-        private val context: Context,
-        private var sections: List<Section>,
-        private val onSectionClicked: ((Section) -> Unit),
-        private val onWebcamClicked: ((Webcam) -> Unit)
+    private val prefUtils: PreferencesUtils,
+    private var sections: List<Section>,
+    private val onSectionClicked: ((Section) -> Unit),
+    private val onWebcamClicked: ((Webcam) -> Unit)
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val viewPool = RecyclerView.RecycledViewPool()
@@ -47,18 +47,18 @@ class AdapterSections(
         holder.itemView.textViewSectionName.text = item.title
 
         // Image name have "-" instead of "_", we need to do the change
-        val imageResourceID = ImageUtils.getImageResourceAssociatedToSection(context, item)
+        val imageResourceID = ImageUtils.getImageResourceAssociatedToSection(holder.itemView.context, item)
 
         // Set the right section icon
-        Glide.with(context)
-                .load(imageResourceID)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(holder.itemView.imageViewSection)
+        Glide.with(holder.itemView.context)
+            .load(imageResourceID)
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .into(holder.itemView.imageViewSection)
 
         // Set the number of camera to show in the subtitle
         val nbWebCams = String.format(
-                Locale.getDefault(),
-                context.resources.getQuantityString(R.plurals.nb_cameras_format, item.webcams.count(), item.webcams.count())
+            Locale.getDefault(),
+            holder.itemView.context.resources.getQuantityString(R.plurals.nb_cameras_format, item.webcams.count(), item.webcams.count())
         )
         holder.itemView.textViewSectionNbCameras.text = nbWebCams
 
@@ -71,23 +71,22 @@ class AdapterSections(
 
         // Create and set adapter only if this is not already done
         if (holder.itemView.recyclerViewWebcams.adapter == null) {
-            val adapterSectionWebcams = AdapterSectionWebcams(context, item.webcams, onWebcamClicked)
 
             // Applying all settings to the RecyclerView
             holder.itemView.recyclerViewWebcams.apply {
-                adapter = adapterSectionWebcams
-                layoutManager = CustomScaleLayoutManager(context, dip(-50f).toInt(), 5f, ScaleLayoutManager.HORIZONTAL).apply {
-                    minScale = 0.7f
-                    minAlpha = 0.5f
-                    maxAlpha = 1f
-                    maxVisibleItemCount = 3
-                    infinite = true
-                    enableBringCenterToFront = true
-                }
+                adapter = AdapterSectionWebcams(prefUtils, item.webcams, onWebcamClicked)
+                layoutManager =
+                    CustomScaleLayoutManager(holder.itemView.context, dip(-50f).toInt(), 5f, ScaleLayoutManager.HORIZONTAL).apply {
+                        minScale = 0.7f
+                        minAlpha = 0.5f
+                        maxAlpha = 1f
+                        maxVisibleItemCount = 3
+                        infinite = true
+                        enableBringCenterToFront = true
+                    }
 
                 // Some optimization
                 setHasFixedSize(true)
-                setItemViewCacheSize(3)
 
                 setRecycledViewPool(viewPool)
             }
@@ -104,13 +103,13 @@ class AdapterSections(
 
         // This is needed to scroll 1 by 1, and get notified about position changing
         holder.itemView.recyclerViewWebcams.attachSnapHelperWithListener(
-                PagerSnapHelper(),
-                SnapOnScrollListener.Behavior.NOTIFY_ON_SCROLL,
-                object : SnapOnScrollListener.OnSnapPositionChangeListener {
-                    override fun onSnapPositionChange(position: Int) {
-                        holder.itemView.textViewWebcamName.text = item.webcams[position].title
-                    }
+            PagerSnapHelper(),
+            SnapOnScrollListener.Behavior.NOTIFY_ON_SCROLL,
+            object : SnapOnScrollListener.OnSnapPositionChangeListener {
+                override fun onSnapPositionChange(position: Int) {
+                    holder.itemView.textViewWebcamName.text = item.webcams[position].title
                 }
+            }
         )
     }
 

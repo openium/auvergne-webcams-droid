@@ -25,7 +25,7 @@ abstract class AbstractFragment : Fragment(), KodeinAware {
     protected val glide: Glide by instance()
 
     override val kodein: Kodein by closestKodein()
-    protected val preferencesUtils: PreferencesUtils by instance()
+    protected val prefUtils: PreferencesUtils by instance()
 
     protected abstract val layoutId: Int
 

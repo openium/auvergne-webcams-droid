@@ -104,7 +104,7 @@ class FragmentMain : AbstractFragment() {
     }
 
     private fun initAdapter() {
-        adapter = AdapterSections(requireContext(), arrayListOf(), {
+        adapter = AdapterSections(prefUtils, arrayListOf(), {
             // TODO add this later
         }, {
             startActivityWebcamDetail(it)
@@ -116,11 +116,6 @@ class FragmentMain : AbstractFragment() {
 
             // Some optimizations
             setHasFixedSize(true)
-            setItemViewCacheSize(5)
-
-            (layoutManager as? LinearLayoutManager)?.also {
-                it.initialPrefetchItemCount = 5
-            }
         }
     }
 

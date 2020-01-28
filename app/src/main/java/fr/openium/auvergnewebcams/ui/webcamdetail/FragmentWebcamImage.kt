@@ -75,7 +75,7 @@ class FragmentWebcamImage : AbstractFragmentWebcam() {
         var scaleType: Int? = null
         var imageURL: Uri? = null
 
-        if (preferencesUtils.isWebcamsHighQuality && !webcam.imageHD.isNullOrBlank()) {
+        if (prefUtils.isWebcamsHighQuality && !webcam.imageHD.isNullOrBlank()) {
             scaleType = BigImageView.INIT_SCALE_TYPE_CENTER_CROP
             imageURL = Uri.parse(webcam.getUrlForWebcam(canBeHD = true, canBeVideo = false))
         } else if (!webcam.imageLD.isNullOrBlank()) {
