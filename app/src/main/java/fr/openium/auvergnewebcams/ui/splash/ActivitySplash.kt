@@ -2,7 +2,7 @@ package fr.openium.auvergnewebcams.ui.splash
 
 import android.os.Bundle
 import android.view.animation.AnimationUtils
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractActivity
 import fr.openium.auvergnewebcams.ui.main.ActivityMain
@@ -25,7 +25,7 @@ class ActivitySplash : AbstractActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModelSplash = ViewModelProviders.of(this).get(ViewModelSplash::class.java)
+        viewModelSplash = ViewModelProvider(this).get(ViewModelSplash::class.java)
 
         // Get new data
         viewModelSplash.updateData().subscribe({

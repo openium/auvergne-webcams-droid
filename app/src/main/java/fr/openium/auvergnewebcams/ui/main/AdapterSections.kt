@@ -74,7 +74,7 @@ class AdapterSections(
 
             // Applying all settings to the RecyclerView
             holder.itemView.recyclerViewWebcams.apply {
-                adapter = AdapterSectionWebcams(prefUtils, item.webcams, onWebcamClicked)
+                adapter = AdapterSectionWebcams(prefUtils, Glide.with(holder.itemView.context), item.webcams, onWebcamClicked)
                 layoutManager =
                     CustomScaleLayoutManager(holder.itemView.context, dip(-50f).toInt(), 5f, ScaleLayoutManager.HORIZONTAL).apply {
                         minScale = 0.7f

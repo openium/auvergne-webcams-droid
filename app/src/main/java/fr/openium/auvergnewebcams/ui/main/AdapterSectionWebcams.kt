@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -25,9 +25,10 @@ import kotlinx.android.synthetic.main.item_section_webcams.view.*
  * Created by Openium on 19/02/2019.
  */
 class AdapterSectionWebcams(
-    prefUtils: PreferencesUtils,
-    private var webcams: List<Webcam>,
-    private val onWebcamClicked: ((Webcam) -> Unit)
+        prefUtils: PreferencesUtils,
+        private var glideRequest: RequestManager,
+        private var webcams: List<Webcam>,
+        private val onWebcamClicked: ((Webcam) -> Unit)
 ) : RecyclerView.Adapter<AdapterSectionWebcams.WebcamHolder>() {
 
     private var mediaStoreSignature = MediaStoreSignature("", prefUtils.lastUpdateWebcamsTimestamp, 0)
@@ -54,31 +55,26 @@ class AdapterSectionWebcams(
                 dataSource: DataSource?,
                 isFirst: Boolean
             ): Boolean {
-                updateErrorText(webcam, holder)
                 holder.itemView.imageViewSectionWebcamsImage.scaleType = ImageView.ScaleType.CENTER_CROP
-                holder.itemView.imageViewSectionWebcamsImage.setImageDrawable(resource)
-
+                updateErrorText(webcam, holder)
                 holder.itemView.progressBarSectionWebcams.gone()
                 return false
             }
 
             override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
                 holder.itemView.imageViewSectionWebcamsImage.scaleType = ImageView.ScaleType.CENTER_INSIDE
-                holder.itemView.imageViewSectionWebcamsImage.setImageResource(R.drawable.broken_camera)
-
                 updateErrorText(webcam, holder, true)
-
                 holder.itemView.progressBarSectionWebcams.gone()
                 return false
             }
         }
 
-        Glide.with(holder.itemView.context)
-            .load(webcam.getUrlForWebcam(canBeHD = false, canBeVideo = false))
-            .transition(DrawableTransitionOptions.withCrossFade())
-            .signature(mediaStoreSignature)
-            .listener(listenerGlide)
-            .submit()
+        glideRequest.load(webcam.getUrlForWebcam(canBeHD = false, canBeVideo = false))
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .signature(mediaStoreSignature)
+                .listener(listenerGlide)
+                .error(R.drawable.broken_camera)
+                .into(holder.itemView.imageViewSectionWebcamsImage)
 
         holder.itemView.setOnClickListener {
             onWebcamClicked(webcam)

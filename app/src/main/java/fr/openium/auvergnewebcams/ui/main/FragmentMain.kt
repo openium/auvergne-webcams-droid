@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractFragment
@@ -41,7 +41,7 @@ class FragmentMain : AbstractFragment() {
         AnalyticsUtils.appIsOpen(requireContext())
         AnalyticsUtils.sendAllUserProperties(requireContext())
 
-        viewModelMain = ViewModelProviders.of(this).get(ViewModelMain::class.java)
+        viewModelMain = ViewModelProvider(this).get(ViewModelMain::class.java)
 
         setHasOptionsMenu(true)
     }

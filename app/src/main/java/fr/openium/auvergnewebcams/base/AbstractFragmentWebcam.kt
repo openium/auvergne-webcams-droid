@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -50,7 +50,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModelWebcam = ViewModelProviders.of(this).get(ViewModelWebcam::class.java)
+        viewModelWebcam = ViewModelProvider(this).get(ViewModelWebcam::class.java)
         setHasOptionsMenu(true)
     }
 
