@@ -8,7 +8,7 @@ import fr.openium.auvergnewebcams.repository.SectionRepository
 import fr.openium.auvergnewebcams.repository.WebcamRepository
 import fr.openium.rxtools.ext.fromIOToMain
 import io.reactivex.Completable
-import io.reactivex.Observable
+import io.reactivex.Single
 import org.kodein.di.generic.instance
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
@@ -33,7 +33,7 @@ class ViewModelMain(app: Application) : AbstractViewModel(app) {
             }.ignoreElement()
         ).fromIOToMain()
 
-    fun getSectionsObs(): Observable<List<Section>> = sectionRepository.getSectionsObs()
+    fun getSectionsSingle(): Single<List<Section>> = sectionRepository.getSectionsSingle()
 
-    fun getWebcamsObs(): Observable<List<Webcam>> = webcamRepository.getWebcamsObs()
+    fun getWebcamsSingle(): Single<List<Webcam>> = webcamRepository.getWebcamsSingle()
 }

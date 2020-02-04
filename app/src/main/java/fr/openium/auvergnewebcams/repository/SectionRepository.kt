@@ -19,45 +19,37 @@ class SectionRepository(
 
     // WS
 
-    fun fetch(): Single<SectionList> {
-        return apiHelper.getSections(this, webcamRepository)
-    }
+    fun fetch(): Single<SectionList> = apiHelper.getSections(this, webcamRepository)
 
     // Local
 
-    fun getSections(): List<Section> {
-        return client.database.sectionDao().getSections()
-    }
+    fun getSections(): List<Section> =
+        client.database.sectionDao().getSections()
 
-    fun getSectionsObs(): Observable<List<Section>> {
-        return client.database.sectionDao().getSectionsObs()
-    }
+    fun getSectionsSingle(): Single<List<Section>> =
+        client.database.sectionDao().getSectionsSingle()
 
-    fun update(section: Section): Int {
-        return client.database.sectionDao().update(section)
-    }
+    fun getSectionsObs(): Observable<List<Section>> =
+        client.database.sectionDao().getSectionsObs()
 
-    fun update(sections: List<Section>): Int {
-        return client.database.sectionDao().update(sections)
-    }
+    fun update(section: Section): Int =
+        client.database.sectionDao().update(section)
 
-    fun insert(section: Section): Long {
-        return client.database.sectionDao().insert(section)
-    }
+    fun update(sections: List<Section>): Int =
+        client.database.sectionDao().update(sections)
 
-    fun insert(sections: List<Section>): List<Long> {
-        return client.database.sectionDao().insert(sections)
-    }
+    fun insert(section: Section): Long =
+        client.database.sectionDao().insert(section)
 
-    fun delete(section: Section) {
+    fun insert(sections: List<Section>): List<Long> =
+        client.database.sectionDao().insert(sections)
+
+    fun delete(section: Section) =
         client.database.sectionDao().delete(section)
-    }
 
-    fun delete(sections: List<Section>) {
+    fun delete(sections: List<Section>) =
         client.database.sectionDao().delete(sections)
-    }
 
-    fun deleteAllNotInUIDs(ids: List<Long>): Completable {
-        return client.database.sectionDao().deleteAllNotInUids(ids)
-    }
+    fun deleteAllNotInUIDs(ids: List<Long>): Completable =
+        client.database.sectionDao().deleteAllNotInUids(ids)
 }

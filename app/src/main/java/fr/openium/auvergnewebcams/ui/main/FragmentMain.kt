@@ -15,8 +15,7 @@ import fr.openium.auvergnewebcams.ui.webcamdetail.ActivityWebcam
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import fr.openium.kotlintools.ext.startActivity
 import fr.openium.rxtools.ext.fromIOToMain
-import io.reactivex.Observable
-import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.fragment_main.*
@@ -38,22 +37,19 @@ class FragmentMain : AbstractFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        setHasOptionsMenu(true)
+
         AnalyticsUtils.appIsOpen(requireContext())
         AnalyticsUtils.sendAllUserProperties(requireContext())
 
         viewModelMain = ViewModelProvider(this).get(ViewModelMain::class.java)
-
-        setHasOptionsMenu(true)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        // Set listeners
         setListeners()
-
-        // Init recyclerView adapter and layoutManager
-        initAdapter()
+        getData()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -72,27 +68,6 @@ class FragmentMain : AbstractFragment() {
         }
     }
 
-    override fun startSubscription(onStartDisposables: CompositeDisposable) {
-        super.startSubscription(onStartDisposables)
-
-        Observable.combineLatest(
-            viewModelMain.getSectionsObs(),
-            viewModelMain.getWebcamsObs(),
-            BiFunction { sections: List<Section>, webcams: List<Webcam> ->
-                sections to webcams
-            })
-            .fromIOToMain().subscribe({ sectionsToWebcams ->
-                sectionsToWebcams.first.forEach { section ->
-                    section.webcams = sectionsToWebcams.second.filter { it.sectionUid == section.uid }
-                }
-
-                // Update data display
-                adapter?.refreshData(sectionsToWebcams.first)
-            }, {
-                Timber.e(it, "Error on getting Sections/webcams from DB")
-            }).addTo(disposables)
-    }
-
     // --- Methods
     // ---------------------------------------------------
 
@@ -103,20 +78,44 @@ class FragmentMain : AbstractFragment() {
         }
     }
 
-    private fun initAdapter() {
-        adapter = AdapterSections(prefUtils, arrayListOf(), {
-            // TODO add this later
-        }, {
-            startActivityWebcamDetail(it)
-        })
+    private fun initAdapter(sections: List<Section>) {
+        if (adapter == null) {
+            adapter = AdapterSections(prefUtils, sections, {
+                // TODO add this later
+            }, {
+                startActivityWebcamDetail(it)
+            })
 
-        recyclerViewSections.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = this@FragmentMain.adapter
+            recyclerViewSections.apply {
+                layoutManager = LinearLayoutManager(context)
+                adapter = this@FragmentMain.adapter
 
-            // Some optimizations
-            setHasFixedSize(true)
+                // Some optimizations
+                setHasFixedSize(true)
+            }
+        } else {
+            adapter?.refreshData(sections)
         }
+    }
+
+    private fun getData() {
+        Single.zip(
+            viewModelMain.getSectionsSingle(),
+            viewModelMain.getWebcamsSingle(),
+            BiFunction { sections: List<Section>, webcams: List<Webcam> ->
+                sections to webcams
+            })
+            .fromIOToMain()
+            .subscribe({ sectionsAndWebcams ->
+                sectionsAndWebcams.first.forEach { section ->
+                    section.webcams = sectionsAndWebcams.second.filter { it.sectionUid == section.uid }
+                }
+
+                // Init recyclerView adapter and layoutManager
+                initAdapter(sectionsAndWebcams.first)
+            }, {
+                Timber.e(it, "Error when getting sections and webcams")
+            }).addTo(disposables)
     }
 
     private fun refreshMethod() {
@@ -124,8 +123,10 @@ class FragmentMain : AbstractFragment() {
         viewModelMain.updateData().doFinally {
             swipeRefreshLayoutSections.isRefreshing = false
         }.subscribe({
+            getData()
             Timber.d("Sections refreshed correctly")
         }, {
+            // TODO Show error to user
             Timber.e(it, "Error when getting sections from PTR")
         }).addTo(disposables)
     }

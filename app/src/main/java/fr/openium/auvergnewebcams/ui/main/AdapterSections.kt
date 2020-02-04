@@ -31,7 +31,9 @@ class AdapterSections(
     private val onWebcamClicked: ((Webcam) -> Unit)
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val viewPool = RecyclerView.RecycledViewPool()
+    private val viewPool = RecyclerView.RecycledViewPool().apply {
+        setMaxRecycledViews(0, 30)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return SectionHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_section, parent, false))
@@ -83,6 +85,8 @@ class AdapterSections(
                         maxVisibleItemCount = 3
                         infinite = true
                         enableBringCenterToFront = true
+                        setItemViewCacheSize(0)
+                        recycleChildrenOnDetach = true
                     }
 
                 // Some optimization

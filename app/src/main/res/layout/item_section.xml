@@ -59,7 +59,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewWebcams"
         android:layout_width="match_parent"
-        android:layout_height="165dp"
+        android:layout_height="150dp"
         android:clipToPadding="false"
         android:paddingBottom="5dp" />
 

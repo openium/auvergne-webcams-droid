@@ -4,6 +4,7 @@ import androidx.room.*
 import fr.openium.auvergnewebcams.model.entity.Section
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.Single
 
 
 @Dao
@@ -13,6 +14,9 @@ interface SectionDao {
 
     @Query("SELECT * FROM Section")
     fun getSections(): List<Section>
+
+    @Query("SELECT * FROM Section")
+    fun getSectionsSingle(): Single<List<Section>>
 
     @Query("SELECT * FROM Section")
     fun getSectionsObs(): Observable<List<Section>>
