@@ -9,6 +9,10 @@ import com.jakewharton.rxrelay2.PublishRelay
 
 val eventHasNetwork = BehaviorRelay.create<Boolean>()
 
-val eventCameraFavoris = PublishRelay.create<Long>()
+val eventCameraFavoris = PublishRelay.create<Long>() // TODO
 
 val eventNewRefreshDelayValue = PublishRelay.create<Int>()
+
+val eventRefreshDelayValueChanged = PublishRelay.create<Unit>()
+
+val eventNeedToRefreshWebcam = PublishRelay.create<Unit>()

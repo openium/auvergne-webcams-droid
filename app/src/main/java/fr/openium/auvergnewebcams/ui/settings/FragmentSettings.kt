@@ -9,6 +9,7 @@ import com.google.android.material.snackbar.Snackbar
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractFragment
 import fr.openium.auvergnewebcams.event.eventNewRefreshDelayValue
+import fr.openium.auvergnewebcams.event.eventRefreshDelayValueChanged
 import fr.openium.auvergnewebcams.ui.about.ActivitySettingsAbout
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import fr.openium.auvergnewebcams.utils.FirebaseUtils
@@ -37,13 +38,12 @@ class FragmentSettings : AbstractFragment() {
 
         setListeners()
 
-        showDelayRefresh(prefUtils.isWebcamsDelayRefreshActive)
-
         initVersion()
     }
 
     private fun setListeners() {
         // Auto refresh
+        showDelayRefresh(prefUtils.isWebcamsDelayRefreshActive)
         switchSettingsRefreshDelay.isChecked = prefUtils.isWebcamsDelayRefreshActive
         switchSettingsRefreshDelay.setOnCheckedChangeListener { _, isChecked ->
             FirebaseUtils.setUserPropertiesRefreshPreferences(requireContext(), isChecked)
@@ -64,6 +64,7 @@ class FragmentSettings : AbstractFragment() {
             FirebaseUtils.setUserPropertiesRefreshIntervalPreferences(requireContext(), it)
             prefUtils.webcamsDelayRefreshValue = it
             textViewSettingsDelayValue.text = it.toString()
+            eventRefreshDelayValueChanged.accept(Unit)
         }.addTo(disposables)
 
         // Webcams quality

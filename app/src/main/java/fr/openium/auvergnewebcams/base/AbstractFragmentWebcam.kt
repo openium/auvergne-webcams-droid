@@ -18,6 +18,7 @@ import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.event.eventCameraFavoris
 import fr.openium.auvergnewebcams.event.eventHasNetwork
+import fr.openium.auvergnewebcams.event.eventNeedToRefreshWebcam
 import fr.openium.auvergnewebcams.ext.hasNetwork
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.service.DownloadWorker
@@ -116,6 +117,12 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
                 Timber.e(it, "Error getting webcam from DB")
                 activity?.finish()
             }).addTo(disposables)
+
+        eventNeedToRefreshWebcam.subscribe({
+            if (::webcam.isInitialized) {
+                refreshWebcam()
+            }
+        }, { Timber.e(it, "Error refreshing Webcam detail") }).addTo(disposables)
 
         buttonWebcamDetailFavorite.setOnLikeListener(object : OnLikeListener {
             override fun liked(likeButton: LikeButton) {

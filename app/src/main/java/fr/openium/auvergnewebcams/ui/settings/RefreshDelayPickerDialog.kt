@@ -23,6 +23,7 @@ class RefreshDelayPickerDialog : AbstractDialog() {
         val value = arguments?.getInt(Constants.ARG_DELAY_VALUE, PreferencesUtils.DEFAULT_TIME_DELAY) ?: PreferencesUtils.DEFAULT_TIME_DELAY
 
         numberPicker.postDelayed({
+            //TODO check
             numberPicker.value = value
         }, 0)
 
