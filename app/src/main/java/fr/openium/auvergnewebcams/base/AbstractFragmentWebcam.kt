@@ -103,7 +103,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     // ---------------------------------------------------
 
     private fun setListener(webcamId: Long) {
-        viewModelWebcam.getWebcamObs(webcamId)
+        viewModelWebcam.getWebcamSingle(webcamId)
             .fromIOToMain()
             .subscribe({
                 it.value?.let {
