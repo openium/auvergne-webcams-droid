@@ -4,20 +4,26 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
-import android.widget.ImageView
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.github.piasy.biv.loader.ImageLoader
 import com.github.piasy.biv.view.BigImageView
 import com.google.android.material.snackbar.Snackbar
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractFragmentWebcam
+import fr.openium.auvergnewebcams.ext.hasNetwork
 import fr.openium.kotlintools.ext.gone
 import fr.openium.kotlintools.ext.show
 import fr.openium.kotlintools.ext.snackbar
+import io.reactivex.Observable
+import io.reactivex.disposables.Disposable
+import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.footer_webcam_detail.*
 import kotlinx.android.synthetic.main.fragment_webcam_image.*
+import timber.log.Timber
 import java.io.File
+import java.util.concurrent.TimeUnit
+import kotlin.math.abs
+import kotlin.math.min
 
 
 /**
@@ -28,34 +34,15 @@ class FragmentWebcamImage : AbstractFragmentWebcam() {
     override val layoutId: Int
         get() = R.layout.fragment_webcam_image
 
+    private var zoomTimer: Disposable? = null
+
     // --- Life cycle
     // ---------------------------------------------------
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        bigImageViewWebcamImage.setFailureImage(ContextCompat.getDrawable(requireContext(), R.drawable.broken_camera))
-        bigImageViewWebcamImage.setFailureImageInitScaleType(ImageView.ScaleType.CENTER)
-        bigImageViewWebcamImage.setImageLoaderCallback(object : ImageLoader.Callback {
-            override fun onSuccess(image: File?) {
-                // TODO remove and use built-in option
-                progressBarWebcamImageDetail?.gone()
-            }
-
-            override fun onFail(error: Exception?) {
-                updateDisplay(State.NOT_WORKING)
-                progressBarWebcamImageDetail?.gone()
-            }
-
-            override fun onStart() {
-                progressBarWebcamImageDetail?.show()
-            }
-
-            override fun onFinish() {}
-            override fun onCacheHit(imageType: Int, image: File?) {}
-            override fun onCacheMiss(imageType: Int, image: File?) {}
-            override fun onProgress(progress: Int) {}
-        })
+        initBigImageViewListener()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -71,25 +58,79 @@ class FragmentWebcamImage : AbstractFragmentWebcam() {
     // --- Methods
     // ---------------------------------------------------
 
+    private fun initBigImageViewListener() {
+        bigImageViewWebcamImage.setImageLoaderCallback(object : ImageLoader.Callback {
+            override fun onSuccess(image: File?) {
+                progressBarWebcamImageDetail?.gone()
+
+                // Start Timer cause BigImageView SSIV is not implementing method onReady...
+                setZoomTimer()
+            }
+
+            override fun onFail(error: Exception?) {
+                updateDisplay(State.NOT_WORKING)
+                progressBarWebcamImageDetail?.gone()
+                Timber.e(error, "Error loading big images")
+            }
+
+            override fun onStart() {
+                progressBarWebcamImageDetail?.show()
+            }
+
+            override fun onFinish() {}
+            override fun onCacheHit(imageType: Int, image: File?) {}
+            override fun onCacheMiss(imageType: Int, image: File?) {}
+            override fun onProgress(progress: Int) {}
+        })
+    }
+
+    private fun setZoomTimer() {
+        zoomTimer?.dispose()
+        zoomTimer = null
+
+        zoomTimer = Observable.timer(50, TimeUnit.MILLISECONDS).subscribe({
+            if (bigImageViewWebcamImage.ssiv.isReady) {
+                bigImageViewWebcamImage.ssiv.animateScaleAndCenter(
+                    min(bigImageViewWebcamImage.ssiv.maxScale, getZoomValue()),
+                    bigImageViewWebcamImage.ssiv.center
+                )?.withInterruptible(false)?.withDuration(300L)?.start()
+            } else {
+                setZoomTimer()
+            }
+        }, { Timber.e(it, "Error refresh timer") }).addTo(disposables)
+    }
+
+    // If you want to understand this a little bit more, look inside com/github/piasy/biv/utils/DisplayOptimizeListener.class onReady method
+    private fun getZoomValue(): Float {
+        var zoomValue = if (bigImageViewWebcamImage.ssiv.sWidth <= bigImageViewWebcamImage.ssiv.sHeight) {
+            bigImageViewWebcamImage.ssiv.width.toFloat() / bigImageViewWebcamImage.ssiv.sWidth
+        } else {
+            bigImageViewWebcamImage.ssiv.height.toFloat() / bigImageViewWebcamImage.ssiv.sHeight
+        }
+
+        if (abs(zoomValue - 0.1) < 0.2f) {
+            zoomValue += 0.2f
+        }
+
+        return zoomValue * 0.75f
+    }
+
     override fun setWebcam() {
-        var scaleType: Int? = null
         var imageURL: Uri? = null
 
         if (prefUtils.isWebcamsHighQuality && !webcam.imageHD.isNullOrBlank()) {
-            scaleType = BigImageView.INIT_SCALE_TYPE_CENTER_CROP
             imageURL = Uri.parse(webcam.getUrlForWebcam(canBeHD = true, canBeVideo = false))
         } else if (!webcam.imageLD.isNullOrBlank()) {
-            scaleType = BigImageView.INIT_SCALE_TYPE_CENTER_INSIDE
             imageURL = Uri.parse(webcam.getUrlForWebcam(canBeHD = false, canBeVideo = false))
         }
 
         bigImageViewWebcamImage.apply {
-            scaleType?.also { setInitScaleType(it) }
+            setInitScaleType(BigImageView.INIT_SCALE_TYPE_CENTER_INSIDE)
             imageURL?.also { showImage(imageURL) }
         }
     }
 
-    override fun refreshWebcam() {
+    override fun resetWebcam() {
         updateDisplay()
         setWebcam()
     }
@@ -123,5 +164,13 @@ class FragmentWebcamImage : AbstractFragmentWebcam() {
         val fileName = String.format("%s_%s.jpg", webcam.title ?: "", System.currentTimeMillis().toString())
 
         startService(urlSrc, true, fileName)
+    }
+
+    override fun refreshWebcam() {
+        if (requireContext().hasNetwork) {
+            resetWebcam()
+        } else {
+            snackbar(R.string.generic_no_network, Snackbar.LENGTH_SHORT)
+        }
     }
 }

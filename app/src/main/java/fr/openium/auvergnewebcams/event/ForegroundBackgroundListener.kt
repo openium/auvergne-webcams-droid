@@ -69,7 +69,6 @@ class ForegroundBackgroundListener(val context: Context) : LifecycleObserver, Ko
 
         refreshTimer = Observable.timer(prefUtils.webcamsDelayRefreshValue.toLong(), TimeUnit.MINUTES).subscribe({
             removeGlideCache()
-            Timber.d("TEST Refreshed")
 
             setTimer()
         }, { Timber.e(it, "Error refresh timer") }).addTo(disposables)
@@ -78,12 +77,10 @@ class ForegroundBackgroundListener(val context: Context) : LifecycleObserver, Ko
     private fun removeGlideCache() {
         Observable
             .fromCallable {
-                Timber.d("Glide disk cache cleaned")
                 Glide.get(context).clearDiskCache()
             }
             .fromIOToMain()
             .subscribe({
-                Timber.d("Glide memory cache cleaned")
                 Glide.get(context).clearMemory()
             }, { Timber.e(it, "Error cleaning Glide cache") }).addTo(disposables)
     }

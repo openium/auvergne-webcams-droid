@@ -15,11 +15,18 @@ import com.google.android.material.snackbar.Snackbar
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractFragmentWebcam
 import fr.openium.auvergnewebcams.ext.goneWithAnimationCompat
+import fr.openium.auvergnewebcams.ext.hasNetwork
 import fr.openium.auvergnewebcams.ext.showWithAnimationCompat
+import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
 import fr.openium.kotlintools.ext.getColorCompat
 import fr.openium.kotlintools.ext.gone
 import fr.openium.kotlintools.ext.show
 import fr.openium.kotlintools.ext.snackbar
+import fr.openium.rxtools.ext.fromIOToMain
+import io.reactivex.Observable
+import io.reactivex.functions.BiFunction
+import io.reactivex.rxkotlin.addTo
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.exo_player_view.*
 import kotlinx.android.synthetic.main.footer_webcam_detail.*
 import kotlinx.android.synthetic.main.fragment_webcam_video.*
@@ -41,6 +48,7 @@ class FragmentWebcamVideo : AbstractFragmentWebcam() {
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
+
         if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             playerViewWebcamVideo.setBackgroundColor(requireContext().getColorCompat(R.color.grey_medium))
             if (webcam.viewsurfHD.isNullOrEmpty()) {
@@ -129,7 +137,7 @@ class FragmentWebcamVideo : AbstractFragmentWebcam() {
         playerViewWebcamVideo.showController()
     }
 
-    override fun refreshWebcam() {
+    override fun resetWebcam() {
         updateDisplay()
         player.retry()
     }
@@ -157,5 +165,33 @@ class FragmentWebcamVideo : AbstractFragmentWebcam() {
         )
 
         startService(urlSrc, false, fileName)
+    }
+
+    override fun refreshWebcam() {
+        if (requireContext().hasNetwork) {
+            Observable.zip(
+                Observable.fromCallable { LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfLD) },
+                Observable.fromCallable { LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfHD) },
+                BiFunction { t1: String, t2: String ->
+                    t1 to t2
+                }).observeOn(Schedulers.io())
+                .map { pair ->
+                    webcam.mediaViewSurfLD = pair.first
+                    webcam.mediaViewSurfHD = pair.second
+
+                    viewModelWebcam.updateWebcam(webcam)
+
+                    webcam.mediaViewSurfLD to webcam.mediaViewSurfHD
+                }
+                .fromIOToMain()
+                .subscribe({
+                    player.stop()
+
+                    setWebcam()
+                    resetWebcam()
+                }, { Timber.e(it) }).addTo(disposables)
+        } else {
+            snackbar(R.string.generic_no_network, Snackbar.LENGTH_SHORT)
+        }
     }
 }

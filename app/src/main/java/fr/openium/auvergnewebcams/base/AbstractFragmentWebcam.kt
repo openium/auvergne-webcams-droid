@@ -18,7 +18,6 @@ import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.event.eventCameraFavoris
 import fr.openium.auvergnewebcams.event.eventHasNetwork
-import fr.openium.auvergnewebcams.event.eventNeedToRefreshWebcam
 import fr.openium.auvergnewebcams.ext.hasNetwork
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.service.DownloadWorker
@@ -73,7 +72,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
         return when (item.itemId) {
             R.id.menu_refresh -> {
                 AnalyticsUtils.webcamDetailRefreshed(requireContext())
-                getLastPictureOrVideoOfWebcam()
+                refreshWebcam()
                 true
             }
             R.id.menu_share -> {
@@ -118,12 +117,6 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
                 activity?.finish()
             }).addTo(disposables)
 
-        eventNeedToRefreshWebcam.subscribe({
-            if (::webcam.isInitialized) {
-                refreshWebcam()
-            }
-        }, { Timber.e(it, "Error refreshing Webcam detail") }).addTo(disposables)
-
         buttonWebcamDetailFavorite.setOnLikeListener(object : OnLikeListener {
             override fun liked(likeButton: LikeButton) {
                 setFavChanged(true)
@@ -134,7 +127,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
 
         eventHasNetwork.filter { it }.fromIOToMain().subscribe({
             if (::webcam.isInitialized) {
-                refreshWebcam()
+                resetWebcam()
             }
         }, { Timber.e(it, "Error when listening for network state changing") }).addTo(disposables)
     }
@@ -150,11 +143,6 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     private fun getState(): State = when {
         webcam.isUpToDate() -> State.LOADED_UP_TO_DATE
         else -> State.LOADED_NOT_UP_TO_DATE
-    }
-
-    private fun getRotationState(): RotationState = when (resources.configuration.orientation) {
-        Configuration.ORIENTATION_LANDSCAPE -> RotationState.LANDSCAPE
-        else -> RotationState.PORTRAIT
     }
 
     open fun updateDisplay(forcedState: State? = null) {
@@ -174,17 +162,17 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
             textViewWebcamDetailLastUpdate.gone()
         }
 
-        when (getRotationState() to (forcedState ?: getState())) {
-            RotationState.PORTRAIT to State.LOADED_UP_TO_DATE -> {
+        when (resources.configuration.orientation to (forcedState ?: getState())) {
+            Configuration.ORIENTATION_PORTRAIT to State.LOADED_UP_TO_DATE -> {
                 textViewWebcamDetailErrorMessage.gone()
                 frameLayoutWebcamDetailHeader.show()
             }
-            RotationState.PORTRAIT to State.LOADED_NOT_UP_TO_DATE -> {
+            Configuration.ORIENTATION_PORTRAIT to State.LOADED_NOT_UP_TO_DATE -> {
                 textViewWebcamDetailErrorMessage.text = getString(R.string.generic_not_up_to_date)
                 textViewWebcamDetailErrorMessage.show()
                 frameLayoutWebcamDetailHeader.show()
             }
-            RotationState.PORTRAIT to State.NOT_WORKING -> {
+            Configuration.ORIENTATION_PORTRAIT to State.NOT_WORKING -> {
                 if (requireContext().hasNetwork) {
                     textViewWebcamDetailErrorMessage.text = getString(R.string.load_webcam_error)
                 } else {
@@ -194,9 +182,9 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
                 textViewWebcamDetailErrorMessage.show()
                 frameLayoutWebcamDetailHeader.show()
             }
-            RotationState.LANDSCAPE to State.LOADED_UP_TO_DATE,
-            RotationState.LANDSCAPE to State.LOADED_NOT_UP_TO_DATE,
-            RotationState.LANDSCAPE to State.NOT_WORKING -> {
+            Configuration.ORIENTATION_LANDSCAPE to State.LOADED_UP_TO_DATE,
+            Configuration.ORIENTATION_LANDSCAPE to State.LOADED_NOT_UP_TO_DATE,
+            Configuration.ORIENTATION_LANDSCAPE to State.NOT_WORKING -> {
                 frameLayoutWebcamDetailHeader.gone()
                 textViewWebcamDetailErrorMessage.gone()
             }
@@ -238,38 +226,6 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
         } ?: snackbar(R.string.generic_no_email_app, Snackbar.LENGTH_SHORT)
     }
 
-    // TODO
-    private fun getLastPictureOrVideoOfWebcam() {
-        if (requireContext().hasNetwork) {
-//            showProgress()
-            itemMenuRefresh?.isEnabled = false
-
-//            if (webcam.type == Webcam.WebcamType.VIEWSURF.nameType) {
-//                val urlLD = webcam.viewsurfLD
-//                val urlHD = webcam.viewsurfHD
-//
-//                Observable.zip(
-//                    Observable.fromCallable { LoadWebCamUtils.getMediaViewSurf(urlLD) },
-//                    Observable.fromCallable { LoadWebCamUtils.getMediaViewSurf(urlHD) },
-//                    BiFunction { t1: String, t2: String ->
-//                        t1 to t2
-//                    })
-//                    .fromIOToMain()
-//                    .subscribe({ pair ->
-//                        webcam.mediaViewSurfLD = pair.first
-//                        webcam.mediaViewSurfHD = pair.second
-//
-//                        viewModelWebcamImage.updateWebcam(webcam)
-//                        initWebCam()
-//                    }, { Timber.e(it) }).addTo(disposables)
-//            } else {
-            updateDisplay()
-//            }
-        } else {
-            snackbar(R.string.generic_no_network, Snackbar.LENGTH_SHORT)
-        }
-    }
-
     protected fun startService(urlSrc: String, isPhoto: Boolean, fileName: String) {
         if (requireContext().hasNetwork) {
             WorkManager.getInstance(requireContext()).enqueue(
@@ -292,18 +248,15 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
         NOT_WORKING
     }
 
-    enum class RotationState {
-        PORTRAIT,
-        LANDSCAPE
-    }
-
     abstract fun setWebcam()
 
-    abstract fun refreshWebcam()
+    abstract fun resetWebcam()
 
     abstract fun shareWebCam()
 
     abstract fun saveWebcam()
+
+    abstract fun refreshWebcam()
 }
 
 

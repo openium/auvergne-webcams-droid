@@ -7,8 +7,10 @@ import com.github.piasy.biv.loader.ImageLoader
 import com.github.piasy.biv.loader.glide.GlideLoaderException
 import com.github.piasy.biv.loader.glide.GlideProgressSupport
 import okhttp3.*
+import okio.JvmOverloads
 import timber.log.Timber
 import java.io.IOException
+
 
 /**
  * Created by Openium on 19/02/2019.
@@ -37,6 +39,7 @@ class CustomGlideImageLoader private constructor(val context: Context, okHttpCli
                     GetImageWebcamAsyncTask(response, callback, it).execute()
                 }
             }
+
         })
     }
 

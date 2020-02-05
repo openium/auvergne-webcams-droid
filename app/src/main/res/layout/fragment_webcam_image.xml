@@ -17,6 +17,8 @@
             android:id="@+id/bigImageViewWebcamImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:failureImage="@drawable/broken_camera"
+            app:failureImageInitScaleType="center"
             app:optimizeDisplay="true" />
 
         <ProgressBar
