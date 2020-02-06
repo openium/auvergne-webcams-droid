@@ -11,7 +11,7 @@ import fr.openium.auvergnewebcams.model.entity.Webcam
 
 @Database(entities = [Section::class, Webcam::class], version = 1)
 @TypeConverters(StringTypeConverter::class)
-abstract class CustomDatabase : RoomDatabase() {
+abstract class AWDatabase : RoomDatabase() {
 
     abstract fun sectionDao(): SectionDao
 

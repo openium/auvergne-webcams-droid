@@ -7,7 +7,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.event.ForegroundBackgroundListener
-import fr.openium.auvergnewebcams.model.CustomClient
+import fr.openium.auvergnewebcams.model.AWClient
 import fr.openium.auvergnewebcams.repository.SectionRepository
 import fr.openium.auvergnewebcams.repository.WebcamRepository
 import fr.openium.auvergnewebcams.rest.AWApi
@@ -50,8 +50,8 @@ object Modules {
     }
 
     val databaseService = Kodein.Module("Database Module") {
-        bind<CustomClient>() with provider {
-            CustomClient.getInstance(instance())
+        bind<AWClient>() with provider {
+            AWClient.getInstance(instance())
         }
     }
 

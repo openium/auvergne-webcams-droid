@@ -76,7 +76,7 @@ object FirebaseUtils {
     // --- Other methods
     // ----------------------------------
 
-    /***
+    /**
      * Generic log event method
      */
     fun logContentEvent(
@@ -98,7 +98,7 @@ object FirebaseUtils {
         firebaseAnalytics.logEvent(contentName, params)
     }
 
-    /***
+    /**
      * Generic log search event method
      */
     fun logSearchEvent(firebaseAnalytics: FirebaseAnalytics, value: String) {
@@ -107,7 +107,7 @@ object FirebaseUtils {
         })
     }
 
-    /***
+    /**
      * Generic log view item list event method
      */
     fun logViewItemListEvent(firebaseAnalytics: FirebaseAnalytics, value: String) {

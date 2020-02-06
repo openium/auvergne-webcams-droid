@@ -27,8 +27,7 @@ import timber.log.Timber
  */
 class FragmentSettings : AbstractFragment() {
 
-    override val layoutId: Int
-        get() = R.layout.fragment_settings
+    override val layoutId: Int = R.layout.fragment_settings
 
     // --- Life cycle
     // ---------------------------------------------------
@@ -40,6 +39,9 @@ class FragmentSettings : AbstractFragment() {
 
         initVersion()
     }
+
+    // --- Methods
+    // ---------------------------------------------------
 
     private fun setListeners() {
         // Auto refresh
@@ -78,7 +80,6 @@ class FragmentSettings : AbstractFragment() {
         textViewSettingsAbout.setOnClickListener {
             AnalyticsUtils.aboutClicked(requireContext())
             startActivity<ActivitySettingsAbout>()
-            activity?.overridePendingTransition(R.anim.animation_from_right, R.anim.animation_to_left)
         }
 
         // Openium website
@@ -112,9 +113,6 @@ class FragmentSettings : AbstractFragment() {
         }
     }
 
-    // --- Methods
-    // ---------------------------------------------------
-
     private fun sendEmail() {
         val intentEmail = Intent(Intent.ACTION_SENDTO).apply {
             data = Uri.parse("mailto:${getString(R.string.detail_signal_problem_email)}")
@@ -139,7 +137,10 @@ class FragmentSettings : AbstractFragment() {
     }
 
     private fun startActivityForUrl(url: String) {
-        val intent = Intent(Intent.ACTION_VIEW).apply { data = Uri.parse(url) }
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            data = Uri.parse(url)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
         val chooser = Intent.createChooser(intent, getString(R.string.generic_chooser))
 
         chooser.resolveActivity(requireContext().packageManager)?.also {

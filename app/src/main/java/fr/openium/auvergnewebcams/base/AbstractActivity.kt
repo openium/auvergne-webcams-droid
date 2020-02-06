@@ -19,7 +19,7 @@ abstract class AbstractActivity : AppCompatActivity(), KodeinAware {
     override val kodein: Kodein by closestKodein()
 
     protected val disposables: CompositeDisposable = CompositeDisposable()
-    protected var rebindDisposables: CompositeDisposable = CompositeDisposable() //Resubscribe in onstart
+    protected var rebindDisposables: CompositeDisposable = CompositeDisposable() // Resubscribe in onstart
 
     protected open val handleFragmentBackPressed: Boolean = true
 
@@ -29,9 +29,7 @@ abstract class AbstractActivity : AppCompatActivity(), KodeinAware {
         beforeSetContentView()
         setContentView(layoutId)
 
-        toolbar?.also {
-            setSupportActionBar(toolbar)
-        }
+        toolbar?.also { setSupportActionBar(it) }
 
         setHomeAsUp(showHomeAsUp)
     }

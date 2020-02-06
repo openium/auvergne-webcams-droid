@@ -6,10 +6,8 @@ package fr.openium.auvergnewebcams
 
 object Constants {
 
-    const val KEY_ID = "KEY_ID"
-    const val KEY_TYPE = "KEY_TYPE"
-    const val ARG_SECTION_UID = "ARG_SECTION_UID"
-    const val ARG_DELAY_VALUE = "ARG_DELAY_VALUE"
-
-    const val FAVORI_SECTION_ID = -1L
+    const val KEY_WEBCAM_ID = "KEY_WEBCAM_ID"
+    const val KEY_WEBCAM_TYPE = "KEY_WEBCAM_TYPE"
+    const val KEY_SECTION_ID = "KEY_SECTION_ID"
+    const val KEY_DELAY_VALUE = "KEY_DELAY_VALUE"
 }

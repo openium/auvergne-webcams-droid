@@ -46,7 +46,8 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : Work
 
     private fun downloadFile(): Result {
         val notifBaseId = preferencesUtils.newNotifId
-        Timber.d("TEST notifBaseId $notifBaseId")
+
+        Timber.d("[Worker] Start download notification n°$notifBaseId")
         var result = Result.success()
 
         if (!mUrl.isNullOrEmpty()) {
@@ -72,7 +73,7 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : Work
                         total += count
                         val progress = (total * 100) / contentLength
                         if (currentProgress != progress) {
-                            Timber.d("TEST currentProgress $currentProgress")
+                            Timber.d("[Worker] Downloading $currentProgress%")
                             AppNotifier.SaveWebcamAction.downloadingFile(applicationContext, webcamName, notifBaseId, progress)
                             currentProgress = progress
                         }
@@ -93,9 +94,13 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : Work
                     inputStream.close()
 
                     SystemClock.sleep(100)
+
+                    Timber.d("[Worker] Finish download notification n°$notifBaseId with SUCCESS")
                     AppNotifier.SaveWebcamAction.downloadSuccess(applicationContext, webcamName, notifBaseId, bitmap)
                 } catch (e: Exception) {
                     Timber.e(e)
+
+                    Timber.d("[Worker] Finish download notification n°$notifBaseId with ERROR")
                     AppNotifier.SaveWebcamAction.downloadError(applicationContext, webcamName, notifBaseId)
                     result = Result.failure()
                 }

@@ -110,7 +110,8 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
     implementation 'com.google.android.material:material:1.2.0-alpha04'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
-    implementation 'androidx.work:work-runtime-ktx:2.3.0'
+    implementation 'androidx.work:work-runtime-ktx:2.3.1'
+    implementation 'androidx.preference:preference-ktx:1.1.0'
 //    implementation 'androidx.multidex:multidex:2.0.1'
 
     // --- Firebase ---
@@ -123,7 +124,7 @@ dependencies {
     implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
 
     // --- KTX ---
-    implementation 'androidx.core:core-ktx:1.1.0'
+    implementation 'androidx.core:core-ktx:1.2.0'
 
     // --- Kodein ---
     implementation 'org.kodein.di:kodein-di-generic-jvm:6.3.1'
@@ -178,12 +179,12 @@ dependencies {
     implementation 'com.github.piasy:BigImageViewer:1.6.2'
     implementation 'com.github.piasy:GlideImageLoader:1.6.2'
 
-    // Like button (Twitter)
-    implementation 'com.github.jd-alexander:LikeButton:0.2.3'
-
     // Alternative LayoutManager
     implementation 'rouchuan.viewpagerlayoutmanager:viewpagerlayoutmanager:2.0.22'
 
     // ExoPlayer
     implementation 'com.google.android.exoplayer:exoplayer:2.11.1'
+
+    // Like button (Twitter)
+    implementation 'com.github.jd-alexander:LikeButton:0.2.3'
 }

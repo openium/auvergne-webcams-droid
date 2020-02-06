@@ -10,7 +10,10 @@ import io.reactivex.Single
 @Dao
 interface SectionDao {
 
-    // Queries
+    // Query
+
+    @Query("SELECT * FROM Section WHERE uid == :sectionId LIMIT 1")
+    fun getSectionSingle(sectionId: Long): Single<Section>
 
     @Query("SELECT * FROM Section")
     fun getSections(): List<Section>
@@ -21,7 +24,7 @@ interface SectionDao {
     @Query("SELECT * FROM Section")
     fun getSectionsObs(): Observable<List<Section>>
 
-    // Updates
+    // Update
 
     @Update
     fun update(section: Section): Int
@@ -29,7 +32,7 @@ interface SectionDao {
     @Update
     fun update(sections: List<Section>): Int
 
-    // Inserts
+    // Insert
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(section: Section): Long
@@ -37,7 +40,7 @@ interface SectionDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(sections: List<Section>): List<Long>
 
-    // Deletes
+    // Delete
 
     @Delete
     fun delete(section: Section)

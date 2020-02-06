@@ -20,7 +20,7 @@ class RefreshDelayPickerDialog : AbstractDialog() {
         dialog.setContentView(R.layout.dialog_refresh_delay_picker)
 
         val numberPicker = dialog.findViewById<NumberPicker>(R.id.numberPickerDialogRefreshDelay)
-        val value = arguments?.getInt(Constants.ARG_DELAY_VALUE, PreferencesUtils.DEFAULT_TIME_DELAY) ?: PreferencesUtils.DEFAULT_TIME_DELAY
+        val value = arguments?.getInt(Constants.KEY_DELAY_VALUE, PreferencesUtils.DEFAULT_REFRESH_DELAY) ?: PreferencesUtils.DEFAULT_REFRESH_DELAY
 
         numberPicker.postDelayed({
             //TODO check
@@ -50,7 +50,7 @@ class RefreshDelayPickerDialog : AbstractDialog() {
         fun newInstance(currentValue: Int): RefreshDelayPickerDialog {
             return RefreshDelayPickerDialog().apply {
                 arguments = Bundle().apply {
-                    putInt(Constants.ARG_DELAY_VALUE, currentValue)
+                    putInt(Constants.KEY_DELAY_VALUE, currentValue)
                 }
             }
         }

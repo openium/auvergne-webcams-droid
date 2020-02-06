@@ -10,7 +10,7 @@ import com.crashlytics.android.answers.SearchEvent
  */
 object FabricUtils {
 
-    /***
+    /**
      * Generic method to log all ContentViewEvent
      */
     fun logContentViewEvent(analytics: Answers, contentName: String, contentType: String? = null, itemSelected: String? = null) {
@@ -27,7 +27,7 @@ object FabricUtils {
         analytics.logContentView(contentView)
     }
 
-    /***
+    /**
      * Generic method to log all SearchEvent
      */
     fun logSearchEvent(analytics: Answers, searchText: String) {

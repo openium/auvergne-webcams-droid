@@ -1,4 +1,4 @@
-package fr.openium.auvergnewebcams.ui.webcamdetail
+package fr.openium.auvergnewebcams.ui.webcamDetail
 
 import android.content.Context
 import android.content.Intent
@@ -19,17 +19,16 @@ import kotlinx.android.synthetic.main.toolbar.*
 /**
  * Created by Openium on 19/02/2019.
  */
-class ActivityWebcam : AbstractActivityFragment() {
+class ActivityWebcamDetail : AbstractActivityFragment() {
 
     override val showHomeAsUp: Boolean = true
 
-    override fun getDefaultFragment(): Fragment? {
-        return if (typeWebcam == Webcam.WebcamType.VIEWSURF.nameType) {
-            FragmentWebcamVideo()
+    override fun getDefaultFragment(): Fragment? =
+        if (typeWebcam == Webcam.WebcamType.VIEWSURF.nameType) {
+            FragmentWebcamDetailVideo()
         } else {
-            FragmentWebcamImage()
+            FragmentWebcamDetailImage()
         }
-    }
 
     private var typeWebcam: String? = null
 
@@ -37,8 +36,9 @@ class ActivityWebcam : AbstractActivityFragment() {
     // ---------------------------------------------------
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        typeWebcam = intent?.getStringExtra(Constants.KEY_TYPE)
+        typeWebcam = intent?.getStringExtra(Constants.KEY_WEBCAM_TYPE)
         super.onCreate(savedInstanceState)
+        overridePendingTransition(R.anim.animation_from_right, R.anim.animation_to_left)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -62,11 +62,10 @@ class ActivityWebcam : AbstractActivityFragment() {
 
     companion object {
 
-        fun getIntent(context: Context, webcam: Webcam): Intent {
-            return Intent(context, ActivityWebcam::class.java).apply {
-                putExtra(Constants.KEY_ID, webcam.uid)
-                putExtra(Constants.KEY_TYPE, webcam.type)
+        fun getIntent(context: Context, webcam: Webcam): Intent =
+            Intent(context, ActivityWebcamDetail::class.java).apply {
+                putExtra(Constants.KEY_WEBCAM_ID, webcam.uid)
+                putExtra(Constants.KEY_WEBCAM_TYPE, webcam.type)
             }
-        }
     }
 }

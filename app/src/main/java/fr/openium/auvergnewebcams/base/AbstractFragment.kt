@@ -20,12 +20,11 @@ import org.kodein.di.generic.instance
 abstract class AbstractFragment : Fragment(), KodeinAware {
 
     protected val disposables: CompositeDisposable = CompositeDisposable()
-    protected val rebindDisposables: CompositeDisposable = CompositeDisposable() //Resubscribe in onstart
-
-    protected val glide: Glide by instance()
+    protected val rebindDisposables: CompositeDisposable = CompositeDisposable() // Resubscribe in onstart
 
     override val kodein: Kodein by closestKodein()
     protected val prefUtils: PreferencesUtils by instance()
+    protected val glide: Glide by instance()
 
     protected abstract val layoutId: Int
 
@@ -38,7 +37,6 @@ abstract class AbstractFragment : Fragment(), KodeinAware {
 
     override fun onStart() {
         super.onStart()
-
         startSubscription(rebindDisposables)
     }
 

@@ -1,20 +1,24 @@
-package fr.openium.auvergnewebcams.ui.settings
+package fr.openium.auvergnewebcams.ui.sectionDetail
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractActivityFragment
+import fr.openium.auvergnewebcams.model.entity.Section
 
 /**
  * Created by Openium on 19/02/2019.
  */
-class ActivitySettings : AbstractActivityFragment() {
+class ActivitySectionDetail : AbstractActivityFragment() {
 
     override val layoutId: Int = R.layout.container_toolbar
 
     override val showHomeAsUp: Boolean = true
 
-    override fun getDefaultFragment(): Fragment? = FragmentSettings()
+    override fun getDefaultFragment(): Fragment? = FragmentSectionDetail()
 
     // --- Life cycle
     // ---------------------------------------------------
@@ -27,5 +31,16 @@ class ActivitySettings : AbstractActivityFragment() {
     override fun finish() {
         super.finish()
         overridePendingTransition(R.anim.animation_from_left, R.anim.animation_to_right)
+    }
+
+    // --- Other methods
+    // ---------------------------------------------------
+
+    companion object {
+
+        fun getIntent(context: Context, section: Section): Intent =
+            Intent(context, ActivitySectionDetail::class.java).apply {
+                putExtra(Constants.KEY_SECTION_ID, section.uid)
+            }
     }
 }

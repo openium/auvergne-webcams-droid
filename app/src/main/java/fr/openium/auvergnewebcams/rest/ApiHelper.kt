@@ -55,11 +55,6 @@ class ApiHelper(val context: Context, val api: AWApi) {
                             webcam.isFavoris = wdb.isFavoris
                         }
 
-                        if (webcam.title?.contains("Guéry") == true) {
-                            Timber.d("TEST webcam hidden ${webcam.hidden}")
-                            Timber.d("TEST webcam hidden ${webcam.hidden}")
-                        }
-
                         if (webcam.hidden == null) {
                             webcam.hidden = false
                         }

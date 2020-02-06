@@ -21,7 +21,7 @@ import fr.openium.auvergnewebcams.event.eventHasNetwork
 import fr.openium.auvergnewebcams.ext.hasNetwork
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.service.DownloadWorker
-import fr.openium.auvergnewebcams.ui.webcamdetail.ViewModelWebcam
+import fr.openium.auvergnewebcams.ui.webcamDetail.ViewModelWebcamDetail
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import fr.openium.auvergnewebcams.utils.DateUtils
 import fr.openium.kotlintools.ext.gone
@@ -40,7 +40,7 @@ import timber.log.Timber
  */
 abstract class AbstractFragmentWebcam : AbstractFragment() {
 
-    protected lateinit var viewModelWebcam: ViewModelWebcam
+    protected lateinit var viewModelWebcamDetail: ViewModelWebcamDetail
 
     protected lateinit var webcam: Webcam
     private var itemMenuRefresh: MenuItem? = null
@@ -50,14 +50,14 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModelWebcam = ViewModelProvider(this).get(ViewModelWebcam::class.java)
+        viewModelWebcamDetail = ViewModelProvider(this).get(ViewModelWebcamDetail::class.java)
         setHasOptionsMenu(true)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        arguments?.getLong(Constants.KEY_ID)?.also {
+        arguments?.getLong(Constants.KEY_WEBCAM_ID)?.also {
             setListener(it)
         } ?: activity?.finish()
     }
@@ -102,7 +102,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     // ---------------------------------------------------
 
     private fun setListener(webcamId: Long) {
-        viewModelWebcam.getWebcamSingle(webcamId)
+        viewModelWebcamDetail.getWebcamSingle(webcamId)
             .fromIOToMain()
             .subscribe({
                 it.value?.let {
@@ -133,7 +133,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
 
     private fun setFavChanged(isLiked: Boolean) {
         webcam.isFavoris = isLiked
-        viewModelWebcam.updateWebcam(webcam)
+        viewModelWebcamDetail.updateWebcam(webcam)
 
         eventCameraFavoris.accept(webcam.uid)
         AnalyticsUtils.favoriteClicked(requireContext(), webcam.title ?: "", webcam.isFavoris)
@@ -172,12 +172,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
                 frameLayoutWebcamDetailHeader.show()
             }
             Configuration.ORIENTATION_PORTRAIT to State.NOT_WORKING -> {
-                if (requireContext().hasNetwork) {
-                    textViewWebcamDetailErrorMessage.text = getString(R.string.load_webcam_error)
-                } else {
-                    textViewWebcamDetailErrorMessage.text = getString(R.string.generic_no_network)
-                }
-
+                textViewWebcamDetailErrorMessage.text = getString(R.string.load_webcam_error)
                 textViewWebcamDetailErrorMessage.show()
                 frameLayoutWebcamDetailHeader.show()
             }
@@ -237,7 +232,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
                 }.build()
             )
         } else {
-            snackbar(R.string.generic_no_network, Snackbar.LENGTH_SHORT)
+            snackbar(R.string.generic_network_error, Snackbar.LENGTH_SHORT)
         }
     }
 

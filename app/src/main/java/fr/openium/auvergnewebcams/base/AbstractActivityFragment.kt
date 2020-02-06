@@ -20,6 +20,7 @@ abstract class AbstractActivityFragment : AbstractActivity() {
         onPreAddFragment()
         val fragmentManager = supportFragmentManager
         fragment = fragmentManager.findFragmentById(containerId)
+
         if (fragment == null) {
             fragment = getDefaultFragment()
             fragment?.arguments = intent?.extras

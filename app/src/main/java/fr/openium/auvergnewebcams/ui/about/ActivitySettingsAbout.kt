@@ -14,18 +14,18 @@ import kotlinx.android.synthetic.main.activity_about.*
  */
 class ActivitySettingsAbout : AbstractActivity() {
 
-    override val layoutId: Int
-        get() = R.layout.activity_about
+    override val layoutId: Int = R.layout.activity_about
 
-    override val showHomeAsUp: Boolean
-        get() = true
+    override val showHomeAsUp: Boolean = true
 
     // --- Life cycle
     // ---------------------------------------------------
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        overridePendingTransition(R.anim.animation_from_right, R.anim.animation_to_left)
 
+        // TODO Find why this is loading slowly
         webViewAbout.webChromeClient = object : WebChromeClient() {
             override fun onProgressChanged(view: WebView?, newProgress: Int) {
                 super.onProgressChanged(view, newProgress)
@@ -42,8 +42,8 @@ class ActivitySettingsAbout : AbstractActivity() {
         webViewAbout.loadUrl("file:///android_asset/about.html")
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
+    override fun finish() {
+        super.finish()
         overridePendingTransition(R.anim.animation_from_left, R.anim.animation_to_right)
     }
 }

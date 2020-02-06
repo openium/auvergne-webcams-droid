@@ -4,7 +4,7 @@ import android.content.Context
 import com.google.gson.ExclusionStrategy
 import com.google.gson.FieldAttributes
 import com.google.gson.GsonBuilder
-import fr.openium.auvergnewebcams.model.CustomClient
+import fr.openium.auvergnewebcams.model.AWClient
 import fr.openium.auvergnewebcams.rest.AWApi
 import fr.openium.auvergnewebcams.rest.MockApi
 import fr.openium.auvergnewebcams.rest.model.SectionList
@@ -42,8 +42,8 @@ object DebugModules {
     }
 
     val databaseService = Kodein.Module("Database Module") {
-        bind<CustomClient>(overrides = true) with provider {
-            CustomClient.getInstance(instance())
+        bind<AWClient>(overrides = true) with provider {
+            AWClient.getInstance(instance())
         }
     }
 

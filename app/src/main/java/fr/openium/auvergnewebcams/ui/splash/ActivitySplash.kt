@@ -14,8 +14,7 @@ import timber.log.Timber
 
 class ActivitySplash : AbstractActivity() {
 
-    override val layoutId: Int
-        get() = R.layout.activity_splash
+    override val layoutId: Int = R.layout.activity_splash
 
     private lateinit var viewModelSplash: ViewModelSplash
 
@@ -50,7 +49,6 @@ class ActivitySplash : AbstractActivity() {
 
     private fun startActivityMain() {
         startActivity<ActivityMain>()
-        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         finish()
     }
 }

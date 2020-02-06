@@ -2,8 +2,8 @@ package fr.openium.auvergnewebcams.utils
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.preference.PreferenceManager
 import androidx.core.content.edit
+import androidx.preference.PreferenceManager
 import fr.openium.kotlintools.ext.toUnixTimestamp
 
 /**
@@ -12,7 +12,7 @@ import fr.openium.kotlintools.ext.toUnixTimestamp
 class PreferencesUtils(val context: Context) {
 
     var webcamsDelayRefreshValue: Int
-        get() = getInt(KEY_WEBCAM_DELAY_REFRESH_VALUE, DEFAULT_TIME_DELAY)
+        get() = getInt(KEY_WEBCAM_DELAY_REFRESH_VALUE, DEFAULT_REFRESH_DELAY)
         set(accepted) {
             edit {
                 putInt(KEY_WEBCAM_DELAY_REFRESH_VALUE, accepted)
@@ -61,7 +61,7 @@ class PreferencesUtils(val context: Context) {
 
     var newNotifId: Int
         get() {
-            val value = getInt(KEY_WEBCAM_DELAY_REFRESH_VALUE, DEFAULT_TIME_DELAY)
+            val value = getInt(KEY_WEBCAM_DELAY_REFRESH_VALUE, DEFAULT_REFRESH_DELAY)
             newNotifId = value + 1
             return value
         }
@@ -71,40 +71,29 @@ class PreferencesUtils(val context: Context) {
             }
         }
 
-    private fun getString(key: String, defaultValue: String? = null): String? {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        return sharedPreferences.getString(key, defaultValue)
-    }
+    private fun getString(key: String, defaultValue: String? = null): String? =
+        PreferenceManager.getDefaultSharedPreferences(context).getString(key, defaultValue)
 
-    private fun getStringSet(key: String, defaultValue: MutableSet<String> = mutableSetOf()): MutableSet<String> {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        return sharedPreferences.getStringSet(key, defaultValue) ?: defaultValue
-    }
+    private fun getStringSet(key: String, defaultValue: MutableSet<String> = mutableSetOf()): MutableSet<String> =
+        PreferenceManager.getDefaultSharedPreferences(context).getStringSet(key, defaultValue) ?: defaultValue
 
-    private fun getBoolean(key: String, defaultValue: Boolean = false): Boolean {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        return sharedPreferences.getBoolean(key, defaultValue)
-    }
+    private fun getBoolean(key: String, defaultValue: Boolean = false): Boolean =
+        PreferenceManager.getDefaultSharedPreferences(context).getBoolean(key, defaultValue)
 
-    private fun getLong(key: String, defaultValue: Long = 0L): Long {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        return sharedPreferences.getLong(key, defaultValue)
-    }
+    private fun getLong(key: String, defaultValue: Long = 0L): Long =
+        PreferenceManager.getDefaultSharedPreferences(context).getLong(key, defaultValue)
 
-    private fun getInt(key: String, defaultValue: Int = 0): Int {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        return sharedPreferences.getInt(key, defaultValue)
-    }
+    private fun getInt(key: String, defaultValue: Int = 0): Int =
+        PreferenceManager.getDefaultSharedPreferences(context).getInt(key, defaultValue)
 
     private fun edit(block: SharedPreferences.Editor.() -> Unit) {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        sharedPreferences.edit {
+        PreferenceManager.getDefaultSharedPreferences(context).edit {
             block.invoke(this)
         }
     }
 
     companion object {
-        const val DEFAULT_TIME_DELAY = 10
+        const val DEFAULT_REFRESH_DELAY = 10
 
         // Common
         private const val KEY_WEBCAM_QUALITY = "KEY_WEBCAM_QUALITY"

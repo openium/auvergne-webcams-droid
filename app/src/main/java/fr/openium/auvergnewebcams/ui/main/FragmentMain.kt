@@ -6,13 +6,16 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractFragment
 import fr.openium.auvergnewebcams.model.entity.Section
 import fr.openium.auvergnewebcams.model.entity.Webcam
+import fr.openium.auvergnewebcams.ui.sectionDetail.ActivitySectionDetail
 import fr.openium.auvergnewebcams.ui.settings.ActivitySettings
-import fr.openium.auvergnewebcams.ui.webcamdetail.ActivityWebcam
+import fr.openium.auvergnewebcams.ui.webcamDetail.ActivityWebcamDetail
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
+import fr.openium.kotlintools.ext.snackbar
 import fr.openium.kotlintools.ext.startActivity
 import fr.openium.rxtools.ext.fromIOToMain
 import io.reactivex.Single
@@ -20,16 +23,17 @@ import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.fragment_main.*
 import timber.log.Timber
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 
 class FragmentMain : AbstractFragment() {
 
-    override val layoutId: Int
-        get() = R.layout.fragment_main
+    override val layoutId: Int = R.layout.fragment_main
 
     private lateinit var viewModelMain: ViewModelMain
 
-    private var adapter: AdapterSections? = null
+    private var adapterMain: AdapterMainSections? = null
 
     // --- Life cycle
     // ---------------------------------------------------
@@ -61,7 +65,6 @@ class FragmentMain : AbstractFragment() {
         return if (item.itemId == R.id.menu_settings) {
             AnalyticsUtils.settingsClicked(requireContext())
             startActivity<ActivitySettings>()
-            activity?.overridePendingTransition(R.anim.animation_from_right, R.anim.animation_to_left)
             true
         } else {
             super.onOptionsItemSelected(item)
@@ -79,22 +82,24 @@ class FragmentMain : AbstractFragment() {
     }
 
     private fun initAdapter(sections: List<Section>) {
-        if (adapter == null) {
-            adapter = AdapterSections(prefUtils, sections, {
-                // TODO add this later
+        if (adapterMain == null) {
+            adapterMain = AdapterMainSections(prefUtils, sections, {
+                AnalyticsUtils.webcamDetailsClicked(requireContext(), it.title ?: "")
+                requireContext().startActivity(ActivitySectionDetail.getIntent(requireContext(), it))
             }, {
-                startActivityWebcamDetail(it)
+                AnalyticsUtils.webcamDetailsClicked(requireContext(), it.title ?: "")
+                requireContext().startActivity(ActivityWebcamDetail.getIntent(requireContext(), it))
             })
 
             recyclerViewSections.apply {
                 layoutManager = LinearLayoutManager(context)
-                adapter = this@FragmentMain.adapter
+                adapter = adapterMain
 
-                // Some optimizations
+                // Optimize
                 setHasFixedSize(true)
             }
         } else {
-            adapter?.refreshData(sections)
+            adapterMain?.refreshData(sections)
         }
     }
 
@@ -126,20 +131,12 @@ class FragmentMain : AbstractFragment() {
             getData()
             Timber.d("Sections refreshed correctly")
         }, {
-            // TODO Show error to user
+            if (it is UnknownHostException || it is SocketTimeoutException) {
+                snackbar(R.string.generic_network_error, Snackbar.LENGTH_SHORT)
+            } else {
+                snackbar(R.string.generic_error, Snackbar.LENGTH_SHORT)
+            }
             Timber.e(it, "Error when getting sections from PTR")
         }).addTo(disposables)
-    }
-
-    private fun startActivityWebcamDetail(webcam: Webcam) {
-        AnalyticsUtils.webcamDetailsClicked(requireContext(), webcam.title ?: "")
-
-        requireContext().startActivity(
-            ActivityWebcam.getIntent(
-                requireContext(),
-                webcam
-            )
-        )
-        activity?.overridePendingTransition(R.anim.animation_from_right, R.anim.animation_to_left)
     }
 }

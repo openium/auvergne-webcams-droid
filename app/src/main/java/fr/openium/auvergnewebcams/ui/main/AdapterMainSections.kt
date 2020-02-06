@@ -17,6 +17,7 @@ import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.utils.ImageUtils
 import fr.openium.auvergnewebcams.utils.PreferencesUtils
 import fr.openium.kotlintools.ext.dip
+import kotlinx.android.synthetic.main.header_section.view.*
 import kotlinx.android.synthetic.main.item_section.view.*
 import java.util.*
 
@@ -24,7 +25,7 @@ import java.util.*
 /**
  * Created by Openium on 19/02/2019.
  */
-class AdapterSections(
+class AdapterMainSections(
     private val prefUtils: PreferencesUtils,
     private var sections: List<Section>,
     private val onSectionClicked: ((Section) -> Unit),
@@ -76,7 +77,7 @@ class AdapterSections(
 
             // Applying all settings to the RecyclerView
             holder.itemView.recyclerViewWebcams.apply {
-                adapter = AdapterSectionWebcams(prefUtils, Glide.with(holder.itemView.context), item.webcams, onWebcamClicked)
+                adapter = AdapterMainSectionWebcams(prefUtils, Glide.with(holder.itemView.context), item.webcams, onWebcamClicked)
                 layoutManager =
                     CustomScaleLayoutManager(holder.itemView.context, dip(-50f).toInt(), 5f, ScaleLayoutManager.HORIZONTAL).apply {
                         minScale = 0.7f
@@ -101,7 +102,7 @@ class AdapterSections(
                 it.onFlingListener = null
 
                 // Update webcams list
-                (it.adapter as AdapterSectionWebcams).refreshData(item.webcams)
+                (it.adapter as AdapterMainSectionWebcams).refreshData(item.webcams)
             }
         }
 
@@ -117,9 +118,7 @@ class AdapterSections(
         )
     }
 
-    override fun getItemCount(): Int {
-        return sections.size
-    }
+    override fun getItemCount(): Int = sections.size
 
     fun refreshData(sectionList: List<Section>) {
         sections = sectionList

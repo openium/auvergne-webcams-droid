@@ -1,4 +1,4 @@
-package fr.openium.auvergnewebcams.ui.webcamdetail
+package fr.openium.auvergnewebcams.ui.webcamDetail
 
 import android.content.Intent
 import android.content.res.Configuration
@@ -29,10 +29,9 @@ import kotlin.math.min
 /**
  * Created by Openium on 19/02/2019.
  */
-class FragmentWebcamImage : AbstractFragmentWebcam() {
+class FragmentWebcamDetailImage : AbstractFragmentWebcam() {
 
-    override val layoutId: Int
-        get() = R.layout.fragment_webcam_image
+    override val layoutId: Int = R.layout.fragment_webcam_image
 
     private var zoomTimer: Disposable? = null
 
@@ -88,7 +87,7 @@ class FragmentWebcamImage : AbstractFragmentWebcam() {
         zoomTimer?.dispose()
         zoomTimer = null
 
-        zoomTimer = Observable.timer(50, TimeUnit.MILLISECONDS).subscribe({
+        zoomTimer = Observable.timer(25, TimeUnit.MILLISECONDS).subscribe({
             if (bigImageViewWebcamImage.ssiv.isReady) {
                 bigImageViewWebcamImage.ssiv.animateScaleAndCenter(
                     min(bigImageViewWebcamImage.ssiv.maxScale, getZoomValue()),
@@ -170,7 +169,7 @@ class FragmentWebcamImage : AbstractFragmentWebcam() {
         if (requireContext().hasNetwork) {
             resetWebcam()
         } else {
-            snackbar(R.string.generic_no_network, Snackbar.LENGTH_SHORT)
+            snackbar(R.string.generic_network_error, Snackbar.LENGTH_SHORT)
         }
     }
 }

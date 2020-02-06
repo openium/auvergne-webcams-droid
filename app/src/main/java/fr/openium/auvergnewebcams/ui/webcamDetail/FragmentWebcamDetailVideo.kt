@@ -1,4 +1,4 @@
-package fr.openium.auvergnewebcams.ui.webcamdetail
+package fr.openium.auvergnewebcams.ui.webcamDetail
 
 import android.content.Intent
 import android.content.res.Configuration
@@ -35,10 +35,9 @@ import timber.log.Timber
 /**
  * Created by Openium on 19/02/2019.
  */
-class FragmentWebcamVideo : AbstractFragmentWebcam() {
+class FragmentWebcamDetailVideo : AbstractFragmentWebcam() {
 
-    override val layoutId: Int
-        get() = R.layout.fragment_webcam_video
+    override val layoutId: Int = R.layout.fragment_webcam_video
 
     private lateinit var player: SimpleExoPlayer
     private lateinit var mediaDataSourceFactory: DataSource.Factory
@@ -106,7 +105,6 @@ class FragmentWebcamVideo : AbstractFragmentWebcam() {
             }
 
             override fun onPlayerError(error: ExoPlaybackException) {
-                Timber.e(error, "TEST error onPlayerError")
                 if (error.sourceException is HttpDataSource.InvalidResponseCodeException) {
                     imageViewWebcamVideoLoadingError.showWithAnimationCompat()
                 }
@@ -148,6 +146,7 @@ class FragmentWebcamVideo : AbstractFragmentWebcam() {
             type = "text/plain"
             putExtra(Intent.EXTRA_TEXT, String.format("%s \n%s", webcam.title, url))
             putExtra(Intent.EXTRA_SUBJECT, webcam.title)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
 
         val chooser = Intent.createChooser(intent, getString(R.string.generic_chooser))
@@ -159,10 +158,7 @@ class FragmentWebcamVideo : AbstractFragmentWebcam() {
 
     override fun saveWebcam() {
         val urlSrc = webcam.getUrlForWebcam(canBeHD = true, canBeVideo = true)
-        val fileName = String.format(
-            "%s_%s.mp4", webcam.title
-                ?: "", System.currentTimeMillis().toString()
-        )
+        val fileName = String.format("%s_%s.mp4", webcam.title ?: "", System.currentTimeMillis().toString())
 
         startService(urlSrc, false, fileName)
     }
@@ -179,7 +175,7 @@ class FragmentWebcamVideo : AbstractFragmentWebcam() {
                     webcam.mediaViewSurfLD = pair.first
                     webcam.mediaViewSurfHD = pair.second
 
-                    viewModelWebcam.updateWebcam(webcam)
+                    viewModelWebcamDetail.updateWebcam(webcam)
 
                     webcam.mediaViewSurfLD to webcam.mediaViewSurfHD
                 }
@@ -191,7 +187,7 @@ class FragmentWebcamVideo : AbstractFragmentWebcam() {
                     resetWebcam()
                 }, { Timber.e(it) }).addTo(disposables)
         } else {
-            snackbar(R.string.generic_no_network, Snackbar.LENGTH_SHORT)
+            snackbar(R.string.generic_network_error, Snackbar.LENGTH_SHORT)
         }
     }
 }

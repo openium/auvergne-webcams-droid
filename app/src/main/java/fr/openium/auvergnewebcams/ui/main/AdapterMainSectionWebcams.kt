@@ -24,12 +24,12 @@ import kotlinx.android.synthetic.main.item_section_webcams.view.*
 /**
  * Created by Openium on 19/02/2019.
  */
-class AdapterSectionWebcams(
+class AdapterMainSectionWebcams(
     prefUtils: PreferencesUtils,
     private var glideRequest: RequestManager,
     private var webcams: List<Webcam>,
     private val onWebcamClicked: ((Webcam) -> Unit)
-) : RecyclerView.Adapter<AdapterSectionWebcams.WebcamHolder>() {
+) : RecyclerView.Adapter<AdapterMainSectionWebcams.WebcamHolder>() {
 
     private var mediaStoreSignature = MediaStoreSignature("", prefUtils.lastUpdateWebcamsTimestamp, 0)
 

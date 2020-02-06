@@ -29,14 +29,14 @@ object AnalyticsUtils {
     private const val KEY_SPECIAL_EVENTS_CONTENT_TYPE_FAVORITE = "favorite"
     private const val KEY_SPECIAL_EVENTS_CONTENT_TYPE_PROPOSE_WEBCAM = "propose_webcam"
 
-    // --- Favorite values ---
+    // --- Favorite values
     private const val KEY_SPECIAL_EVENTS_CONTENT_TYPE_IS_FAVORITE = "favorite"
     private const val KEY_SPECIAL_EVENTS_CONTENT_TYPE_IS_NOT_FAVORITE = "unfavorite"
     private const val KEY_SPECIAL_EVENTS_CONTENT_TYPE_IS_FAVORITE_FROM_SECTION = "favorite_from_section"
     private const val KEY_SPECIAL_EVENTS_CONTENT_TYPE_IS_NOT_FAVORITE_FROM_SECTION = "unfavorite_from_section"
 
-    /***
-     * UserProperties :
+    /**
+     * Propriétés utilisateur:
      * Propriété de refresh des webcams
      * Propriété du délai de refresh des webcams
      * Propriété de la qualité des webcams
@@ -47,7 +47,7 @@ object AnalyticsUtils {
         FirebaseUtils.sendFirebaseUserPropertiesWebcamQualityPreferences(context, FirebaseAnalytics.getInstance(context))
     }
 
-    /***
+    /**
      * Ouverture de l'application
      */
     fun appIsOpen(context: Context) {
@@ -55,7 +55,7 @@ object AnalyticsUtils {
         FabricUtils.logContentViewEvent(Answers.getInstance(), FirebaseAnalytics.Event.APP_OPEN)
     }
 
-    /***
+    /**
      * Clic sur la barre de recherche
      */
     fun searchStarted(context: Context) {
@@ -68,7 +68,7 @@ object AnalyticsUtils {
         FabricUtils.logContentViewEvent(Answers.getInstance(), FirebaseAnalytics.Event.SELECT_CONTENT, KEY_BUTTON, KEY_SEARCH)
     }
 
-    /***
+    /**
      * Pull-to-refresh sur l'écran
      */
     fun homeRefreshed(context: Context) {
@@ -81,7 +81,7 @@ object AnalyticsUtils {
         FabricUtils.logContentViewEvent(Answers.getInstance(), FirebaseAnalytics.Event.SELECT_CONTENT, KEY_BUTTON, KEY_HOME_REFRESH)
     }
 
-    /***
+    /**
      * Clic sur le bouton d'accès aux paramètres
      */
     fun settingsClicked(context: Context) {
@@ -94,7 +94,7 @@ object AnalyticsUtils {
         FabricUtils.logContentViewEvent(Answers.getInstance(), FirebaseAnalytics.Event.SELECT_CONTENT, KEY_BUTTON, KEY_SETTINGS)
     }
 
-    /***
+    /**
      * Clic sur une webcam pour accéder à son détail
      */
     fun webcamDetailsClicked(context: Context, webcamTitle: String) {
@@ -112,7 +112,7 @@ object AnalyticsUtils {
         )
     }
 
-    /***
+    /**
      * Clic sur une section pour accéder à la liste de toutes les webcams de cette section
      */
     fun sectionDetailsClicked(context: Context, sectionTitle: String) {
@@ -120,7 +120,7 @@ object AnalyticsUtils {
         FabricUtils.logContentViewEvent(Answers.getInstance(), FirebaseAnalytics.Event.VIEW_ITEM_LIST, sectionTitle)
     }
 
-    /***
+    /**
      * Refresh de la webcam sur son détail
      */
     fun webcamDetailRefreshed(context: Context) {
@@ -138,7 +138,7 @@ object AnalyticsUtils {
         )
     }
 
-    /***
+    /**
      * Clic sur le bouton de partage d'une webcam
      */
     fun shareWebcamClicked(context: Context) {
@@ -151,7 +151,7 @@ object AnalyticsUtils {
         FabricUtils.logContentViewEvent(Answers.getInstance(), FirebaseAnalytics.Event.SELECT_CONTENT, KEY_BUTTON, KEY_SHARE_WEBCAM)
     }
 
-    /***
+    /**
      * Clic sur le bouton d'enregistrement d'une webcam
      */
     fun saveWebcamClicked(context: Context) {
@@ -164,7 +164,7 @@ object AnalyticsUtils {
         FabricUtils.logContentViewEvent(Answers.getInstance(), FirebaseAnalytics.Event.SELECT_CONTENT, KEY_BUTTON, KEY_SAVE_WEBCAM)
     }
 
-    /***
+    /**
      * Clic sur le bouton de signalement d'une webcam
      */
     fun signalProblemClicked(context: Context) {
@@ -177,7 +177,7 @@ object AnalyticsUtils {
         FabricUtils.logContentViewEvent(Answers.getInstance(), FirebaseAnalytics.Event.SELECT_CONTENT, KEY_BUTTON, KEY_REPORT_WEBCAM_ERROR)
     }
 
-    /***
+    /**
      * Clic sur le bouton favoris d'une webcam
      */
     fun favoriteClicked(context: Context, webcamTitle: String, becameFavorite: Boolean) {
@@ -197,7 +197,7 @@ object AnalyticsUtils {
         )
     }
 
-    /***
+    /**
      * Lorsqu'une recherche a été effectué
      */
     fun searchRequestDone(context: Context, searchText: String) {
@@ -205,7 +205,7 @@ object AnalyticsUtils {
         FabricUtils.logSearchEvent(Answers.getInstance(), searchText)
     }
 
-    /***
+    /**
      * Clic sur le bouton "A propos"
      */
     fun aboutClicked(context: Context) {
@@ -218,7 +218,7 @@ object AnalyticsUtils {
         FabricUtils.logContentViewEvent(Answers.getInstance(), FirebaseAnalytics.Event.SELECT_CONTENT, KEY_BUTTON, KEY_ABOUT)
     }
 
-    /***
+    /**
      * Clic sur le bouton d'accès au site Openium
      */
     fun websiteOpeniumClicked(context: Context) {
@@ -231,7 +231,7 @@ object AnalyticsUtils {
         FabricUtils.logContentViewEvent(Answers.getInstance(), FirebaseAnalytics.Event.SELECT_CONTENT, KEY_BUTTON, KEY_WEBSITE_OPENIUM)
     }
 
-    /***
+    /**
      * Clic sur le bouton d'accès au site Les Pirates
      */
     fun lesPiratesClicked(context: Context) {
@@ -244,7 +244,7 @@ object AnalyticsUtils {
         FabricUtils.logContentViewEvent(Answers.getInstance(), FirebaseAnalytics.Event.SELECT_CONTENT, KEY_BUTTON, KEY_WEBSITE_PIRATES)
     }
 
-    /***
+    /**
      * Clic sur le bouton pour noter l'application
      */
     fun rateAppClicked(context: Context) {
@@ -257,7 +257,7 @@ object AnalyticsUtils {
         FabricUtils.logContentViewEvent(Answers.getInstance(), FirebaseAnalytics.Event.SELECT_CONTENT, KEY_BUTTON, KEY_RATE_APP)
     }
 
-    /***
+    /**
      * Clic sur le bouton de proposition d'une nouvelle webcam
      */
     fun suggestWebcamClicked(context: Context) {
@@ -265,7 +265,7 @@ object AnalyticsUtils {
         FabricUtils.logContentViewEvent(Answers.getInstance(), KEY_SPECIAL_EVENTS_CONTENT_TYPE_PROPOSE_WEBCAM)
     }
 
-    /***
+    /**
      * Clic sur le bouton pour mettre en favoris une webcam depuis le détail d'une section
      */
     fun favoriteFromSectionClicked(context: Context, webcamTitle: String, becameFavorite: Boolean) {

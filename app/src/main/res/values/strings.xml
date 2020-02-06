@@ -27,7 +27,8 @@
     <string name="generic_no_email_app">Aucune application mail n\'est disponible sur cet appareil</string>
     <string name="generic_ok">OK</string>
     <string name="generic_cancel">Annuler</string>
-    <string name="generic_no_network">Aucune connexion internet disponible</string>
+    <string name="generic_error">Une erreur est survenue</string>
+    <string name="generic_network_error">Serveur inaccessible ou connexion réseau inexistante</string>
     <string name="generic_chooser">Choisir une application</string>
 
     <!-- Settings -->

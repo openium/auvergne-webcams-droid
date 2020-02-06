@@ -42,7 +42,12 @@
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
         <activity
-            android:name=".ui.webcamdetail.ActivityWebcam"
+            android:name=".ui.webcamDetail.ActivityWebcamDetail"
+            android:configChanges="orientation|screenSize"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+
+        <activity
+            android:name=".ui.sectionDetail.ActivitySectionDetail"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 

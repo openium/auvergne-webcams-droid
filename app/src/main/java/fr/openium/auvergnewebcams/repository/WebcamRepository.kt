@@ -1,6 +1,6 @@
 package fr.openium.auvergnewebcams.repository
 
-import fr.openium.auvergnewebcams.model.CustomClient
+import fr.openium.auvergnewebcams.model.AWClient
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.utils.DateUtils
 import fr.openium.auvergnewebcams.utils.Optional
@@ -9,7 +9,7 @@ import io.reactivex.Single
 /**
  * Created by Openium on 19/02/2019.
  */
-class WebcamRepository(private val client: CustomClient) {
+class WebcamRepository(private val client: AWClient) {
 
     fun getWebcam(webcamId: Long): Webcam? =
         client.database.webcamDao().getWebcam(webcamId)
@@ -21,6 +21,9 @@ class WebcamRepository(private val client: CustomClient) {
 
     fun getWebcamsSingle(): Single<List<Webcam>> =
         client.database.webcamDao().getWebcamsSingle()
+
+    fun getWebcamsSingle(sectionId: Long): Single<List<Webcam>> =
+        client.database.webcamDao().getWebcamsSingle(sectionId)
 
     fun update(webcam: Webcam): Int =
         client.database.webcamDao().update(webcam)

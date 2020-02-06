@@ -1,4 +1,4 @@
-package fr.openium.auvergnewebcams.ui.webcamdetail
+package fr.openium.auvergnewebcams.ui.webcamDetail
 
 import android.app.Application
 import fr.openium.auvergnewebcams.base.AbstractViewModel
@@ -9,7 +9,7 @@ import io.reactivex.Single
 import org.kodein.di.generic.instance
 
 
-class ViewModelWebcam(app: Application) : AbstractViewModel(app) {
+class ViewModelWebcamDetail(app: Application) : AbstractViewModel(app) {
 
     private val webcamRepository: WebcamRepository by instance()
 

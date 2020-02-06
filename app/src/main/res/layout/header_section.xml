@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayoutSection"
+    android:layout_width="match_parent"
+    android:layout_height="74dp"
+    android:orientation="horizontal"
+    android:padding="12dp">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imageViewSection"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:adjustViewBounds="true"
+        android:scaleType="fitCenter"
+        tools:src="@drawable/goal_landscape" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textViewSectionName"
+            style="@style/FontStyleBold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            tools:text="Puy de dome" />
+
+        <TextView
+            android:id="@+id/textViewSectionNbCameras"
+            style="@style/FontStyleRegularItalic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:drawableEnd="@drawable/ic_arrow_right_grey_thin"
+            android:gravity="center"
+            android:textColor="@color/grey_text"
+            android:textSize="13sp"
+            tools:text="2 webcams" />
+
+    </LinearLayout>
+
+</LinearLayout>
