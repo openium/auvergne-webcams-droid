@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -11,6 +12,7 @@ import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractFragment
 import fr.openium.auvergnewebcams.model.entity.Section
 import fr.openium.auvergnewebcams.model.entity.Webcam
+import fr.openium.auvergnewebcams.ui.search.ActivitySearch
 import fr.openium.auvergnewebcams.ui.sectionDetail.ActivitySectionDetail
 import fr.openium.auvergnewebcams.ui.settings.ActivitySettings
 import fr.openium.auvergnewebcams.ui.webcamDetail.ActivityWebcamDetail
@@ -79,6 +81,11 @@ class FragmentMain : AbstractFragment() {
             AnalyticsUtils.homeRefreshed(requireContext())
             refreshMethod()
         }
+
+        textViewSearch.setOnClickListener {
+            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity(), textViewSearch, getString(R.string.transition_search_name))
+            startActivity<ActivitySearch>(options.toBundle())
+        }
     }
 
     private fun initAdapter(sections: List<Section>) {
@@ -105,22 +112,22 @@ class FragmentMain : AbstractFragment() {
 
     private fun getData() {
         Single.zip(
-            viewModelMain.getSectionsSingle(),
-            viewModelMain.getWebcamsSingle(),
-            BiFunction { sections: List<Section>, webcams: List<Webcam> ->
-                sections to webcams
-            })
-            .fromIOToMain()
-            .subscribe({ sectionsAndWebcams ->
-                sectionsAndWebcams.first.forEach { section ->
-                    section.webcams = sectionsAndWebcams.second.filter { it.sectionUid == section.uid }
-                }
+                viewModelMain.getSectionsSingle(),
+                viewModelMain.getWebcamsSingle(),
+                BiFunction { sections: List<Section>, webcams: List<Webcam> ->
+                    sections to webcams
+                })
+                .fromIOToMain()
+                .subscribe({ sectionsAndWebcams ->
+                    sectionsAndWebcams.first.forEach { section ->
+                        section.webcams = sectionsAndWebcams.second.filter { it.sectionUid == section.uid }
+                    }
 
-                // Init recyclerView adapter and layoutManager
-                initAdapter(sectionsAndWebcams.first)
-            }, {
-                Timber.e(it, "Error when getting sections and webcams")
-            }).addTo(disposables)
+                    // Init recyclerView adapter and layoutManager
+                    initAdapter(sectionsAndWebcams.first)
+                }, {
+                    Timber.e(it, "Error when getting sections and webcams")
+                }).addTo(disposables)
     }
 
     private fun refreshMethod() {

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey_dark"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/textViewSearch"
+        style="@style/FontStyleRegularItalic"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/grey_light"
+        android:drawableStart="@drawable/ic_search"
+        android:gravity="center_vertical"
+        android:textColor="@color/white"
+        android:textColorHint="@color/grey_very_light"
+        android:textSize="14sp"
+        android:transitionName="@string/transition_search_name"
+        app:searchIcon="@drawable/ic_search" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewSearch"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>
