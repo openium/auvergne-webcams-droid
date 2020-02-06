@@ -69,9 +69,9 @@ class AdapterSectionDetail(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (position == 0) {
+        return data[position].section?.let {
             SECTION_VIEWTYPE
-        } else WEBCAM_VIEWTYPE
+        } ?: WEBCAM_VIEWTYPE
     }
 
     override fun getItemCount(): Int = data.count()
