@@ -40,10 +40,10 @@ import timber.log.Timber
  */
 abstract class AbstractFragmentWebcam : AbstractFragment() {
 
-    protected lateinit var webcam: Webcam
-    protected var itemMenuRefresh: MenuItem? = null
-
     protected lateinit var viewModelWebcam: ViewModelWebcam
+
+    protected lateinit var webcam: Webcam
+    private var itemMenuRefresh: MenuItem? = null
 
     // --- Life cycle
     // ---------------------------------------------------
@@ -68,8 +68,8 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean =
+        when (item.itemId) {
             R.id.menu_refresh -> {
                 AnalyticsUtils.webcamDetailRefreshed(requireContext())
                 refreshWebcam()
@@ -92,7 +92,6 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)

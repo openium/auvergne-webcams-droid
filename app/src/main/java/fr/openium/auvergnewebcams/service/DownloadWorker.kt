@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Environment
+import android.os.SystemClock
 import android.provider.MediaStore
 import androidx.work.Worker
 import androidx.work.WorkerParameters
@@ -91,6 +92,7 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : Work
                     outputStream.close()
                     inputStream.close()
 
+                    SystemClock.sleep(100)
                     AppNotifier.SaveWebcamAction.downloadSuccess(applicationContext, webcamName, notifBaseId, bitmap)
                 } catch (e: Exception) {
                     Timber.e(e)
@@ -107,14 +109,14 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : Work
     }
 
     private fun getOutputStream(): OutputStream {
-        return if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-            getOutPutStreamForApiAboveAPI29() ?: getOutputStreamForApiUnderAPI29()
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            getOutPutStreamForApiAboveQ() ?: getOutputStreamForApiUnderQ()
         } else {
-            getOutputStreamForApiUnderAPI29()
+            getOutputStreamForApiUnderQ()
         }
     }
 
-    private fun getOutPutStreamForApiAboveAPI29(): OutputStream? {
+    private fun getOutPutStreamForApiAboveQ(): OutputStream? {
         val relativePath =
             if (mIsPhoto) {
                 Environment.DIRECTORY_PICTURES
@@ -139,7 +141,7 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : Work
         }
     }
 
-    private fun getOutputStreamForApiUnderAPI29(): OutputStream {
+    private fun getOutputStreamForApiUnderQ(): OutputStream {
         val directory = if (mIsPhoto) {
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
         } else {
