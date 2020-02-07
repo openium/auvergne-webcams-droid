@@ -83,7 +83,11 @@ class FragmentMain : AbstractFragment() {
         }
 
         textViewSearch.setOnClickListener {
-            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity(), textViewSearch, getString(R.string.transition_search_name))
+            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                requireActivity(),
+                textViewSearch,
+                getString(R.string.transition_search_name)
+            )
             startActivity<ActivitySearch>(options.toBundle())
         }
     }
@@ -112,22 +116,22 @@ class FragmentMain : AbstractFragment() {
 
     private fun getData() {
         Single.zip(
-                viewModelMain.getSectionsSingle(),
-                viewModelMain.getWebcamsSingle(),
-                BiFunction { sections: List<Section>, webcams: List<Webcam> ->
-                    sections to webcams
-                })
-                .fromIOToMain()
-                .subscribe({ sectionsAndWebcams ->
-                    sectionsAndWebcams.first.forEach { section ->
-                        section.webcams = sectionsAndWebcams.second.filter { it.sectionUid == section.uid }
-                    }
+            viewModelMain.getSectionsSingle(),
+            viewModelMain.getWebcamsSingle(),
+            BiFunction { sections: List<Section>, webcams: List<Webcam> ->
+                sections.sortedBy { it.order } to webcams.sortedBy { it.order }
+            })
+            .fromIOToMain()
+            .subscribe({ sectionsAndWebcams ->
+                sectionsAndWebcams.first.forEach { section ->
+                    section.webcams = sectionsAndWebcams.second.filter { it.sectionUid == section.uid }
+                }
 
-                    // Init recyclerView adapter and layoutManager
-                    initAdapter(sectionsAndWebcams.first)
-                }, {
-                    Timber.e(it, "Error when getting sections and webcams")
-                }).addTo(disposables)
+                // Init recyclerView adapter and layoutManager
+                initAdapter(sectionsAndWebcams.first)
+            }, {
+                Timber.e(it, "Error when getting sections and webcams")
+            }).addTo(disposables)
     }
 
     private fun refreshMethod() {

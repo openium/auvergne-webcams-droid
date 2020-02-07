@@ -17,14 +17,14 @@
 
     <TextView
         android:id="@+id/textViewSectionWebcamsError"
-        style="@style/FontStyleRegular"
+        style="@style/Font.Text.Regular"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:background="@color/grey_very_dark_transparent"
         android:gravity="center"
         android:padding="5dp"
-        android:textColor="@color/grey_text"
+        android:textColor="@color/grey_light"
         android:textSize="13sp"
         tools:text="@string/generic_not_up_to_date" />
 

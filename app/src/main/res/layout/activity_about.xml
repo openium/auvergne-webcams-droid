@@ -38,7 +38,7 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="130dp"
                     android:layout_height="130dp"
-                    android:src="@drawable/pdd_landscape"
+                    android:src="@drawable/categ_pdd_landscape"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -50,7 +50,7 @@
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
-                    android:src="@drawable/lioran_landscape"
+                    android:src="@drawable/categ_lioran_landscape"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.90"
@@ -61,7 +61,7 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="60dp"
                     android:layout_height="60dp"
-                    android:src="@drawable/goal_landscape"
+                    android:src="@drawable/categ_goal_landscape"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.05"
@@ -72,7 +72,7 @@
                 <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:src="@drawable/cf_landscape"
+                    android:src="@drawable/categ_cf_landscape"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.19"
@@ -83,7 +83,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
-                style="@style/FontStyleSemiBold"
+                style="@style/Font.Text.SemiBold"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -102,15 +102,15 @@
                 android:layout_marginEnd="16dp"
                 android:background="@android:color/transparent"
                 android:textColor="@color/white"
-                android:textColorLink="@color/grey_text" />
+                android:textColorLink="@color/grey_light" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="wrap_content"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:src="@drawable/logo_openium_white" />
+                android:src="@drawable/logo_openium" />
 
         </LinearLayout>
 

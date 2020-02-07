@@ -32,7 +32,7 @@
             android:layout_gravity="center"
             android:padding="24dp"
             android:visibility="gone"
-            app:srcCompat="@drawable/broken_camera" />
+            app:srcCompat="@drawable/ic_broken_camera" />
 
     </FrameLayout>
 

@@ -73,7 +73,7 @@ class AdapterMainSectionWebcams(
             .transition(DrawableTransitionOptions.withCrossFade())
             .signature(mediaStoreSignature)
             .listener(listenerGlide)
-            .error(R.drawable.broken_camera)
+            .error(R.drawable.ic_broken_camera)
             .into(holder.itemView.imageViewSectionWebcamsImage)
 
         holder.itemView.setOnClickListener {

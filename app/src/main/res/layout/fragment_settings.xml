@@ -16,7 +16,7 @@
         android:paddingBottom="24dp">
 
         <TextView
-            style="@style/FontStyleRegular"
+            style="@style/Font.Text.Regular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
@@ -27,13 +27,13 @@
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/switchSettingsRefreshDelay"
-            style="@style/FontStyleRegular"
+            style="@style/Font.Text.Regular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/settings_global_refresh"
-            android:textColor="@color/selector_color_white_to_grey"
+            android:textColor="@color/white"
             android:textSize="16sp"
             android:theme="@style/SwitchStyle" />
 
@@ -46,7 +46,7 @@
             android:orientation="horizontal">
 
             <TextView
-                style="@style/FontStyleRegular"
+                style="@style/Font.Text.Regular"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -56,10 +56,10 @@
 
             <TextView
                 android:id="@+id/textViewSettingsDelayValue"
-                style="@style/FontStyleRegular"
+                style="@style/Font.Text.Regular"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawableEnd="@drawable/selector_arrow_white_to_grey"
+                android:drawableEnd="@drawable/selector_arrow_right_small_white_to_grey"
                 android:gravity="center_vertical"
                 android:textColor="@color/selector_color_white_to_grey"
                 android:textSize="16sp"
@@ -69,18 +69,18 @@
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/switchSettingsQualityWebcams"
-            style="@style/FontStyleRegular"
+            style="@style/Font.Text.Regular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/settings_global_quality_high"
-            android:textColor="@color/selector_color_white_to_grey"
+            android:textColor="@color/white"
             android:textSize="16sp"
             android:theme="@style/SwitchStyle" />
 
         <TextView
-            style="@style/FontStyleRegular"
+            style="@style/Font.Text.Regular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
@@ -92,12 +92,12 @@
 
         <TextView
             android:id="@+id/textViewSettingsAbout"
-            style="@style/FontStyleRegular"
+            style="@style/Font.Text.Regular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:drawableEnd="@drawable/selector_arrow_white_to_grey"
+            android:drawableEnd="@drawable/selector_arrow_right_small_white_to_grey"
             android:gravity="center_vertical"
             android:text="@string/settings_credits_about"
             android:textColor="@color/selector_color_white_to_grey"
@@ -105,12 +105,12 @@
 
         <TextView
             android:id="@+id/textViewSettingsOpenium"
-            style="@style/FontStyleRegular"
+            style="@style/Font.Text.Regular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:drawableEnd="@drawable/selector_arrow_white_to_grey"
+            android:drawableEnd="@drawable/selector_arrow_right_small_white_to_grey"
             android:gravity="center_vertical"
             android:text="@string/settings_credits_openium"
             android:textColor="@color/selector_color_white_to_grey"
@@ -118,12 +118,12 @@
 
         <TextView
             android:id="@+id/textViewSettingsPirates"
-            style="@style/FontStyleRegular"
+            style="@style/Font.Text.Regular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:drawableEnd="@drawable/selector_arrow_white_to_grey"
+            android:drawableEnd="@drawable/selector_arrow_right_small_white_to_grey"
             android:gravity="center_vertical"
             android:text="@string/settings_credits_pirates"
             android:textColor="@color/selector_color_white_to_grey"
@@ -131,12 +131,12 @@
 
         <TextView
             android:id="@+id/textViewSettingsSendNewWebcam"
-            style="@style/FontStyleRegular"
+            style="@style/Font.Text.Regular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:drawableEnd="@drawable/selector_arrow_white_to_grey"
+            android:drawableEnd="@drawable/selector_arrow_right_small_white_to_grey"
             android:gravity="center_vertical"
             android:text="@string/settings_send_new_webcam"
             android:textColor="@color/selector_color_white_to_grey"
@@ -144,12 +144,12 @@
 
         <TextView
             android:id="@+id/textViewSettingsNote"
-            style="@style/FontStyleRegular"
+            style="@style/Font.Text.Regular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:drawableEnd="@drawable/selector_arrow_white_to_grey"
+            android:drawableEnd="@drawable/selector_arrow_right_small_white_to_grey"
             android:gravity="center_vertical"
             android:text="@string/settings_credits_note"
             android:textColor="@color/selector_color_white_to_grey"
@@ -157,7 +157,7 @@
 
         <TextView
             android:id="@+id/textViewSettingsVersion"
-            style="@style/FontStyleRegular"
+            style="@style/Font.Text.Regular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"

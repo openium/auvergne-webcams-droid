@@ -30,7 +30,7 @@
 
     <TextView
         android:id="@id/exo_position"
-        style="@style/FontStyleSemiBold"
+        style="@style/Font.Text.SemiBold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingStart="4dp"
@@ -43,14 +43,14 @@
         android:layout_width="0dp"
         android:layout_height="24dp"
         android:layout_weight="1"
-        app:buffered_color="@color/grey_very_light"
+        app:buffered_color="@color/grey_light"
         app:played_color="@color/white"
         app:scrubber_color="@color/blue"
-        app:unplayed_color="@color/grey_light" />
+        app:unplayed_color="@color/grey" />
 
     <TextView
         android:id="@id/exo_duration"
-        style="@style/FontStyleSemiBold"
+        style="@style/Font.Text.SemiBold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingStart="4dp"

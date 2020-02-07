@@ -79,7 +79,7 @@ class AdapterMainSections(
             holder.itemView.recyclerViewWebcams.apply {
                 adapter = AdapterMainSectionWebcams(prefUtils, Glide.with(holder.itemView.context), item.webcams, onWebcamClicked)
                 layoutManager =
-                    CustomScaleLayoutManager(holder.itemView.context, dip(-50f).toInt(), 5f, ScaleLayoutManager.HORIZONTAL).apply {
+                    CustomScaleLayoutManager(holder.itemView.context, dip(-40f).toInt(), 1f, ScaleLayoutManager.HORIZONTAL).apply {
                         minScale = 0.7f
                         minAlpha = 0.5f
                         maxAlpha = 1f

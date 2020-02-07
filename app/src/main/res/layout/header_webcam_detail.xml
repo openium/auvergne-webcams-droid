@@ -28,13 +28,13 @@
 
     <TextView
         android:id="@+id/textViewWebcamDetailLastUpdate"
-        style="@style/FontStyleRegularItalic"
+        style="@style/Font.Text.RegularItalic"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:gravity="center"
         android:padding="10dp"
-        android:textColor="@color/grey_text"
+        android:textColor="@color/grey_light"
         android:textSize="14sp"
         tools:text="Mise à jour le 13.12.19 - 15h48" />
 
