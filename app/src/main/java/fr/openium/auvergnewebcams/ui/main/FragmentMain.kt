@@ -103,7 +103,10 @@ class FragmentMain : AbstractFragment() {
             })
 
             recyclerViewSections.apply {
-                layoutManager = LinearLayoutManager(context)
+                layoutManager = LinearLayoutManager(context).apply {
+                    setItemViewCacheSize(0)
+                    recycleChildrenOnDetach = true
+                }
                 adapter = adapterMain
 
                 // Optimize

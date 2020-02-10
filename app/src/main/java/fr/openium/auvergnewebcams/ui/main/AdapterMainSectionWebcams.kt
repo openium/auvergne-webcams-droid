@@ -19,6 +19,8 @@ import fr.openium.auvergnewebcams.utils.PreferencesUtils
 import fr.openium.kotlintools.ext.gone
 import fr.openium.kotlintools.ext.show
 import kotlinx.android.synthetic.main.item_section_webcams.view.*
+import timber.log.Timber
+import java.util.concurrent.atomic.AtomicInteger
 
 
 /**
@@ -31,14 +33,19 @@ class AdapterMainSectionWebcams(
     private val onWebcamClicked: ((Webcam) -> Unit)
 ) : RecyclerView.Adapter<AdapterMainSectionWebcams.WebcamHolder>() {
 
+    companion object {
+        val number = AtomicInteger(0)
+    }
+
     private var mediaStoreSignature = MediaStoreSignature("", prefUtils.lastUpdateWebcamsTimestamp, 0)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WebcamHolder {
+        Timber.d("TEST Child creation n°${number.incrementAndGet()}")
         return WebcamHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_section_webcams, parent, false))
     }
 
     override fun onBindViewHolder(holder: WebcamHolder, position: Int) {
-        val webcam = webcams[position % webcams.size]
+        val webcam = webcams[position % webcams.count()]
 
         // Show error text if needed
         updateErrorText(webcam, holder)

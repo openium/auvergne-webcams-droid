@@ -19,7 +19,9 @@ import fr.openium.auvergnewebcams.utils.PreferencesUtils
 import fr.openium.kotlintools.ext.dip
 import kotlinx.android.synthetic.main.header_section.view.*
 import kotlinx.android.synthetic.main.item_section.view.*
+import timber.log.Timber
 import java.util.*
+import java.util.concurrent.atomic.AtomicInteger
 
 
 /**
@@ -32,11 +34,16 @@ class AdapterMainSections(
     private val onWebcamClicked: ((Webcam) -> Unit)
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
+    companion object {
+        val number = AtomicInteger(0)
+    }
+
     private val viewPool = RecyclerView.RecycledViewPool().apply {
         setMaxRecycledViews(0, 30)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        Timber.d("TEST Parent creation n°${number.incrementAndGet()}")
         return SectionHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_section, parent, false))
     }
 
@@ -79,7 +86,7 @@ class AdapterMainSections(
             holder.itemView.recyclerViewWebcams.apply {
                 adapter = AdapterMainSectionWebcams(prefUtils, Glide.with(holder.itemView.context), item.webcams, onWebcamClicked)
                 layoutManager =
-                    CustomScaleLayoutManager(holder.itemView.context, dip(-40f).toInt(), 1f, ScaleLayoutManager.HORIZONTAL).apply {
+                    CustomScaleLayoutManager(holder.itemView.context, dip(-50f).toInt(), 5f, ScaleLayoutManager.HORIZONTAL).apply {
                         minScale = 0.7f
                         minAlpha = 0.5f
                         maxAlpha = 1f
@@ -89,10 +96,14 @@ class AdapterMainSections(
                         setItemViewCacheSize(0)
                         recycleChildrenOnDetach = true
                     }
+//                    ZoomRecyclerLayout(context).apply {
+//                        orientation = RecyclerView.HORIZONTAL
+//                        setItemViewCacheSize(0)
+//                        recycleChildrenOnDetach = true
+//                    }
 
                 // Some optimization
                 setHasFixedSize(true)
-
                 setRecycledViewPool(viewPool)
             }
         } else {
@@ -112,7 +123,7 @@ class AdapterMainSections(
             SnapOnScrollListener.Behavior.NOTIFY_ON_SCROLL,
             object : SnapOnScrollListener.OnSnapPositionChangeListener {
                 override fun onSnapPositionChange(position: Int) {
-                    holder.itemView.textViewWebcamName.text = item.webcams[position].title
+                    holder.itemView.textViewWebcamName.text = item.webcams[position % item.webcams.count()].title
                 }
             }
         )
