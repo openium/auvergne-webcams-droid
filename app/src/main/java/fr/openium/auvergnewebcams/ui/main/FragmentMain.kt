@@ -17,6 +17,7 @@ import fr.openium.auvergnewebcams.ui.sectionDetail.ActivitySectionDetail
 import fr.openium.auvergnewebcams.ui.settings.ActivitySettings
 import fr.openium.auvergnewebcams.ui.webcamDetail.ActivityWebcamDetail
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
+import fr.openium.auvergnewebcams.utils.ImageUtils
 import fr.openium.kotlintools.ext.snackbar
 import fr.openium.kotlintools.ext.startActivity
 import fr.openium.rxtools.ext.fromIOToMain
@@ -27,6 +28,7 @@ import kotlinx.android.synthetic.main.fragment_main.*
 import timber.log.Timber
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import java.util.*
 
 
 class FragmentMain : AbstractFragment() {
@@ -94,9 +96,9 @@ class FragmentMain : AbstractFragment() {
 
     private fun initAdapter(sections: List<Section>) {
         if (adapterMain == null) {
-            adapterMain = AdapterMainSections(prefUtils, sections, {
-                AnalyticsUtils.webcamDetailsClicked(requireContext(), it.title ?: "")
-                requireContext().startActivity(ActivitySectionDetail.getIntent(requireContext(), it))
+            adapterMain = AdapterMainSections(prefUtils, getAdapterData(sections), { idToName ->
+                AnalyticsUtils.webcamDetailsClicked(requireContext(), idToName.second ?: "")
+                requireContext().startActivity(ActivitySectionDetail.getIntent(requireContext(), idToName.first))
             }, {
                 AnalyticsUtils.webcamDetailsClicked(requireContext(), it.title ?: "")
                 requireContext().startActivity(ActivityWebcamDetail.getIntent(requireContext(), it))
@@ -113,8 +115,42 @@ class FragmentMain : AbstractFragment() {
                 setHasFixedSize(true)
             }
         } else {
-            adapterMain?.refreshData(sections)
+            adapterMain?.refreshData(getAdapterData(sections))
         }
+    }
+
+    private fun getAdapterData(sections: List<Section>): List<AdapterMainSections.Data> {
+        val dataList = mutableListOf<AdapterMainSections.Data>()
+
+        sections.forEach {
+            // Add header
+            dataList.add(
+                AdapterMainSections.Data(
+                    AdapterMainSections.DataHeader(
+                        it.uid,
+                        it.title ?: "",
+                        ImageUtils.getImageResourceAssociatedToSection(requireContext(), it),
+                        String.format(
+                            Locale.getDefault(),
+                            resources.getQuantityString(
+                                R.plurals.nb_cameras_format,
+                                it.webcams.count(),
+                                it.webcams.count()
+                            )
+                        )
+                    )
+                )
+            )
+
+            // Add items
+            dataList.add(
+                AdapterMainSections.Data(
+                    webcams = it.webcams
+                )
+            )
+        }
+
+        return dataList
     }
 
     private fun getData() {

@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment
 import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractActivityFragment
-import fr.openium.auvergnewebcams.model.entity.Section
 
 /**
  * Created by Openium on 19/02/2019.
@@ -38,9 +37,9 @@ class ActivitySectionDetail : AbstractActivityFragment() {
 
     companion object {
 
-        fun getIntent(context: Context, section: Section): Intent =
+        fun getIntent(context: Context, sectionId: Long): Intent =
             Intent(context, ActivitySectionDetail::class.java).apply {
-                putExtra(Constants.KEY_SECTION_ID, section.uid)
+                putExtra(Constants.KEY_SECTION_ID, sectionId)
             }
     }
 }
