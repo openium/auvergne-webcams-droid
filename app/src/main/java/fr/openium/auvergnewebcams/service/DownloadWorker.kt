@@ -4,10 +4,12 @@ import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.os.SystemClock
 import android.provider.MediaStore
+import androidx.core.net.toUri
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import fr.openium.auvergnewebcams.R
@@ -18,7 +20,6 @@ import org.kodein.di.KodeinAware
 import org.kodein.di.android.closestKodein
 import org.kodein.di.generic.instance
 import timber.log.Timber
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
@@ -30,7 +31,9 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : Work
     private var mUrl: String? = null
     private var mFileName: String = ""
     private var webcamName: String = ""
+
     private var mIsPhoto: Boolean = true
+    private var mUri: Uri? = null
 
     override val kodein: Kodein by closestKodein(applicationContext)
     private val preferencesUtils: PreferencesUtils by instance()
@@ -52,8 +55,7 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : Work
 
         if (!mUrl.isNullOrEmpty()) {
 
-            val outputStream = getOutputStream()
-            val bos = ByteArrayOutputStream()
+            val oS = getOutputStream()
 
             val connection = URL(mUrl).openConnection()
             connection.connect()
@@ -61,13 +63,13 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : Work
             val contentLength = connection.contentLength
             if (contentLength > 0) {
                 try {
-                    val inputStream = connection.getInputStream()
+                    val iS = connection.getInputStream()
 
                     val buffer = ByteArray(contentLength)
                     var total = 0
 
                     var currentProgress = 0
-                    var count = inputStream.read(buffer)
+                    var count = iS.read(buffer)
 
                     while (count != -1) {
                         total += count
@@ -77,26 +79,33 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : Work
                             AppNotifier.SaveWebcamAction.downloadingFile(applicationContext, webcamName, notifBaseId, progress)
                             currentProgress = progress
                         }
-                        bos.write(buffer, 0, count)
-                        outputStream.write(buffer, 0, count)
-                        count = inputStream.read(buffer)
+                        oS.write(buffer, 0, count)
+                        count = iS.read(buffer)
                     }
 
                     // Create the bitmap
                     var bitmap: Bitmap? = null
-                    if (mIsPhoto) {
-                        val bitmapData: ByteArray = bos.toByteArray()
-                        bitmap = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.size)
+                    if (mIsPhoto && mUri != null) {
+                        applicationContext.contentResolver.openInputStream(mUri!!)?.let {
+                            bitmap = BitmapFactory.decodeStream(it)
+                            it.close()
+                        }
                     }
 
-                    outputStream.flush()
-                    outputStream.close()
-                    inputStream.close()
+                    oS.flush()
+                    oS.close()
+                    iS.close()
 
                     SystemClock.sleep(100)
 
                     Timber.d("[Worker] Finish download notification n°$notifBaseId with SUCCESS")
-                    AppNotifier.SaveWebcamAction.downloadSuccess(applicationContext, webcamName, notifBaseId, bitmap)
+                    AppNotifier.SaveWebcamAction.downloadSuccess(
+                        applicationContext,
+                        webcamName,
+                        notifBaseId,
+                        bitmap,
+                        mUri
+                    )
                 } catch (e: Exception) {
                     Timber.e(e)
 
@@ -136,17 +145,19 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : Work
             put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
         }
 
-        val uri = if (mIsPhoto) {
+        val baseUri = if (mIsPhoto) {
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         } else {
             MediaStore.Video.Media.EXTERNAL_CONTENT_URI
         }
-        return resolver.insert(uri, contentValues)?.let {
+        
+        return resolver.insert(baseUri, contentValues)?.let {
+            mUri = it
             resolver.openOutputStream(it)
         }
     }
 
-    private fun getOutputStreamForApiUnderQ(): OutputStream {
+    private fun getOutputStreamForApiUnderQ(): FileOutputStream {
         val directory = if (mIsPhoto) {
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
         } else {
@@ -155,7 +166,10 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : Work
 
         directory.mkdirs()
 
-        return FileOutputStream(File(directory, mFileName))
+        val file = File(directory, mFileName)
+        mUri = file.toUri()
+
+        return FileOutputStream(file)
     }
 
     companion object {

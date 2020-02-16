@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import androidx.core.content.pm.PackageInfoCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import fr.openium.auvergnewebcams.R
@@ -151,7 +152,8 @@ class FragmentSettings : AbstractFragment() {
     private fun initVersion() {
         try {
             requireContext().packageManager.getPackageInfo(requireContext().packageName, 0)?.also {
-                val version = getString(R.string.settings_version_format, it.versionName, it.versionCode.toString())
+                val version =
+                    getString(R.string.settings_version_format, it.versionName, PackageInfoCompat.getLongVersionCode(it).toString())
                 textViewSettingsVersion.text = version
             }
         } catch (e: PackageManager.NameNotFoundException) {

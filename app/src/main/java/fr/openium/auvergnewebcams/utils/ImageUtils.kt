@@ -10,7 +10,7 @@ import fr.openium.auvergnewebcams.model.entity.Section
 object ImageUtils {
 
     fun getImageResourceAssociatedToSection(context: Context, item: Section): Int {
-        val imageName = "categ_" + item.imageName?.replace("-", "_") ?: ""
+        val imageName = "categ_" + item.imageName?.replace("-", "_")
 
         // Return 0 if there is no image associated
         val imageResourceID = context.resources.getIdentifier(imageName, "drawable", context.packageName)

@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlin.math.abs
 
+// Keep it in project for futur test
 class ZoomRecyclerLayout(context: Context) : LinearLayoutManager(context) {
 
     companion object {

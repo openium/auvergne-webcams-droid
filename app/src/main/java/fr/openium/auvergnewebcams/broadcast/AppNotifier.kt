@@ -1,12 +1,16 @@
 package fr.openium.auvergnewebcams.broadcast
 
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.utils.NotificationUtils
+
 
 object AppNotifier {
 
@@ -18,13 +22,13 @@ object AppNotifier {
             sendNotification(context, notifBaseId, title, description, downloadProgress)
         }
 
-        fun downloadSuccess(context: Context, webcamName: String, notifBaseId: Int, savedWebcam: Bitmap?) {
+        fun downloadSuccess(context: Context, webcamName: String, notifBaseId: Int, savedWebcam: Bitmap?, savedFileUri: Uri?) {
             // Cancel progress notification
             cancel(context, notifBaseId)
 
             val title = context.getString(R.string.save_success_title)
             val description = context.getString(R.string.save_description, webcamName)
-            sendNotification(context, notifBaseId, title, description, image = savedWebcam)
+            sendNotification(context, notifBaseId, title, description, image = savedWebcam, fileUri = savedFileUri)
         }
 
         fun downloadError(context: Context, webcamName: String, notifBaseId: Int) {
@@ -47,7 +51,8 @@ object AppNotifier {
         title: String,
         description: String,
         progress: Int? = null,
-        image: Bitmap? = null
+        image: Bitmap? = null,
+        fileUri: Uri? = null
     ) {
         // Create the notification
         val builder = NotificationCompat.Builder(context, NotificationUtils.CHANNEL_ID).apply {
@@ -77,6 +82,18 @@ object AppNotifier {
                         .bigLargeIcon(null)
                 )
             } ?: setStyle(NotificationCompat.BigTextStyle().bigText(description))
+
+            fileUri?.let {
+                val galleryIntent = Intent(Intent.ACTION_VIEW, fileUri)
+                val contentIntent = PendingIntent.getActivity(
+                    context.applicationContext,
+                    0,
+                    galleryIntent,
+                    PendingIntent.FLAG_ONE_SHOT
+                )
+
+                setContentIntent(contentIntent)
+            }
         }
 
         // Init channels before notify

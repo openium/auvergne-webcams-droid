@@ -58,6 +58,11 @@ android {
             minifyEnabled false
             ext.enableCrashlytics = false
 
+            // Optimization
+            minifyEnabled = true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
             // Needed
             signingConfig signingConfigs.release
         }
@@ -105,7 +110,7 @@ dependencies {
     // --- Kotlin ---
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    // --- Android support ---
+    // --- AndroidX ---
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
     implementation 'com.google.android.material:material:1.2.0-alpha04'
@@ -118,10 +123,9 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.firebase:firebase-core:17.2.2'
 
-    // --- Android Tools ---
+    // --- Openium Tools ---
     implementation 'fr.openium:kotlin-tools:1.0.7'
     implementation 'fr.openium:rx-tools:1.0.4'
-    implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
 
     // --- KTX ---
     implementation 'androidx.core:core-ktx:1.2.0'
@@ -135,6 +139,7 @@ dependencies {
     implementation 'com.jakewharton.rxbinding3:rxbinding:3.1.0'
     implementation 'com.jakewharton.rxbinding3:rxbinding-appcompat:3.1.0'
     implementation 'com.jakewharton.rxrelay2:rxrelay:2.1.1'
+    implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
 
     // --- Retrofit ---
     implementation 'com.squareup.retrofit2:retrofit:2.6.2'
@@ -179,8 +184,8 @@ dependencies {
     implementation 'com.github.piasy:BigImageViewer:1.6.2'
     implementation 'com.github.piasy:GlideImageLoader:1.6.2'
 
-    // Alternative LayoutManager
-    implementation 'rouchuan.viewpagerlayoutmanager:viewpagerlayoutmanager:2.0.22'
+    // ViewPagerLayoutManager
+    implementation(name: 'viewpagerlayoutmanager-release', ext: 'aar')
 
     // ExoPlayer
     implementation 'com.google.android.exoplayer:exoplayer:2.11.1'

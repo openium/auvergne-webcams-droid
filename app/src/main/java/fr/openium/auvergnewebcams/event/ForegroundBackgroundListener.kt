@@ -47,7 +47,7 @@ class ForegroundBackgroundListener(val context: Context) : LifecycleObserver, Ko
 
         eventRefreshDelayValueChanged.subscribe({
             setTimer()
-        }, { Timber.e(it, "Error listening to refresh value changed in background") }).addTo(disposables)
+        }, { Timber.e(it, "Error listening to refresh value change in background") }).addTo(disposables)
 
         // Register to network connectivity changes
         context.registerReceiver(networkReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))

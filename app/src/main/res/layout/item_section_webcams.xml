@@ -6,8 +6,8 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imageViewSectionWebcamsImage"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_width="290dp"
+        android:layout_height="150dp" />
 
     <ProgressBar
         android:id="@+id/progressBarSectionWebcams"
@@ -18,7 +18,7 @@
     <TextView
         android:id="@+id/textViewSectionWebcamsError"
         style="@style/Font.Text.Regular"
-        android:layout_width="match_parent"
+        android:layout_width="290dp"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:background="@color/grey_very_dark_transparent"
