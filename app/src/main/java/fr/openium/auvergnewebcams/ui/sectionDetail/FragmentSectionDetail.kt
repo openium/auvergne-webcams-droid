@@ -75,7 +75,7 @@ class FragmentSectionDetail : AbstractFragment() {
 
     private fun initAdapter() {
         if (adapterSectionDetail == null) {
-            adapterSectionDetail = AdapterSectionDetail(prefUtils, Glide.with(requireContext()), getData()) {
+            adapterSectionDetail = AdapterSectionDetail(prefUtils, dateUtils, Glide.with(requireContext()), getData()) {
                 AnalyticsUtils.webcamDetailsClicked(requireContext(), it.title ?: "")
                 requireContext().startActivity(ActivityWebcamDetail.getIntent(requireContext(), it))
             }

@@ -43,7 +43,8 @@ class Webcam {
             if (canBeHD && !imageHD.isNullOrBlank()) imageHD ?: "" else imageLD ?: ""
         }
 
-    fun isUpToDate(): Boolean = if (lastUpdate != null && lastUpdate!! > 0L) !DateUtils.isMoreThan48Hour(lastUpdate!!) else true
+    fun isUpToDate(dateUtils: DateUtils): Boolean =
+        if (lastUpdate != null && lastUpdate!! > 0L) !dateUtils.isMoreThan48Hour(lastUpdate!!) else true
 
     enum class WebcamType(val nameType: String) {
         IMAGE("image"),

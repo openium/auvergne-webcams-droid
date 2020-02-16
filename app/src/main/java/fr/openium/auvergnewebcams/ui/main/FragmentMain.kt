@@ -96,8 +96,8 @@ class FragmentMain : AbstractFragment() {
 
     private fun initAdapter(sections: List<Section>) {
         if (adapterMain == null) {
-            adapterMain = AdapterMainSections(prefUtils, getAdapterData(sections), { idToName ->
-                AnalyticsUtils.webcamDetailsClicked(requireContext(), idToName.second ?: "")
+            adapterMain = AdapterMainSections(prefUtils, dateUtils, getAdapterData(sections), { idToName ->
+                AnalyticsUtils.webcamDetailsClicked(requireContext(), idToName.second)
                 requireContext().startActivity(ActivitySectionDetail.getIntent(requireContext(), idToName.first))
             }, {
                 AnalyticsUtils.webcamDetailsClicked(requireContext(), it.title ?: "")

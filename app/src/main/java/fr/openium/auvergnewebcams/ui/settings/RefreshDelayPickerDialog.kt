@@ -15,44 +15,37 @@ import fr.openium.auvergnewebcams.utils.PreferencesUtils
  */
 class RefreshDelayPickerDialog : AbstractDialog() {
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = Dialog(requireContext())
-        dialog.setContentView(R.layout.dialog_refresh_delay_picker)
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
+        Dialog(requireContext()).apply {
+            setContentView(R.layout.dialog_refresh_delay_picker)
 
-        val numberPicker = dialog.findViewById<NumberPicker>(R.id.numberPickerDialogRefreshDelay)
-        val value = arguments?.getInt(Constants.KEY_DELAY_VALUE, PreferencesUtils.DEFAULT_REFRESH_DELAY) ?: PreferencesUtils.DEFAULT_REFRESH_DELAY
+            val delayValue = arguments?.getInt(Constants.KEY_DELAY_VALUE, PreferencesUtils.DEFAULT_REFRESH_DELAY)
+                ?: PreferencesUtils.DEFAULT_REFRESH_DELAY
 
-        numberPicker.postDelayed({
-            //TODO check
-            numberPicker.value = value
-        }, 0)
+            val numberPicker = findViewById<NumberPicker>(R.id.numberPickerDialogRefreshDelay).apply {
+                minValue = MIN_VALUE
+                maxValue = MAX_VALUE
+                value = delayValue
+            }
 
-        numberPicker.minValue = MIN_VALUE
-        numberPicker.maxValue = MAX_VALUE
+            findViewById<Button>(R.id.buttonCancelDialogRefreshDelay).setOnClickListener { dismiss() }
 
-        val buttonCancel = dialog.findViewById<Button>(R.id.buttonCancelDialogRefreshDelay)
-        buttonCancel.setOnClickListener { dismiss() }
-
-        val buttonOk = dialog.findViewById<Button>(R.id.buttonOkDialogRefreshDelay)
-        buttonOk.setOnClickListener {
-            eventNewRefreshDelayValue.accept(numberPicker.value)
-            dismiss()
+            findViewById<Button>(R.id.buttonOkDialogRefreshDelay).setOnClickListener {
+                eventNewRefreshDelayValue.accept(numberPicker.value)
+                dismiss()
+            }
         }
-
-        return dialog
-    }
 
     companion object {
 
         private const val MIN_VALUE = 1
         private const val MAX_VALUE = 120
 
-        fun newInstance(currentValue: Int): RefreshDelayPickerDialog {
-            return RefreshDelayPickerDialog().apply {
+        fun newInstance(currentValue: Int): RefreshDelayPickerDialog =
+            RefreshDelayPickerDialog().apply {
                 arguments = Bundle().apply {
                     putInt(Constants.KEY_DELAY_VALUE, currentValue)
                 }
             }
-        }
     }
 }

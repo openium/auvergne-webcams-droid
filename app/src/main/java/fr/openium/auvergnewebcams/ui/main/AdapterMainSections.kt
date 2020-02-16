@@ -13,6 +13,7 @@ import fr.openium.auvergnewebcams.custom.CustomScaleLayoutManager
 import fr.openium.auvergnewebcams.custom.SnapOnScrollListener
 import fr.openium.auvergnewebcams.ext.attachSnapHelperWithListener
 import fr.openium.auvergnewebcams.model.entity.Webcam
+import fr.openium.auvergnewebcams.utils.DateUtils
 import fr.openium.auvergnewebcams.utils.PreferencesUtils
 import fr.openium.kotlintools.ext.dip
 import kotlinx.android.synthetic.main.header_section.view.*
@@ -24,6 +25,7 @@ import kotlinx.android.synthetic.main.item_section.view.*
  */
 class AdapterMainSections(
     private val prefUtils: PreferencesUtils,
+    private val dateUtils: DateUtils,
     private var data: List<Data>,
     private val onHeaderClicked: ((Pair<Long, String>) -> Unit),
     private val onItemClicked: ((Webcam) -> Unit)
@@ -41,8 +43,8 @@ class AdapterMainSections(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
-            HEADER_VIEW_TYPE -> HeaderHolder(inflater.inflate(R.layout.header_section, parent, false)) // TODO
-            ITEM_VIEW_TYPE -> ItemHolder(inflater.inflate(R.layout.item_section, parent, false)) // TODO
+            HEADER_VIEW_TYPE -> HeaderHolder(inflater.inflate(R.layout.header_section, parent, false))
+            ITEM_VIEW_TYPE -> ItemHolder(inflater.inflate(R.layout.item_section, parent, false))
             else -> error("Unknown view type $viewType")
         }
     }
@@ -50,7 +52,7 @@ class AdapterMainSections(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is HeaderHolder -> holder.bindView(data[position].header, onHeaderClicked)
-            is ItemHolder -> holder.bindView(data[position].webcams, onItemClicked, viewPool, prefUtils)
+            is ItemHolder -> holder.bindView(data[position].webcams, onItemClicked, viewPool, prefUtils, dateUtils)
             else -> {
                 // Nothing to do
             }
@@ -95,7 +97,8 @@ class AdapterMainSections(
             webcamList: List<Webcam>?,
             onItemClicked: (Webcam) -> Unit,
             viewPool: RecyclerView.RecycledViewPool,
-            prefUtils: PreferencesUtils
+            prefUtils: PreferencesUtils,
+            dateUtils: DateUtils
         ) {
             webcamList?.let { webcams ->
                 // Create and set adapter only if this is not already done
@@ -103,7 +106,7 @@ class AdapterMainSections(
 
                     // Applying all settings to the RecyclerView
                     itemView.recyclerViewWebcams.apply {
-                        adapter = AdapterMainSectionWebcams(prefUtils, Glide.with(itemView.context), webcams, onItemClicked)
+                        adapter = AdapterMainSectionWebcams(prefUtils, dateUtils, Glide.with(itemView.context), webcams, onItemClicked)
                         layoutManager =
                             CustomScaleLayoutManager(itemView.context, dip(-40f).toInt(), 5f, ScaleLayoutManager.HORIZONTAL).apply {
                                 minScale = 0.7f

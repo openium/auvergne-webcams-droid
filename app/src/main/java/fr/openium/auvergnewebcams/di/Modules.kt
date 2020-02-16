@@ -12,6 +12,7 @@ import fr.openium.auvergnewebcams.repository.SectionRepository
 import fr.openium.auvergnewebcams.repository.WebcamRepository
 import fr.openium.auvergnewebcams.rest.AWApi
 import fr.openium.auvergnewebcams.rest.ApiHelper
+import fr.openium.auvergnewebcams.utils.DateUtils
 import fr.openium.auvergnewebcams.utils.PreferencesUtils
 import okhttp3.Cache
 import okhttp3.HttpUrl
@@ -42,6 +43,10 @@ object Modules {
 
         bind<LifecycleObserver>("foregroundListener") with provider {
             ForegroundBackgroundListener(instance())
+        }
+
+        bind<DateUtils>() with singleton {
+            DateUtils(instance())
         }
     }
 
@@ -96,6 +101,6 @@ object Modules {
 
     val repositoryModule = Kodein.Module("Repository Module") {
         bind<SectionRepository>() with provider { SectionRepository(instance(), instance(), instance()) }
-        bind<WebcamRepository>() with provider { WebcamRepository(instance()) }
+        bind<WebcamRepository>() with provider { WebcamRepository(instance(), instance()) }
     }
 }

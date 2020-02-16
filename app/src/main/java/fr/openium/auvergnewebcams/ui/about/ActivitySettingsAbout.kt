@@ -25,15 +25,12 @@ class ActivitySettingsAbout : AbstractActivity() {
         super.onCreate(savedInstanceState)
         overridePendingTransition(R.anim.animation_from_right, R.anim.animation_to_left)
 
-        // TODO Find why this is loading slowly
         webViewAbout.webChromeClient = object : WebChromeClient() {
             override fun onProgressChanged(view: WebView?, newProgress: Int) {
                 super.onProgressChanged(view, newProgress)
 
                 if (newProgress == 100) {
-                    frameLayoutAboutProgress.postDelayed({
-                        frameLayoutAboutProgress?.gone()
-                    }, 200)
+                    frameLayoutAboutProgress?.gone()
                 }
             }
         }

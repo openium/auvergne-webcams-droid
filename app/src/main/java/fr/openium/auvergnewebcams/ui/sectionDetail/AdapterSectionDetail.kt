@@ -17,6 +17,7 @@ import com.bumptech.glide.signature.MediaStoreSignature
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.model.entity.Section
 import fr.openium.auvergnewebcams.model.entity.Webcam
+import fr.openium.auvergnewebcams.utils.DateUtils
 import fr.openium.auvergnewebcams.utils.ImageUtils
 import fr.openium.auvergnewebcams.utils.PreferencesUtils
 import fr.openium.kotlintools.ext.gone
@@ -31,6 +32,7 @@ import java.util.*
  */
 class AdapterSectionDetail(
     prefUtils: PreferencesUtils,
+    private val dateUtils: DateUtils,
     private var glideRequest: RequestManager,
     private var data: List<Data>,
     private val onWebcamClicked: ((Webcam) -> Unit)
@@ -60,7 +62,7 @@ class AdapterSectionDetail(
                 holder.bindView(item.section)
             }
             is WebcamHolder -> {
-                holder.bindView(item.webcam, onWebcamClicked, glideRequest, mediaStoreSignature)
+                holder.bindView(item.webcam, onWebcamClicked, glideRequest, mediaStoreSignature, dateUtils)
             }
             else -> {
 
@@ -124,13 +126,14 @@ class AdapterSectionDetail(
             webcam: Webcam?,
             onWebcamClicked: (Webcam) -> Unit,
             glideRequest: RequestManager,
-            mediaStoreSignature: MediaStoreSignature
+            mediaStoreSignature: MediaStoreSignature,
+            dateUtils: DateUtils
         ) {
             webcam?.let {
                 itemView.textViewWebcamName.text = webcam.title ?: ""
 
                 // Show error text if needed
-                updateErrorText(webcam)
+                updateErrorText(dateUtils, webcam)
 
                 val listenerGlide = object : RequestListener<Drawable> {
 
@@ -142,7 +145,7 @@ class AdapterSectionDetail(
                         isFirst: Boolean
                     ): Boolean {
                         itemView.imageViewWebcamImage.scaleType = ImageView.ScaleType.CENTER_CROP
-                        updateErrorText(webcam)
+                        updateErrorText(dateUtils, webcam)
                         itemView.progressBarWebcam.gone()
                         return false
                     }
@@ -154,7 +157,7 @@ class AdapterSectionDetail(
                         isFirstResource: Boolean
                     ): Boolean {
                         itemView.imageViewWebcamImage.scaleType = ImageView.ScaleType.CENTER_INSIDE
-                        updateErrorText(webcam, true)
+                        updateErrorText(dateUtils, webcam, true)
                         itemView.progressBarWebcam.gone()
                         return false
                     }
@@ -173,13 +176,13 @@ class AdapterSectionDetail(
             }
         }
 
-        private fun updateErrorText(webcam: Webcam, isFullError: Boolean = false) {
+        private fun updateErrorText(dateUtils: DateUtils, webcam: Webcam, isFullError: Boolean = false) {
             when {
                 isFullError -> {
                     itemView.textViewWebcamError.text = itemView.context.getString(R.string.load_webcam_error)
                     itemView.textViewWebcamError.show()
                 }
-                webcam.isUpToDate() -> {
+                webcam.isUpToDate(dateUtils) -> {
                     itemView.textViewWebcamError.gone()
                 }
                 else -> {

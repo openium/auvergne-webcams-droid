@@ -15,12 +15,11 @@ import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.signature.MediaStoreSignature
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.model.entity.Webcam
+import fr.openium.auvergnewebcams.utils.DateUtils
 import fr.openium.auvergnewebcams.utils.PreferencesUtils
 import fr.openium.kotlintools.ext.gone
 import fr.openium.kotlintools.ext.show
 import kotlinx.android.synthetic.main.item_section_webcams.view.*
-import timber.log.Timber
-import java.util.concurrent.atomic.AtomicInteger
 
 
 /**
@@ -28,19 +27,15 @@ import java.util.concurrent.atomic.AtomicInteger
  */
 class AdapterMainSectionWebcams(
     prefUtils: PreferencesUtils,
+    private val dateUtils: DateUtils,
     private var glideRequest: RequestManager,
     private var webcams: List<Webcam>,
     private val onWebcamClicked: ((Webcam) -> Unit)
 ) : RecyclerView.Adapter<AdapterMainSectionWebcams.WebcamHolder>() {
 
-    companion object {
-        val number = AtomicInteger(0)
-    }
-
     private var mediaStoreSignature = MediaStoreSignature("", prefUtils.lastUpdateWebcamsTimestamp, 0)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WebcamHolder {
-        Timber.d("TEST Child creation n°${number.incrementAndGet()}")
         return WebcamHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_section_webcams, parent, false))
     }
 
@@ -94,7 +89,7 @@ class AdapterMainSectionWebcams(
                 holder.itemView.textViewSectionWebcamsError.text = holder.itemView.context.getString(R.string.load_webcam_error)
                 holder.itemView.textViewSectionWebcamsError.show()
             }
-            webcam.isUpToDate() -> {
+            webcam.isUpToDate(dateUtils) -> {
                 holder.itemView.textViewSectionWebcamsError.gone()
             }
             else -> {

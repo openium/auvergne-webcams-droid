@@ -23,7 +23,6 @@ import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.service.DownloadWorker
 import fr.openium.auvergnewebcams.ui.webcamDetail.ViewModelWebcamDetail
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
-import fr.openium.auvergnewebcams.utils.DateUtils
 import fr.openium.kotlintools.ext.gone
 import fr.openium.kotlintools.ext.setTitle
 import fr.openium.kotlintools.ext.show
@@ -140,7 +139,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     }
 
     private fun getState(): State = when {
-        webcam.isUpToDate() -> State.LOADED_UP_TO_DATE
+        webcam.isUpToDate(dateUtils) -> State.LOADED_UP_TO_DATE
         else -> State.LOADED_NOT_UP_TO_DATE
     }
 
@@ -154,7 +153,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
 
         // Last update date
         if (webcam.lastUpdate ?: 0 > 0L) {
-            val date = DateUtils.getDateInFullFormat(webcam.lastUpdate ?: 0)
+            val date = dateUtils.getDateInFullFormat(webcam.lastUpdate ?: 0)
             textViewWebcamDetailLastUpdate.text = getString(R.string.generic_last_update_format, date)
             textViewWebcamDetailLastUpdate.show()
         } else {
@@ -194,7 +193,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
                             saveWebcam()
                         }
                         permission.shouldShowRequestPermissionRationale -> {
-                            // We can ask again // TODO
+                            // We can ask again
                         }
                         else -> {
                             // Denied forever

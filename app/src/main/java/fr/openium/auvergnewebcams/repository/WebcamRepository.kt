@@ -9,7 +9,7 @@ import io.reactivex.Single
 /**
  * Created by Openium on 19/02/2019.
  */
-class WebcamRepository(private val client: AWClient) {
+class WebcamRepository(private val client: AWClient, private val dateUtils: DateUtils) {
 
     fun getWebcam(webcamId: Long): Webcam? =
         client.database.webcamDao().getWebcam(webcamId)
@@ -46,7 +46,7 @@ class WebcamRepository(private val client: AWClient) {
     fun updateLastUpdateDate(lastModified: String, urlMedia: String) {
         getWebcamWithPartialUrl(urlMedia)?.let {
             if (!lastModified.isBlank()) {
-                val newTime = DateUtils.parseDateGMT(lastModified)
+                val newTime = dateUtils.parseDateGMT(lastModified)
 
                 if (it.lastUpdate == null || newTime != it.lastUpdate!!) {
                     it.lastUpdate = newTime

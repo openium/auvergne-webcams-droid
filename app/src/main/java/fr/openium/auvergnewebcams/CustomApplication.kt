@@ -11,7 +11,6 @@ import fr.openium.auvergnewebcams.custom.CustomGlideImageLoader
 import fr.openium.auvergnewebcams.di.Modules
 import fr.openium.auvergnewebcams.log.CrashReportingTree
 import fr.openium.auvergnewebcams.repository.WebcamRepository
-import fr.openium.auvergnewebcams.utils.DateUtils
 import io.fabric.sdk.android.Fabric
 import okhttp3.OkHttpClient
 import org.kodein.di.Kodein
@@ -20,7 +19,6 @@ import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
 import org.kodein.di.generic.singleton
 import timber.log.Timber
-import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 /**
@@ -39,15 +37,8 @@ abstract class CustomApplication : Application(), KodeinAware {
         import(Modules.repositoryModule)
     }
 
-    private val backgroundExecutor = Executors.newCachedThreadPool()
-
     override fun onCreate() {
         super.onCreate()
-
-        // TODO move that in DI
-        backgroundExecutor.submit {
-            DateUtils.init(applicationContext)
-        }
 
         initializeCrashlytics()
         plantTimber()

@@ -9,16 +9,12 @@ import java.util.*
 /**
  * Created by Openium on 19/02/2019.
  */
-object DateUtils {
+class DateUtils(context: Context) {
 
-    private lateinit var dateFullFormat: SimpleDateFormat
-    private lateinit var dateFormatGMT: SimpleDateFormat
-
-    fun init(context: Context) {
-        dateFullFormat = SimpleDateFormat(context.getString(R.string.date_full_format), Locale.getDefault())
-        dateFormatGMT = SimpleDateFormat("E, d MMM yyyy HH:mm:ss 'GMT'", Locale.US)
-        dateFormatGMT.timeZone = TimeZone.getTimeZone("GMT")
-    }
+    private var dateFullFormat: SimpleDateFormat =
+        SimpleDateFormat(context.getString(R.string.date_full_format), Locale.getDefault())
+    private var dateFormatGMT: SimpleDateFormat =
+        SimpleDateFormat("E, d MMM yyyy HH:mm:ss 'GMT'", Locale.US).apply { timeZone = TimeZone.getTimeZone("GMT") }
 
     fun getDateInFullFormat(date: Long): String = dateFullFormat.format(Date(date))
 
