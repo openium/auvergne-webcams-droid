@@ -2,7 +2,6 @@ package fr.openium.auvergnewebcams.model.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import fr.openium.auvergnewebcams.utils.DateUtils
 
 /**
  * Created by Openium on 19/02/2019.
@@ -42,9 +41,6 @@ class Webcam {
             // Load LD/HD image
             if (canBeHD && !imageHD.isNullOrBlank()) imageHD ?: "" else imageLD ?: ""
         }
-
-    fun isUpToDate(dateUtils: DateUtils): Boolean =
-        if (lastUpdate != null && lastUpdate!! > 0L) !dateUtils.isMoreThan48Hour(lastUpdate!!) else true
 
     enum class WebcamType(val nameType: String) {
         IMAGE("image"),

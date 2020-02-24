@@ -1,5 +1,6 @@
 package fr.openium.auvergnewebcams.ui.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -18,6 +19,7 @@ import fr.openium.auvergnewebcams.ui.settings.ActivitySettings
 import fr.openium.auvergnewebcams.ui.webcamDetail.ActivityWebcamDetail
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import fr.openium.auvergnewebcams.utils.ImageUtils
+import fr.openium.kotlintools.ext.applicationContext
 import fr.openium.kotlintools.ext.snackbar
 import fr.openium.kotlintools.ext.startActivity
 import fr.openium.rxtools.ext.fromIOToMain
@@ -90,7 +92,7 @@ class FragmentMain : AbstractFragment() {
                 textViewSearch,
                 getString(R.string.transition_search_name)
             )
-            startActivity<ActivitySearch>(options.toBundle())
+            startActivity(Intent(applicationContext, ActivitySearch::class.java), options.toBundle())
         }
     }
 

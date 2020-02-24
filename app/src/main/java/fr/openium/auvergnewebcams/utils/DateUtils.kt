@@ -11,6 +11,10 @@ import java.util.*
  */
 class DateUtils(context: Context) {
 
+    companion object {
+        const val DELAY_VALUE_BEFORE_OUTDATED = 2 * 24 * 60 * 60 * 1000L
+    }
+
     private var dateFullFormat: SimpleDateFormat =
         SimpleDateFormat(context.getString(R.string.date_full_format), Locale.getDefault())
     private var dateFormatGMT: SimpleDateFormat =
@@ -18,7 +22,10 @@ class DateUtils(context: Context) {
 
     fun getDateInFullFormat(date: Long): String = dateFullFormat.format(Date(date))
 
-    fun isMoreThan48Hour(time: Long): Boolean = System.currentTimeMillis() - time > 2 * 24 * 60 * 60 * 1000
+    fun isUpToDate(lastUpdateTime: Long?): Boolean {
+        val time = lastUpdateTime ?: 0L
+        return if (time == 0L) true else System.currentTimeMillis() - time <= DELAY_VALUE_BEFORE_OUTDATED
+    }
 
     fun parseDateGMT(date: String): Long? = try {
         dateFormatGMT.parse(date)?.time

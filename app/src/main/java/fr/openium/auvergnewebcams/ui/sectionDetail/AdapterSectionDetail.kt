@@ -182,7 +182,7 @@ class AdapterSectionDetail(
                     itemView.textViewWebcamError.text = itemView.context.getString(R.string.load_webcam_error)
                     itemView.textViewWebcamError.show()
                 }
-                webcam.isUpToDate(dateUtils) -> {
+                dateUtils.isUpToDate(webcam.lastUpdate) -> {
                     itemView.textViewWebcamError.gone()
                 }
                 else -> {

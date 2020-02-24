@@ -139,7 +139,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     }
 
     private fun getState(): State = when {
-        webcam.isUpToDate(dateUtils) -> State.LOADED_UP_TO_DATE
+        dateUtils.isUpToDate(webcam.lastUpdate) -> State.LOADED_UP_TO_DATE
         else -> State.LOADED_NOT_UP_TO_DATE
     }
 

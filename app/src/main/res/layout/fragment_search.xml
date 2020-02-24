@@ -10,15 +10,24 @@
         android:id="@+id/textViewSearch"
         style="@style/Font.Text.RegularItalic"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="?attr/actionBarSize"
         android:background="@color/grey"
         android:drawableStart="@drawable/ic_search"
         android:gravity="center_vertical"
         android:textColor="@color/white"
         android:textColorHint="@color/grey_light"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:transitionName="@string/transition_search_name"
         app:searchIcon="@drawable/ic_search" />
+
+    <TextView
+        android:id="@+id/textViewSearchResult"
+        style="@style/Font.Text.Regular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="10dp"
+        android:textSize="14sp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewSearch"

@@ -39,7 +39,6 @@ class CustomGlideImageLoader private constructor(val context: Context, okHttpCli
                     GetImageWebcamAsyncTask(response, callback, it).execute()
                 }
             }
-
         })
     }
 

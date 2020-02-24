@@ -6,6 +6,7 @@ import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.custom.LastUpdateDateInterceptor
 import fr.openium.auvergnewebcams.event.ForegroundBackgroundListener
 import fr.openium.auvergnewebcams.model.AWClient
 import fr.openium.auvergnewebcams.repository.SectionRepository
@@ -37,16 +38,31 @@ object Modules {
     }
 
     val serviceModule = Kodein.Module("Service Module") {
-        bind<Glide>() with singleton {
-            Glide.get(instance())
-        }
-
         bind<LifecycleObserver>("foregroundListener") with provider {
             ForegroundBackgroundListener(instance())
         }
 
         bind<DateUtils>() with singleton {
             DateUtils(instance())
+        }
+    }
+
+    val glideModule = Kodein.Module("Glide Module") {
+        bind<Glide>() with singleton {
+            Glide.get(instance())
+        }
+
+        bind<OkHttpClient>("glide") with provider {
+            OkHttpClient.Builder()
+                .retryOnConnectionFailure(true)
+                .addInterceptor(instance<LastUpdateDateInterceptor>("glide"))
+                .readTimeout(10, TimeUnit.MINUTES)
+                .writeTimeout(10, TimeUnit.MINUTES)
+                .build()
+        }
+
+        bind<LastUpdateDateInterceptor>("glide") with singleton {
+            LastUpdateDateInterceptor(instance())
         }
     }
 

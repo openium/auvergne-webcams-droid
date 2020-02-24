@@ -14,9 +14,4 @@ class ActivitySearch : AbstractActivityFragment() {
     override val showHomeAsUp: Boolean = true
 
     override fun getDefaultFragment(): Fragment? = FragmentSearch()
-
-    // --- Life cycle
-    // ---------------------------------------------------
-
-
 }

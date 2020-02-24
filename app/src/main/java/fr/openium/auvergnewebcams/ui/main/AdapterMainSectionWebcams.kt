@@ -19,7 +19,9 @@ import fr.openium.auvergnewebcams.utils.DateUtils
 import fr.openium.auvergnewebcams.utils.PreferencesUtils
 import fr.openium.kotlintools.ext.gone
 import fr.openium.kotlintools.ext.show
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.item_section_webcams.view.*
+import timber.log.Timber
 
 
 /**
@@ -34,6 +36,11 @@ class AdapterMainSectionWebcams(
 ) : RecyclerView.Adapter<AdapterMainSectionWebcams.WebcamHolder>() {
 
     private var mediaStoreSignature = MediaStoreSignature("", prefUtils.lastUpdateWebcamsTimestamp, 0)
+    private val disposables = CompositeDisposable()
+
+    init {
+        Timber.d("TEST disposables created")
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WebcamHolder {
         return WebcamHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_section_webcams, parent, false))
@@ -43,7 +50,7 @@ class AdapterMainSectionWebcams(
         val webcam = webcams[position % webcams.count()]
 
         // Show error text if needed
-        updateErrorText(webcam, holder)
+        updateErrorText(webcam.lastUpdate, holder)
 
         // Show the progressBar
         holder.itemView.progressBarSectionWebcams.show()
@@ -58,20 +65,20 @@ class AdapterMainSectionWebcams(
                 isFirst: Boolean
             ): Boolean {
                 holder.itemView.imageViewSectionWebcamsImage.scaleType = ImageView.ScaleType.CENTER_CROP
-                updateErrorText(webcam, holder)
+                updateErrorText(webcam.lastUpdate, holder)
                 holder.itemView.progressBarSectionWebcams.gone()
                 return false
             }
 
             override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
                 holder.itemView.imageViewSectionWebcamsImage.scaleType = ImageView.ScaleType.CENTER_INSIDE
-                updateErrorText(webcam, holder, true)
+                updateErrorText(webcam.lastUpdate, holder, true)
                 holder.itemView.progressBarSectionWebcams.gone()
                 return false
             }
         }
 
-        glideRequest.load(webcam.getUrlForWebcam(canBeHD = false, canBeVideo = false))
+        glideRequest.load(webcam.getUrlForWebcam(canBeHD = true, canBeVideo = false))
             .transition(DrawableTransitionOptions.withCrossFade())
             .signature(mediaStoreSignature)
             .listener(listenerGlide)
@@ -83,13 +90,13 @@ class AdapterMainSectionWebcams(
         }
     }
 
-    private fun updateErrorText(webcam: Webcam, holder: WebcamHolder, isFullError: Boolean = false) {
+    private fun updateErrorText(lastUpdateTime: Long?, holder: WebcamHolder, isFullError: Boolean = false) {
         when {
             isFullError -> {
                 holder.itemView.textViewSectionWebcamsError.text = holder.itemView.context.getString(R.string.load_webcam_error)
                 holder.itemView.textViewSectionWebcamsError.show()
             }
-            webcam.isUpToDate(dateUtils) -> {
+            dateUtils.isUpToDate(lastUpdateTime) -> {
                 holder.itemView.textViewSectionWebcamsError.gone()
             }
             else -> {
