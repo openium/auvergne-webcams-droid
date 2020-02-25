@@ -3,43 +3,40 @@ package fr.openium.auvergnewebcams.custom
 import android.os.AsyncTask
 import com.github.piasy.biv.loader.ImageLoader
 import com.github.piasy.biv.loader.glide.GlideLoaderException
+import com.github.piasy.biv.metadata.ImageInfoExtractor
 import okhttp3.Response
-import okio.Okio
+import okio.buffer
+import okio.sink
+import okio.source
 import timber.log.Timber
 import java.io.File
 
-class GetImageWebcamAsyncTask(var response: Response?, var callback: ImageLoader.Callback?, var externalCacheDir: File) : AsyncTask<Void, Void, File>() {
+class GetImageWebcamAsyncTask(var response: Response?, var callback: ImageLoader.Callback?, var externalCacheDir: File) :
+    AsyncTask<Void, Void, File>() {
+
     override fun doInBackground(vararg params: Void?): File? {
-        response?.body()?.let { body ->
+        return response?.body?.let { body ->
             try {
-                Okio.buffer(Okio.source(body.byteStream())).use { source ->
-                    val file = File(externalCacheDir, "webcam.jpg")
-                    Okio.buffer(Okio.sink(file)).use { sink ->
+                body.byteStream().source().buffer().use { source ->
+                    val file = File(externalCacheDir, "lastWebcamDisplayedToUser.jpg")
+                    file.sink().buffer().use { sink ->
                         sink.writeAll(source)
                         sink.flush()
-                        return file
+                        file
                     }
                 }
-            } catch (error: Exception) {
-                Timber.e(error.message)
-                return null
+            } catch (e: Exception) {
+                Timber.e(e)
+                null
             }
         }
-        return null
-    }
-
-    override fun onPreExecute() {
-        super.onPreExecute()
-        // ...
     }
 
     override fun onPostExecute(file: File?) {
         super.onPostExecute(file)
-        if (file != null) {
-            callback?.onCacheHit(file)
+        file?.let {
+            callback?.onCacheHit(ImageInfoExtractor.getImageType(file), file)
             callback?.onSuccess(file)
-        } else {
-            callback?.onFail(GlideLoaderException(null))
-        }
+        } ?: callback?.onFail(GlideLoaderException(null))
     }
 }

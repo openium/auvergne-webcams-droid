@@ -2,30 +2,33 @@ package fr.openium.auvergnewebcams
 
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
-import com.github.salomonbrys.kodein.Kodein
-import com.github.salomonbrys.kodein.lazy
-import fr.openium.auvergnewebcams.injection.DebugModules
+import fr.openium.auvergnewebcams.di.DebugModules
 import io.fabric.sdk.android.Fabric
+import org.kodein.di.Copy
+import org.kodein.di.Kodein
+import timber.log.Timber
 
 /**
- * Created by t.coulange on 20/03/2017.
+ * Created by Openium on 19/02/2019.
  */
-class ApplicationImpl : ApplicationBase() {
-    override val kodein: Kodein by Kodein.lazy {
-        extend(super.kodein)
+class ApplicationImpl : CustomApplication() {
+
+    override val kodein = Kodein.lazy {
+        extend(super.kodein, copy = Copy.All)
         import(DebugModules.configModule, true)
-        import(DebugModules.serviceModule, true)
         import(DebugModules.restModule, true)
+        import(DebugModules.repositoryModule, true)
+        import(DebugModules.serviceModule, true)
+        import(DebugModules.databaseService, true)
     }
 
-    override fun onCreate() {
-        super.onCreate()
+    override fun plantTimber() {
+        Timber.plant(Timber.DebugTree())
     }
 
-    override fun initializeFabric() {
-        val core = CrashlyticsCore.Builder().disabled(true).build()
+    override fun initializeCrashlytics() {
+        val core = CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build()
         val crashlytics = Crashlytics.Builder().core(core).build()
         Fabric.with(this, crashlytics)
     }
-
 }

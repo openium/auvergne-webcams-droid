@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#000000</color>
+    <color name="colorPrimary">@color/black</color>
+    <color name="colorPrimaryDark">@color/grey_very_dark</color>
+    <color name="colorAccent">@color/white</color>
+
     <color name="white">#ffffff</color>
-    <color name="dark_grey">#303030</color>
-    <color name="dark_grey_transparent">#BB303030</color>
+    <color name="grey_light">#9B9B9B</color>
     <color name="grey">#606060</color>
-    <color name="grey_text">#9B9B9B</color>
+    <color name="grey_medium">#333535</color>
+    <color name="grey_medium_transparent">#D9333535</color>
+    <color name="grey_dark">#303030</color>
+    <color name="grey_very_dark">#252525</color>
+    <color name="grey_very_dark_transparent">#D9252525</color>
+    <color name="black">#000000</color>
     <color name="blue">#52A4FF</color>
 </resources>

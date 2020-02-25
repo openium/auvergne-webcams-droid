@@ -1,65 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/grey_dark"
+    android:keepScreenOn="true"
     android:orientation="vertical">
 
-    <include layout="@layout/header_detail_camera" />
+    <include layout="@layout/header_webcam_detail" />
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:background="@color/black">
 
-        <VideoView
-            android:id="@+id/viewViewWebcam"
+        <com.google.android.exoplayer2.ui.PlayerView
+            android:id="@+id/playerViewWebcamVideo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center" />
-
-        <ImageView
-            android:id="@+id/imageViewErrorLoad"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:src="@drawable/broken_camera"
-            android:visibility="gone" />
+            android:background="@color/grey_medium"
+            android:focusable="true"
+            app:show_buffering="always"
+            app:shutter_background_color="@color/grey_medium" />
 
-        <ProgressBar
-            android:id="@+id/progressbar_detail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center" />
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imageViewWebcamVideoLoadingError"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:padding="24dp"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_broken_camera" />
 
     </FrameLayout>
 
-    <TextView
-        android:id="@+id/textviewWebcamNotUpdate"
-        style="@style/font_proxima_regular"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="@color/dark_grey_transparent"
-        android:gravity="center"
-        android:padding="10dp"
-        android:text="@string/generic_not_up_to_date"
-        android:textColor="@color/grey_text"
-        android:textSize="14sp"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/textViewWebcamLowQualityOnly"
-        style="@style/font_proxima_regular"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:background="@color/dark_grey"
-        android:gravity="center"
-        android:padding="10dp"
-        android:text="@string/webcam_only_available_low_quality"
-        android:textColor="@color/grey_text"
-        android:textSize="14sp"
-        android:visibility="gone" />
+    <include layout="@layout/footer_webcam_detail" />
 
 </LinearLayout>
-

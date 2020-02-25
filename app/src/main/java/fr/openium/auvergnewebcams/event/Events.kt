@@ -1,14 +1,15 @@
 package fr.openium.auvergnewebcams.event
 
+import com.jakewharton.rxrelay2.PublishRelay
+
 /**
- * Created by laura on 08/12/2017.
+ * Created by Openium on 19/02/2019.
  */
 
-class EventCameraFavoris : PublishEvents<Long>()
+val eventHasNetwork = PublishRelay.create<Boolean>()
 
-class EventNewValueDelay : PublishEvents<Int>()
+val eventCameraFavoris = PublishRelay.create<Long>() // TODO
 
-object Events {
-    val eventCameraFavoris = EventCameraFavoris()
-    val eventNewValueDelay = EventNewValueDelay()
-}
+val eventNewRefreshDelayValue = PublishRelay.create<Int>()
+
+val eventRefreshDelayValueChanged = PublishRelay.create<Unit>()

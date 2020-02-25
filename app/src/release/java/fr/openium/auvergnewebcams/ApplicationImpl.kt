@@ -1,8 +1,7 @@
 package fr.openium.auvergnewebcams
 
 /**
- * Created by t.coulange on 20/03/2017.
+ * Created by Openium on 19/02/2019.
  */
-class ApplicationImpl : ApplicationBase() {
-
+class ApplicationImpl : CustomApplication() {
 }

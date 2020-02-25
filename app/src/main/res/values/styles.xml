@@ -1,43 +1,64 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/dark_grey</item>
-        <item name="colorPrimaryDark">@color/black</item>
-        <item name="colorAccent">@color/white</item>
+    <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
         <item name="colorControlNormal">@color/white</item>
+
+        <item name="actionOverflowButtonStyle">@style/OverFlow</item>
     </style>
 
-    <style name="font_proxima_bold">
-        <item name="fontPath">fonts/ProximaNova-Bold.otf</item>
+    <style name="OverFlow" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_more</item>
     </style>
 
-    <style name="font_proxima_regular">
-        <item name="fontPath">fonts/ProximaNova-Regular.otf</item>
+    <!-- FONTS -->
+
+    <style name="Font.Text.Regular" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/proxima_nova_regular</item>
     </style>
 
-    <style name="font_proxima_regular_italic">
-        <item name="fontPath">fonts/ProximaNova-RegularItalic.otf</item>
+    <style name="Font.Text.RegularItalic" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/proxima_nova_regular_italic</item>
     </style>
 
-    <style name="font_proxima_semi_bold">
-        <item name="fontPath">fonts/ProximaNova-Sbold.otf</item>
+    <style name="Font.Text.SemiBold" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/proxima_nova_sbold</item>
     </style>
 
+    <style name="Font.Text.Bold" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/proxima_nova_bold</item>
+    </style>
 
-    <style name="search_view" parent="Widget.AppCompat.SearchView">
-        <item name="searchIcon">@drawable/ic_search</item>
-        <item name="android:queryHint">@string/search_hint</item>
+    <style name="Font.Other.Regular" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/circular_std_book</item>
+    </style>
+
+    <!-- OTHER -->
+
+    <style name="Toolbar.TitleText" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="fontFamily">@font/circular_std_book</item>
     </style>
 
     <style name="SwitchStyle" parent="Theme.AppCompat.Light">
         <item name="colorControlActivated">@color/blue</item>
-        <item name="colorSwitchThumbNormal">@color/grey_text</item>
+        <item name="colorSwitchThumbNormal">@color/grey_light</item>
     </style>
 
-    <style name="dialog_style" parent="AlertDialog.AppCompat">
+    <style name="BaseUnelevatedButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:textAllCaps">false</item>
+        <item name="rippleColor">@android:color/transparent</item>
+        <item name="backgroundTint">@android:color/transparent</item>
+        <item name="android:textAppearance">@style/Font.Text.SemiBold</item>
+    </style>
 
+    <style name="MaterialAlertDialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="buttonBarNeutralButtonStyle">@style/PositiveButtonStyle</item>
+    </style>
+
+    <style name="PositiveButtonStyle" parent="@style/Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/selector_color_white_to_grey</item>
     </style>
 
 </resources>
