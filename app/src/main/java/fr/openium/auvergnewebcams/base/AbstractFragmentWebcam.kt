@@ -149,7 +149,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
 
         // Like button
         buttonWebcamDetailFavorite.isLiked = webcam.isFavoris
-        buttonWebcamDetailFavorite.show()
+//        buttonWebcamDetailFavorite.show() //TODO
 
         // Last update date
         if (webcam.lastUpdate ?: 0 > 0L) {
