@@ -15,21 +15,20 @@ android {
         targetSdkVersion 29
 
         versionCode openiumVersion.versionCode
-        versionName '1.4.1'
+        versionName '1.4.3'
 
         renderscriptTargetApi 21
         renderscriptSupportModeEnabled = true
 
         testInstrumentationRunner 'fr.openium.ddiv2.CustomInstrumentationRunner'
 
-        multiDexEnabled true
         ndk {
             abiFilters "arm64-v8a", "armeabi-v7a", "x86", "x86_64"
         }
     }
 
     signingConfigs {
-        debubg {
+        debug {
             storeFile file("keys/debug.keystore")
         }
 
@@ -43,39 +42,24 @@ android {
 
     buildTypes {
         debug {
-            // Configuration
+            // Optimization
             minifyEnabled false
             ext.enableCrashlytics = false
             ext.alwaysUpdateBuildId = false
 
-            // Needed
+            // Allow debug and release on the same device
             versionNameSuffix '-debug'
             applicationIdSuffix '.debug'
             signingConfig signingConfigs.debug
         }
         release {
-            // Configuration
-            ext.enableCrashlytics = true
-
-            // Optimization
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
-            // Needed
             signingConfig signingConfigs.release
         }
     }
-
-    testOptions {
-        execution 'ANDROIDX_TEST_ORCHESTRATOR'
-        animationsDisabled true
-
-        unitTests.all {
-            setIgnoreFailures(true)
-        }
-    }
-
 
     // Needed for tests purposes and for exoPlayer
     compileOptions {
