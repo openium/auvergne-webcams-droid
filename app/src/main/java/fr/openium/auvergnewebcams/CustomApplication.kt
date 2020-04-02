@@ -61,4 +61,8 @@ abstract class CustomApplication : Application(), KodeinAware {
         // This is needed to be done once at beginning to allow app to use this lib
         BigImageViewer.initialize(CustomGlideImageLoader.with(applicationContext, client))
     }
+
+    companion object {
+        const val TAG = "[AW]"
+    }
 }

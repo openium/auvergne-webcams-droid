@@ -5,15 +5,14 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import androidx.core.content.FileProvider
-import com.github.piasy.biv.loader.ImageLoader
 import com.github.piasy.biv.view.BigImageView
 import com.google.android.material.snackbar.Snackbar
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractFragmentWebcam
+import fr.openium.auvergnewebcams.custom.SimpleImageLoaderCallback
 import fr.openium.auvergnewebcams.ext.hasNetwork
-import fr.openium.kotlintools.ext.gone
-import fr.openium.kotlintools.ext.show
-import fr.openium.kotlintools.ext.snackbar
+import fr.openium.kotlintools.ext.*
+import fr.openium.rxtools.ext.fromIOToMain
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.addTo
@@ -48,9 +47,9 @@ class FragmentWebcamDetailImage : AbstractFragmentWebcam() {
         super.onConfigurationChanged(newConfig)
 
         if (newConfig.orientation != Configuration.ORIENTATION_LANDSCAPE && webcam.imageHD.isNullOrEmpty()) {
-            textViewWebcamLowQualityOnly.show()
+            textViewWebcamDetailLowQualityOnly.show()
         } else {
-            textViewWebcamLowQualityOnly.gone()
+            textViewWebcamDetailLowQualityOnly.gone()
         }
     }
 
@@ -58,8 +57,9 @@ class FragmentWebcamDetailImage : AbstractFragmentWebcam() {
     // ---------------------------------------------------
 
     private fun initBigImageViewListener() {
-        bigImageViewWebcamImage.setImageLoaderCallback(object : ImageLoader.Callback {
+        bigImageViewWebcamImage.setImageLoaderCallback(object : SimpleImageLoaderCallback() {
             override fun onSuccess(image: File?) {
+                wasLastTimeLoadingSuccessfull = true
                 progressBarWebcamImageDetail?.gone()
 
                 // Start Timer cause BigImageView SSIV is not implementing method onReady...
@@ -67,7 +67,8 @@ class FragmentWebcamDetailImage : AbstractFragmentWebcam() {
             }
 
             override fun onFail(error: Exception?) {
-                updateDisplay(State.NOT_WORKING)
+                wasLastTimeLoadingSuccessfull = false
+                updateDisplay()
                 progressBarWebcamImageDetail?.gone()
                 Timber.e(error, "Error loading big images")
             }
@@ -75,11 +76,6 @@ class FragmentWebcamDetailImage : AbstractFragmentWebcam() {
             override fun onStart() {
                 progressBarWebcamImageDetail?.show()
             }
-
-            override fun onFinish() {}
-            override fun onCacheHit(imageType: Int, image: File?) {}
-            override fun onCacheMiss(imageType: Int, image: File?) {}
-            override fun onProgress(progress: Int) {}
         })
     }
 
@@ -87,7 +83,7 @@ class FragmentWebcamDetailImage : AbstractFragmentWebcam() {
         zoomTimer?.dispose()
         zoomTimer = null
 
-        zoomTimer = Observable.timer(25, TimeUnit.MILLISECONDS).subscribe({
+        zoomTimer = Observable.timer(25, TimeUnit.MILLISECONDS).fromIOToMain().subscribe({
             if (bigImageViewWebcamImage.ssiv.isReady) {
                 bigImageViewWebcamImage.ssiv.animateScaleAndCenter(
                     min(bigImageViewWebcamImage.ssiv.maxScale, getZoomValue()),
@@ -112,6 +108,17 @@ class FragmentWebcamDetailImage : AbstractFragmentWebcam() {
         }
 
         return zoomValue * 0.75f
+    }
+
+    // --- Override Methods
+    // ---------------------------------------------------
+
+    override fun showDetailContent() {
+        linearLayoutWebcamImageDetailContent.showWithAnimationCompat()
+    }
+
+    override fun hideDetailContent() {
+        linearLayoutWebcamImageDetailContent.goneWithAnimationCompat()
     }
 
     override fun setWebcam() {

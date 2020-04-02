@@ -2,10 +2,13 @@ package fr.openium.auvergnewebcams.base
 
 import android.content.Intent
 import android.content.res.Configuration
+import android.net.MailTo
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
@@ -23,14 +26,13 @@ import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.service.DownloadWorker
 import fr.openium.auvergnewebcams.ui.webcamDetail.ViewModelWebcamDetail
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
-import fr.openium.kotlintools.ext.gone
-import fr.openium.kotlintools.ext.setTitle
-import fr.openium.kotlintools.ext.show
-import fr.openium.kotlintools.ext.snackbar
+import fr.openium.kotlintools.ext.*
 import fr.openium.rxtools.ext.fromIOToMain
 import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.footer_webcam_detail.*
 import kotlinx.android.synthetic.main.header_webcam_detail.*
+import kotlinx.android.synthetic.main.layout_webcam_not_connected.*
+import kotlinx.android.synthetic.main.layout_webcam_not_working.*
 import timber.log.Timber
 
 
@@ -43,6 +45,8 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
 
     protected lateinit var webcam: Webcam
     private var itemMenuRefresh: MenuItem? = null
+
+    protected var wasLastTimeLoadingSuccessfull = true
 
     // --- Life cycle
     // ---------------------------------------------------
@@ -84,11 +88,6 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
                 checkPermissionSaveFile()
                 true
             }
-            R.id.menu_signal_problem -> {
-                AnalyticsUtils.signalProblemClicked(requireContext())
-                signalProblem()
-                true
-            }
             else -> super.onOptionsItemSelected(item)
         }
 
@@ -104,24 +103,28 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
         viewModelWebcamDetail.getWebcamSingle(webcamId)
             .fromIOToMain()
             .subscribe({
-                it.value?.let {
+                it.value?.ifLet {
                     webcam = it
 
                     updateDisplay()
                     setWebcam()
-                } ?: activity?.finish()
+                }?.elseLet {
+                    toast(R.string.detail_webcam_not_found, Toast.LENGTH_SHORT)
+                    activity?.finish()
+                }
             }, {
                 Timber.e(it, "Error getting webcam from DB")
                 activity?.finish()
             }).addTo(disposables)
 
         buttonWebcamDetailFavorite.setOnLikeListener(object : OnLikeListener {
-            override fun liked(likeButton: LikeButton) {
-                setFavChanged(true)
-            }
-
+            override fun liked(likeButton: LikeButton) = setFavChanged(true)
             override fun unLiked(likeButton: LikeButton) = setFavChanged(false)
         })
+
+        linearLayoutWebcamDetailNotWorking.setOnClickListener {
+            signalProblem()
+        }
 
         eventHasNetwork.filter { it }.fromIOToMain().subscribe({
             if (::webcam.isInitialized) {
@@ -139,11 +142,13 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     }
 
     private fun getState(): State = when {
-        dateUtils.isUpToDate(webcam.lastUpdate) -> State.LOADED_UP_TO_DATE
+        !requireContext().hasNetwork -> State.NOT_CONNECTED
+        !wasLastTimeLoadingSuccessfull -> State.NOT_WORKING
+        dateUtils.isUpToDate(webcam.getLastUpdateDate()) -> State.LOADED_UP_TO_DATE
         else -> State.LOADED_NOT_UP_TO_DATE
     }
 
-    open fun updateDisplay(forcedState: State? = null) {
+    open fun updateDisplay() {
         // Screen title
         setTitle(webcam.title ?: "")
 
@@ -152,34 +157,68 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
 //        buttonWebcamDetailFavorite.show() //TODO
 
         // Last update date
-        if (webcam.lastUpdate ?: 0 > 0L) {
-            val date = dateUtils.getDateInFullFormat(webcam.lastUpdate ?: 0)
-            textViewWebcamDetailLastUpdate.text = getString(R.string.generic_last_update_format, date)
-            textViewWebcamDetailLastUpdate.show()
+        val lastUpdate = webcam.getLastUpdateDate()
+        if (lastUpdate != null) {
+            textViewWebcamDetailLastUpdate.text =
+                getString(R.string.generic_last_update_format, dateUtils.getDateInFullFormat(lastUpdate))
+            textViewWebcamDetailLastUpdate.showWithAnimationCompat()
         } else {
-            textViewWebcamDetailLastUpdate.gone()
+            frameLayoutWebcamDetailHeader.goneWithAnimationCompat() //TODO
+            textViewWebcamDetailLastUpdate.goneWithAnimationCompat()
         }
 
-        when (resources.configuration.orientation to (forcedState ?: getState())) {
+        when (resources.configuration.orientation to getState()) {
             Configuration.ORIENTATION_PORTRAIT to State.LOADED_UP_TO_DATE -> {
-                textViewWebcamDetailErrorMessage.gone()
-                frameLayoutWebcamDetailHeader.show()
+                showDetailContent()
+                linearLayoutWebcamDetailNotWorking.goneWithAnimationCompat()
+                linearLayoutWebcamDetailNotConnected.goneWithAnimationCompat()
+                textViewWebcamDetailNotUpToDate.goneWithAnimationCompat()
             }
             Configuration.ORIENTATION_PORTRAIT to State.LOADED_NOT_UP_TO_DATE -> {
-                textViewWebcamDetailErrorMessage.text = getString(R.string.generic_not_up_to_date)
-                textViewWebcamDetailErrorMessage.show()
-                frameLayoutWebcamDetailHeader.show()
+                showDetailContent()
+                linearLayoutWebcamDetailNotWorking.goneWithAnimationCompat()
+                linearLayoutWebcamDetailNotConnected.goneWithAnimationCompat()
+                textViewWebcamDetailNotUpToDate.showWithAnimationCompat()
             }
             Configuration.ORIENTATION_PORTRAIT to State.NOT_WORKING -> {
-                textViewWebcamDetailErrorMessage.text = getString(R.string.load_webcam_error)
-                textViewWebcamDetailErrorMessage.show()
-                frameLayoutWebcamDetailHeader.show()
+                hideDetailContent()
+                linearLayoutWebcamDetailNotWorking.showWithAnimationCompat()
+                linearLayoutWebcamDetailNotConnected.goneWithAnimationCompat()
+                textViewWebcamDetailNotUpToDate.goneWithAnimationCompat()
             }
-            Configuration.ORIENTATION_LANDSCAPE to State.LOADED_UP_TO_DATE,
-            Configuration.ORIENTATION_LANDSCAPE to State.LOADED_NOT_UP_TO_DATE,
+            Configuration.ORIENTATION_PORTRAIT to State.NOT_CONNECTED -> {
+                hideDetailContent()
+                linearLayoutWebcamDetailNotWorking.goneWithAnimationCompat()
+                linearLayoutWebcamDetailNotConnected.showWithAnimationCompat()
+                textViewWebcamDetailNotUpToDate.goneWithAnimationCompat()
+            }
+            Configuration.ORIENTATION_LANDSCAPE to State.LOADED_UP_TO_DATE -> {
+                showDetailContent()
+                linearLayoutWebcamDetailNotWorking.goneWithAnimationCompat()
+                linearLayoutWebcamDetailNotConnected.goneWithAnimationCompat()
+                frameLayoutWebcamDetailHeader.goneWithAnimationCompat()
+                frameLayoutWebcamDetailFooter.goneWithAnimationCompat()
+            }
+            Configuration.ORIENTATION_LANDSCAPE to State.LOADED_NOT_UP_TO_DATE -> {
+                showDetailContent()
+                linearLayoutWebcamDetailNotWorking.goneWithAnimationCompat()
+                linearLayoutWebcamDetailNotConnected.goneWithAnimationCompat()
+                frameLayoutWebcamDetailHeader.goneWithAnimationCompat()
+                frameLayoutWebcamDetailFooter.goneWithAnimationCompat()
+            }
             Configuration.ORIENTATION_LANDSCAPE to State.NOT_WORKING -> {
-                frameLayoutWebcamDetailHeader.gone()
-                textViewWebcamDetailErrorMessage.gone()
+                hideDetailContent()
+                linearLayoutWebcamDetailNotWorking.showWithAnimationCompat()
+                linearLayoutWebcamDetailNotConnected.goneWithAnimationCompat()
+                frameLayoutWebcamDetailHeader.goneWithAnimationCompat()
+                frameLayoutWebcamDetailFooter.goneWithAnimationCompat()
+            }
+            Configuration.ORIENTATION_LANDSCAPE to State.NOT_CONNECTED -> {
+                hideDetailContent()
+                linearLayoutWebcamDetailNotWorking.goneWithAnimationCompat()
+                linearLayoutWebcamDetailNotConnected.showWithAnimationCompat()
+                frameLayoutWebcamDetailHeader.goneWithAnimationCompat()
+                frameLayoutWebcamDetailFooter.goneWithAnimationCompat()
             }
         }
     }
@@ -204,16 +243,20 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     }
 
     private fun signalProblem() {
-        val intent = Intent(Intent.ACTION_SEND).apply {
+        AnalyticsUtils.signalProblemClicked(requireContext())
+
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
             type = "text/plain"
-            putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.detail_signal_problem_email)))
-            putExtra(Intent.EXTRA_SUBJECT, getString(R.string.detail_signal_problem_subject, webcam.title ?: ""))
-            putExtra(Intent.EXTRA_TEXT, getString(R.string.detail_signal_problem_body_format, webcam.title ?: "", webcam.uid.toString()))
+            data = Uri.parse(
+                MailTo.MAILTO_SCHEME + getString(R.string.detail_signal_problem_email)
+                        + "?subject=" + getString(R.string.detail_signal_problem_subject, webcam.title ?: "")
+                        + "&body=" + getString(R.string.detail_signal_problem_body_format, webcam.title ?: "", webcam.uid.toString())
+            )
+
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
 
         val chooser = Intent.createChooser(intent, getString(R.string.generic_chooser))
-
         chooser.resolveActivity(requireActivity().packageManager)?.also {
             startActivity(chooser)
         } ?: snackbar(R.string.generic_no_email_app, Snackbar.LENGTH_SHORT)
@@ -238,8 +281,13 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     enum class State {
         LOADED_UP_TO_DATE,
         LOADED_NOT_UP_TO_DATE,
-        NOT_WORKING
+        NOT_WORKING,
+        NOT_CONNECTED
     }
+
+    abstract fun showDetailContent()
+
+    abstract fun hideDetailContent()
 
     abstract fun setWebcam()
 
@@ -251,5 +299,3 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
 
     abstract fun refreshWebcam()
 }
-
-

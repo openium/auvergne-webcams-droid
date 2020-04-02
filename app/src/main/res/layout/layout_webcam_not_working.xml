@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/linearLayoutWebcamDetailNotWorking"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:srcCompat="@drawable/ic_broken_camera" />
+
+    <TextView
+        style="@style/Font.Text.Regular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:gravity="center"
+        android:text="@string/detail_not_working_title"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+    <TextView
+        style="@style/Font.Text.Bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:text="@string/detail_not_working_text"
+        android:textColor="@color/blue"
+        android:textSize="16sp" />
+
+</LinearLayout>
+
+

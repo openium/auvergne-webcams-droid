@@ -93,7 +93,7 @@ class AdapterMainSectionWebcams(
     private fun updateErrorText(lastUpdateTime: Long?, holder: WebcamHolder, isFullError: Boolean = false) {
         when {
             isFullError -> {
-                holder.itemView.textViewSectionWebcamsError.text = holder.itemView.context.getString(R.string.load_webcam_error)
+                holder.itemView.textViewSectionWebcamsError.text = holder.itemView.context.getString(R.string.loading_not_working_error)
                 holder.itemView.textViewSectionWebcamsError.show()
             }
             dateUtils.isUpToDate(lastUpdateTime) -> {

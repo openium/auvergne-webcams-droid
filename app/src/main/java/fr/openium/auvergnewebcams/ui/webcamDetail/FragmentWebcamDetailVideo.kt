@@ -9,19 +9,15 @@ import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.upstream.FileDataSource
 import com.google.android.exoplayer2.upstream.HttpDataSource
 import com.google.android.exoplayer2.util.Util
 import com.google.android.material.snackbar.Snackbar
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractFragmentWebcam
-import fr.openium.auvergnewebcams.ext.goneWithAnimationCompat
 import fr.openium.auvergnewebcams.ext.hasNetwork
-import fr.openium.auvergnewebcams.ext.showWithAnimationCompat
 import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
-import fr.openium.kotlintools.ext.getColorCompat
-import fr.openium.kotlintools.ext.gone
-import fr.openium.kotlintools.ext.show
-import fr.openium.kotlintools.ext.snackbar
+import fr.openium.kotlintools.ext.*
 import fr.openium.rxtools.ext.fromIOToMain
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
@@ -51,11 +47,11 @@ class FragmentWebcamDetailVideo : AbstractFragmentWebcam() {
         if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             playerViewWebcamVideo.setBackgroundColor(requireContext().getColorCompat(R.color.grey_medium))
             if (webcam.viewsurfHD.isNullOrEmpty()) {
-                textViewWebcamLowQualityOnly.show()
+                textViewWebcamDetailLowQualityOnly.show()
             }
         } else {
             playerViewWebcamVideo.setBackgroundColor(requireContext().getColorCompat(R.color.black))
-            textViewWebcamLowQualityOnly.gone()
+            textViewWebcamDetailLowQualityOnly.gone()
         }
     }
 
@@ -99,18 +95,22 @@ class FragmentWebcamDetailVideo : AbstractFragmentWebcam() {
                     playerViewWebcamVideo.showWithAnimationCompat()
                 }
 
-                if (playbackState != Player.STATE_IDLE) {
-                    imageViewWebcamVideoLoadingError.goneWithAnimationCompat()
-                }
+                wasLastTimeLoadingSuccessfull = true
             }
 
             override fun onPlayerError(error: ExoPlaybackException) {
                 if (error.sourceException is HttpDataSource.InvalidResponseCodeException) {
-                    imageViewWebcamVideoLoadingError.showWithAnimationCompat()
+                    wasLastTimeLoadingSuccessfull = false
+                    updateDisplay()
                 }
 
                 if (error.sourceException is HttpDataSource.HttpDataSourceException) {
                     exo_buffering.showWithAnimationCompat()
+                }
+
+                if (error.sourceException is FileDataSource.FileDataSourceException) {
+                    wasLastTimeLoadingSuccessfull = false
+                    updateDisplay()
                 }
             }
         })
@@ -124,6 +124,14 @@ class FragmentWebcamDetailVideo : AbstractFragmentWebcam() {
             playerViewWebcamVideo?.onPause()
             player.release()
         }
+    }
+
+    override fun showDetailContent() {
+        linearLayoutWebcamVideoDetailContent.showWithAnimationCompat()
+    }
+
+    override fun hideDetailContent() {
+        linearLayoutWebcamVideoDetailContent.goneWithAnimationCompat()
     }
 
     override fun setWebcam() {

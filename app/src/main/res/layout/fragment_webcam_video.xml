@@ -7,35 +7,36 @@
     android:keepScreenOn="true"
     android:orientation="vertical">
 
-    <include layout="@layout/header_webcam_detail" />
+    <include
+        layout="@layout/layout_webcam_not_working"
+        android:visibility="gone" />
 
-    <FrameLayout
+    <include
+        layout="@layout/layout_webcam_not_connected"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/linearLayoutWebcamVideoDetailContent"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:background="@color/black">
+        android:layout_height="match_parent"
+        android:background="@color/black"
+        android:orientation="vertical">
+
+        <include layout="@layout/header_webcam_detail" />
 
         <com.google.android.exoplayer2.ui.PlayerView
             android:id="@+id/playerViewWebcamVideo"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:layout_gravity="center"
+            android:layout_weight="1"
             android:background="@color/grey_medium"
             android:focusable="true"
             app:show_buffering="always"
             app:shutter_background_color="@color/grey_medium" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/imageViewWebcamVideoLoadingError"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:padding="24dp"
-            android:visibility="gone"
-            app:srcCompat="@drawable/ic_broken_camera" />
+        <include layout="@layout/footer_webcam_detail" />
 
-    </FrameLayout>
-
-    <include layout="@layout/footer_webcam_detail" />
+    </LinearLayout>
 
 </LinearLayout>

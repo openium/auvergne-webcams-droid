@@ -12,7 +12,6 @@ import fr.openium.auvergnewebcams.model.AWClient
 import fr.openium.auvergnewebcams.repository.SectionRepository
 import fr.openium.auvergnewebcams.repository.WebcamRepository
 import fr.openium.auvergnewebcams.rest.AWApi
-import fr.openium.auvergnewebcams.rest.ApiHelper
 import fr.openium.auvergnewebcams.utils.DateUtils
 import fr.openium.auvergnewebcams.utils.PreferencesUtils
 import okhttp3.Cache
@@ -108,10 +107,6 @@ object Modules {
 
         bind<AWApi>() with singleton {
             instance<Retrofit>().create(AWApi::class.java)
-        }
-
-        bind<ApiHelper>() with singleton {
-            ApiHelper(instance(), instance())
         }
     }
 

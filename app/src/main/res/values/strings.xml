@@ -68,11 +68,12 @@
     <string name="detail_refresh_menu">Mettre à jour</string>
     <string name="detail_share_menu">Partager</string>
     <string name="detail_save_menu">Télécharger</string>
-    <string name="detail_signal_problem_menu">Signaler un problème</string>
 
     <string name="detail_signal_problem_subject">Signaler un problème - Webcam %s</string>
     <string name="detail_signal_problem_body_format">La webcam %s (%s) ne fonctionne pas.</string>
     <string name="detail_signal_problem_email">auvergnewebcams@openium.fr</string>
+    <string name="error_no_permisson">Veuillez activer les permissions dans les paramètres de l\'application</string>
+    <string name="detail_webcam_not_found">Impossible de charger le détail de cette caméra</string>
 
     <!-- Save -->
     <string name="save_success_title">Téléchargement terminé</string>
@@ -81,13 +82,17 @@
     <string name="save_error_description">Une erreur est survenue pendant le téléchargement de la webcam %s</string>
     <string name="save_description">Webcam: %s</string>
 
-    <!-- Error -->
-    <string name="load_webcam_error">La webcam ne semble pas fonctionelle</string>
-    <string name="error_no_permisson">Veuillez activer les permissions dans les paramètres de l\'application</string>
+    <!-- Detail Not Working -->
+    <string name="detail_not_working_title">La webcam ne semble\npas fonctionelle</string>
+    <string name="detail_not_working_text">Touchez l\'écran\npour signaler la caméra</string>
+
+    <!-- Detail Not Connected -->
+    <string name="detail_not_connected_title">Aucune connexion internet</string>
+    <string name="detail_not_connected_text">Veuillez activer votre Wifi\nou vos données mobiles</string>
 
     <!-- Other -->
     <string name="favoris_section_title">Favoris</string>
     <string name="webcam_only_available_low_quality">La webcam n\'est disponible qu\'en basse qualité</string>
-    <string name="webcam_signal_problem">Toucher l\'écran pour signaler la caméra</string>
+    <string name="loading_not_working_error">La webcam ne semble pas fonctionelle</string>
 
 </resources>

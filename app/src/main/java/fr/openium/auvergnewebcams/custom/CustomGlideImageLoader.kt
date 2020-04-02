@@ -7,7 +7,6 @@ import com.github.piasy.biv.loader.ImageLoader
 import com.github.piasy.biv.loader.glide.GlideLoaderException
 import com.github.piasy.biv.loader.glide.GlideProgressSupport
 import okhttp3.*
-import okio.JvmOverloads
 import timber.log.Timber
 import java.io.IOException
 

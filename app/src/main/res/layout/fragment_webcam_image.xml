@@ -6,31 +6,44 @@
     android:background="@color/grey_dark"
     android:orientation="vertical">
 
-    <include layout="@layout/header_webcam_detail" />
+    <include
+        layout="@layout/layout_webcam_not_working"
+        android:visibility="gone" />
+
+    <include
+        layout="@layout/layout_webcam_not_connected"
+        android:visibility="gone" />
 
     <FrameLayout
+        android:id="@+id/linearLayoutWebcamImageDetailContent"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <com.github.piasy.biv.view.BigImageView
-            android:id="@+id/bigImageViewWebcamImage"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:failureImage="@drawable/ic_broken_camera"
-            app:failureImageInitScaleType="center"
-            app:optimizeDisplay="true" />
+            android:layout_height="match_parent">
 
-        <ProgressBar
-            android:id="@+id/progressBarWebcamImageDetail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center" />
+            <com.github.piasy.biv.view.BigImageView
+                android:id="@+id/bigImageViewWebcamImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:failureImage="@drawable/ic_broken_camera"
+                app:failureImageInitScaleType="center"
+                app:optimizeDisplay="true" />
+
+            <ProgressBar
+                android:id="@+id/progressBarWebcamImageDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+
+        </FrameLayout>
+
+        <include layout="@layout/header_webcam_detail" />
+
+        <include layout="@layout/footer_webcam_detail" />
 
     </FrameLayout>
 
-    <include layout="@layout/footer_webcam_detail" />
-
 </LinearLayout>
-
-

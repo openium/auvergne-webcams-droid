@@ -1,10 +1,7 @@
 package fr.openium.auvergnewebcams.utils
 
 import android.content.Context
-import android.content.SharedPreferences
-import androidx.core.content.edit
-import androidx.preference.PreferenceManager
-import fr.openium.kotlintools.ext.toUnixTimestamp
+import fr.openium.kotlintools.ext.*
 
 /**
  * Created by Openium on 19/02/2019.
@@ -12,85 +9,46 @@ import fr.openium.kotlintools.ext.toUnixTimestamp
 class PreferencesUtils(val context: Context) {
 
     var webcamsDelayRefreshValue: Int
-        get() = getInt(KEY_WEBCAM_DELAY_REFRESH_VALUE, DEFAULT_REFRESH_DELAY)
-        set(accepted) {
-            edit {
-                putInt(KEY_WEBCAM_DELAY_REFRESH_VALUE, accepted)
-            }
-        }
+        get() = context.getIntPref(KEY_WEBCAM_DELAY_REFRESH_VALUE, DEFAULT_REFRESH_DELAY)
+        set(accepted) = context.setIntPref(KEY_WEBCAM_DELAY_REFRESH_VALUE, accepted)
 
     var isWebcamsDelayRefreshActive: Boolean
-        get() = getBoolean(KEY_WEBCAM_DELAY_REFRESH, true)
-        set(accepted) {
-            edit {
-                putBoolean(KEY_WEBCAM_DELAY_REFRESH, accepted)
-            }
-        }
+        get() = context.getBooleanPref(KEY_WEBCAM_DELAY_REFRESH, true)
+        set(accepted) = context.setBooleanPref(KEY_WEBCAM_DELAY_REFRESH, accepted)
 
     var isWebcamsHighQuality: Boolean
-        get() = getBoolean(KEY_WEBCAM_QUALITY, true)
-        set(accepted) {
-            edit {
-                putBoolean(KEY_WEBCAM_QUALITY, accepted)
-            }
-        }
+        get() = context.getBooleanPref(KEY_WEBCAM_QUALITY, true)
+        set(accepted) = context.setBooleanPref(KEY_WEBCAM_QUALITY, accepted)
 
+    // TODO
     var lastUpdateWebcamsTimestamp: Long
         get() {
-            var lastUpdate = getLong(KEY_WEBCAM_LAST_UPDATE_TIMESTAMP, -1)
+            var lastUpdate = context.getLongPref(KEY_WEBCAM_LAST_UPDATE_TIMESTAMP, -1)
             if (isWebcamsDelayRefreshActive) {
                 if (lastUpdate == -1L) {
                     lastUpdate = System.currentTimeMillis().toUnixTimestamp()
                     lastUpdateWebcamsTimestamp = lastUpdate
                 } else {
                     val delayRefreshInSec = webcamsDelayRefreshValue * 60
-                    val diff = System.currentTimeMillis().toUnixTimestamp() - lastUpdate
+                    val actualTimestamp = System.currentTimeMillis().toUnixTimestamp()
+                    val diff = actualTimestamp - lastUpdate
                     if (diff > delayRefreshInSec) {
-                        lastUpdate = System.currentTimeMillis().toUnixTimestamp()
+                        lastUpdate = actualTimestamp
                         lastUpdateWebcamsTimestamp = lastUpdate
                     }
                 }
             }
             return lastUpdate
         }
-        set(value) {
-            edit {
-                putLong(KEY_WEBCAM_LAST_UPDATE_TIMESTAMP, value)
-            }
-        }
+        set(value) = context.setLongPref(KEY_WEBCAM_LAST_UPDATE_TIMESTAMP, value)
 
     var newNotifId: Int
         get() {
-            val value = getInt(KEY_WEBCAM_DELAY_REFRESH_VALUE, DEFAULT_REFRESH_DELAY)
+            val value = context.getIntPref(KEY_NOTIF_ID, 0)
             newNotifId = value + 1
             return value
         }
-        set(accepted) {
-            edit {
-                putInt(KEY_WEBCAM_DELAY_REFRESH_VALUE, accepted)
-            }
-        }
-
-    private fun getString(key: String, defaultValue: String? = null): String? =
-        PreferenceManager.getDefaultSharedPreferences(context).getString(key, defaultValue)
-
-    private fun getStringSet(key: String, defaultValue: MutableSet<String> = mutableSetOf()): MutableSet<String> =
-        PreferenceManager.getDefaultSharedPreferences(context).getStringSet(key, defaultValue) ?: defaultValue
-
-    private fun getBoolean(key: String, defaultValue: Boolean = false): Boolean =
-        PreferenceManager.getDefaultSharedPreferences(context).getBoolean(key, defaultValue)
-
-    private fun getLong(key: String, defaultValue: Long = 0L): Long =
-        PreferenceManager.getDefaultSharedPreferences(context).getLong(key, defaultValue)
-
-    private fun getInt(key: String, defaultValue: Int = 0): Int =
-        PreferenceManager.getDefaultSharedPreferences(context).getInt(key, defaultValue)
-
-    private fun edit(block: SharedPreferences.Editor.() -> Unit) {
-        PreferenceManager.getDefaultSharedPreferences(context).edit {
-            block.invoke(this)
-        }
-    }
+        set(accepted) = context.setIntPref(KEY_NOTIF_ID, accepted)
 
     companion object {
         const val DEFAULT_REFRESH_DELAY = 10
@@ -100,5 +58,6 @@ class PreferencesUtils(val context: Context) {
         private const val KEY_WEBCAM_DELAY_REFRESH = "KEY_WEBCAM_DELAY_REFRESH"
         private const val KEY_WEBCAM_DELAY_REFRESH_VALUE = "KEY_WEBCAM_DELAY_REFRESH_VALUE"
         private const val KEY_WEBCAM_LAST_UPDATE_TIMESTAMP = "KEY_WEBCAM_LAST_UPDATE_TIMESTAMP"
+        private const val KEY_NOTIF_ID = "KEY_NOTIF_ID"
     }
 }

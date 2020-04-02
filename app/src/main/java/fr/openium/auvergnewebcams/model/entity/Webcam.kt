@@ -42,6 +42,11 @@ class Webcam {
             if (canBeHD && !imageHD.isNullOrBlank()) imageHD ?: "" else imageLD ?: ""
         }
 
+    fun getLastUpdateDate(): Long? =
+        if (lastUpdate != null && lastUpdate != 0L) {
+            lastUpdate
+        } else null
+
     enum class WebcamType(val nameType: String) {
         IMAGE("image"),
         VIEWSURF("viewsurf")

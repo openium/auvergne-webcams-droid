@@ -18,9 +18,4 @@
         android:title="@string/detail_save_menu"
         app:showAsAction="never" />
 
-    <item
-        android:id="@+id/menu_signal_problem"
-        android:title="@string/detail_signal_problem_menu"
-        app:showAsAction="never" />
-
 </menu>
