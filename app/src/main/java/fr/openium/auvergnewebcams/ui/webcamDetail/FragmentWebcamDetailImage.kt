@@ -53,14 +53,11 @@ class FragmentWebcamDetailImage : AbstractFragmentWebcam() {
         }
     }
 
-    // --- Methods
-    // ---------------------------------------------------
-
     private fun initBigImageViewListener() {
-        bigImageViewWebcamImage.setImageLoaderCallback(object : SimpleImageLoaderCallback() {
+        bigImageViewWebcamImageDetail.setImageLoaderCallback(object : SimpleImageLoaderCallback() {
             override fun onSuccess(image: File?) {
                 wasLastTimeLoadingSuccessfull = true
-                progressBarWebcamImageDetail?.gone()
+                progressBarWebcamImageDetail.gone()
 
                 // Start Timer cause BigImageView SSIV is not implementing method onReady...
                 setZoomTimer()
@@ -69,12 +66,12 @@ class FragmentWebcamDetailImage : AbstractFragmentWebcam() {
             override fun onFail(error: Exception?) {
                 wasLastTimeLoadingSuccessfull = false
                 updateDisplay()
-                progressBarWebcamImageDetail?.gone()
+                progressBarWebcamImageDetail.gone()
                 Timber.e(error, "Error loading big images")
             }
 
             override fun onStart() {
-                progressBarWebcamImageDetail?.show()
+                progressBarWebcamImageDetail.show()
             }
         })
     }
@@ -84,11 +81,11 @@ class FragmentWebcamDetailImage : AbstractFragmentWebcam() {
         zoomTimer = null
 
         zoomTimer = Observable.timer(25, TimeUnit.MILLISECONDS).fromIOToMain().subscribe({
-            if (bigImageViewWebcamImage.ssiv.isReady) {
-                bigImageViewWebcamImage.ssiv.animateScaleAndCenter(
-                    min(bigImageViewWebcamImage.ssiv.maxScale, getZoomValue()),
-                    bigImageViewWebcamImage.ssiv.center
-                )?.withInterruptible(false)?.withDuration(300L)?.start()
+            if (bigImageViewWebcamImageDetail.ssiv.isReady) {
+                bigImageViewWebcamImageDetail.ssiv.animateScaleAndCenter(
+                    min(bigImageViewWebcamImageDetail.ssiv.maxScale, getZoomValue()),
+                    bigImageViewWebcamImageDetail.ssiv.center
+                )?.withInterruptible(false)?.withDuration(200L)?.start()
             } else {
                 setZoomTimer()
             }
@@ -97,10 +94,10 @@ class FragmentWebcamDetailImage : AbstractFragmentWebcam() {
 
     // If you want to understand this a little bit more, look inside com/github/piasy/biv/utils/DisplayOptimizeListener.class onReady method
     private fun getZoomValue(): Float {
-        var zoomValue = if (bigImageViewWebcamImage.ssiv.sWidth <= bigImageViewWebcamImage.ssiv.sHeight) {
-            bigImageViewWebcamImage.ssiv.width.toFloat() / bigImageViewWebcamImage.ssiv.sWidth
+        var zoomValue = if (bigImageViewWebcamImageDetail.ssiv.sWidth <= bigImageViewWebcamImageDetail.ssiv.sHeight) {
+            bigImageViewWebcamImageDetail.ssiv.width.toFloat() / bigImageViewWebcamImageDetail.ssiv.sWidth
         } else {
-            bigImageViewWebcamImage.ssiv.height.toFloat() / bigImageViewWebcamImage.ssiv.sHeight
+            bigImageViewWebcamImageDetail.ssiv.height.toFloat() / bigImageViewWebcamImageDetail.ssiv.sHeight
         }
 
         if (abs(zoomValue - 0.1) < 0.2f) {
@@ -130,7 +127,7 @@ class FragmentWebcamDetailImage : AbstractFragmentWebcam() {
             imageURL = Uri.parse(webcam.getUrlForWebcam(canBeHD = false, canBeVideo = false))
         }
 
-        bigImageViewWebcamImage.apply {
+        bigImageViewWebcamImageDetail.apply {
             setInitScaleType(BigImageView.INIT_SCALE_TYPE_CENTER_INSIDE)
             imageURL?.also { showImage(imageURL) }
         }
@@ -142,11 +139,11 @@ class FragmentWebcamDetailImage : AbstractFragmentWebcam() {
     }
 
     override fun shareWebCam() {
-        bigImageViewWebcamImage.currentImageFile?.also {
+        bigImageViewWebcamImageDetail.currentImageFile?.also {
             val image = FileProvider.getUriForFile(
                 requireContext(),
                 requireContext().packageName + ".provider",
-                bigImageViewWebcamImage.currentImageFile
+                bigImageViewWebcamImageDetail.currentImageFile
             )
 
             val intent = Intent(Intent.ACTION_SEND).apply {

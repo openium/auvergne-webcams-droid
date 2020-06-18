@@ -5,31 +5,27 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import coil.api.load
 import com.leochuan.ScaleLayoutManager
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.custom.CustomScaleLayoutManager
 import fr.openium.auvergnewebcams.custom.SnapOnScrollListener
 import fr.openium.auvergnewebcams.ext.attachSnapHelperWithListener
 import fr.openium.auvergnewebcams.model.entity.Webcam
-import fr.openium.auvergnewebcams.utils.DateUtils
-import fr.openium.auvergnewebcams.utils.PreferencesUtils
 import fr.openium.kotlintools.ext.dip
 import kotlinx.android.synthetic.main.header_section.view.*
 import kotlinx.android.synthetic.main.item_section.view.*
+import org.koin.core.KoinComponent
 
 
 /**
  * Created by Openium on 19/02/2019.
  */
 class AdapterMainSections(
-    private val prefUtils: PreferencesUtils,
-    private val dateUtils: DateUtils,
     private var data: List<Data>,
     private val onHeaderClicked: ((Pair<Long, String>) -> Unit),
     private val onItemClicked: ((Webcam) -> Unit)
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), KoinComponent {
 
     companion object {
         const val HEADER_VIEW_TYPE = 0
@@ -52,7 +48,7 @@ class AdapterMainSections(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is HeaderHolder -> holder.bindView(data[position].header, onHeaderClicked)
-            is ItemHolder -> holder.bindView(data[position].webcams, onItemClicked, viewPool, prefUtils, dateUtils)
+            is ItemHolder -> holder.bindView(data[position].webcams, onItemClicked, viewPool)
             else -> {
                 // Nothing to do
             }
@@ -76,10 +72,7 @@ class AdapterMainSections(
                 itemView.textViewSectionName.text = header.title
 
                 // Set the right section icon
-                Glide.with(itemView.context)
-                    .load(header.imageId)
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .into(itemView.imageViewSection)
+                itemView.imageViewSection.load(header.imageId)
 
                 // Set the number of camera to show in the subtitle
                 itemView.textViewSectionNbCameras.text = header.nbWebCamsString
@@ -96,9 +89,7 @@ class AdapterMainSections(
         fun bindView(
             webcamList: List<Webcam>?,
             onItemClicked: (Webcam) -> Unit,
-            viewPool: RecyclerView.RecycledViewPool,
-            prefUtils: PreferencesUtils,
-            dateUtils: DateUtils
+            viewPool: RecyclerView.RecycledViewPool
         ) {
             webcamList?.let { webcams ->
                 // Create and set adapter only if this is not already done
@@ -106,7 +97,7 @@ class AdapterMainSections(
 
                     // Applying all settings to the RecyclerView
                     itemView.recyclerViewWebcams.apply {
-                        adapter = AdapterMainSectionWebcams(prefUtils, dateUtils, Glide.with(itemView.context), webcams, onItemClicked)
+                        adapter = AdapterMainSectionWebcams(webcams, onItemClicked)
                         layoutManager =
                             CustomScaleLayoutManager(itemView.context, dip(-40f).toInt(), 5f, ScaleLayoutManager.HORIZONTAL).apply {
                                 minScale = 0.7f

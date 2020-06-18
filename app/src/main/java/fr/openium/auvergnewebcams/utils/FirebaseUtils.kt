@@ -2,7 +2,7 @@ package fr.openium.auvergnewebcams.utils
 
 import android.content.Context
 import android.os.Bundle
-import android.preference.PreferenceManager
+import androidx.preference.PreferenceManager
 import com.google.firebase.analytics.FirebaseAnalytics
 
 

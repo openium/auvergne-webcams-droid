@@ -1,9 +1,9 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'io.fabric'
-apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 29
@@ -41,7 +41,6 @@ android {
         debug {
             // Optimization
             minifyEnabled false
-            ext.enableCrashlytics = false
             ext.alwaysUpdateBuildId = false
 
             // Allow debug and release on the same device
@@ -65,7 +64,7 @@ android {
         }
     }
 
-    // Needed for tests purposes and for exoPlayer
+    // Needed for tests purposes and for exoPlayer/coil
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -74,15 +73,27 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    // Apk size optimization
+    packagingOptions {
+        exclude "okhttp3/**"
+        exclude "com/google/api/**"
+        exclude "kotlin/**"
+        exclude "META-INF/*.version"
+        exclude "META-INF/**.pro"
+        exclude "META-INF/services/**"
+        exclude "**/*.kotlin_module"
+        exclude "**/*.properties"
+        exclude "**/*.xml"
+    }
 }
 
 repositories {
-    maven { url 'https://maven.openium.fr' }
-    maven { url 'https://maven.fabric.io/public' }
-    maven { url 'https://jitpack.io' }
     mavenCentral()
     google()
     jcenter()
+    maven { url 'https://maven.openium.fr' }
+    maven { url 'https://jitpack.io' }
 
     flatDir {
         dirs 'libs'
@@ -99,26 +110,27 @@ dependencies {
 
     // --- AndroidX ---
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
-    implementation 'com.google.android.material:material:1.2.0-alpha05'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta7'
+    implementation 'com.google.android.material:material:1.2.0-beta01'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
     implementation 'androidx.work:work-runtime-ktx:2.3.4'
-    implementation 'androidx.preference:preference-ktx:1.1.0'
+    implementation 'androidx.preference:preference-ktx:1.1.1'
 
     // --- Firebase ---
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
-    implementation 'com.google.firebase:firebase-core:17.3.0'
+    implementation 'com.google.firebase:firebase-crashlytics:17.0.1'
+    implementation 'com.google.firebase:firebase-analytics:17.4.3'
 
     // --- Openium Tools ---
     implementation 'fr.openium:kotlin-tools:1.0.14'
     implementation 'fr.openium:rx-tools:1.0.5'
 
     // --- KTX ---
-    implementation 'androidx.core:core-ktx:1.2.0'
+    implementation 'androidx.core:core-ktx:1.3.0'
 
-    // --- Kodein ---
-    implementation 'org.kodein.di:kodein-di-generic-jvm:6.3.1'
-    implementation 'org.kodein.di:kodein-di-framework-android-x:6.3.1'
+    // --- Koin
+    implementation "org.koin:koin-android:2.1.4"
+    implementation "org.koin:koin-androidx-viewmodel:2.1.4"
 
     // --- Rx ---
     implementation 'io.reactivex.rxjava2:rxjava:2.2.15'
@@ -137,12 +149,8 @@ dependencies {
     // --- Log ---
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
-    // --- Crashlytics ---
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
-    implementation 'com.crashlytics.sdk.android:answers:1.4.7'
-
     // --- Test ---
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test:core:1.2.0'
     androidTestImplementation 'androidx.test:core-ktx:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
@@ -151,7 +159,7 @@ dependencies {
 
     // --- ARCH ---
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-common-java8:2.2.0'
 
     // --- Room ---
@@ -161,19 +169,17 @@ dependencies {
 
     // --- Specific lib of the app ---
 
-    // Glide
-    implementation 'com.github.bumptech.glide:glide:4.10.0'
-    implementation 'com.github.bumptech.glide:okhttp3-integration:4.10.0'
+    // Coil
+    implementation 'io.coil-kt:coil:0.9.5'
 
-    // BigImageViewer
-    implementation 'com.github.piasy:BigImageViewer:1.6.2'
-    implementation 'com.github.piasy:GlideImageLoader:1.6.2'
+    // Big image viewer
+    implementation 'com.github.piasy:BigImageViewer:1.6.3'
 
     // ViewPagerLayoutManager
     implementation(name: 'viewpagerlayoutmanager-release', ext: 'aar')
 
     // ExoPlayer
-    implementation 'com.google.android.exoplayer:exoplayer:2.11.1'
+    implementation 'com.google.android.exoplayer:exoplayer:2.11.5'
 
     // Like button (Twitter)
     implementation 'com.github.jd-alexander:LikeButton:0.2.3'

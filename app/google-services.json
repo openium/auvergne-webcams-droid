@@ -25,17 +25,23 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
+          "other_platform_oauth_client": [
+            {
+              "client_id": "288038948917-3dadtuo23i85st0gvtg9mqgjcsh4shni.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "288038948917-acfd60utkvq5lf40o6hj94d9rgpj4s39.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "fr.openium.ParisWebcams"
+              }
+            }
+          ]
         }
-      }
+      },
+      "admob_app_id": "ca-app-pub-1956032214604331~4416625764"
     },
     {
       "client_info": {
@@ -64,28 +70,20 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 2,
           "other_platform_oauth_client": [
-            {
-              "client_id": "288038948917-npjc592ckqp9bmbtjma5rk4fhc0a7t1q.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "fr.openium.AuvergneWebcams",
-                "app_store_id": "1183930829"
-              }
-            },
             {
               "client_id": "288038948917-3dadtuo23i85st0gvtg9mqgjcsh4shni.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "288038948917-acfd60utkvq5lf40o6hj94d9rgpj4s39.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "fr.openium.ParisWebcams"
+              }
             }
           ]
-        },
-        "ads_service": {
-          "status": 2
         }
       }
     }
