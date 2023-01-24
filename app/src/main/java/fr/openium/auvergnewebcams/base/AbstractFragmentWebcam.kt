@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.net.MailTo
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -17,6 +18,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.like.LikeButton
 import com.like.OnLikeListener
 import com.tbruyelle.rxpermissions2.RxPermissions
+import fr.openium.auvergnewebcams.BuildConfig
 import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.event.eventCameraFavoris
@@ -224,22 +226,26 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     }
 
     private fun checkPermissionSaveFile() {
-        disposables.add(
-            RxPermissions(requireActivity()).requestEach(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                .subscribe { permission ->
-                    when {
-                        permission.granted -> {
-                            saveWebcam()
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+            saveWebcam()
+        } else {
+            disposables.add(
+                RxPermissions(requireActivity()).requestEach(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    .subscribe { permission ->
+                        when {
+                            permission.granted -> {
+                                saveWebcam()
+                            }
+                            permission.shouldShowRequestPermissionRationale -> {
+                                // We can ask again
+                            }
+                            else -> {
+                                // Denied forever
+                                snackbar(getString(R.string.error_no_permisson), Snackbar.LENGTH_SHORT)
+                            }
                         }
-                        permission.shouldShowRequestPermissionRationale -> {
-                            // We can ask again
-                        }
-                        else -> {
-                            // Denied forever
-                            snackbar(getString(R.string.error_no_permisson), Snackbar.LENGTH_SHORT)
-                        }
-                    }
-                })
+                    })
+        }
     }
 
     private fun signalProblem() {
@@ -263,6 +269,28 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     }
 
     protected fun startService(urlSrc: String, isPhoto: Boolean, fileName: String) {
+        RxPermissions(requireActivity())
+            .requestEach(android.Manifest.permission.POST_NOTIFICATIONS)
+            .subscribe({permission ->
+                when {
+                    permission.granted -> {
+                        startWorker(urlSrc, isPhoto, fileName)
+                    }
+                    permission.shouldShowRequestPermissionRationale -> {
+                        // We can ask again
+                    }
+                    else -> {
+                        // Denied forever
+                        snackbar(getString(R.string.error_no_permisson), Snackbar.LENGTH_SHORT)
+                    }
+                }
+
+            }, {
+                Timber.e(it)
+            }).addTo(disposables)
+    }
+
+    private fun startWorker(urlSrc: String, isPhoto: Boolean, fileName: String) {
         if (requireContext().hasNetwork) {
             WorkManager.getInstance(requireContext()).enqueue(
                 OneTimeWorkRequestBuilder<DownloadWorker>().apply {
