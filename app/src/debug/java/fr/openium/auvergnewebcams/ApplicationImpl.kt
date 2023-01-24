@@ -1,9 +1,6 @@
 package fr.openium.auvergnewebcams
 
-import com.crashlytics.android.Crashlytics
-import com.crashlytics.android.core.CrashlyticsCore
 import fr.openium.auvergnewebcams.di.DebugModules
-import io.fabric.sdk.android.Fabric
 import org.kodein.di.Copy
 import org.kodein.di.Kodein
 import timber.log.Timber
@@ -24,11 +21,5 @@ class ApplicationImpl : CustomApplication() {
 
     override fun plantTimber() {
         Timber.plant(Timber.DebugTree())
-    }
-
-    override fun initializeCrashlytics() {
-        val core = CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build()
-        val crashlytics = Crashlytics.Builder().core(core).build()
-        Fabric.with(this, crashlytics)
     }
 }

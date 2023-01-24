@@ -17,7 +17,8 @@
 
         <activity
             android:name=".ui.splash.ActivitySplash"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -55,10 +56,6 @@
             android:name=".ui.search.ActivitySearch"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
-
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="7cc7cb6974a476c88eaefd8f8f18727ed0ba945a" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

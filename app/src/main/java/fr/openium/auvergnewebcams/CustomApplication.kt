@@ -4,13 +4,11 @@ import android.app.Application
 import android.content.Context
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ProcessLifecycleOwner
-import com.crashlytics.android.Crashlytics
-import com.crashlytics.android.answers.Answers
 import com.github.piasy.biv.BigImageViewer
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import fr.openium.auvergnewebcams.custom.CustomGlideImageLoader
 import fr.openium.auvergnewebcams.di.Modules
-import fr.openium.auvergnewebcams.log.CrashReportingTree
-import io.fabric.sdk.android.Fabric
+import fr.openium.auvergnewebcams.log.FirebaseCrashReportingTree
 import okhttp3.OkHttpClient
 import org.kodein.di.Kodein
 import org.kodein.di.KodeinAware
@@ -39,7 +37,6 @@ abstract class CustomApplication : Application(), KodeinAware {
     override fun onCreate() {
         super.onCreate()
 
-        initializeCrashlytics()
         plantTimber()
 
         val foregroundListener by instance<LifecycleObserver>("foregroundListener")
@@ -49,12 +46,8 @@ abstract class CustomApplication : Application(), KodeinAware {
         initBigImageViewer(client)
     }
 
-    open fun initializeCrashlytics() {
-        Fabric.with(applicationContext, Crashlytics(), Answers())
-    }
-
     protected open fun plantTimber() {
-        Timber.plant(CrashReportingTree())
+        Timber.plant(FirebaseCrashReportingTree(FirebaseCrashlytics.getInstance()))
     }
 
     private fun initBigImageViewer(client: OkHttpClient) {
