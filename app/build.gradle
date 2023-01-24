@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId 'fr.openium.auvergnewebcams'
-        minSdkVersion 24
+        minSdkVersion 21
         targetSdkVersion 33
 
         versionCode 34
@@ -58,16 +58,6 @@ android {
         }
     }
 
-    // Needed for tests purposes and for exoPlayer/coil
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-
     // Apk size optimization
     packagingOptions {
         exclude "okhttp3/**"
@@ -92,16 +82,19 @@ dependencies {
 
     // --- AndroidX ---
     implementation 'androidx.appcompat:appcompat:1.6.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.2.0-alpha05'
-    implementation 'com.google.android.material:material:1.9.0-alpha01'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'com.google.android.material:material:1.7.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'androidx.work:work-runtime-ktx:2.7.1'
     implementation 'androidx.preference:preference-ktx:1.2.0'
 
-    // --- Firebase ---
+    // --- Play services ---
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
-    implementation 'com.google.firebase:firebase-crashlytics:18.3.3'
-    implementation 'com.google.firebase:firebase-analytics:21.2.0'
+
+    // --- Firebase ---
+    implementation platform('com.google.firebase:firebase-bom:31.2.0')
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
 
     // --- Openium Tools ---
     implementation 'fr.openium:kotlin-tools:1.0.14'
@@ -160,7 +153,7 @@ dependencies {
 //    implementation(name: 'viewpagerlayoutmanager-release', ext: 'aar')
 
     // ExoPlayer
-    implementation 'com.google.android.exoplayer:exoplayer:2.11.5'
+    implementation 'com.google.android.exoplayer:exoplayer:2.18.2'
 
     // Like button (Twitter)
     implementation 'com.github.jd-alexander:LikeButton:0.2.3'
