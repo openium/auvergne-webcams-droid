@@ -1,7 +1,6 @@
 package fr.openium.auvergnewebcams.utils
 
 import android.content.Context
-import com.crashlytics.android.answers.Answers
 import com.google.firebase.analytics.FirebaseAnalytics
 
 
@@ -52,7 +51,6 @@ object AnalyticsUtils {
      */
     fun appIsOpen(context: Context) {
         FirebaseUtils.logContentEvent(FirebaseAnalytics.getInstance(context), FirebaseAnalytics.Event.APP_OPEN)
-        FabricUtils.logContentViewEvent(Answers.getInstance(), FirebaseAnalytics.Event.APP_OPEN)
     }
 
     /**
@@ -65,7 +63,6 @@ object AnalyticsUtils {
             KEY_BUTTON,
             KEY_SEARCH
         )
-        FabricUtils.logContentViewEvent(Answers.getInstance(), FirebaseAnalytics.Event.SELECT_CONTENT, KEY_BUTTON, KEY_SEARCH)
     }
 
     /**
@@ -78,7 +75,6 @@ object AnalyticsUtils {
             KEY_BUTTON,
             KEY_HOME_REFRESH
         )
-        FabricUtils.logContentViewEvent(Answers.getInstance(), FirebaseAnalytics.Event.SELECT_CONTENT, KEY_BUTTON, KEY_HOME_REFRESH)
     }
 
     /**
@@ -91,7 +87,6 @@ object AnalyticsUtils {
             KEY_BUTTON,
             KEY_SETTINGS
         )
-        FabricUtils.logContentViewEvent(Answers.getInstance(), FirebaseAnalytics.Event.SELECT_CONTENT, KEY_BUTTON, KEY_SETTINGS)
     }
 
     /**
@@ -104,12 +99,6 @@ object AnalyticsUtils {
             KEY_SPECIAL_EVENTS_CONTENT_TYPE_WEBCAM,
             webcamTitle
         )
-        FabricUtils.logContentViewEvent(
-            Answers.getInstance(),
-            FirebaseAnalytics.Event.SELECT_CONTENT,
-            KEY_SPECIAL_EVENTS_CONTENT_TYPE_WEBCAM,
-            webcamTitle
-        )
     }
 
     /**
@@ -117,7 +106,6 @@ object AnalyticsUtils {
      */
     fun sectionDetailsClicked(context: Context, sectionTitle: String) {
         FirebaseUtils.logViewItemListEvent(FirebaseAnalytics.getInstance(context), sectionTitle)
-        FabricUtils.logContentViewEvent(Answers.getInstance(), FirebaseAnalytics.Event.VIEW_ITEM_LIST, sectionTitle)
     }
 
     /**
@@ -126,12 +114,6 @@ object AnalyticsUtils {
     fun webcamDetailRefreshed(context: Context) {
         FirebaseUtils.logContentEvent(
             FirebaseAnalytics.getInstance(context),
-            FirebaseAnalytics.Event.SELECT_CONTENT,
-            KEY_BUTTON,
-            KEY_WEBCAM_DETAIL_REFRESH
-        )
-        FabricUtils.logContentViewEvent(
-            Answers.getInstance(),
             FirebaseAnalytics.Event.SELECT_CONTENT,
             KEY_BUTTON,
             KEY_WEBCAM_DETAIL_REFRESH
@@ -148,7 +130,6 @@ object AnalyticsUtils {
             KEY_BUTTON,
             KEY_SHARE_WEBCAM
         )
-        FabricUtils.logContentViewEvent(Answers.getInstance(), FirebaseAnalytics.Event.SELECT_CONTENT, KEY_BUTTON, KEY_SHARE_WEBCAM)
     }
 
     /**
@@ -161,7 +142,6 @@ object AnalyticsUtils {
             KEY_BUTTON,
             KEY_SAVE_WEBCAM
         )
-        FabricUtils.logContentViewEvent(Answers.getInstance(), FirebaseAnalytics.Event.SELECT_CONTENT, KEY_BUTTON, KEY_SAVE_WEBCAM)
     }
 
     /**
@@ -174,7 +154,6 @@ object AnalyticsUtils {
             KEY_BUTTON,
             KEY_REPORT_WEBCAM_ERROR
         )
-        FabricUtils.logContentViewEvent(Answers.getInstance(), FirebaseAnalytics.Event.SELECT_CONTENT, KEY_BUTTON, KEY_REPORT_WEBCAM_ERROR)
     }
 
     /**
@@ -189,12 +168,6 @@ object AnalyticsUtils {
             favStr,
             webcamTitle
         )
-        FabricUtils.logContentViewEvent(
-            Answers.getInstance(),
-            KEY_SPECIAL_EVENTS_CONTENT_TYPE_FAVORITE,
-            favStr,
-            webcamTitle
-        )
     }
 
     /**
@@ -202,7 +175,6 @@ object AnalyticsUtils {
      */
     fun searchRequestDone(context: Context, searchText: String) {
         FirebaseUtils.logSearchEvent(FirebaseAnalytics.getInstance(context), searchText)
-        FabricUtils.logSearchEvent(Answers.getInstance(), searchText)
     }
 
     /**
@@ -215,7 +187,6 @@ object AnalyticsUtils {
             KEY_BUTTON,
             KEY_ABOUT
         )
-        FabricUtils.logContentViewEvent(Answers.getInstance(), FirebaseAnalytics.Event.SELECT_CONTENT, KEY_BUTTON, KEY_ABOUT)
     }
 
     /**
@@ -228,7 +199,6 @@ object AnalyticsUtils {
             KEY_BUTTON,
             KEY_WEBSITE_OPENIUM
         )
-        FabricUtils.logContentViewEvent(Answers.getInstance(), FirebaseAnalytics.Event.SELECT_CONTENT, KEY_BUTTON, KEY_WEBSITE_OPENIUM)
     }
 
     /**
@@ -241,7 +211,6 @@ object AnalyticsUtils {
             KEY_BUTTON,
             KEY_WEBSITE_PIRATES
         )
-        FabricUtils.logContentViewEvent(Answers.getInstance(), FirebaseAnalytics.Event.SELECT_CONTENT, KEY_BUTTON, KEY_WEBSITE_PIRATES)
     }
 
     /**
@@ -254,7 +223,6 @@ object AnalyticsUtils {
             KEY_BUTTON,
             KEY_RATE_APP
         )
-        FabricUtils.logContentViewEvent(Answers.getInstance(), FirebaseAnalytics.Event.SELECT_CONTENT, KEY_BUTTON, KEY_RATE_APP)
     }
 
     /**
@@ -262,7 +230,6 @@ object AnalyticsUtils {
      */
     fun suggestWebcamClicked(context: Context) {
         FirebaseUtils.logContentEvent(FirebaseAnalytics.getInstance(context), KEY_SPECIAL_EVENTS_CONTENT_TYPE_PROPOSE_WEBCAM)
-        FabricUtils.logContentViewEvent(Answers.getInstance(), KEY_SPECIAL_EVENTS_CONTENT_TYPE_PROPOSE_WEBCAM)
     }
 
     /**
@@ -277,12 +244,6 @@ object AnalyticsUtils {
 
         FirebaseUtils.logContentEvent(
             FirebaseAnalytics.getInstance(context),
-            KEY_SPECIAL_EVENTS_CONTENT_TYPE_FAVORITE,
-            favStr,
-            webcamTitle
-        )
-        FabricUtils.logContentViewEvent(
-            Answers.getInstance(),
             KEY_SPECIAL_EVENTS_CONTENT_TYPE_FAVORITE,
             favStr,
             webcamTitle
