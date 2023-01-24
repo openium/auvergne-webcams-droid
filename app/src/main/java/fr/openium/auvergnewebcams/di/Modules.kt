@@ -53,18 +53,17 @@ object Modules {
 
     val coilModule = module {
         single {
-            ImageLoader(get()) {
+            ImageLoader.Builder(get()).apply {
                 okHttpClient { get(named("COIL")) }
                 crossfade(true)
                 allowRgb565(true)
-            }
+            }.build()
         }
 
         single(named("COIL")) {
             OkHttpClient.Builder()
                 .retryOnConnectionFailure(true)
                 .addInterceptor(get<LastUpdateDateInterceptor>(named("COIL")))
-                .cache(CoilUtils.createDefaultCache(get()))
                 .readTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
                 .build()

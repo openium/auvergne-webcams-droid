@@ -58,14 +58,12 @@ abstract class CustomApplication : Application() {
 
     private fun initCoil() {
         val imageLoader by inject<ImageLoader>()
-        Coil.setDefaultImageLoader(imageLoader)
+        Coil.setImageLoader(imageLoader)
     }
 
     private fun initBigImageViewer() {
         BigImageViewer.initialize(
-            CoilImageLoader(applicationContext, ImageLoader(applicationContext) {
-                allowRgb565(false)
-            })
+            CoilImageLoader(applicationContext)
         )
     }
 

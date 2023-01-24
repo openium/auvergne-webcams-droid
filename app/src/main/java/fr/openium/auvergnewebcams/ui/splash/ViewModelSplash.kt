@@ -31,6 +31,7 @@ class ViewModelSplash(app: Application) : AbstractViewModel(app), KoinComponent 
                 sectionRepository.fetch().doOnSuccess {
                     Timber.d("Loading from network")
                 }.doOnError {
+                    Timber.e(it)
                     loadFromJson()
                 }.ignoreElement()
             } else {

@@ -7,7 +7,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import coil.Coil
-import coil.api.load
+import coil.dispose
+import coil.request.ImageRequest
 import coil.target.Target
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.model.entity.Webcam
@@ -16,6 +17,7 @@ import fr.openium.kotlintools.ext.gone
 import fr.openium.kotlintools.ext.goneWithAnimationCompat
 import fr.openium.kotlintools.ext.show
 import kotlinx.android.synthetic.main.item_section_webcams.view.*
+import kotlinx.android.synthetic.main.item_webcam.view.*
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
@@ -41,10 +43,10 @@ class AdapterMainSectionWebcams(
         // Show error text if needed
         updateErrorText(webcam.lastUpdate, holder)
 
-        Coil.load(holder.itemView.imageViewSectionWebcamsImage.context, webcam.getUrlForWebcam(canBeHD = true, canBeVideo = false)) {
-            error(R.drawable.ic_broken_camera)
-
-            target(object : Target {
+        val request = ImageRequest.Builder(holder.itemView.context)
+            .data(webcam.getUrlForWebcam(canBeHD = true, canBeVideo = false))
+            .error(R.drawable.ic_broken_camera)
+            .target(object : Target {
                 override fun onStart(placeholder: Drawable?) {
                     holder.itemView.progressBarSectionWebcams.show()
                 }
@@ -62,12 +64,18 @@ class AdapterMainSectionWebcams(
                     updateErrorText(webcam.lastUpdate, holder)
                     holder.itemView.progressBarSectionWebcams.goneWithAnimationCompat()
                 }
-            })
-        }
+            }).build()
+        Coil.imageLoader(context = holder.itemView.context)
+            .enqueue(request)
 
         holder.itemView.setOnClickListener {
             onWebcamClicked(webcam)
         }
+    }
+
+    override fun onViewRecycled(holder: WebcamHolder) {
+        super.onViewRecycled(holder)
+        holder.itemView.imageViewSectionWebcamsImage.dispose()
     }
 
     private fun updateErrorText(lastUpdateTime: Long?, holder: WebcamHolder, isFullError: Boolean = false) {

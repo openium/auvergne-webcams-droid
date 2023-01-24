@@ -5,7 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import coil.api.load
+import coil.dispose
+import coil.load
 import com.leochuan.ScaleLayoutManager
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.custom.CustomScaleLayoutManager
@@ -15,6 +16,8 @@ import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.kotlintools.ext.dip
 import kotlinx.android.synthetic.main.header_section.view.*
 import kotlinx.android.synthetic.main.item_section.view.*
+import kotlinx.android.synthetic.main.item_section.view.textViewWebcamName
+import kotlinx.android.synthetic.main.item_webcam.view.*
 import org.koin.core.KoinComponent
 
 

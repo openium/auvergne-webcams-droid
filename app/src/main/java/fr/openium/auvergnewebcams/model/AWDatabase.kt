@@ -9,7 +9,7 @@ import fr.openium.auvergnewebcams.model.dao.WebcamDao
 import fr.openium.auvergnewebcams.model.entity.Section
 import fr.openium.auvergnewebcams.model.entity.Webcam
 
-@Database(entities = [Section::class, Webcam::class], version = 1)
+@Database(entities = [Section::class, Webcam::class], version = 2)
 @TypeConverters(StringTypeConverter::class)
 abstract class AWDatabase : RoomDatabase() {
 

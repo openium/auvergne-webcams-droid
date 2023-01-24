@@ -9,7 +9,7 @@ import retrofit2.http.GET
  */
 interface AWApi {
 
-    @GET("resources/json/v2/aw-config.json")
+    @GET("resources/json/v3/aw-config.json")
     fun getSections(): Single<SectionList> {
         error("Not implemented")
     }

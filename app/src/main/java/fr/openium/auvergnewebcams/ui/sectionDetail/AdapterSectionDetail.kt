@@ -7,7 +7,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import coil.Coil
-import coil.api.load
+import coil.clear
+import coil.dispose
+import coil.load
+import coil.request.ImageRequest
 import coil.target.Target
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.model.entity.Section
@@ -74,6 +77,11 @@ class AdapterSectionDetail(
 
     override fun getItemCount(): Int = data.count()
 
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        super.onViewRecycled(holder)
+        holder.itemView.imageViewWebcamImage.dispose()
+    }
+
     fun refreshData(data: List<Data>) {
         this.data = data
         notifyDataSetChanged()
@@ -85,6 +93,7 @@ class AdapterSectionDetail(
     )
 
     class SectionHolder(view: View) : RecyclerView.ViewHolder(view) {
+
         fun bindView(section: Section?) {
             section?.let {
                 // Set section title
@@ -126,10 +135,10 @@ class AdapterSectionDetail(
                 // Show error text if needed
                 updateErrorText(dateUtils, webcam)
 
-                Coil.load(itemView.imageViewWebcamImage.context, webcam.getUrlForWebcam(canBeHD = false, canBeVideo = false)) {
-                    error(R.drawable.ic_broken_camera)
-
-                    target(object : Target {
+                val request = ImageRequest.Builder(itemView.context)
+                    .data(webcam.getUrlForWebcam(canBeHD = true, canBeVideo = false))
+                    .error(R.drawable.ic_broken_camera)
+                    .target(object : Target {
                         override fun onStart(placeholder: Drawable?) {
                             itemView.progressBarWebcam.show()
                         }
@@ -147,8 +156,10 @@ class AdapterSectionDetail(
                             updateErrorText(dateUtils, webcam)
                             itemView.progressBarWebcam.goneWithAnimationCompat()
                         }
-                    })
-                }
+                    }).build()
+
+                Coil.imageLoader(context = itemView.context)
+                    .enqueue(request)
 
                 itemView.setOnClickListener {
                     onWebcamClicked.invoke(webcam)
