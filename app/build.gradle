@@ -144,7 +144,7 @@ dependencies {
     // --- Specific lib of the app ---
 
     // Coil
-    implementation 'io.coil-kt:coil:0.9.5'
+    implementation 'io.coil-kt:coil:2.2.2'
 
     // Big image viewer
     implementation 'com.github.piasy:BigImageViewer:1.8.1'
