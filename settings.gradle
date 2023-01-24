@@ -1,1 +1,23 @@
-include ':app'
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+    repositories {
+        google()
+        mavenCentral()
+        jcenter()
+        maven { url 'https://jitpack.io' }
+        maven { url 'https://maven.openium.fr' }
+
+        flatDir{
+            dirs 'libs'
+        }
+    }
+}
+rootProject.name = "AuvergneWebcams"
+include ":app"

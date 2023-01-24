@@ -32,8 +32,8 @@ class SectionRepository(private val client: AWClient, private val api: AWApi, pr
                         webcam.populateId(section.uid)
 
                         if (webcam.type == Webcam.WebcamType.VIEWSURF.nameType) {
-                            webcam.mediaViewSurfLD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfLD)
-                            webcam.mediaViewSurfHD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfHD)
+                            webcam.mediaViewSurfLD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurf)
+                            webcam.mediaViewSurfHD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurf)
                         }
 
                         // Try to get the webcam to know if it's already in DB

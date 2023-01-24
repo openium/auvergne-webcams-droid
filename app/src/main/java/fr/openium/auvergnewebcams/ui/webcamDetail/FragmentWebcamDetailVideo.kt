@@ -17,7 +17,12 @@ import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractFragmentWebcam
 import fr.openium.auvergnewebcams.ext.hasNetwork
 import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
-import fr.openium.kotlintools.ext.*
+import fr.openium.kotlintools.ext.getColorCompat
+import fr.openium.kotlintools.ext.gone
+import fr.openium.kotlintools.ext.goneWithAnimationCompat
+import fr.openium.kotlintools.ext.show
+import fr.openium.kotlintools.ext.showWithAnimationCompat
+import fr.openium.kotlintools.ext.snackbar
 import fr.openium.rxtools.ext.fromIOToMain
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
@@ -46,7 +51,7 @@ class FragmentWebcamDetailVideo : AbstractFragmentWebcam() {
 
         if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             playerViewWebcamVideo.setBackgroundColor(requireContext().getColorCompat(R.color.grey_medium))
-            if (webcam.viewsurfHD.isNullOrEmpty()) {
+            if (webcam.viewsurf.isNullOrEmpty()) {
                 textViewWebcamDetailLowQualityOnly.show()
             }
         } else {
@@ -174,8 +179,8 @@ class FragmentWebcamDetailVideo : AbstractFragmentWebcam() {
     override fun refreshWebcam() {
         if (requireContext().hasNetwork) {
             Observable.zip(
-                Observable.fromCallable { LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfLD) },
-                Observable.fromCallable { LoadWebCamUtils.getMediaViewSurf(webcam.viewsurfHD) },
+                Observable.fromCallable { LoadWebCamUtils.getMediaViewSurf(webcam.viewsurf) },
+                Observable.fromCallable { LoadWebCamUtils.getMediaViewSurf(webcam.viewsurf) },
                 BiFunction { t1: String, t2: String ->
                     t1 to t2
                 }).observeOn(Schedulers.io())
