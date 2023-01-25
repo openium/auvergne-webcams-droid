@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "4a8a7a19ad8d959398da4d709e367329",
+    "identityHash": "a8801bb2de41a648f411d731ae0e6ffc",
     "entities": [
       {
         "tableName": "Section",
@@ -46,17 +46,17 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": false,
           "columnNames": [
             "uid"
-          ],
-          "autoGenerate": false
+          ]
         },
         "indices": [],
         "foreignKeys": []
       },
       {
         "tableName": "Webcam",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uid` INTEGER NOT NULL, `sectionUid` INTEGER, `order` INTEGER NOT NULL, `title` TEXT, `imageLD` TEXT, `imageHD` TEXT, `viewsurfLD` TEXT, `viewsurfHD` TEXT, `type` TEXT, `tags` TEXT, `mediaViewSurfLD` TEXT, `mediaViewSurfHD` TEXT, `lastUpdate` INTEGER, `isFavoris` INTEGER NOT NULL, `hidden` INTEGER, PRIMARY KEY(`uid`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uid` INTEGER NOT NULL, `sectionUid` INTEGER, `order` INTEGER NOT NULL, `title` TEXT, `imageLD` TEXT, `imageHD` TEXT, `viewsurf` TEXT, `type` TEXT, `tags` TEXT, `mediaViewSurfLD` TEXT, `mediaViewSurfHD` TEXT, `lastUpdate` INTEGER, `isFavoris` INTEGER NOT NULL, `hidden` INTEGER, PRIMARY KEY(`uid`))",
         "fields": [
           {
             "fieldPath": "uid",
@@ -95,14 +95,8 @@
             "notNull": false
           },
           {
-            "fieldPath": "viewsurfLD",
-            "columnName": "viewsurfLD",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "viewsurfHD",
-            "columnName": "viewsurfHD",
+            "fieldPath": "viewsurf",
+            "columnName": "viewsurf",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -150,10 +144,10 @@
           }
         ],
         "primaryKey": {
+          "autoGenerate": false,
           "columnNames": [
             "uid"
-          ],
-          "autoGenerate": false
+          ]
         },
         "indices": [],
         "foreignKeys": []
@@ -162,7 +156,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4a8a7a19ad8d959398da4d709e367329')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a8801bb2de41a648f411d731ae0e6ffc')"
     ]
   }
 }

@@ -7,7 +7,9 @@ import androidx.room.Room
 class AWClient private constructor(context: Context) {
 
     // App database object
-    val database: AWDatabase = Room.databaseBuilder(context, AWDatabase::class.java, "AWDatabase").build()
+    val database: AWDatabase = Room.databaseBuilder(context, AWDatabase::class.java, "AWDatabase")
+        .fallbackToDestructiveMigration()
+        .build()
 
     companion object {
         private var instance: AWClient? = null

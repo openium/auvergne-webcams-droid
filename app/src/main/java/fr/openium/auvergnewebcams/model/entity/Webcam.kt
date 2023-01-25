@@ -15,8 +15,7 @@ class Webcam {
     var title: String? = null
     var imageLD: String? = null
     var imageHD: String? = null
-    var viewsurfLD: String? = null
-    var viewsurfHD: String? = null
+    var viewsurf: String? = null
     var type: String? = null
     var tags: List<String>? = listOf()
     var mediaViewSurfLD: String? = null
@@ -34,9 +33,9 @@ class Webcam {
             val format = if (canBeVideo) "%s/%s.mp4" else "%s/%s.jpg"
 
             // Load LD/HD video
-            if (canBeHD && !mediaViewSurfHD.isNullOrEmpty() && !viewsurfHD.isNullOrEmpty()) {
-                String.format(format, viewsurfHD, mediaViewSurfHD)
-            } else String.format(format, viewsurfLD, mediaViewSurfLD)
+            if (canBeHD && !mediaViewSurfHD.isNullOrEmpty()) {
+                String.format(format, viewsurf, mediaViewSurfHD)
+            } else String.format(format, viewsurf, mediaViewSurfLD)
         } else {
             // Load LD/HD image
             if (canBeHD && !imageHD.isNullOrBlank()) imageHD ?: "" else imageLD ?: ""

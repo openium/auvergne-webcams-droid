@@ -3,7 +3,6 @@ package fr.openium.auvergnewebcams.ui.sectionDetail
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
 import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractFragment
@@ -27,9 +26,9 @@ class FragmentSectionDetail : AbstractFragment() {
 
     override val layoutId: Int = R.layout.fragment_section_detail
 
-    protected lateinit var viewModelSectionDetail: ViewModelSectionDetail
+    private lateinit var viewModelSectionDetail: ViewModelSectionDetail
 
-    protected lateinit var section: Section
+    private lateinit var section: Section
     private var adapterSectionDetail: AdapterSectionDetail? = null
 
     // --- Life cycle
@@ -75,7 +74,7 @@ class FragmentSectionDetail : AbstractFragment() {
 
     private fun initAdapter() {
         if (adapterSectionDetail == null) {
-            adapterSectionDetail = AdapterSectionDetail(prefUtils, dateUtils, Glide.with(requireContext()), getData()) {
+            adapterSectionDetail = AdapterSectionDetail(getData()) {
                 AnalyticsUtils.webcamDetailsClicked(requireContext(), it.title ?: "")
                 requireContext().startActivity(ActivityWebcamDetail.getIntent(requireContext(), it))
             }

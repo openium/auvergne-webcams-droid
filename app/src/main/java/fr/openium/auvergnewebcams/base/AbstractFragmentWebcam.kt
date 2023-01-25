@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.work.Data
@@ -28,7 +29,12 @@ import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.service.DownloadWorker
 import fr.openium.auvergnewebcams.ui.webcamDetail.ViewModelWebcamDetail
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
-import fr.openium.kotlintools.ext.*
+import fr.openium.kotlintools.ext.goneWithAnimationCompat
+import fr.openium.kotlintools.ext.ifLet
+import fr.openium.kotlintools.ext.setTitle
+import fr.openium.kotlintools.ext.showWithAnimationCompat
+import fr.openium.kotlintools.ext.snackbar
+import fr.openium.kotlintools.ext.toast
 import fr.openium.rxtools.ext.fromIOToMain
 import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.footer_webcam_detail.*
@@ -59,12 +65,12 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
         setHasOptionsMenu(true)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         arguments?.getLong(Constants.KEY_WEBCAM_ID)?.also {
             setListener(it)
-        } ?: activity?.finish()
+        } ?: requireActivity().finish()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -80,16 +86,19 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
                 refreshWebcam()
                 true
             }
+
             R.id.menu_share -> {
                 AnalyticsUtils.shareWebcamClicked(requireContext())
                 shareWebCam()
                 true
             }
+
             R.id.menu_save -> {
                 AnalyticsUtils.saveWebcamClicked(requireContext())
                 checkPermissionSaveFile()
                 true
             }
+
             else -> super.onOptionsItemSelected(item)
         }
 
@@ -161,8 +170,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
         // Last update date
         val lastUpdate = webcam.getLastUpdateDate()
         if (lastUpdate != null) {
-            textViewWebcamDetailLastUpdate.text =
-                getString(R.string.generic_last_update_format, dateUtils.getDateInFullFormat(lastUpdate))
+            textViewWebcamDetailLastUpdate.text = getString(R.string.generic_last_update_format, dateUtils.getDateInFullFormat(lastUpdate))
             textViewWebcamDetailLastUpdate.showWithAnimationCompat()
         } else {
             frameLayoutWebcamDetailHeader.goneWithAnimationCompat() //TODO
@@ -176,24 +184,28 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
                 linearLayoutWebcamDetailNotConnected.goneWithAnimationCompat()
                 textViewWebcamDetailNotUpToDate.goneWithAnimationCompat()
             }
+
             Configuration.ORIENTATION_PORTRAIT to State.LOADED_NOT_UP_TO_DATE -> {
                 showDetailContent()
                 linearLayoutWebcamDetailNotWorking.goneWithAnimationCompat()
                 linearLayoutWebcamDetailNotConnected.goneWithAnimationCompat()
                 textViewWebcamDetailNotUpToDate.showWithAnimationCompat()
             }
+
             Configuration.ORIENTATION_PORTRAIT to State.NOT_WORKING -> {
                 hideDetailContent()
                 linearLayoutWebcamDetailNotWorking.showWithAnimationCompat()
                 linearLayoutWebcamDetailNotConnected.goneWithAnimationCompat()
                 textViewWebcamDetailNotUpToDate.goneWithAnimationCompat()
             }
+
             Configuration.ORIENTATION_PORTRAIT to State.NOT_CONNECTED -> {
                 hideDetailContent()
                 linearLayoutWebcamDetailNotWorking.goneWithAnimationCompat()
                 linearLayoutWebcamDetailNotConnected.showWithAnimationCompat()
                 textViewWebcamDetailNotUpToDate.goneWithAnimationCompat()
             }
+
             Configuration.ORIENTATION_LANDSCAPE to State.LOADED_UP_TO_DATE -> {
                 showDetailContent()
                 linearLayoutWebcamDetailNotWorking.goneWithAnimationCompat()
@@ -201,6 +213,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
                 frameLayoutWebcamDetailHeader.goneWithAnimationCompat()
                 frameLayoutWebcamDetailFooter.goneWithAnimationCompat()
             }
+
             Configuration.ORIENTATION_LANDSCAPE to State.LOADED_NOT_UP_TO_DATE -> {
                 showDetailContent()
                 linearLayoutWebcamDetailNotWorking.goneWithAnimationCompat()
@@ -208,6 +221,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
                 frameLayoutWebcamDetailHeader.goneWithAnimationCompat()
                 frameLayoutWebcamDetailFooter.goneWithAnimationCompat()
             }
+
             Configuration.ORIENTATION_LANDSCAPE to State.NOT_WORKING -> {
                 hideDetailContent()
                 linearLayoutWebcamDetailNotWorking.showWithAnimationCompat()
@@ -215,6 +229,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
                 frameLayoutWebcamDetailHeader.goneWithAnimationCompat()
                 frameLayoutWebcamDetailFooter.goneWithAnimationCompat()
             }
+
             Configuration.ORIENTATION_LANDSCAPE to State.NOT_CONNECTED -> {
                 hideDetailContent()
                 linearLayoutWebcamDetailNotWorking.goneWithAnimationCompat()

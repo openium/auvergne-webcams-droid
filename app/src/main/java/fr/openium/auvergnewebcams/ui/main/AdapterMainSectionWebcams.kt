@@ -6,41 +6,32 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.RequestManager
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
-import com.bumptech.glide.signature.MediaStoreSignature
+import coil.Coil
+import coil.dispose
+import coil.request.ImageRequest
+import coil.target.Target
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.utils.DateUtils
-import fr.openium.auvergnewebcams.utils.PreferencesUtils
 import fr.openium.kotlintools.ext.gone
+import fr.openium.kotlintools.ext.goneWithAnimationCompat
 import fr.openium.kotlintools.ext.show
-import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.item_section_webcams.view.*
-import timber.log.Timber
+import kotlinx.android.synthetic.main.item_webcam.view.*
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 
 
 /**
  * Created by Openium on 19/02/2019.
  */
 class AdapterMainSectionWebcams(
-    prefUtils: PreferencesUtils,
-    private val dateUtils: DateUtils,
-    private var glideRequest: RequestManager,
     private var webcams: List<Webcam>,
     private val onWebcamClicked: ((Webcam) -> Unit)
-) : RecyclerView.Adapter<AdapterMainSectionWebcams.WebcamHolder>() {
+) : RecyclerView.Adapter<AdapterMainSectionWebcams.WebcamHolder>(), KoinComponent {
 
-    private var mediaStoreSignature = MediaStoreSignature("", prefUtils.lastUpdateWebcamsTimestamp, 0)
-    private val disposables = CompositeDisposable()
-
-    init {
-        Timber.d("TEST disposables created")
-    }
+    //    private var mediaStoreSignature = MediaStoreSignature("", prefUtils.lastUpdateWebcamsTimestamp, 0)
+    private val dateUtils by inject<DateUtils>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WebcamHolder {
         return WebcamHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_section_webcams, parent, false))
@@ -52,42 +43,39 @@ class AdapterMainSectionWebcams(
         // Show error text if needed
         updateErrorText(webcam.lastUpdate, holder)
 
-        // Show the progressBar
-        holder.itemView.progressBarSectionWebcams.show()
-
-        val listenerGlide = object : RequestListener<Drawable> {
-
-            override fun onResourceReady(
-                resource: Drawable?,
-                model: Any?,
-                target: Target<Drawable>?,
-                dataSource: DataSource?,
-                isFirst: Boolean
-            ): Boolean {
-                holder.itemView.imageViewSectionWebcamsImage.scaleType = ImageView.ScaleType.CENTER_CROP
-                updateErrorText(webcam.lastUpdate, holder)
-                holder.itemView.progressBarSectionWebcams.gone()
-                return false
-            }
-
-            override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                holder.itemView.imageViewSectionWebcamsImage.scaleType = ImageView.ScaleType.CENTER_INSIDE
-                updateErrorText(webcam.lastUpdate, holder, true)
-                holder.itemView.progressBarSectionWebcams.gone()
-                return false
-            }
-        }
-
-        glideRequest.load(webcam.getUrlForWebcam(canBeHD = true, canBeVideo = false))
-            .transition(DrawableTransitionOptions.withCrossFade())
-            .signature(mediaStoreSignature)
-            .listener(listenerGlide)
+        val request = ImageRequest.Builder(holder.itemView.context)
+            .data(webcam.getUrlForWebcam(canBeHD = true, canBeVideo = false))
             .error(R.drawable.ic_broken_camera)
-            .into(holder.itemView.imageViewSectionWebcamsImage)
+            .target(object : Target {
+                override fun onStart(placeholder: Drawable?) {
+                    holder.itemView.progressBarSectionWebcams.show()
+                }
+
+                override fun onError(error: Drawable?) {
+                    holder.itemView.imageViewSectionWebcamsImage.scaleType = ImageView.ScaleType.CENTER_INSIDE
+                    holder.itemView.imageViewSectionWebcamsImage.setImageDrawable(error)
+                    updateErrorText(webcam.lastUpdate, holder, true)
+                    holder.itemView.progressBarSectionWebcams.goneWithAnimationCompat()
+                }
+
+                override fun onSuccess(result: Drawable) {
+                    holder.itemView.imageViewSectionWebcamsImage.scaleType = ImageView.ScaleType.CENTER_CROP
+                    holder.itemView.imageViewSectionWebcamsImage.setImageDrawable(result)
+                    updateErrorText(webcam.lastUpdate, holder)
+                    holder.itemView.progressBarSectionWebcams.goneWithAnimationCompat()
+                }
+            }).build()
+        Coil.imageLoader(context = holder.itemView.context)
+            .enqueue(request)
 
         holder.itemView.setOnClickListener {
             onWebcamClicked(webcam)
         }
+    }
+
+    override fun onViewRecycled(holder: WebcamHolder) {
+        super.onViewRecycled(holder)
+        holder.itemView.imageViewSectionWebcamsImage.dispose()
     }
 
     private fun updateErrorText(lastUpdateTime: Long?, holder: WebcamHolder, isFullError: Boolean = false) {

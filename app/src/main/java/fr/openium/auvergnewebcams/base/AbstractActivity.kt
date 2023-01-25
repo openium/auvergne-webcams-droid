@@ -3,41 +3,32 @@ package fr.openium.auvergnewebcams.base
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import com.bumptech.glide.Glide
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.custom.OnBackPressedListener
 import fr.openium.auvergnewebcams.utils.DateUtils
 import fr.openium.auvergnewebcams.utils.PreferencesUtils
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.toolbar.*
-import org.kodein.di.Kodein
-import org.kodein.di.KodeinAware
-import org.kodein.di.android.closestKodein
-import org.kodein.di.generic.instance
+import org.koin.android.ext.android.inject
 
 /**
  * Created by Openium on 19/02/2019.
  */
 
-abstract class AbstractActivity : AppCompatActivity(), KodeinAware {
+abstract class AbstractActivity : AppCompatActivity() {
     protected val disposables: CompositeDisposable = CompositeDisposable()
-    protected var rebindDisposables: CompositeDisposable = CompositeDisposable() // Resubscribe in onstart
 
-    override val kodein: Kodein by closestKodein()
-    protected val prefUtils: PreferencesUtils by instance()
-    protected val dateUtils: DateUtils by instance()
-    protected val glide: Glide by instance()
+    protected val prefUtils by inject<PreferencesUtils>()
+    protected val dateUtils by inject<DateUtils>()
 
     protected open val handleFragmentBackPressed: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        beforeSetContentView()
         setContentView(layoutId)
 
         toolbar?.also { setSupportActionBar(it) }
-
         setHomeAsUp(showHomeAsUp)
     }
 
@@ -46,24 +37,6 @@ abstract class AbstractActivity : AppCompatActivity(), KodeinAware {
             setDisplayHomeAsUpEnabled(enabled)
             setHomeButtonEnabled(enabled)
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        startDisposable(rebindDisposables)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        rebindDisposables.clear()
-    }
-
-    protected open fun startDisposable(onStartDisposables: CompositeDisposable) {
-
-    }
-
-    protected open fun beforeSetContentView() {
-
     }
 
     override fun onDestroy() {

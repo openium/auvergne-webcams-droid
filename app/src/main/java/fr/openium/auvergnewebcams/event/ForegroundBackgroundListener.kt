@@ -8,25 +8,20 @@ import android.net.ConnectivityManager
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
-import com.bumptech.glide.Glide
 import fr.openium.auvergnewebcams.ext.hasNetwork
 import fr.openium.auvergnewebcams.utils.PreferencesUtils
-import fr.openium.rxtools.ext.fromIOToMain
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.addTo
-import org.kodein.di.Kodein
-import org.kodein.di.KodeinAware
-import org.kodein.di.android.closestKodein
-import org.kodein.di.generic.instance
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
-class ForegroundBackgroundListener(val context: Context) : LifecycleObserver, KodeinAware {
+class ForegroundBackgroundListener(val context: Context) : LifecycleObserver, KoinComponent {
 
-    override val kodein: Kodein by closestKodein(context)
-    private val prefUtils: PreferencesUtils by instance()
+    private val prefUtils by inject<PreferencesUtils>()
 
     private val disposables: CompositeDisposable = CompositeDisposable()
 
@@ -75,13 +70,14 @@ class ForegroundBackgroundListener(val context: Context) : LifecycleObserver, Ko
     }
 
     private fun removeGlideCache() {
-        Observable
-            .fromCallable {
-                Glide.get(context).clearDiskCache()
-            }
-            .fromIOToMain()
-            .subscribe({
-                Glide.get(context).clearMemory()
-            }, { Timber.e(it, "Error cleaning Glide cache") }).addTo(disposables)
+        // TODO
+//        Observable
+//            .fromCallable {
+//                Glide.get(context).clearDiskCache()
+//            }
+//            .fromIOToMain()
+//            .subscribe({
+//                Glide.get(context).clearMemory()
+//            }, { Timber.e(it, "Error cleaning Glide cache") }).addTo(disposables)
     }
 }

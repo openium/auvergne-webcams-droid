@@ -18,7 +18,8 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imageViewWebcamImage"
             android:layout_width="match_parent"
-            android:layout_height="150dp" />
+            android:layout_height="150dp"
+            android:scaleType="centerCrop" />
 
         <ProgressBar
             android:id="@+id/progressBarWebcam"

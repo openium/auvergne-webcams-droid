@@ -13,11 +13,7 @@ import io.reactivex.schedulers.Schedulers
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.kodein.di.Kodein
-import org.kodein.di.generic.bind
-import org.kodein.di.generic.instance
-import org.kodein.di.generic.provider
-import org.kodein.di.generic.singleton
+import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -33,37 +29,29 @@ import java.util.concurrent.TimeUnit
 object DebugModules {
     const val mock = false
 
-    val configModule = Kodein.Module("Config module") {
-
-    }
-
-    val serviceModule = Kodein.Module("Service module") {
-
-    }
-
-    val databaseService = Kodein.Module("Database Module") {
-        bind<AWClient>(overrides = true) with provider {
-            AWClient.getInstance(instance())
+    val databaseService = module {
+        single(override = true) {
+            AWClient.getInstance(get())
         }
     }
 
-    val restModule = Kodein.Module("REST module") {
-        bind<OkHttpClient>(overrides = true) with provider {
+    val restModule = module {
+        single(override = true) {
             OkHttpClient.Builder()
                 .addInterceptor(HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY })
-                .cache(instance())
+                .cache(get())
                 .build()
         }
 
-        bind<Retrofit>(overrides = true) with singleton {
+        single(override = true) {
             Retrofit.Builder()
-                .baseUrl(instance<HttpUrl>()).client(instance())
-                .addConverterFactory(GsonConverterFactory.create(instance()))
+                .baseUrl(get<HttpUrl>()).client(get())
+                .addConverterFactory(GsonConverterFactory.create(get()))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
                 .build()
         }
 
-        bind<AWApi>(overrides = true) with provider {
+        single(override = true) {
             if (mock) {
                 val networkBehaviour = NetworkBehavior.create()
                 networkBehaviour.setDelay(0, TimeUnit.MILLISECONDS)
@@ -72,7 +60,7 @@ object DebugModules {
                 val apiMock = object : MockApi() {
 
                     override fun getSections(): Single<SectionList> {
-                        val thisValue = instance<Context>().assets.open("aw-config.json")
+                        val thisValue = get<Context>().assets.open("aw-config.json")
                         val reader = InputStreamReader(thisValue)
 
                         val sObjectMapper = GsonBuilder()
@@ -96,21 +84,15 @@ object DebugModules {
 
                 apiMock.delegate = MockRetrofit.Builder(
                     Retrofit.Builder()
-                        .baseUrl(instance<HttpUrl>())
+                        .baseUrl(get<HttpUrl>())
                         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                         .addConverterFactory(GsonConverterFactory.create())
                         .build()
-                )
-                    .networkBehavior(networkBehaviour)
-                    .build().create(AWApi::class.java)
+                ).networkBehavior(networkBehaviour).build().create(AWApi::class.java)
                 apiMock
             } else {
-                instance<Retrofit>().create(AWApi::class.java)
+                get<Retrofit>().create(AWApi::class.java)
             }
         }
-    }
-
-    val repositoryModule = Kodein.Module("Repository Module") {
-        
     }
 }

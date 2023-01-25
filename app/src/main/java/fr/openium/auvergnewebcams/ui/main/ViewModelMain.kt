@@ -9,15 +9,16 @@ import fr.openium.auvergnewebcams.repository.WebcamRepository
 import fr.openium.rxtools.ext.fromIOToMain
 import io.reactivex.Completable
 import io.reactivex.Single
-import org.kodein.di.generic.instance
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 
-class ViewModelMain(app: Application) : AbstractViewModel(app) {
+class ViewModelMain(app: Application) : AbstractViewModel(app), KoinComponent {
 
-    private val sectionRepository: SectionRepository by instance()
-    private val webcamRepository: WebcamRepository by instance()
+    private val sectionRepository by inject<SectionRepository>()
+    private val webcamRepository by inject<WebcamRepository>()
 
     companion object {
         const val MINIMUM_SECONDS_TO_WAIT = 2L
@@ -33,7 +34,9 @@ class ViewModelMain(app: Application) : AbstractViewModel(app) {
             }.ignoreElement()
         ).fromIOToMain()
 
-    fun getSectionsSingle(): Single<List<Section>> = sectionRepository.getSectionsSingle()
+    fun getSectionsSingle(): Single<List<Section>> =
+        sectionRepository.getSectionsSingle()
 
-    fun getWebcamsSingle(): Single<List<Webcam>> = webcamRepository.getWebcamsSingle()
+    fun getWebcamsSingle(): Single<List<Webcam>> =
+        webcamRepository.getWebcamsSingle()
 }

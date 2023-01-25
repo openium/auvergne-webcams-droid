@@ -9,15 +9,16 @@ import fr.openium.auvergnewebcams.repository.SectionRepository
 import fr.openium.auvergnewebcams.rest.model.SectionList
 import fr.openium.rxtools.ext.fromIOToMain
 import io.reactivex.Completable
-import org.kodein.di.generic.instance
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 import timber.log.Timber
 import java.io.InputStreamReader
 import java.util.concurrent.TimeUnit
 
 
-class ViewModelSplash(app: Application) : AbstractViewModel(app) {
+class ViewModelSplash(app: Application) : AbstractViewModel(app), KoinComponent {
 
-    private val sectionRepository: SectionRepository by instance()
+    private val sectionRepository by inject<SectionRepository>()
 
     companion object {
         const val MINIMUM_SECONDS_TO_WAIT = 2L
@@ -30,6 +31,7 @@ class ViewModelSplash(app: Application) : AbstractViewModel(app) {
                 sectionRepository.fetch().doOnSuccess {
                     Timber.d("Loading from network")
                 }.doOnError {
+                    Timber.e(it)
                     loadFromJson()
                 }.ignoreElement()
             } else {
@@ -49,7 +51,7 @@ class ViewModelSplash(app: Application) : AbstractViewModel(app) {
 
         if (sections.isEmpty()) {
             getSectionsFromAssets()?.also {
-                sectionRepository.insert(it.sections)
+                sectionRepository.insertSectionsAndWebcams(it)
             }
         }
     }

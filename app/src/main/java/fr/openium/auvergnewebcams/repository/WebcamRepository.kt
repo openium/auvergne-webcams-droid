@@ -45,7 +45,7 @@ class WebcamRepository(private val client: AWClient, private val dateUtils: Date
 
     fun updateLastUpdateDate(lastModified: String, urlMedia: String) {
         getWebcamWithPartialUrl(urlMedia)?.let {
-            if (!lastModified.isBlank()) {
+            if (lastModified.isNotBlank()) {
                 val newTime = dateUtils.parseDateGMT(lastModified) ?: 0L
 
                 if (it.lastUpdate == null || newTime != it.lastUpdate!!) {

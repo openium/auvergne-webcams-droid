@@ -1,9 +1,9 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'com.google.gms.google-services'
-apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'fr.openium.version'
 
 android {
@@ -37,12 +37,8 @@ android {
 
     buildTypes {
         debug {
-            // Optimization
             minifyEnabled false
-            ext.enableCrashlytics = false
-            ext.alwaysUpdateBuildId = false
 
-            // Allow debug and release on the same device
             versionNameSuffix '-debug'
             applicationIdSuffix '.debug'
             signingConfig signingConfigs.debug
@@ -50,8 +46,8 @@ android {
         release {
             minifyEnabled true
             shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
     }
@@ -63,14 +59,17 @@ android {
         }
     }
 
-    // Needed for tests purposes and for exoPlayer
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = "1.8"
+    // Apk size optimization
+    packagingOptions {
+        exclude "okhttp3/**"
+        exclude "com/google/api/**"
+        exclude "kotlin/**"
+        exclude "META-INF/*.version"
+        exclude "META-INF/**.pro"
+        exclude "META-INF/services/**"
+        exclude "**/*.kotlin_module"
+        exclude "**/*.properties"
+        exclude "**/*.xml"
     }
 }
 
@@ -85,7 +84,7 @@ dependencies {
     // --- AndroidX ---
     implementation 'androidx.appcompat:appcompat:1.6.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'com.google.android.material:material:1.6.0'
+    implementation 'com.google.android.material:material:1.7.0'
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     implementation 'androidx.work:work-runtime-ktx:2.7.1'
     implementation 'androidx.preference:preference-ktx:1.2.0'
@@ -94,7 +93,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
 
     // --- Firebase ---
-    implementation platform('com.google.firebase:firebase-bom:29.3.1')
+    implementation platform('com.google.firebase:firebase-bom:31.2.0')
     implementation 'com.google.firebase:firebase-crashlytics-ktx'
     implementation 'com.google.firebase:firebase-analytics-ktx'
 
@@ -105,12 +104,12 @@ dependencies {
     // --- KTX ---
     implementation 'androidx.core:core-ktx:1.9.0'
 
-    // --- Kodein ---
-    implementation 'org.kodein.di:kodein-di-generic-jvm:6.3.1'
-    implementation 'org.kodein.di:kodein-di-framework-android-x:6.3.1'
+    // --- Koin
+    implementation "org.koin:koin-android:2.1.4"
+    implementation "org.koin:koin-androidx-viewmodel:2.1.4"
 
     // --- Rx ---
-    implementation 'io.reactivex.rxjava2:rxjava:2.2.15'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.21'
     implementation 'com.jakewharton.rxbinding3:rxbinding:3.1.0'
     implementation 'com.jakewharton.rxbinding3:rxbinding-appcompat:3.1.0'
     implementation 'com.jakewharton.rxrelay2:rxrelay:2.1.1'
@@ -124,7 +123,7 @@ dependencies {
     debugImplementation 'com.squareup.retrofit2:retrofit-mock:2.9.0'
 
     // --- Log ---
-    implementation 'com.jakewharton.timber:timber:4.7.1'
+    implementation 'com.jakewharton.timber:timber:5.0.1'
 
     // --- Test ---
     testImplementation 'junit:junit:4.13.2'
@@ -145,13 +144,14 @@ dependencies {
 
     // --- Specific lib of the app ---
 
-    // Glide
-    implementation 'com.github.bumptech.glide:glide:4.12.0'
-    implementation 'com.github.bumptech.glide:okhttp3-integration:4.12.0'
+    // Coil
+    implementation 'io.coil-kt:coil:2.2.2'
 
-    // BigImageViewer
+    // Big image viewer
     implementation 'com.github.piasy:BigImageViewer:1.8.1'
-    implementation 'com.github.piasy:GlideImageLoader:1.8.1'
+
+    // ViewPagerLayoutManager
+//    implementation(name: 'viewpagerlayoutmanager-release', ext: 'aar')
 
     // ExoPlayer
     implementation 'com.google.android.exoplayer:exoplayer:2.18.2'
