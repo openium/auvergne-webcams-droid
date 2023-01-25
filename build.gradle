@@ -9,6 +9,7 @@ buildscript {
         mavenCentral()
         maven { url "https://www.jitpack.io" }
         maven { url "https://plugins.gradle.org/m2/" }
+        maven { url 'https://maven.openium.fr' }
     }
 
     dependencies {
@@ -23,6 +24,7 @@ buildscript {
 
         // Crashlytics
         classpath "com.google.firebase:firebase-crashlytics-gradle:2.9.2"
+
         // Version
         classpath "fr.openium:version-plugin:1.2"
     }
