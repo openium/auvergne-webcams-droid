@@ -51,7 +51,7 @@ class ViewModelSplash(app: Application) : AbstractViewModel(app), KoinComponent 
 
         if (sections.isEmpty()) {
             getSectionsFromAssets()?.also {
-                sectionRepository.insert(it.sections)
+                sectionRepository.insertSectionsAndWebcams(it)
             }
         }
     }

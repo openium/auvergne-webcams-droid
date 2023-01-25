@@ -126,6 +126,7 @@ class FragmentWebcamDetailImage : AbstractFragmentWebcam() {
         } else if (!webcam.imageLD.isNullOrBlank()) {
             imageURL = Uri.parse(webcam.getUrlForWebcam(canBeHD = false, canBeVideo = false))
         }
+        Timber.d("IMAGE URL ${imageURL?.toString()}")
 
         bigImageViewWebcamImageDetail.apply {
             setInitScaleType(BigImageView.INIT_SCALE_TYPE_CENTER_INSIDE)

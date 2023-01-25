@@ -79,7 +79,7 @@ class AdapterSectionDetail(
 
     override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
         super.onViewRecycled(holder)
-        holder.itemView.imageViewWebcamImage.dispose()
+        holder.itemView.imageViewWebcamImage?.dispose()
     }
 
     fun refreshData(data: List<Data>) {
