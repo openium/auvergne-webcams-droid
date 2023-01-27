@@ -5,32 +5,31 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import androidx.core.app.ActivityOptionsCompat
+import android.view.View
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractFragment
 import fr.openium.auvergnewebcams.model.entity.Section
 import fr.openium.auvergnewebcams.model.entity.Webcam
+import fr.openium.auvergnewebcams.ui.main.components.SectionsListScreen
 import fr.openium.auvergnewebcams.ui.search.ActivitySearch
 import fr.openium.auvergnewebcams.ui.sectionDetail.ActivitySectionDetail
 import fr.openium.auvergnewebcams.ui.settings.ActivitySettings
+import fr.openium.auvergnewebcams.ui.theme.AWTheme
 import fr.openium.auvergnewebcams.ui.webcamDetail.ActivityWebcamDetail
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
-import fr.openium.auvergnewebcams.utils.ImageUtils
 import fr.openium.kotlintools.ext.applicationContext
 import fr.openium.kotlintools.ext.snackbar
 import fr.openium.kotlintools.ext.startActivity
-import fr.openium.rxtools.ext.fromIOToMain
-import io.reactivex.Single
-import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.addTo
-import kotlinx.android.synthetic.main.fragment_main.*
+import kotlinx.android.synthetic.main.fragment_main.composeView
 import timber.log.Timber
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
-import java.util.*
 
 
 class FragmentMain : AbstractFragment() {
@@ -39,7 +38,6 @@ class FragmentMain : AbstractFragment() {
 
     private lateinit var viewModelMain: ViewModelMain
 
-    private var adapterMain: AdapterMainSections? = null
 
     // --- Life cycle
     // ---------------------------------------------------
@@ -52,14 +50,35 @@ class FragmentMain : AbstractFragment() {
         AnalyticsUtils.appIsOpen(requireContext())
         AnalyticsUtils.sendAllUserProperties(requireContext())
 
-        viewModelMain = ViewModelProvider(this).get(ViewModelMain::class.java)
+        viewModelMain = ViewModelProvider(this)[ViewModelMain::class.java]
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        setListeners()
-        getData()
+        composeView.setContent {
+            AWTheme {
+                val sectionsList by viewModelMain.sections.collectAsState(initial = emptyList())
+                val refresh by viewModelMain.isRefreshing.observeAsState(false)
+                val canBeHD = prefUtils.isWebcamsHighQuality
+                SectionsListScreen(
+                    sections = sectionsList,
+                    isRefreshing = refresh,
+                    refresh = {
+                        AnalyticsUtils.homeRefreshed(requireContext())
+                        refreshMethod()
+                    },
+                    canBeHD = canBeHD,
+                    goToWebcamDetail = {
+                        goToWebcamDetail(it)
+                    },
+                    goToSectionList = {
+                        goToSectionList(it)
+                    },
+                    goToSearch = ::goToSearch
+                )
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -80,115 +99,33 @@ class FragmentMain : AbstractFragment() {
     // --- Methods
     // ---------------------------------------------------
 
-    private fun setListeners() {
-        swipeRefreshLayoutSections.setOnRefreshListener {
-            AnalyticsUtils.homeRefreshed(requireContext())
-            refreshMethod()
-        }
-
-        textViewSearch.setOnClickListener {
-            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                requireActivity(),
-                textViewSearch,
-                getString(R.string.transition_search_name)
-            )
-            startActivity(Intent(applicationContext, ActivitySearch::class.java), options.toBundle())
-        }
+    private fun goToWebcamDetail(webcam: Webcam) {
+        AnalyticsUtils.webcamDetailsClicked(requireContext(), webcam.title ?: "")
+        requireContext().startActivity(ActivityWebcamDetail.getIntent(requireContext(), webcam))
     }
 
-    private fun initAdapter(sections: List<Section>) {
-        if (adapterMain == null) {
-            adapterMain = AdapterMainSections(getAdapterData(sections), { idToName ->
-                AnalyticsUtils.webcamDetailsClicked(requireContext(), idToName.second)
-                requireContext().startActivity(ActivitySectionDetail.getIntent(requireContext(), idToName.first))
-            }, {
-                AnalyticsUtils.webcamDetailsClicked(requireContext(), it.title ?: "")
-                requireContext().startActivity(ActivityWebcamDetail.getIntent(requireContext(), it))
-            })
-
-            recyclerViewSections.apply {
-                layoutManager = LinearLayoutManager(context).apply {
-                    setItemViewCacheSize(0)
-                    recycleChildrenOnDetach = true
-                }
-                adapter = adapterMain
-
-                // Optimize
-                setHasFixedSize(true)
-            }
-        } else {
-            adapterMain?.refreshData(getAdapterData(sections))
-        }
+    private fun goToSectionList(section: Section) {
+        AnalyticsUtils.webcamDetailsClicked(requireContext(), section.title ?: "")
+        requireContext().startActivity(ActivitySectionDetail.getIntent(requireContext(), sectionId = section.uid))
     }
 
-    private fun getAdapterData(sections: List<Section>): List<AdapterMainSections.Data> {
-        val dataList = mutableListOf<AdapterMainSections.Data>()
-
-        sections.forEach {
-            // Add header
-            dataList.add(
-                AdapterMainSections.Data(
-                    AdapterMainSections.DataHeader(
-                        it.uid,
-                        it.title ?: "",
-                        ImageUtils.getImageResourceAssociatedToSection(requireContext(), it),
-                        String.format(
-                            Locale.getDefault(),
-                            resources.getQuantityString(
-                                R.plurals.nb_cameras_format,
-                                it.webcams.count(),
-                                it.webcams.count()
-                            )
-                        )
-                    )
-                )
-            )
-
-            // Add items
-            dataList.add(
-                AdapterMainSections.Data(
-                    webcams = it.webcams
-                )
-            )
-        }
-
-        return dataList
-    }
-
-    private fun getData() {
-        Single.zip(
-            viewModelMain.getSectionsSingle(),
-            viewModelMain.getWebcamsSingle(),
-            BiFunction { sections: List<Section>, webcams: List<Webcam> ->
-                sections.sortedBy { it.order } to webcams.sortedBy { it.order }
-            })
-            .fromIOToMain()
-            .subscribe({ sectionsAndWebcams ->
-                sectionsAndWebcams.first.forEach { section ->
-                    section.webcams = sectionsAndWebcams.second.filter { it.sectionUid == section.uid }
-                }
-
-                // Init recyclerView adapter and layoutManager
-                initAdapter(sectionsAndWebcams.first)
-            }, {
-                Timber.e(it, "Error when getting sections and webcams")
-            }).addTo(disposables)
+    private fun goToSearch() {
+        requireContext().startActivity(Intent(applicationContext, ActivitySearch::class.java))
     }
 
     private fun refreshMethod() {
         // Get new data
-        viewModelMain.updateData().doFinally {
-            swipeRefreshLayoutSections.isRefreshing = false
-        }.subscribe({
-            getData()
-            Timber.d("Sections refreshed correctly")
-        }, {
-            if (it is UnknownHostException || it is SocketTimeoutException) {
-                snackbar(R.string.generic_network_error, Snackbar.LENGTH_SHORT)
-            } else {
-                snackbar(R.string.generic_error, Snackbar.LENGTH_SHORT)
-            }
-            Timber.e(it, "Error when getting sections from PTR")
-        }).addTo(disposables)
+        viewModelMain.setRefreshing(true)
+        viewModelMain.updateData()
+            .doFinally {
+                viewModelMain.setRefreshing(false)
+            }.subscribe({
+                Timber.d("Sections refreshed correctly")
+            }, {
+                if (it is UnknownHostException || it is SocketTimeoutException) {
+                    snackbar(R.string.generic_network_error, Snackbar.LENGTH_SHORT)
+                } else snackbar(R.string.generic_error, Snackbar.LENGTH_SHORT)
+                Timber.e(it, "Error when getting sections from PTR")
+            }).addTo(disposables)
     }
 }

@@ -19,11 +19,10 @@ class WebcamRepository(private val client: AWClient, private val dateUtils: Date
             Optional.of(it)
         }
 
-    fun getWebcamsSingle(): Single<List<Webcam>> =
-        client.database.webcamDao().getWebcamsSingle()
-
     fun getWebcamsSingle(sectionId: Long): Single<List<Webcam>> =
         client.database.webcamDao().getWebcamsSingle(sectionId)
+
+    fun watchAllWebcams() = client.database.webcamDao().watchAllWebcams()
 
     fun update(webcam: Webcam): Int =
         client.database.webcamDao().update(webcam)

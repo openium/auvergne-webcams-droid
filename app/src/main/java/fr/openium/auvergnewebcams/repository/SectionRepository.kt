@@ -84,8 +84,7 @@ class SectionRepository(private val client: AWClient, private val api: AWApi, pr
     fun getSections(): List<Section> =
         client.database.sectionDao().getSections()
 
-    fun getSectionsSingle(): Single<List<Section>> =
-        client.database.sectionDao().getSectionsSingle()
+    fun watchSectionsWithCameras() = client.database.sectionDao().watchSectionsWithCameras()
 
     fun update(section: Section): Int =
         client.database.sectionDao().update(section)
@@ -93,12 +92,9 @@ class SectionRepository(private val client: AWClient, private val api: AWApi, pr
     fun update(sections: List<Section>): Int =
         client.database.sectionDao().update(sections)
 
-    fun insert(section: Section): Long =
-        client.database.sectionDao().insert(section)
-
-    fun insert(sections: List<Section>): List<Long> =
+    private fun insert(sections: List<Section>): List<Long> =
         client.database.sectionDao().insert(sections)
 
-    fun deleteAllNotInUIDs(ids: List<Long>): Completable =
+    private fun deleteAllNotInUIDs(ids: List<Long>): Completable =
         client.database.sectionDao().deleteAllNotInUids(ids)
 }

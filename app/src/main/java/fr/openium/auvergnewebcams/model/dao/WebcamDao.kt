@@ -3,11 +3,14 @@ package fr.openium.auvergnewebcams.model.dao
 import androidx.room.*
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
 
 
 @Dao
 interface WebcamDao {
     // Query
+    @Query("SELECT * FROM Webcam")
+    fun watchAllWebcams(): Flow<List<Webcam>>
 
     @Query("SELECT * FROM Webcam WHERE uid == :webcamId LIMIT 1")
     fun getWebcam(webcamId: Long): Webcam?

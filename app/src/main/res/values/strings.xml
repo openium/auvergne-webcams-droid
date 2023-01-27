@@ -58,11 +58,13 @@
     <string name="url_note_format">market://details?id=%s</string>
 
     <!-- Search -->
-    <string name="transition_search_name">SearchTransition</string>
     <string name="search_hint">Rechercher une webcam</string>
     <string name="search_title">Rechercher</string>
-    <string name="search_result">%d résultats pour</string>
-    <string name="search_result_none_format">Aucun résultat pour %s </string>
+    <plurals name="search_result_format">
+        <item quantity="one">%d résultat pour</item>
+        <item quantity="other">%d résultats pour</item>
+    </plurals>
+    <string name="search_result_none_format">Aucun résultat pour</string>
 
     <!-- Detail -->
     <string name="detail_refresh_menu">Mettre à jour</string>
