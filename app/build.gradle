@@ -6,7 +6,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'fr.openium.version'
 
-def keystorePropertiesFile = rootProject.file("app/keystore.properties")
+def keystorePropertiesFile = rootProject.file("private/keys/keystore.properties")
 def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
