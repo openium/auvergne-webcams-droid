@@ -6,6 +6,8 @@ import android.webkit.WebChromeClient
 import android.webkit.WebView
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractActivity
+import fr.openium.auvergnewebcams.ui.about.components.AboutScreen
+import fr.openium.auvergnewebcams.ui.theme.AWTheme
 import fr.openium.kotlintools.ext.gone
 import kotlinx.android.synthetic.main.activity_about.*
 
@@ -25,18 +27,15 @@ class ActivitySettingsAbout : AbstractActivity() {
         super.onCreate(savedInstanceState)
         overridePendingTransition(R.anim.animation_from_right, R.anim.animation_to_left)
 
-        webViewAbout.webChromeClient = object : WebChromeClient() {
-            override fun onProgressChanged(view: WebView?, newProgress: Int) {
-                super.onProgressChanged(view, newProgress)
-
-                if (newProgress == 100) {
-                    frameLayoutAboutProgress?.gone()
-                }
+        composeView.setContent {
+            AWTheme {
+                AboutScreen(
+                    navigateBack = {
+                        finish()
+                    }
+                )
             }
         }
-
-        webViewAbout.setBackgroundColor(Color.TRANSPARENT)
-        webViewAbout.loadUrl("file:///android_asset/about.html")
     }
 
     override fun finish() {
