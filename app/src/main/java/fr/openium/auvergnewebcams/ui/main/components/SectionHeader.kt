@@ -60,14 +60,14 @@ fun SectionHeader(
             Text(
                 text = title,
                 color = AWAppTheme.colors.white,
-                style = AWAppTheme.typography.title
+                style = AWAppTheme.typography.h1
             )
             Spacer(modifier = Modifier.height(8.dp))
             Row(modifier = Modifier.wrapContentWidth()) {
                 Text(
                     text = pluralStringResource(id = R.plurals.nb_cameras_format, count = webcamsCount, webcamsCount),
                     color = AWAppTheme.colors.greyLight,
-                    style = AWAppTheme.typography.subtitle
+                    style = AWAppTheme.typography.p2Italic
                 )
                 Icon(
                     painter = painterResource(id = R.drawable.ic_arrow_right_extra_small),

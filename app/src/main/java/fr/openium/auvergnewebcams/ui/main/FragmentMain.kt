@@ -6,9 +6,9 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.snackbar.Snackbar
 import fr.openium.auvergnewebcams.R
@@ -56,12 +56,9 @@ class FragmentMain : AbstractFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setListeners()
-        viewModelMain.getData()
-
         composeView.setContent {
             AWTheme {
-                val sectionsList by viewModelMain.sections.observeAsState(initial = emptyList())
+                val sectionsList by viewModelMain.sections.collectAsState(initial = emptyList())
                 val refresh by viewModelMain.isRefreshing.observeAsState(false)
                 SectionsList(
                     sections = sectionsList,
@@ -73,6 +70,8 @@ class FragmentMain : AbstractFragment() {
                         goToWebcamDetail(it)
                     }, goToSectionList = {
                         goToSectionList(it)
+                    }, goToSearch = {
+                        goToSearch()
                     }
                 )
             }
@@ -97,17 +96,6 @@ class FragmentMain : AbstractFragment() {
     // --- Methods
     // ---------------------------------------------------
 
-    private fun setListeners() {
-        textViewSearch.setOnClickListener {
-            val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                requireActivity(),
-                textViewSearch,
-                getString(R.string.transition_search_name)
-            )
-            startActivity(Intent(applicationContext, ActivitySearch::class.java), options.toBundle())
-        }
-    }
-
     private fun goToWebcamDetail(webcam: Webcam) {
         AnalyticsUtils.webcamDetailsClicked(requireContext(), webcam.title ?: "")
         requireContext().startActivity(ActivityWebcamDetail.getIntent(requireContext(), webcam))
@@ -118,6 +106,9 @@ class FragmentMain : AbstractFragment() {
         requireContext().startActivity(ActivitySectionDetail.getIntent(requireContext(), sectionId = section.uid))
     }
 
+    private fun goToSearch() {
+        requireContext().startActivity(Intent(applicationContext, ActivitySearch::class.java))
+    }
 
     private fun refreshMethod() {
         // Get new data
@@ -126,7 +117,6 @@ class FragmentMain : AbstractFragment() {
             .doFinally {
                 viewModelMain.setRefreshing(false)
             }.subscribe({
-                viewModelMain.getData()
                 Timber.d("Sections refreshed correctly")
             }, {
                 if (it is UnknownHostException || it is SocketTimeoutException) {

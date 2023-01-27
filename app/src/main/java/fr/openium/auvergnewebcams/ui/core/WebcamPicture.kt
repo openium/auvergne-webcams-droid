@@ -1,13 +1,11 @@
-package fr.openium.auvergnewebcams.ui.main.components
+package fr.openium.auvergnewebcams.ui.core
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
@@ -18,7 +16,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -30,7 +27,7 @@ import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 
 @Composable
-fun ItemWebcam(
+fun WebcamPicture(
     webcam: Webcam,
     modifier: Modifier = Modifier,
     goToWebcamDetail: () -> Unit
@@ -80,7 +77,7 @@ fun ItemWebcam(
             Text(
                 text = stringResource(id = R.string.generic_not_up_to_date),
                 color = AWAppTheme.colors.greyLight,
-                style = AWAppTheme.typography.error,
+                style = AWAppTheme.typography.p3,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()

@@ -55,7 +55,7 @@ fun AWTheme(content: @Composable () -> Unit) {
         LocalTextSelectionColors provides selectionColors,
         LocalTypography provides Typography
     ) {
-        ProvideTextStyle(value = Typography.title) {
+        ProvideTextStyle(value = Typography.h1) {
             content()
         }
     }

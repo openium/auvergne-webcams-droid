@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import androidx.core.content.FileProvider
 import com.github.piasy.biv.view.BigImageView
 import com.google.android.material.snackbar.Snackbar
@@ -37,8 +38,8 @@ class FragmentWebcamDetailImage : AbstractFragmentWebcam() {
     // --- Life cycle
     // ---------------------------------------------------
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         initBigImageViewListener()
     }

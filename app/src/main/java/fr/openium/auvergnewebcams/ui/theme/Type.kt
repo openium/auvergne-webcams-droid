@@ -22,30 +22,37 @@ val Circular = FontFamily(
 
 @Immutable
 data class AWTypography(
-    val title: TextStyle,
-    val subtitle: TextStyle,
-    val error: TextStyle,
-    val subtitle2: TextStyle
+    val h1: TextStyle,
+    val p1: TextStyle,
+    val p1Italic: TextStyle,
+    val p2Italic: TextStyle,
+    val p3: TextStyle
 )
 
 val Typography = AWTypography(
-    title = TextStyle(
+    h1 = TextStyle(
         fontSize = 18.sp,
         fontFamily = Proxima,
         fontWeight = FontWeight.Bold
     ),
-    subtitle = TextStyle(
+    p1 = TextStyle(
+        fontSize = 16.sp,
+        fontFamily = Proxima,
+        fontWeight = FontWeight.Normal
+    ),
+    p1Italic = TextStyle(
+        fontSize = 16.sp,
+        fontFamily = Proxima,
+        fontWeight = FontWeight.Normal,
+        fontStyle = FontStyle.Italic
+    ),
+    p2Italic = TextStyle(
         fontSize = 13.sp,
         fontFamily = Proxima,
         fontWeight = FontWeight.Normal,
         fontStyle = FontStyle.Italic
     ),
-    subtitle2 = TextStyle(
-        fontSize = 16.sp,
-        fontFamily = Proxima,
-        fontWeight = FontWeight.Normal
-    ),
-    error = TextStyle(
+    p3 = TextStyle(
         fontSize = 13.sp,
         fontFamily = Proxima,
         fontWeight = FontWeight.Normal
@@ -54,9 +61,10 @@ val Typography = AWTypography(
 
 val LocalTypography = staticCompositionLocalOf {
     AWTypography(
-        title = TextStyle.Default,
-        subtitle = TextStyle.Default,
-        error = TextStyle.Default,
-        subtitle2 = TextStyle.Default
+        h1 = TextStyle.Default,
+        p1 = TextStyle.Default,
+        p1Italic = TextStyle.Default,
+        p2Italic = TextStyle.Default,
+        p3 = TextStyle.Default
     )
 }
