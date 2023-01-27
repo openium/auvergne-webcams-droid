@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
+import coil.ImageLoader
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.calculateCurrentOffsetForPage
@@ -35,6 +36,7 @@ import kotlin.math.absoluteValue
 @Composable
 fun SectionItem(
     section: SectionWithCameras,
+    imageLoader: ImageLoader,
     canBeHD: Boolean,
     goToWebcamDetail: (Webcam) -> Unit,
     goToSectionList: () -> Unit
@@ -94,6 +96,7 @@ fun SectionItem(
                 WebcamPicture(
                     modifier = Modifier.align(Alignment.Center),
                     webcam = webcam,
+                    imageLoader = imageLoader,
                     canBeHD = canBeHD,
                     goToWebcamDetail = {
                         goToWebcamDetail(webcam)

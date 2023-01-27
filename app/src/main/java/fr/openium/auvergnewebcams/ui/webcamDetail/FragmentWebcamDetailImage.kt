@@ -11,14 +11,21 @@ import com.google.android.material.snackbar.Snackbar
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractFragmentWebcam
 import fr.openium.auvergnewebcams.custom.SimpleImageLoaderCallback
+import fr.openium.auvergnewebcams.ext.getUrlForWebcam
 import fr.openium.auvergnewebcams.ext.hasNetwork
-import fr.openium.kotlintools.ext.*
+import fr.openium.kotlintools.ext.gone
+import fr.openium.kotlintools.ext.goneWithAnimationCompat
+import fr.openium.kotlintools.ext.show
+import fr.openium.kotlintools.ext.showWithAnimationCompat
+import fr.openium.kotlintools.ext.snackbar
 import fr.openium.rxtools.ext.fromIOToMain
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.addTo
-import kotlinx.android.synthetic.main.footer_webcam_detail.*
-import kotlinx.android.synthetic.main.fragment_webcam_image.*
+import kotlinx.android.synthetic.main.footer_webcam_detail.textViewWebcamDetailLowQualityOnly
+import kotlinx.android.synthetic.main.fragment_webcam_image.bigImageViewWebcamImageDetail
+import kotlinx.android.synthetic.main.fragment_webcam_image.linearLayoutWebcamImageDetailContent
+import kotlinx.android.synthetic.main.fragment_webcam_image.progressBarWebcamImageDetail
 import timber.log.Timber
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -57,7 +64,7 @@ class FragmentWebcamDetailImage : AbstractFragmentWebcam() {
     private fun initBigImageViewListener() {
         bigImageViewWebcamImageDetail.setImageLoaderCallback(object : SimpleImageLoaderCallback() {
             override fun onSuccess(image: File?) {
-                wasLastTimeLoadingSuccessfull = true
+                wasLastTimeLoadingSuccessful = true
                 progressBarWebcamImageDetail.gone()
 
                 // Start Timer cause BigImageView SSIV is not implementing method onReady...
@@ -65,7 +72,7 @@ class FragmentWebcamDetailImage : AbstractFragmentWebcam() {
             }
 
             override fun onFail(error: Exception?) {
-                wasLastTimeLoadingSuccessfull = false
+                wasLastTimeLoadingSuccessful = false
                 updateDisplay()
                 progressBarWebcamImageDetail.gone()
                 Timber.e(error, "Error loading big images")

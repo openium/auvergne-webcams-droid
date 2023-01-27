@@ -19,12 +19,12 @@ import com.google.android.material.snackbar.Snackbar
 import com.like.LikeButton
 import com.like.OnLikeListener
 import com.tbruyelle.rxpermissions2.RxPermissions
-import fr.openium.auvergnewebcams.BuildConfig
 import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.event.eventCameraFavoris
 import fr.openium.auvergnewebcams.event.eventHasNetwork
 import fr.openium.auvergnewebcams.ext.hasNetwork
+import fr.openium.auvergnewebcams.ext.lastUpdateDate
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.service.DownloadWorker
 import fr.openium.auvergnewebcams.ui.webcamDetail.ViewModelWebcamDetail
@@ -37,10 +37,13 @@ import fr.openium.kotlintools.ext.snackbar
 import fr.openium.kotlintools.ext.toast
 import fr.openium.rxtools.ext.fromIOToMain
 import io.reactivex.rxkotlin.addTo
-import kotlinx.android.synthetic.main.footer_webcam_detail.*
-import kotlinx.android.synthetic.main.header_webcam_detail.*
-import kotlinx.android.synthetic.main.layout_webcam_not_connected.*
-import kotlinx.android.synthetic.main.layout_webcam_not_working.*
+import kotlinx.android.synthetic.main.footer_webcam_detail.frameLayoutWebcamDetailFooter
+import kotlinx.android.synthetic.main.footer_webcam_detail.textViewWebcamDetailNotUpToDate
+import kotlinx.android.synthetic.main.header_webcam_detail.buttonWebcamDetailFavorite
+import kotlinx.android.synthetic.main.header_webcam_detail.frameLayoutWebcamDetailHeader
+import kotlinx.android.synthetic.main.header_webcam_detail.textViewWebcamDetailLastUpdate
+import kotlinx.android.synthetic.main.layout_webcam_not_connected.linearLayoutWebcamDetailNotConnected
+import kotlinx.android.synthetic.main.layout_webcam_not_working.linearLayoutWebcamDetailNotWorking
 import timber.log.Timber
 
 
@@ -54,14 +57,14 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     protected lateinit var webcam: Webcam
     private var itemMenuRefresh: MenuItem? = null
 
-    protected var wasLastTimeLoadingSuccessfull = true
+    protected var wasLastTimeLoadingSuccessful = true
 
     // --- Life cycle
     // ---------------------------------------------------
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModelWebcamDetail = ViewModelProvider(this).get(ViewModelWebcamDetail::class.java)
+        viewModelWebcamDetail = ViewModelProvider(this)[ViewModelWebcamDetail::class.java]
         setHasOptionsMenu(true)
     }
 
@@ -145,17 +148,17 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     }
 
     private fun setFavChanged(isLiked: Boolean) {
-        webcam.isFavoris = isLiked
+        webcam.isFavorite = isLiked
         viewModelWebcamDetail.updateWebcam(webcam)
 
         eventCameraFavoris.accept(webcam.uid)
-        AnalyticsUtils.favoriteClicked(requireContext(), webcam.title ?: "", webcam.isFavoris)
+        AnalyticsUtils.favoriteClicked(requireContext(), webcam.title ?: "", webcam.isFavorite)
     }
 
     private fun getState(): State = when {
         !requireContext().hasNetwork -> State.NOT_CONNECTED
-        !wasLastTimeLoadingSuccessfull -> State.NOT_WORKING
-        dateUtils.isUpToDate(webcam.getLastUpdateDate()) -> State.LOADED_UP_TO_DATE
+        !wasLastTimeLoadingSuccessful -> State.NOT_WORKING
+        dateUtils.isUpToDate(webcam.lastUpdateDate) -> State.LOADED_UP_TO_DATE
         else -> State.LOADED_NOT_UP_TO_DATE
     }
 
@@ -164,11 +167,11 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
         setTitle(webcam.title ?: "")
 
         // Like button
-        buttonWebcamDetailFavorite.isLiked = webcam.isFavoris
+        buttonWebcamDetailFavorite.isLiked = webcam.isFavorite
 //        buttonWebcamDetailFavorite.show() //TODO
 
         // Last update date
-        val lastUpdate = webcam.getLastUpdateDate()
+        val lastUpdate = webcam.lastUpdateDate
         if (lastUpdate != null) {
             textViewWebcamDetailLastUpdate.text = getString(R.string.generic_last_update_format, dateUtils.getDateInFullFormat(lastUpdate))
             textViewWebcamDetailLastUpdate.showWithAnimationCompat()
@@ -241,7 +244,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     }
 
     private fun checkPermissionSaveFile() {
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
             saveWebcam()
         } else {
             disposables.add(
@@ -251,9 +254,11 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
                             permission.granted -> {
                                 saveWebcam()
                             }
+
                             permission.shouldShowRequestPermissionRationale -> {
                                 // We can ask again
                             }
+
                             else -> {
                                 // Denied forever
                                 snackbar(getString(R.string.error_no_permisson), Snackbar.LENGTH_SHORT)
@@ -270,8 +275,8 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
             type = "text/plain"
             data = Uri.parse(
                 MailTo.MAILTO_SCHEME + getString(R.string.detail_signal_problem_email)
-                        + "?subject=" + getString(R.string.detail_signal_problem_subject, webcam.title ?: "")
-                        + "&body=" + getString(R.string.detail_signal_problem_body_format, webcam.title ?: "", webcam.uid.toString())
+                    + "?subject=" + getString(R.string.detail_signal_problem_subject, webcam.title ?: "")
+                    + "&body=" + getString(R.string.detail_signal_problem_body_format, webcam.title ?: "", webcam.uid.toString())
             )
 
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -286,14 +291,16 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     protected fun startService(urlSrc: String, isPhoto: Boolean, fileName: String) {
         RxPermissions(requireActivity())
             .requestEach(android.Manifest.permission.POST_NOTIFICATIONS)
-            .subscribe({permission ->
+            .subscribe({ permission ->
                 when {
                     permission.granted -> {
                         startWorker(urlSrc, isPhoto, fileName)
                     }
+
                     permission.shouldShowRequestPermissionRationale -> {
                         // We can ask again
                     }
+
                     else -> {
                         // Denied forever
                         snackbar(getString(R.string.error_no_permisson), Snackbar.LENGTH_SHORT)

@@ -6,13 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import coil.Coil
-import coil.clear
+import coil.ImageLoader
+import coil.decode.VideoFrameDecoder
 import coil.dispose
 import coil.load
 import coil.request.ImageRequest
 import coil.target.Target
 import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.enums.WebcamType
+import fr.openium.auvergnewebcams.ext.getUrlForWebcam
+import fr.openium.auvergnewebcams.ext.jsonKey
 import fr.openium.auvergnewebcams.model.entity.Section
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.utils.DateUtils
@@ -20,11 +23,16 @@ import fr.openium.auvergnewebcams.utils.ImageUtils
 import fr.openium.kotlintools.ext.gone
 import fr.openium.kotlintools.ext.goneWithAnimationCompat
 import fr.openium.kotlintools.ext.show
-import kotlinx.android.synthetic.main.header_section.view.*
-import kotlinx.android.synthetic.main.item_webcam.view.*
+import kotlinx.android.synthetic.main.header_section.view.imageViewSection
+import kotlinx.android.synthetic.main.header_section.view.textViewSectionName
+import kotlinx.android.synthetic.main.header_section.view.textViewSectionNbCameras
+import kotlinx.android.synthetic.main.item_webcam.view.imageViewWebcamImage
+import kotlinx.android.synthetic.main.item_webcam.view.progressBarWebcam
+import kotlinx.android.synthetic.main.item_webcam.view.textViewWebcamError
+import kotlinx.android.synthetic.main.item_webcam.view.textViewWebcamName
 import org.koin.core.KoinComponent
 import org.koin.core.inject
-import java.util.*
+import java.util.Locale
 
 
 /**
@@ -60,9 +68,11 @@ class AdapterSectionDetail(
             is SectionHolder -> {
                 holder.bindView(item.section)
             }
+
             is WebcamHolder -> {
                 holder.bindView(item.webcam, onWebcamClicked, dateUtils)
             }
+
             else -> {
 
             }
@@ -122,7 +132,9 @@ class AdapterSectionDetail(
         }
     }
 
-    class WebcamHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class WebcamHolder(view: View) : RecyclerView.ViewHolder(view), KoinComponent {
+
+        private val imageLoader by inject<ImageLoader>()
 
         fun bindView(
             webcam: Webcam?,
@@ -136,6 +148,12 @@ class AdapterSectionDetail(
                 updateErrorText(dateUtils, webcam)
 
                 val request = ImageRequest.Builder(itemView.context)
+
+                if (it.type == WebcamType.VIDEO.jsonKey) {
+                    request.decoderFactory { result, options, _ -> VideoFrameDecoder(result.source, options) }
+                }
+
+                request
                     .data(webcam.getUrlForWebcam(canBeHD = true, canBeVideo = false))
                     .error(R.drawable.ic_broken_camera)
                     .target(object : Target {
@@ -156,10 +174,9 @@ class AdapterSectionDetail(
                             updateErrorText(dateUtils, webcam)
                             itemView.progressBarWebcam.goneWithAnimationCompat()
                         }
-                    }).build()
+                    })
 
-                Coil.imageLoader(context = itemView.context)
-                    .enqueue(request)
+                imageLoader.enqueue(request.build())
 
                 itemView.setOnClickListener {
                     onWebcamClicked.invoke(webcam)
@@ -173,9 +190,11 @@ class AdapterSectionDetail(
                     itemView.textViewWebcamError.text = itemView.context.getString(R.string.loading_not_working_error)
                     itemView.textViewWebcamError.show()
                 }
+
                 dateUtils.isUpToDate(webcam.lastUpdate) -> {
                     itemView.textViewWebcamError.gone()
                 }
+
                 else -> {
                     itemView.textViewWebcamError.text = itemView.context.getString(R.string.generic_not_up_to_date)
                     itemView.textViewWebcamError.show()

@@ -21,9 +21,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.ImageLoader
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.ext.getUrlForWebcam
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 import fr.openium.auvergnewebcams.ui.theme.AWTheme
@@ -31,6 +33,7 @@ import fr.openium.auvergnewebcams.ui.theme.AWTheme
 @Composable
 fun WebcamPicture(
     webcam: Webcam,
+    imageLoader: ImageLoader,
     canBeHD: Boolean,
     modifier: Modifier = Modifier,
     goToWebcamDetail: () -> Unit
@@ -44,6 +47,7 @@ fun WebcamPicture(
     ) {
         AsyncImage(
             modifier = Modifier.aspectRatio(16f / 10f),
+            imageLoader = imageLoader,
             model = webcam.getUrlForWebcam(canBeHD = canBeHD, canBeVideo = false),
             contentDescription = webcam.title,
             onState = { state ->
@@ -90,17 +94,5 @@ fun WebcamPicture(
                 textAlign = TextAlign.Center
             )
         }
-    }
-}
-
-@Preview
-@Composable
-fun PreviewWebcamPicture() {
-    AWTheme {
-        WebcamPicture(
-            webcam = Webcam(),
-            canBeHD = true,
-            goToWebcamDetail = {}
-        )
     }
 }

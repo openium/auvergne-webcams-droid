@@ -13,9 +13,8 @@ import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import fr.openium.auvergnewebcams.utils.Optional
 import fr.openium.rxtools.ext.fromIOToMain
 import io.reactivex.Single
-import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.addTo
-import kotlinx.android.synthetic.main.fragment_section_detail.*
+import kotlinx.android.synthetic.main.fragment_section_detail.recyclerViewSectionDetail
 import timber.log.Timber
 
 
@@ -55,11 +54,10 @@ class FragmentSectionDetail : AbstractFragment() {
     private fun setListener(sectionId: Long) {
         Single.zip(
             viewModelSectionDetail.getSectionSingle(sectionId),
-            viewModelSectionDetail.getWebcamsSingle(sectionId),
-            BiFunction { section: Optional<Section>, webcams: List<Webcam> ->
-                section to webcams
-            })
-            .fromIOToMain()
+            viewModelSectionDetail.getWebcamsSingle(sectionId)
+        ) { section: Optional<Section>, webcams: List<Webcam> ->
+            section to webcams
+        }.fromIOToMain()
             .subscribe({ sectionAndWebcams ->
                 sectionAndWebcams.first.value?.let {
                     section = it

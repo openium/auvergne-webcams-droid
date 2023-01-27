@@ -8,12 +8,17 @@ import coil.request.Disposable
 import coil.request.ImageRequest
 import com.github.piasy.biv.loader.ImageLoader
 import com.github.piasy.biv.metadata.ImageInfoExtractor
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 
 internal class CoilLoaderException(val errorDrawable: Drawable?) : RuntimeException()
 
 internal class CoilImageLoader(
     private val context: Context
-) : ImageLoader {
+) : ImageLoader, KoinComponent {
+
+    private val imageLoader by inject<coil.ImageLoader>()
+
     private val pendingRequestTargets: MutableMap<Int, Disposable> = HashMap(3)
 
     override fun loadImage(requestId: Int, uri: Uri?, callback: ImageLoader.Callback?) {
@@ -30,7 +35,8 @@ internal class CoilImageLoader(
             .data(uri)
             .diskCacheKey(uri.toString())
             .build()
-        context.imageLoader.enqueue(request)
+
+        imageLoader.enqueue(request)
     }
 
     override fun cancel(requestId: Int) {
@@ -53,7 +59,7 @@ internal class CoilImageLoader(
                     callback?.onStart()
                 },
                 onSuccess = {
-                    context.imageLoader.diskCache?.get(uri.toString())?.use { snapshot ->
+                    imageLoader.diskCache?.get(uri.toString())?.use { snapshot ->
                         val imageFile = snapshot.data.toFile()
                         callback?.onCacheMiss(ImageInfoExtractor.getImageType(imageFile), imageFile)
                         callback?.onFinish()
@@ -67,7 +73,9 @@ internal class CoilImageLoader(
             )
             .build()
         dispose(requestId)
-        val disposable = context.imageLoader.enqueue(request)
+
+        val disposable = imageLoader.enqueue(request)
+
         remember(requestId, disposable)
     }
 
