@@ -2,8 +2,6 @@ package fr.openium.auvergnewebcams
 
 import android.app.Application
 import androidx.lifecycle.ProcessLifecycleOwner
-import coil.Coil
-import coil.ImageLoader
 import com.github.piasy.biv.BigImageViewer
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import fr.openium.auvergnewebcams.custom.CoilImageLoader
@@ -42,7 +40,6 @@ abstract class CustomApplication : Application() {
 
         initTimber()
         initLifeCycleListener()
-        initCoil()
         initBigImageViewer()
     }
 
@@ -54,11 +51,6 @@ abstract class CustomApplication : Application() {
     private fun initLifeCycleListener() {
         val foregroundListener by inject<ForegroundBackgroundListener>(named("foregroundListener"))
         ProcessLifecycleOwner.get().lifecycle.addObserver(foregroundListener)
-    }
-
-    private fun initCoil() {
-        val imageLoader by inject<ImageLoader>()
-        Coil.setImageLoader(imageLoader)
     }
 
     private fun initBigImageViewer() {

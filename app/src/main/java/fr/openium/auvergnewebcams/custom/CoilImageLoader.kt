@@ -59,7 +59,7 @@ internal class CoilImageLoader(
                     callback?.onStart()
                 },
                 onSuccess = {
-                    context.imageLoader.diskCache?.get(uri.toString())?.use { snapshot ->
+                    imageLoader.diskCache?.get(uri.toString())?.use { snapshot ->
                         val imageFile = snapshot.data.toFile()
                         callback?.onCacheMiss(ImageInfoExtractor.getImageType(imageFile), imageFile)
                         callback?.onFinish()

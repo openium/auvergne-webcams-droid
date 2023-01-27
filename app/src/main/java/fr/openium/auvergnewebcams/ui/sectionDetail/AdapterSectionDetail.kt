@@ -13,7 +13,9 @@ import coil.load
 import coil.request.ImageRequest
 import coil.target.Target
 import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.enums.WebcamType
 import fr.openium.auvergnewebcams.ext.getUrlForWebcam
+import fr.openium.auvergnewebcams.ext.jsonKey
 import fr.openium.auvergnewebcams.model.entity.Section
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.utils.DateUtils
@@ -146,7 +148,12 @@ class AdapterSectionDetail(
                 updateErrorText(dateUtils, webcam)
 
                 val request = ImageRequest.Builder(itemView.context)
-                    .decoderFactory { result, options, _ -> VideoFrameDecoder(result.source, options) }
+
+                if (it.type == WebcamType.VIDEO.jsonKey) {
+                    request.decoderFactory { result, options, _ -> VideoFrameDecoder(result.source, options) }
+                }
+
+                request
                     .data(webcam.getUrlForWebcam(canBeHD = true, canBeVideo = false))
                     .error(R.drawable.ic_broken_camera)
                     .target(object : Target {
@@ -167,9 +174,9 @@ class AdapterSectionDetail(
                             updateErrorText(dateUtils, webcam)
                             itemView.progressBarWebcam.goneWithAnimationCompat()
                         }
-                    }).build()
+                    })
 
-                imageLoader.enqueue(request)
+                imageLoader.enqueue(request.build())
 
                 itemView.setOnClickListener {
                     onWebcamClicked.invoke(webcam)

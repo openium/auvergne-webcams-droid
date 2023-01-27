@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import coil.ImageLoader
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.ui.core.WebcamPicture
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
@@ -20,6 +21,7 @@ import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 fun WebcamItem(
     webcam: Webcam,
     canBeHD: Boolean,
+    imageLoader: ImageLoader,
     goToWebcamDetail: () -> Unit
 ) {
     Column(
@@ -34,6 +36,7 @@ fun WebcamItem(
             WebcamPicture(
                 webcam = webcam,
                 canBeHD = canBeHD,
+                imageLoader = imageLoader,
                 goToWebcamDetail = goToWebcamDetail
             )
         }

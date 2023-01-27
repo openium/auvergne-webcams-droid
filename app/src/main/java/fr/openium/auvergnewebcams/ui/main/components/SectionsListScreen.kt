@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import coil.ImageLoader
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.model.entity.Section
 import fr.openium.auvergnewebcams.model.entity.SectionWithCameras
@@ -37,6 +38,7 @@ fun SectionsListScreen(
     isRefreshing: Boolean,
     refresh: () -> Unit,
     canBeHD: Boolean,
+    imageLoader: ImageLoader,
     goToWebcamDetail: (Webcam) -> Unit,
     goToSectionList: (Section) -> Unit,
     goToSearch: () -> Unit
@@ -74,6 +76,7 @@ fun SectionsListScreen(
                 SectionItem(
                     section = section,
                     canBeHD = canBeHD,
+                    imageLoader = imageLoader,
                     goToWebcamDetail = goToWebcamDetail,
                     goToSectionList = {
                         goToSectionList(section.section)

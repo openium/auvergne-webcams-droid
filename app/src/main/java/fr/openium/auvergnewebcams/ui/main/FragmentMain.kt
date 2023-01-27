@@ -10,6 +10,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.ViewModelProvider
+import coil.ImageLoader
 import com.google.android.material.snackbar.Snackbar
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractFragment
@@ -27,6 +28,7 @@ import fr.openium.kotlintools.ext.snackbar
 import fr.openium.kotlintools.ext.startActivity
 import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.fragment_main.composeView
+import org.koin.android.ext.android.inject
 import timber.log.Timber
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -38,6 +40,7 @@ class FragmentMain : AbstractFragment() {
 
     private lateinit var viewModelMain: ViewModelMain
 
+    private val imageLoader by inject<ImageLoader>()
 
     // --- Life cycle
     // ---------------------------------------------------
@@ -69,6 +72,7 @@ class FragmentMain : AbstractFragment() {
                         refreshMethod()
                     },
                     canBeHD = canBeHD,
+                    imageLoader = imageLoader,
                     goToWebcamDetail = {
                         goToWebcamDetail(it)
                     },

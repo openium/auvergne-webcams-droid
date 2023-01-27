@@ -5,6 +5,7 @@ import android.view.View
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModelProvider
+import coil.ImageLoader
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractFragment
 import fr.openium.auvergnewebcams.model.entity.Webcam
@@ -14,6 +15,7 @@ import fr.openium.auvergnewebcams.ui.webcamDetail.ActivityWebcamDetail
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import fr.openium.kotlintools.ext.setTitle
 import kotlinx.android.synthetic.main.fragment_search.composeView
+import org.koin.android.ext.android.inject
 
 
 /**
@@ -25,12 +27,13 @@ class FragmentSearch : AbstractFragment() {
 
     private lateinit var viewModelSearch: SearchViewModel
 
+    private val imageLoader by inject<ImageLoader>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModelSearch = ViewModelProvider(this).get(SearchViewModel::class.java)
+        viewModelSearch = ViewModelProvider(this)[SearchViewModel::class.java]
         setTitle(getString(R.string.search_title))
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -43,6 +46,7 @@ class FragmentSearch : AbstractFragment() {
                         viewModelSearch.onNewSearch(it)
                     },
                     canBeHD = prefUtils.isWebcamsHighQuality,
+                    imageLoader = imageLoader,
                     webcams = webcams,
                     goToWebcamDetail = {
                         goToWebcamDetail(it)

@@ -24,7 +24,7 @@ fun Webcam.getUrlForWebcam(canBeHD: Boolean, canBeVideo: Boolean): String =
             // Load video
             Timber.d("URL Video $video")
 
-            "$video.mp4" ?: ""
+            video ?: ""
         }
 
         else -> {

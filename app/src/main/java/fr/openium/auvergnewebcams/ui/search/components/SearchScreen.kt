@@ -25,6 +25,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import coil.ImageLoader
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
@@ -35,6 +36,7 @@ import kotlinx.coroutines.delay
 fun SearchScreen(
     webcams: List<Webcam>,
     canBeHD: Boolean,
+    imageLoader: ImageLoader,
     onNewSearch: (String) -> Unit,
     goToWebcamDetail: (Webcam) -> Unit
 ) {
@@ -96,6 +98,7 @@ fun SearchScreen(
                 WebcamItem(
                     webcam = webcam,
                     canBeHD = canBeHD,
+                    imageLoader = imageLoader,
                     goToWebcamDetail = {
                         goToWebcamDetail(webcam)
                     }
