@@ -62,19 +62,6 @@ android {
         }
     }
 
-    // Apk size optimization
-    packagingOptions {
-        exclude "okhttp3/**"
-        exclude "com/google/api/**"
-        exclude "kotlin/**"
-        exclude "META-INF/*.version"
-        exclude "META-INF/**.pro"
-        exclude "META-INF/services/**"
-        exclude "**/*.kotlin_module"
-        exclude "**/*.properties"
-        exclude "**/*.xml"
-    }
-
     buildFeatures {
         compose true
     }
