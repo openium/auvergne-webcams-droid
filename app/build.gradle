@@ -36,6 +36,7 @@ android {
             keyAlias keystoreProperties["aliasProd"]
             keyPassword keystoreProperties["passwordProd"]
         }
+
     }
 
     buildTypes {
