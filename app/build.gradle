@@ -6,6 +6,10 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'fr.openium.version'
 
+def keystorePropertiesFile = rootProject.file("app/keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
     compileSdkVersion 33
 
@@ -24,14 +28,13 @@ android {
 
     signingConfigs {
         debug {
-            storeFile file("keys/debug.keystore")
+            storeFile file(keystoreProperties["debugStoreFile"])
         }
-
         release {
-            storeFile file('keys/release.keystore')
-            storePassword 'AWCOpenium'
-            keyAlias 'AuvergneWebCamsOpenium'
-            keyPassword 'AWCOpenium'
+            storeFile file(keystoreProperties["releaseStoreFile"])
+            storePassword keystoreProperties["passwordProd"]
+            keyAlias keystoreProperties["aliasProd"]
+            keyPassword keystoreProperties["passwordProd"]
         }
     }
 
