@@ -15,7 +15,7 @@ import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractFragment
 import fr.openium.auvergnewebcams.model.entity.Section
 import fr.openium.auvergnewebcams.model.entity.Webcam
-import fr.openium.auvergnewebcams.ui.main.components.SectionsList
+import fr.openium.auvergnewebcams.ui.main.components.SectionsListScreen
 import fr.openium.auvergnewebcams.ui.search.ActivitySearch
 import fr.openium.auvergnewebcams.ui.sectionDetail.ActivitySectionDetail
 import fr.openium.auvergnewebcams.ui.settings.ActivitySettings
@@ -26,7 +26,7 @@ import fr.openium.kotlintools.ext.applicationContext
 import fr.openium.kotlintools.ext.snackbar
 import fr.openium.kotlintools.ext.startActivity
 import io.reactivex.rxkotlin.addTo
-import kotlinx.android.synthetic.main.fragment_main.*
+import kotlinx.android.synthetic.main.fragment_main.composeView
 import timber.log.Timber
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -50,7 +50,7 @@ class FragmentMain : AbstractFragment() {
         AnalyticsUtils.appIsOpen(requireContext())
         AnalyticsUtils.sendAllUserProperties(requireContext())
 
-        viewModelMain = ViewModelProvider(this).get(ViewModelMain::class.java)
+        viewModelMain = ViewModelProvider(this)[ViewModelMain::class.java]
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -60,19 +60,22 @@ class FragmentMain : AbstractFragment() {
             AWTheme {
                 val sectionsList by viewModelMain.sections.collectAsState(initial = emptyList())
                 val refresh by viewModelMain.isRefreshing.observeAsState(false)
-                SectionsList(
+                val canBeHD = prefUtils.isWebcamsHighQuality
+                SectionsListScreen(
                     sections = sectionsList,
                     isRefreshing = refresh,
                     refresh = {
                         AnalyticsUtils.homeRefreshed(requireContext())
                         refreshMethod()
-                    }, goToWebcamDetail = {
+                    },
+                    canBeHD = canBeHD,
+                    goToWebcamDetail = {
                         goToWebcamDetail(it)
-                    }, goToSectionList = {
+                    },
+                    goToSectionList = {
                         goToSectionList(it)
-                    }, goToSearch = {
-                        goToSearch()
-                    }
+                    },
+                    goToSearch = ::goToSearch
                 )
             }
         }
@@ -121,9 +124,7 @@ class FragmentMain : AbstractFragment() {
             }, {
                 if (it is UnknownHostException || it is SocketTimeoutException) {
                     snackbar(R.string.generic_network_error, Snackbar.LENGTH_SHORT)
-                } else {
-                    snackbar(R.string.generic_error, Snackbar.LENGTH_SHORT)
-                }
+                } else snackbar(R.string.generic_error, Snackbar.LENGTH_SHORT)
                 Timber.e(it, "Error when getting sections from PTR")
             }).addTo(disposables)
     }

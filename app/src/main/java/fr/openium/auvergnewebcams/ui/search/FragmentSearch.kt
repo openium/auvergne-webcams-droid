@@ -13,7 +13,7 @@ import fr.openium.auvergnewebcams.ui.theme.AWTheme
 import fr.openium.auvergnewebcams.ui.webcamDetail.ActivityWebcamDetail
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import fr.openium.kotlintools.ext.setTitle
-import kotlinx.android.synthetic.main.fragment_search.*
+import kotlinx.android.synthetic.main.fragment_search.composeView
 
 
 /**
@@ -42,6 +42,7 @@ class FragmentSearch : AbstractFragment() {
                     onNewSearch = {
                         viewModelSearch.onNewSearch(it)
                     },
+                    canBeHD = prefUtils.isWebcamsHighQuality,
                     webcams = webcams,
                     goToWebcamDetail = {
                         goToWebcamDetail(it)

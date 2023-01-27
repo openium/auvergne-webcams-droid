@@ -7,12 +7,8 @@ import fr.openium.auvergnewebcams.base.AbstractViewModel
 import fr.openium.auvergnewebcams.repository.SectionRepository
 import fr.openium.rxtools.ext.fromIOToMain
 import io.reactivex.Completable
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 import timber.log.Timber
@@ -48,5 +44,4 @@ class ViewModelMain(app: Application) : AbstractViewModel(app), KoinComponent {
     companion object {
         const val MINIMUM_SECONDS_TO_WAIT = 2L
     }
-
 }

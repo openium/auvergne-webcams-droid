@@ -3,7 +3,7 @@ package fr.openium.auvergnewebcams.ui.core
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -19,16 +19,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
+import fr.openium.auvergnewebcams.ui.theme.AWTheme
 
 @Composable
 fun WebcamPicture(
     webcam: Webcam,
+    canBeHD: Boolean,
     modifier: Modifier = Modifier,
     goToWebcamDetail: () -> Unit
 ) {
@@ -36,12 +39,12 @@ fun WebcamPicture(
     var showError by remember { mutableStateOf(false) }
 
     Box(
-        modifier = modifier.clickable { goToWebcamDetail() },
+        modifier = modifier.clickable(onClick = goToWebcamDetail),
         contentAlignment = Alignment.Center
     ) {
         AsyncImage(
-            modifier = Modifier.fillMaxSize(),
-            model = webcam.getUrlForWebcam(canBeHD = true, canBeVideo = false),
+            modifier = Modifier.aspectRatio(16f / 10f),
+            model = webcam.getUrlForWebcam(canBeHD = canBeHD, canBeVideo = false),
             contentDescription = webcam.title,
             onState = { state ->
                 when (state) {
@@ -75,17 +78,29 @@ fun WebcamPicture(
         }
         if (showError) {
             Text(
-                text = stringResource(id = R.string.generic_not_up_to_date),
-                color = AWAppTheme.colors.greyLight,
-                style = AWAppTheme.typography.p3,
-                textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .padding(10.dp)
                     .background(color = AWAppTheme.colors.greyVeryDarkTransparent)
-                    .align(Alignment.BottomCenter)
+                    .align(Alignment.BottomCenter),
+                text = stringResource(id = R.string.generic_not_up_to_date),
+                color = AWAppTheme.colors.greyLight,
+                style = AWAppTheme.typography.p3,
+                textAlign = TextAlign.Center
             )
         }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewWebcamPicture() {
+    AWTheme {
+        WebcamPicture(
+            webcam = Webcam(),
+            canBeHD = true,
+            goToWebcamDetail = {}
+        )
     }
 }

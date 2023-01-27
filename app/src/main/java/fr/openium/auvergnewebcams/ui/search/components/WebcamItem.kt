@@ -19,6 +19,7 @@ import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 @Composable
 fun WebcamItem(
     webcam: Webcam,
+    canBeHD: Boolean,
     goToWebcamDetail: () -> Unit
 ) {
     Column(
@@ -32,20 +33,20 @@ fun WebcamItem(
         ) {
             WebcamPicture(
                 webcam = webcam,
+                canBeHD = canBeHD,
                 goToWebcamDetail = goToWebcamDetail
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = webcam.title ?: "",
-            color = AWAppTheme.colors.greyLight,
-            style = AWAppTheme.typography.p1,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 12.dp),
+            text = webcam.title ?: "",
+            color = AWAppTheme.colors.greyLight,
+            style = AWAppTheme.typography.p1,
             textAlign = TextAlign.Center,
             maxLines = 2
         )
-
     }
 }

@@ -32,24 +32,28 @@ import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun SectionsList(
+fun SectionsListScreen(
     sections: List<SectionWithCameras>,
     isRefreshing: Boolean,
     refresh: () -> Unit,
+    canBeHD: Boolean,
     goToWebcamDetail: (Webcam) -> Unit,
     goToSectionList: (Section) -> Unit,
     goToSearch: () -> Unit
 ) {
-    val pullRefreshState = rememberPullRefreshState(isRefreshing, { refresh() })
+    val pullRefreshState = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = refresh)
 
     Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
-        LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(bottom = 16.dp)) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(bottom = 16.dp)
+        ) {
             item {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(color = AWAppTheme.colors.grey)
-                        .clickable { goToSearch() }
+                        .clickable(onClick = goToSearch)
                         .padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -69,6 +73,7 @@ fun SectionsList(
             items(sections) { section ->
                 SectionItem(
                     section = section,
+                    canBeHD = canBeHD,
                     goToWebcamDetail = goToWebcamDetail,
                     goToSectionList = {
                         goToSectionList(section.section)
@@ -76,9 +81,12 @@ fun SectionsList(
                 )
             }
         }
-        PullRefreshIndicator(isRefreshing, pullRefreshState, Modifier.align(Alignment.TopCenter))
+        PullRefreshIndicator(
+            modifier = Modifier.align(Alignment.TopCenter),
+            refreshing = isRefreshing,
+            state = pullRefreshState
+        )
     }
-
 }
 
 

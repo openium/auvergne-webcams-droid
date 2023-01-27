@@ -39,19 +39,20 @@ fun SearchItem(
     val keyboardController = LocalSoftwareKeyboardController.current
 
     TextField(
-        value = currentSearch,
-        onValueChange = onSearchChange,
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 16.dp)
             .background(color = AWAppTheme.colors.grey)
             .focusRequester(focusRequester = focusRequester),
+        value = currentSearch,
+        onValueChange = onSearchChange,
         leadingIcon = {
             Icon(
                 painter = painterResource(id = R.drawable.ic_search),
                 contentDescription = stringResource(id = R.string.search_hint)
             )
-        }, placeholder = {
+        },
+        placeholder = {
             Text(
                 text = stringResource(id = R.string.search_hint),
                 color = AWAppTheme.colors.greyLight,

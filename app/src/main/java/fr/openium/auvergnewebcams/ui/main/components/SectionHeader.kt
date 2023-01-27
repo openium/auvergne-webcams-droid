@@ -3,11 +3,11 @@ package fr.openium.auvergnewebcams.ui.main.components
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -40,11 +40,8 @@ fun SectionHeader(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable {
-                goToSectionList()
-            }
-            .padding(horizontal = 24.dp)
-            .padding(top = 16.dp),
+            .clickable(onClick = goToSectionList)
+            .padding(horizontal = 24.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
@@ -56,14 +53,19 @@ fun SectionHeader(
             contentScale = ContentScale.Fit
         )
         Spacer(modifier = Modifier.width(20.dp))
-        Column(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.Center
+        ) {
             Text(
                 text = title,
                 color = AWAppTheme.colors.white,
                 style = AWAppTheme.typography.h1
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(modifier = Modifier.wrapContentWidth()) {
+            Row(
+                modifier = Modifier.wrapContentWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
                     text = pluralStringResource(id = R.plurals.nb_cameras_format, count = webcamsCount, webcamsCount),
                     color = AWAppTheme.colors.greyLight,
@@ -75,7 +77,6 @@ fun SectionHeader(
                     tint = AWAppTheme.colors.greyLight
                 )
             }
-
         }
     }
 }

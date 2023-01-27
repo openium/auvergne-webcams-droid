@@ -3,7 +3,6 @@ package fr.openium.auvergnewebcams.ui.main.components
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -36,6 +35,7 @@ import kotlin.math.absoluteValue
 @Composable
 fun SectionItem(
     section: SectionWithCameras,
+    canBeHD: Boolean,
     goToWebcamDetail: (Webcam) -> Unit,
     goToSectionList: () -> Unit
 ) {
@@ -61,62 +61,60 @@ fun SectionItem(
             goToSectionList = goToSectionList
         )
         HorizontalPager(
+            modifier = Modifier.fillMaxWidth(),
             count = Int.MAX_VALUE,
             state = state,
-            modifier = Modifier
-                .fillMaxWidth(),
             contentPadding = PaddingValues(horizontal = 50.dp)
         ) { index ->
             val realIndex = (index - startIndex).floorMod(webcams.size)
             val webcam = webcams[realIndex]
 
-            Box(modifier = Modifier
-                .graphicsLayer {
-                    val pageOffset = calculateCurrentOffsetForPage(index).absoluteValue
-                    // We animate the scaleX + scaleY, between 85% and 100%
-                    lerp(
-                        start = 0.85f,
-                        stop = 1f,
-                        fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                    ).also { scale ->
-                        scaleX = scale
-                        scaleY = scale / 1.2f
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .graphicsLayer {
+                        val pageOffset = calculateCurrentOffsetForPage(index).absoluteValue
+                        // We animate the scaleX + scaleY, between 85% and 100%
+                        lerp(
+                            start = 0.85f,
+                            stop = 1f,
+                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                        ).also { scale ->
+                            scaleX = scale
+                            scaleY = scale / 1.2f
+                        }
+                        // We animate the alpha, between 50% and 100%
+                        alpha = lerp(
+                            start = 0.5f,
+                            stop = 1f,
+                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                        )
                     }
-                    // We animate the alpha, between 50% and 100%
-                    alpha = lerp(
-                        start = 0.5f,
-                        stop = 1f,
-                        fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                    )
-                }
-                .fillMaxWidth()
-                .aspectRatio(1f)
             ) {
                 WebcamPicture(
-                    webcam = webcam,
                     modifier = Modifier.align(Alignment.Center),
+                    webcam = webcam,
+                    canBeHD = canBeHD,
                     goToWebcamDetail = {
                         goToWebcamDetail(webcam)
                     }
                 )
             }
-
         }
     }
 
     Text(
-        text = currentTitle,
-        color = AWAppTheme.colors.greyLight,
-        style = AWAppTheme.typography.p1,
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp)
             .defaultMinSize(minHeight = 40.dp),
+        text = currentTitle,
+        color = AWAppTheme.colors.greyLight,
+        style = AWAppTheme.typography.p1,
         textAlign = TextAlign.Center,
         maxLines = 2
     )
 }
-
 
 private fun Int.floorMod(other: Int): Int = when (other) {
     0 -> this

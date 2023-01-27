@@ -19,6 +19,6 @@ class ActivitySearch : AbstractActivityFragment() {
         overridePendingTransition(R.anim.animation_from_left, R.anim.animation_to_right)
     }
 
-    override fun getDefaultFragment(): Fragment = FragmentSearch()
-
+    override fun getDefaultFragment(): Fragment =
+        FragmentSearch()
 }

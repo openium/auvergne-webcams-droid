@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import fr.openium.auvergnewebcams.base.AbstractViewModel
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.repository.WebcamRepository
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -38,7 +39,8 @@ class SearchViewModel(app: Application) : AbstractViewModel(app), KoinComponent 
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000L), emptyList())
     }
 
-    fun onNewSearch(search: String) = viewModelScope.launch {
-        _currentSearch.emit(search)
-    }
+    fun onNewSearch(search: String): Job =
+        viewModelScope.launch {
+            _currentSearch.emit(search)
+        }
 }

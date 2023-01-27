@@ -34,6 +34,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun SearchScreen(
     webcams: List<Webcam>,
+    canBeHD: Boolean,
     onNewSearch: (String) -> Unit,
     goToWebcamDetail: (Webcam) -> Unit
 ) {
@@ -60,9 +61,8 @@ fun SearchScreen(
         if (currentSearch.isNotBlank()) {
             val searchNumberText = if (webcams.isNotEmpty()) {
                 pluralStringResource(id = R.plurals.search_result_format, webcams.size, webcams.size)
-            } else {
-                stringResource(id = R.string.search_result_none_format)
-            }
+            } else stringResource(id = R.string.search_result_none_format)
+
             val index = searchNumberText.length + 1
 
             val infoForSearchText = buildAnnotatedString {
@@ -77,11 +77,11 @@ fun SearchScreen(
             }
 
             Text(
-                text = infoForSearchText,
-                textAlign = TextAlign.Center,
                 modifier = Modifier
                     .padding(top = 16.dp, bottom = 24.dp)
                     .fillMaxWidth(),
+                text = infoForSearchText,
+                textAlign = TextAlign.Center,
                 color = AWAppTheme.colors.white,
                 style = AWAppTheme.typography.p1
             )
@@ -95,6 +95,7 @@ fun SearchScreen(
             items(webcams) { webcam ->
                 WebcamItem(
                     webcam = webcam,
+                    canBeHD = canBeHD,
                     goToWebcamDetail = {
                         goToWebcamDetail(webcam)
                     }
