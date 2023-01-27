@@ -3,7 +3,9 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28"/>
 
     <application
         android:name=".ApplicationImpl"
@@ -17,7 +19,8 @@
 
         <activity
             android:name=".ui.splash.ActivitySplash"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -54,11 +57,8 @@
         <activity
             android:name=".ui.search.ActivitySearch"
             android:configChanges="orientation|screenSize"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
-
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="7cc7cb6974a476c88eaefd8f8f18727ed0ba945a" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

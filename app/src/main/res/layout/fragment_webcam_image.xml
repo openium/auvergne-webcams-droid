@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/grey_dark"
@@ -25,12 +24,9 @@
             android:layout_height="match_parent">
 
             <com.github.piasy.biv.view.BigImageView
-                android:id="@+id/bigImageViewWebcamImage"
+                android:id="@+id/bigImageViewWebcamImageDetail"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:failureImage="@drawable/ic_broken_camera"
-                app:failureImageInitScaleType="center"
-                app:optimizeDisplay="true" />
+                android:layout_height="match_parent" />
 
             <ProgressBar
                 android:id="@+id/progressBarWebcamImageDetail"

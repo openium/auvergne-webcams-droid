@@ -89,7 +89,7 @@ object AppNotifier {
                     context.applicationContext,
                     0,
                     galleryIntent,
-                    PendingIntent.FLAG_ONE_SHOT
+                    PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
                 )
 
                 setContentIntent(contentIntent)

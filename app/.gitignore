@@ -1,2 +1,4 @@
 /build
 /src/main/assets/crashlytics-build.properties
+keystore.properties
+/keys

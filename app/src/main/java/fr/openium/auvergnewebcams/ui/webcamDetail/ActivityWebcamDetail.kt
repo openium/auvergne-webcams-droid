@@ -23,7 +23,7 @@ class ActivityWebcamDetail : AbstractActivityFragment() {
 
     override val showHomeAsUp: Boolean = true
 
-    override fun getDefaultFragment(): Fragment? =
+    override fun getDefaultFragment(): Fragment =
         if (typeWebcam == Webcam.WebcamType.VIEWSURF.nameType) {
             FragmentWebcamDetailVideo()
         } else {

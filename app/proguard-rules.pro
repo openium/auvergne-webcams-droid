@@ -25,3 +25,30 @@
 #-renamesourcefileattribute SourceFile
 -keep class fr.openium.auvergnewebcams.model.** { *; }
 -keep class fr.openium.auvergnewebcams.rest.** { *; }
+
+-keepattributes Signature
+
+# Kotlin
+-keep class kotlin.coroutines.Continuation
+
+# RxJava
+-keep class io.reactivex.Observable { *; }
+-keep class * extends io.reactivex.Observable
+-keep class io.reactivex.Single { *; }
+-keep class * extends io.reactivex.Single
+-keep class io.reactivex.Maybe { *; }
+-keep class * extends io.reactivex.Maybe
+-keep class io.reactivex.Flowable { *; }
+-keep class * extends io.reactivex.Flowable
+
+# Retrofit
+-keep class retrofit2.Response { *; }
+-keep class * extends retrofit2.Response
+-keep class retrofit2.adapter.rxjava2.Result { *; }
+-keep class * extends retrofit2.adapter.rxjava2.Result
+-keep class retrofit2.Converter { *; }
+-keep class * extends retrofit2.Converter
+
+# GSON
+-keep class com.google.gson.reflect.TypeToken { *; }
+-keep class * extends com.google.gson.reflect.TypeToken

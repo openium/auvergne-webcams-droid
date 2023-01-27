@@ -3,7 +3,6 @@ package fr.openium.auvergnewebcams.custom
 import fr.openium.auvergnewebcams.repository.WebcamRepository
 import okhttp3.Interceptor
 import okhttp3.Response
-import timber.log.Timber
 
 class LastUpdateDateInterceptor(private val webcamRepository: WebcamRepository) : Interceptor {
 
@@ -18,7 +17,6 @@ class LastUpdateDateInterceptor(private val webcamRepository: WebcamRepository) 
             // Remove file extension for incoming search
             val urlMedia = argsSplit.lastOrNull()?.replace(".jpg", "") ?: ""
 
-            Timber.d("TEST webcam refreshed")
             webcamRepository.updateLastUpdateDate(lastModified, urlMedia)
         }
 

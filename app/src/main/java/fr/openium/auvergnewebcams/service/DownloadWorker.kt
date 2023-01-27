@@ -15,10 +15,8 @@ import androidx.work.WorkerParameters
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.broadcast.AppNotifier
 import fr.openium.auvergnewebcams.utils.PreferencesUtils
-import org.kodein.di.Kodein
-import org.kodein.di.KodeinAware
-import org.kodein.di.android.closestKodein
-import org.kodein.di.generic.instance
+import org.koin.core.KoinComponent
+import org.koin.core.inject
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
@@ -26,23 +24,22 @@ import java.io.OutputStream
 import java.net.URL
 
 
-class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : Worker(appContext, workerParams), KodeinAware {
+class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : Worker(appContext, workerParams), KoinComponent {
 
-    private var mUrl: String? = null
-    private var mFileName: String = ""
+    private var url: String? = null
+    private var fileName: String = ""
     private var webcamName: String = ""
 
-    private var mIsPhoto: Boolean = true
-    private var mUri: Uri? = null
+    private var isPhoto: Boolean = true
+    private var uri: Uri? = null
 
-    override val kodein: Kodein by closestKodein(applicationContext)
-    private val preferencesUtils: PreferencesUtils by instance()
+    private val preferencesUtils by inject<PreferencesUtils>()
 
     override fun doWork(): Result {
-        mUrl = inputData.getString(KEY_PATH_URL)
-        mIsPhoto = inputData.getBoolean(KEY_IS_PHOTO, true)
-        mFileName = inputData.getString(KEY_FILENAME) ?: ""
-        webcamName = mFileName.split("_").first().replace("\n", " - ")
+        url = inputData.getString(KEY_PATH_URL)
+        fileName = inputData.getString(KEY_FILENAME) ?: ""
+        webcamName = fileName.split("_").first().replace("\n", " - ")
+        isPhoto = inputData.getBoolean(KEY_IS_PHOTO, true)
 
         return downloadFile()
     }
@@ -53,11 +50,11 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : Work
         Timber.d("[Worker] Start download notification n°$notifBaseId")
         var result = Result.success()
 
-        if (!mUrl.isNullOrEmpty()) {
+        if (!url.isNullOrEmpty()) {
 
             val oS = getOutputStream()
 
-            val connection = URL(mUrl).openConnection()
+            val connection = URL(url).openConnection()
             connection.connect()
 
             val contentLength = connection.contentLength
@@ -85,8 +82,8 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : Work
 
                     // Create the bitmap
                     var bitmap: Bitmap? = null
-                    if (mIsPhoto && mUri != null) {
-                        applicationContext.contentResolver.openInputStream(mUri!!)?.let {
+                    if (isPhoto && uri != null) {
+                        applicationContext.contentResolver.openInputStream(uri!!)?.let {
                             bitmap = BitmapFactory.decodeStream(it)
                             it.close()
                         }
@@ -104,7 +101,7 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : Work
                         webcamName,
                         notifBaseId,
                         bitmap,
-                        mUri
+                        uri
                     )
                 } catch (e: Exception) {
                     Timber.e(e)
@@ -122,17 +119,16 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : Work
         return result
     }
 
-    private fun getOutputStream(): OutputStream {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+    private fun getOutputStream(): OutputStream =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             getOutPutStreamForApiAboveQ() ?: getOutputStreamForApiUnderQ()
         } else {
             getOutputStreamForApiUnderQ()
         }
-    }
 
     private fun getOutPutStreamForApiAboveQ(): OutputStream? {
         val relativePath =
-            if (mIsPhoto) {
+            if (isPhoto) {
                 Environment.DIRECTORY_PICTURES
             } else {
                 Environment.DIRECTORY_MOVIES
@@ -140,25 +136,25 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : Work
 
         val resolver = applicationContext.contentResolver
         val contentValues = ContentValues().apply {
-            put(MediaStore.MediaColumns.DISPLAY_NAME, mFileName)
-            put(MediaStore.MediaColumns.MIME_TYPE, if (mIsPhoto) "image/*" else "video/*")
+            put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+            put(MediaStore.MediaColumns.MIME_TYPE, if (isPhoto) "image/*" else "video/*")
             put(MediaStore.MediaColumns.RELATIVE_PATH, relativePath)
         }
 
-        val baseUri = if (mIsPhoto) {
+        val baseUri = if (isPhoto) {
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         } else {
             MediaStore.Video.Media.EXTERNAL_CONTENT_URI
         }
-        
+
         return resolver.insert(baseUri, contentValues)?.let {
-            mUri = it
+            uri = it
             resolver.openOutputStream(it)
         }
     }
 
     private fun getOutputStreamForApiUnderQ(): FileOutputStream {
-        val directory = if (mIsPhoto) {
+        val directory = if (isPhoto) {
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
         } else {
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES)
@@ -166,8 +162,8 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : Work
 
         directory.mkdirs()
 
-        val file = File(directory, mFileName)
-        mUri = file.toUri()
+        val file = File(directory, fileName)
+        uri = file.toUri()
 
         return FileOutputStream(file)
     }

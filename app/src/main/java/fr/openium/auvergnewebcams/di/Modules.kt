@@ -1,10 +1,11 @@
 package fr.openium.auvergnewebcams.di
 
 import android.content.Context
-import androidx.lifecycle.LifecycleObserver
-import com.bumptech.glide.Glide
-import com.google.gson.Gson
+import coil.ImageLoader
+import coil.util.CoilUtils
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.GsonBuilder
+import fr.openium.auvergnewebcams.BuildConfig
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.custom.LastUpdateDateInterceptor
 import fr.openium.auvergnewebcams.event.ForegroundBackgroundListener
@@ -18,8 +19,8 @@ import okhttp3.Cache
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.OkHttpClient
-import org.kodein.di.Kodein
-import org.kodein.di.generic.*
+import org.koin.core.qualifier.named
+import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -32,86 +33,100 @@ import java.util.concurrent.TimeUnit
 
 object Modules {
 
-    val configModule = Kodein.Module("Config Module") {
-        constant("mock") with false
-    }
-
-    val serviceModule = Kodein.Module("Service Module") {
-        bind<LifecycleObserver>("foregroundListener") with provider {
-            ForegroundBackgroundListener(instance())
-        }
-
-        bind<DateUtils>() with singleton {
-            DateUtils(instance())
+    val configModule = module {
+        single {
+            FirebaseCrashlytics.getInstance().apply {
+                setCrashlyticsCollectionEnabled(!BuildConfig.DEBUG)
+            }
         }
     }
 
-    val glideModule = Kodein.Module("Glide Module") {
-        bind<Glide>() with singleton {
-            Glide.get(instance())
+    val serviceModule = module {
+        single(named("foregroundListener")) {
+            ForegroundBackgroundListener(get())
         }
 
-        bind<OkHttpClient>("glide") with provider {
+        single {
+            DateUtils(get())
+        }
+    }
+
+    val coilModule = module {
+        single {
+            ImageLoader.Builder(get()).apply {
+                okHttpClient { get(named("COIL")) }
+                crossfade(true)
+                allowRgb565(true)
+            }.build()
+        }
+
+        single(named("COIL")) {
             OkHttpClient.Builder()
                 .retryOnConnectionFailure(true)
-                .addInterceptor(instance<LastUpdateDateInterceptor>("glide"))
-                .readTimeout(10, TimeUnit.MINUTES)
-                .writeTimeout(10, TimeUnit.MINUTES)
+                .addInterceptor(get<LastUpdateDateInterceptor>(named("COIL")))
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
                 .build()
         }
 
-        bind<LastUpdateDateInterceptor>("glide") with singleton {
-            LastUpdateDateInterceptor(instance())
+        single(named("COIL")) {
+            LastUpdateDateInterceptor(get())
         }
     }
 
-    val preferenceModule = Kodein.Module("Preference Module") {
-        bind<PreferencesUtils>() with singleton { PreferencesUtils(instance()) }
-    }
-
-    val databaseService = Kodein.Module("Database Module") {
-        bind<AWClient>() with provider {
-            AWClient.getInstance(instance())
+    val preferenceModule = module {
+        single {
+            PreferencesUtils(get())
         }
     }
 
-    val restModule = Kodein.Module("REST Module") {
-        bind<Cache>() with provider {
+    val databaseService = module {
+        single {
+            AWClient.getInstance(get())
+        }
+    }
+
+    val restModule = module {
+        single {
             val cacheSize = (20 * 1024 * 1024).toLong() // 20 MiB
-            Cache(instance<Context>().cacheDir, cacheSize)
+            Cache(get<Context>().cacheDir, cacheSize)
         }
 
-        bind<HttpUrl>() with singleton {
-            instance<Context>().getString(R.string.url_dev).toHttpUrlOrNull()!!
+        single {
+            get<Context>().getString(R.string.url_dev).toHttpUrlOrNull()!!
         }
 
-        bind<OkHttpClient>() with provider {
+        single {
             OkHttpClient.Builder()
                 .readTimeout(20, TimeUnit.SECONDS)
-                .cache(instance())
+                .cache(get())
                 .build()
         }
 
-        bind<Retrofit>() with singleton {
+        single {
             Retrofit.Builder()
-                .baseUrl(instance<HttpUrl>())
-                .client(instance())
+                .baseUrl(get<HttpUrl>())
+                .client(get())
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build()
         }
 
-        bind<Gson>() with singleton {
+        single {
             GsonBuilder().setLenient().serializeSpecialFloatingPointValues().create()
         }
 
-        bind<AWApi>() with singleton {
-            instance<Retrofit>().create(AWApi::class.java)
+        single {
+            get<Retrofit>().create(AWApi::class.java)
         }
     }
 
-    val repositoryModule = Kodein.Module("Repository Module") {
-        bind<SectionRepository>() with provider { SectionRepository(instance(), instance(), instance()) }
-        bind<WebcamRepository>() with provider { WebcamRepository(instance(), instance()) }
+    val repositoryModule = module {
+        single {
+            SectionRepository(get(), get(), get())
+        }
+        single {
+            WebcamRepository(get(), get())
+        }
     }
 }

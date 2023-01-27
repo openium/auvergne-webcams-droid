@@ -2,9 +2,11 @@ package fr.openium.auvergnewebcams.model.dao
 
 import androidx.room.*
 import fr.openium.auvergnewebcams.model.entity.Section
+import fr.openium.auvergnewebcams.model.entity.SectionWithCameras
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
 
 
 @Dao
@@ -23,6 +25,9 @@ interface SectionDao {
 
     @Query("SELECT * FROM Section")
     fun getSectionsObs(): Observable<List<Section>>
+
+    @Query("SELECT * FROM Section ORDER BY `order`")
+    fun watchSectionsWithCameras(): Flow<List<SectionWithCameras>>
 
     // Update
 

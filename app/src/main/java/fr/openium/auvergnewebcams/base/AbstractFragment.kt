@@ -5,28 +5,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.bumptech.glide.Glide
 import fr.openium.auvergnewebcams.utils.DateUtils
 import fr.openium.auvergnewebcams.utils.PreferencesUtils
 import io.reactivex.disposables.CompositeDisposable
-import org.kodein.di.Kodein
-import org.kodein.di.KodeinAware
-import org.kodein.di.android.x.closestKodein
-import org.kodein.di.generic.instance
+import org.koin.android.ext.android.inject
 
 /**
  * Created by Openium on 19/02/2019.
  */
 
-abstract class AbstractFragment : Fragment(), KodeinAware {
+abstract class AbstractFragment : Fragment() {
 
     protected val disposables: CompositeDisposable = CompositeDisposable()
-    protected val rebindDisposables: CompositeDisposable = CompositeDisposable() // Resubscribe in onstart
 
-    override val kodein: Kodein by closestKodein()
-    protected val prefUtils: PreferencesUtils by instance()
-    protected val dateUtils: DateUtils by instance()
-    protected val glide: Glide by instance()
+    protected val prefUtils by inject<PreferencesUtils>()
+    protected val dateUtils by inject<DateUtils>()
 
     protected abstract val layoutId: Int
 
@@ -35,20 +28,6 @@ abstract class AbstractFragment : Fragment(), KodeinAware {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(layoutId, container, false)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        startSubscription(rebindDisposables)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        rebindDisposables.clear()
-    }
-
-    protected open fun startSubscription(onStartDisposables: CompositeDisposable) {
-
     }
 
     override fun onDestroyView() {
