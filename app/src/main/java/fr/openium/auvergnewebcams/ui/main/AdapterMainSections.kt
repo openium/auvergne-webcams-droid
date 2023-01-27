@@ -5,7 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import coil.dispose
 import coil.load
 import com.leochuan.ScaleLayoutManager
 import fr.openium.auvergnewebcams.R
@@ -14,10 +13,12 @@ import fr.openium.auvergnewebcams.custom.SnapOnScrollListener
 import fr.openium.auvergnewebcams.ext.attachSnapHelperWithListener
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.kotlintools.ext.dip
-import kotlinx.android.synthetic.main.header_section.view.*
-import kotlinx.android.synthetic.main.item_section.view.*
+import kotlinx.android.synthetic.main.header_section.view.imageViewSection
+import kotlinx.android.synthetic.main.header_section.view.linearLayoutSection
+import kotlinx.android.synthetic.main.header_section.view.textViewSectionName
+import kotlinx.android.synthetic.main.header_section.view.textViewSectionNbCameras
+import kotlinx.android.synthetic.main.item_section.view.recyclerViewWebcams
 import kotlinx.android.synthetic.main.item_section.view.textViewWebcamName
-import kotlinx.android.synthetic.main.item_webcam.view.*
 import org.koin.core.KoinComponent
 
 
@@ -69,6 +70,7 @@ class AdapterMainSections(
     }
 
     class HeaderHolder(view: View) : RecyclerView.ViewHolder(view) {
+
         fun bindView(dataHeader: DataHeader?, onHeaderClicked: (Pair<Long, String>) -> Unit) {
             dataHeader?.let { header ->
                 // Set section title

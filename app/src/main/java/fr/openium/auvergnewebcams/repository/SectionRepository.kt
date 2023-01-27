@@ -1,8 +1,10 @@
 package fr.openium.auvergnewebcams.repository
 
+import fr.openium.auvergnewebcams.enums.WebcamType
+import fr.openium.auvergnewebcams.ext.jsonKey
+import fr.openium.auvergnewebcams.ext.populateId
 import fr.openium.auvergnewebcams.model.AWClient
 import fr.openium.auvergnewebcams.model.entity.Section
-import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.rest.AWApi
 import fr.openium.auvergnewebcams.rest.model.SectionList
 import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
@@ -38,9 +40,16 @@ class SectionRepository(private val client: AWClient, private val api: AWApi, pr
 
                 webcam.populateId(section.uid)
 
-                if (webcam.type == Webcam.WebcamType.VIEWSURF.nameType) {
-                    webcam.mediaViewSurfLD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurf)
-                    webcam.mediaViewSurfHD = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurf)
+                if (webcam.type == WebcamType.VIEWSURF.jsonKey) {
+                    val media = LoadWebCamUtils.getMediaViewSurf(webcam.viewsurf)
+
+                    webcam.mediaViewSurfLD = media
+                    webcam.mediaViewSurfHD = media
+                } else if (webcam.type == WebcamType.VIDEO.jsonKey) {
+                    val media = LoadWebCamUtils.getMediaViewVideo(webcam.video)
+
+                    webcam.mediaViewSurfLD = media
+                    webcam.mediaViewSurfHD = media
                 }
 
                 // Try to get the webcam to know if it's already in DB
@@ -48,7 +57,7 @@ class SectionRepository(private val client: AWClient, private val api: AWApi, pr
 
                 webcamDB?.also { wdb ->
                     wdb.lastUpdate?.also { webcam.lastUpdate = it }
-                    webcam.isFavoris = wdb.isFavoris
+                    webcam.isFavorite = wdb.isFavorite
                 }
 
                 if (webcam.hidden == null) {

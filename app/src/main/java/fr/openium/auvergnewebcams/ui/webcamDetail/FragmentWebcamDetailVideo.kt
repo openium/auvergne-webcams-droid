@@ -3,7 +3,6 @@ package fr.openium.auvergnewebcams.ui.webcamDetail
 import android.content.Intent
 import android.content.res.Configuration
 import android.net.Uri
-import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
@@ -17,7 +16,10 @@ import com.google.android.exoplayer2.util.Util
 import com.google.android.material.snackbar.Snackbar
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractFragmentWebcam
+import fr.openium.auvergnewebcams.enums.WebcamType
+import fr.openium.auvergnewebcams.ext.getUrlForWebcam
 import fr.openium.auvergnewebcams.ext.hasNetwork
+import fr.openium.auvergnewebcams.ext.jsonKey
 import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
 import fr.openium.kotlintools.ext.getColorCompat
 import fr.openium.kotlintools.ext.gone
@@ -27,12 +29,12 @@ import fr.openium.kotlintools.ext.showWithAnimationCompat
 import fr.openium.kotlintools.ext.snackbar
 import fr.openium.rxtools.ext.fromIOToMain
 import io.reactivex.Observable
-import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.exo_player_view.*
-import kotlinx.android.synthetic.main.footer_webcam_detail.*
-import kotlinx.android.synthetic.main.fragment_webcam_video.*
+import kotlinx.android.synthetic.main.exo_player_view.exo_buffering
+import kotlinx.android.synthetic.main.footer_webcam_detail.textViewWebcamDetailLowQualityOnly
+import kotlinx.android.synthetic.main.fragment_webcam_video.linearLayoutWebcamVideoDetailContent
+import kotlinx.android.synthetic.main.fragment_webcam_video.playerViewWebcamVideo
 import timber.log.Timber
 
 /**
@@ -102,13 +104,12 @@ class FragmentWebcamDetailVideo : AbstractFragmentWebcam() {
                     playerViewWebcamVideo.showWithAnimationCompat()
                 }
 
-                wasLastTimeLoadingSuccessfull = true
+                wasLastTimeLoadingSuccessful = true
             }
-
 
             override fun onPlayerError(error: PlaybackException) {
                 if (error.cause is HttpDataSource.InvalidResponseCodeException) {
-                    wasLastTimeLoadingSuccessfull = false
+                    wasLastTimeLoadingSuccessful = false
                     updateDisplay()
                 }
 
@@ -117,7 +118,7 @@ class FragmentWebcamDetailVideo : AbstractFragmentWebcam() {
                 }
 
                 if (error.cause is FileDataSource.FileDataSourceException) {
-                    wasLastTimeLoadingSuccessfull = false
+                    wasLastTimeLoadingSuccessful = false
                     updateDisplay()
                 }
             }
@@ -183,15 +184,16 @@ class FragmentWebcamDetailVideo : AbstractFragmentWebcam() {
 
     override fun refreshWebcam() {
         if (requireContext().hasNetwork) {
-            Observable.zip(
-                Observable.fromCallable { LoadWebCamUtils.getMediaViewSurf(webcam.viewsurf) },
-                Observable.fromCallable { LoadWebCamUtils.getMediaViewSurf(webcam.viewsurf) },
-                BiFunction { t1: String, t2: String ->
-                    t1 to t2
-                }).observeOn(Schedulers.io())
-                .map { pair ->
-                    webcam.mediaViewSurfLD = pair.first
-                    webcam.mediaViewSurfHD = pair.second
+            val isViewSurf = webcam.type == WebcamType.VIEWSURF.jsonKey
+
+            Observable.fromCallable {
+                if (isViewSurf) {
+                    LoadWebCamUtils.getMediaViewSurf(webcam.viewsurf)
+                } else LoadWebCamUtils.getMediaViewVideo(webcam.video)
+            }.observeOn(Schedulers.io())
+                .map { media ->
+                    webcam.mediaViewSurfLD = media
+                    webcam.mediaViewSurfHD = media
 
                     viewModelWebcamDetail.updateWebcam(webcam)
 
@@ -204,8 +206,6 @@ class FragmentWebcamDetailVideo : AbstractFragmentWebcam() {
                     setWebcam()
                     resetWebcam()
                 }, { Timber.e(it) }).addTo(disposables)
-        } else {
-            snackbar(R.string.generic_network_error, Snackbar.LENGTH_SHORT)
-        }
+        } else snackbar(R.string.generic_network_error, Snackbar.LENGTH_SHORT)
     }
 }

@@ -6,18 +6,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import coil.Coil
+import coil.ImageLoader
 import coil.dispose
 import coil.request.ImageRequest
 import coil.target.Target
 import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.ext.getUrlForWebcam
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.utils.DateUtils
 import fr.openium.kotlintools.ext.gone
 import fr.openium.kotlintools.ext.goneWithAnimationCompat
 import fr.openium.kotlintools.ext.show
-import kotlinx.android.synthetic.main.item_section_webcams.view.*
-import kotlinx.android.synthetic.main.item_webcam.view.*
+import kotlinx.android.synthetic.main.item_section_webcams.view.imageViewSectionWebcamsImage
+import kotlinx.android.synthetic.main.item_section_webcams.view.progressBarSectionWebcams
+import kotlinx.android.synthetic.main.item_section_webcams.view.textViewSectionWebcamsError
 import org.koin.core.KoinComponent
 import org.koin.core.inject
 
@@ -32,6 +34,8 @@ class AdapterMainSectionWebcams(
 
     //    private var mediaStoreSignature = MediaStoreSignature("", prefUtils.lastUpdateWebcamsTimestamp, 0)
     private val dateUtils by inject<DateUtils>()
+
+    private val imageLoader by inject<ImageLoader>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WebcamHolder {
         return WebcamHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_section_webcams, parent, false))
@@ -65,8 +69,8 @@ class AdapterMainSectionWebcams(
                     holder.itemView.progressBarSectionWebcams.goneWithAnimationCompat()
                 }
             }).build()
-        Coil.imageLoader(context = holder.itemView.context)
-            .enqueue(request)
+
+        imageLoader.enqueue(request)
 
         holder.itemView.setOnClickListener {
             onWebcamClicked(webcam)
@@ -84,9 +88,11 @@ class AdapterMainSectionWebcams(
                 holder.itemView.textViewSectionWebcamsError.text = holder.itemView.context.getString(R.string.loading_not_working_error)
                 holder.itemView.textViewSectionWebcamsError.show()
             }
+
             dateUtils.isUpToDate(lastUpdateTime) -> {
                 holder.itemView.textViewSectionWebcamsError.gone()
             }
+
             else -> {
                 holder.itemView.textViewSectionWebcamsError.text = holder.itemView.context.getString(R.string.generic_not_up_to_date)
                 holder.itemView.textViewSectionWebcamsError.show()

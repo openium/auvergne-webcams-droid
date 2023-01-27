@@ -1,8 +1,10 @@
 package fr.openium.auvergnewebcams.di
 
 import android.content.Context
+import android.util.Log
 import coil.ImageLoader
-import coil.util.CoilUtils
+import coil.decode.VideoFrameDecoder
+import coil.util.DebugLogger
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.GsonBuilder
 import fr.openium.auvergnewebcams.BuildConfig
@@ -53,11 +55,14 @@ object Modules {
 
     val coilModule = module {
         single {
-            ImageLoader.Builder(get()).apply {
-                okHttpClient { get(named("COIL")) }
-                crossfade(true)
-                allowRgb565(true)
-            }.build()
+            ImageLoader.Builder(get())
+                .okHttpClient(get<OkHttpClient>(named("COIL")))
+                .crossfade(true)
+                .allowRgb565(true)
+                .logger(DebugLogger(Log.VERBOSE))
+                .components {
+                    add(VideoFrameDecoder.Factory())
+                }.build()
         }
 
         single(named("COIL")) {

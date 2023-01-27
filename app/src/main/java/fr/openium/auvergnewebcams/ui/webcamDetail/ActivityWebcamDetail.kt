@@ -8,12 +8,14 @@ import androidx.fragment.app.Fragment
 import fr.openium.auvergnewebcams.Constants
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractActivityFragment
+import fr.openium.auvergnewebcams.enums.WebcamType
 import fr.openium.auvergnewebcams.ext.hideSystemUI
+import fr.openium.auvergnewebcams.ext.jsonKey
 import fr.openium.auvergnewebcams.ext.showSystemUI
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.kotlintools.ext.gone
 import fr.openium.kotlintools.ext.show
-import kotlinx.android.synthetic.main.toolbar.*
+import kotlinx.android.synthetic.main.toolbar.toolbar
 
 
 /**
@@ -23,12 +25,10 @@ class ActivityWebcamDetail : AbstractActivityFragment() {
 
     override val showHomeAsUp: Boolean = true
 
-    override fun getDefaultFragment(): Fragment? =
-        if (typeWebcam == Webcam.WebcamType.VIEWSURF.nameType) {
+    override fun getDefaultFragment(): Fragment =
+        if (typeWebcam == WebcamType.VIEWSURF.jsonKey || typeWebcam == WebcamType.VIDEO.jsonKey) {
             FragmentWebcamDetailVideo()
-        } else {
-            FragmentWebcamDetailImage()
-        }
+        } else FragmentWebcamDetailImage()
 
     private var typeWebcam: String? = null
 

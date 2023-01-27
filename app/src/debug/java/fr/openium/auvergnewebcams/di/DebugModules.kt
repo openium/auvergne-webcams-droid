@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit
  * Created by Openium on 19/02/2019.
  */
 object DebugModules {
-    const val mock = false
+    const val mock = true
 
     val databaseService = module {
         single(override = true) {
