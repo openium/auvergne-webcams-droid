@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModelProvider
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractActivity
 import fr.openium.auvergnewebcams.ui.main.ActivityMain
+import fr.openium.auvergnewebcams.ui.splash.components.SplashScreen
+import fr.openium.auvergnewebcams.ui.theme.AWTheme
 import fr.openium.kotlintools.ext.show
 import fr.openium.kotlintools.ext.startActivity
 import io.reactivex.Completable
@@ -30,40 +32,19 @@ class ActivitySplash : AbstractActivity() {
 
         viewModelSplash = ViewModelProvider(this).get(ViewModelSplash::class.java)
 
-        // Get new data
-        Completable.merge(
-            listOf(
-                viewModelSplash.updateData(),
-                Completable.timer(500, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread()).doOnComplete {
-                    linearLayoutSplashText.show()
-                    mCloud1.show()
-                    mCloud2.show()
-                    mCloud3.show()
-                    mCloud4.show()
-                    mCloud5.show()
-                    mCloud6.show()
-                    mCloud7.show()
-
-                    val alphaAnimation = AnimationUtils.loadAnimation(this, R.anim.anim_alpha_only)
-                    mCloud5.startAnimation(alphaAnimation)
-                    mCloud6.startAnimation(alphaAnimation)
-                    mCloud7.startAnimation(alphaAnimation)
-
-                    val translateRightSlowAnimation = AnimationUtils.loadAnimation(this, R.anim.anim_translate_right_slow)
-                    mCloud1.startAnimation(translateRightSlowAnimation)
-
-                    val translateLeftSlowAnimation = AnimationUtils.loadAnimation(this, R.anim.anim_translate_left_slow)
-                    mCloud2.startAnimation(translateLeftSlowAnimation)
-
-                    val translateRightFastAnimation = AnimationUtils.loadAnimation(this, R.anim.anim_translate_right_fast)
-                    mCloud3.startAnimation(translateRightFastAnimation)
-
-                    val translateLeftFastAnimation = AnimationUtils.loadAnimation(this, R.anim.anim_translate_left_fast)
-                    mCloud4.startAnimation(translateLeftFastAnimation)
-                })
-        ).subscribe({
-            startActivityMain()
-        }, { Timber.e(it) }).addTo(disposables)
+        composeView.setContent {
+            AWTheme {
+                SplashScreen()
+            }
+        }
+        viewModelSplash.updateData()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                startActivityMain()
+            }, {
+                Timber.e(it)
+            })
+            .addTo(disposables)
     }
 
     // --- Methods
