@@ -74,6 +74,14 @@ android {
         exclude "**/*.properties"
         exclude "**/*.xml"
     }
+
+    buildFeatures {
+        compose true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.3.2"
+    }
 }
 
 kapt { useBuildCache = true }
@@ -153,12 +161,27 @@ dependencies {
     // Big image viewer
     implementation 'com.github.piasy:BigImageViewer:1.8.1'
 
-    // ViewPagerLayoutManager
-//    implementation(name: 'viewpagerlayoutmanager-release', ext: 'aar')
-
     // ExoPlayer
     implementation 'com.google.android.exoplayer:exoplayer:2.18.2'
 
     // Like button (Twitter)
     implementation 'com.github.jd-alexander:LikeButton:0.2.3'
+
+    // Compose
+    def composeBom = platform('androidx.compose:compose-bom:2022.12.00')
+    implementation composeBom
+    androidTestImplementation composeBom
+
+    implementation 'androidx.compose.material:material'
+    implementation 'androidx.compose.ui:ui'
+    implementation 'androidx.compose.ui:ui-util'
+    implementation 'androidx.compose.ui:ui-tooling-preview'
+    debugImplementation 'androidx.compose.ui:ui-tooling'
+
+    implementation("io.coil-kt:coil-compose:2.2.2")
+    implementation 'androidx.compose.runtime:runtime-livedata:1.3.3'
+
+    // Accompanist
+    implementation "com.google.accompanist:accompanist-pager:0.28.0"
+    implementation "com.google.accompanist:accompanist-swiperefresh:0.28.0"
 }
