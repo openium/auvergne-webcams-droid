@@ -6,7 +6,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'fr.openium.version'
 
-def keystorePropertiesFile = rootProject.file("app/keystore.properties")
+def keystorePropertiesFile = rootProject.file("private/keys/keystore.properties")
 def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
@@ -87,7 +87,7 @@ android {
 kapt { useBuildCache = true }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar','*.aar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
 
     // --- Kotlin ---
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
