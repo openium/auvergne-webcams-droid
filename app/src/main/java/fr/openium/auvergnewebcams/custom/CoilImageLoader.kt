@@ -1,89 +1,98 @@
 package fr.openium.auvergnewebcams.custom
 
 import android.content.Context
-import android.graphics.drawable.Drawable
+import android.graphics.Bitmap
+import android.graphics.Bitmap.CompressFormat
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
-import coil.imageLoader
+import coil.decode.DataSource
 import coil.request.Disposable
 import coil.request.ImageRequest
 import com.github.piasy.biv.loader.ImageLoader
 import com.github.piasy.biv.metadata.ImageInfoExtractor
-import org.koin.core.KoinComponent
-import org.koin.core.inject
+import timber.log.Timber
+import java.io.File
+import java.io.FileOutputStream
+import java.io.OutputStream
 
-internal class CoilLoaderException(val errorDrawable: Drawable?) : RuntimeException()
 
-internal class CoilImageLoader(
-    private val context: Context
-) : ImageLoader, KoinComponent {
+/**
+ * Created by Piasy{github.com/Piasy} on 09/11/2016.
+ */
+class CoilImageLoader(var context: Context, imageLoader: coil.ImageLoader) : ImageLoader {
 
-    private val imageLoader by inject<coil.ImageLoader>()
+    private val mRequestDisposableMap = hashMapOf<Int, Disposable>()
+    private val mImageLoader = imageLoader
 
-    private val pendingRequestTargets: MutableMap<Int, Disposable> = HashMap(3)
+    override fun loadImage(requestId: Int, uri: Uri, callback: ImageLoader.Callback) {
+        val file = File(context.filesDir.toString(), "latestImageDownloaded.jpg")
 
-    override fun loadImage(requestId: Int, uri: Uri?, callback: ImageLoader.Callback?) {
-        context.imageLoader.diskCache?.get(uri.toString())?.use { snapshot ->
-            val imageFile = snapshot.data.toFile()
-            callback?.onCacheHit(ImageInfoExtractor.getImageType(imageFile), imageFile)
-            callback?.onSuccess(imageFile)
-        } ?: fetchImage(requestId, uri, callback)
+        var isCacheHit = false
+
+        val disposable = mImageLoader.enqueue(
+            ImageRequest.Builder(context)
+                .data(uri)
+                .listener(
+                    onSuccess = { _, result ->
+                        isCacheHit = result.dataSource == DataSource.DISK || result.dataSource == DataSource.MEMORY
+                    }
+                )
+                .target(
+                    onStart = { callback.onStart() },
+                    onSuccess = { result ->
+                        if (result is BitmapDrawable) {
+                            saveBitmapToFile(file, result.bitmap, CompressFormat.JPEG, 100)
+                        }
+
+                        Timber.d("TEST isCacheHit: $isCacheHit")
+
+                        if (isCacheHit) {
+                            callback.onCacheHit(ImageInfoExtractor.getImageType(file), file)
+                        } else callback.onCacheMiss(ImageInfoExtractor.getImageType(file), file)
+
+                        callback.onSuccess(file)
+                    },
+                    onError = {
+                        callback.onFail(Exception("Error on loading image with Coil"))
+                    }
+                )
+                .build()
+        )
+
+        saveTarget(requestId, disposable)
     }
 
-    override fun prefetch(uri: Uri?) {
-        val request = ImageRequest
-            .Builder(context)
-            .data(uri)
-            .diskCacheKey(uri.toString())
-            .build()
-
-        imageLoader.enqueue(request)
-    }
-
-    override fun cancel(requestId: Int) {
-        pendingRequestTargets.remove(requestId)
-    }
-
-    override fun cancelAll() {
-        pendingRequestTargets.keys.forEach { key ->
-            dispose(key)
+    private fun saveBitmapToFile(imageFile: File, bitmap: Bitmap, format: CompressFormat?, quality: Int) {
+        val os: OutputStream
+        try {
+            os = FileOutputStream(imageFile)
+            bitmap.compress(format, quality, os)
+            os.flush()
+            os.close()
+        } catch (e: Exception) {
+            Timber.e(e, "Error writing bitmap")
         }
     }
 
-    private fun fetchImage(requestId: Int, uri: Uri?, callback: ImageLoader.Callback?) {
-        val request = ImageRequest
-            .Builder(context)
-            .data(uri)
-            .diskCacheKey(uri.toString())
-            .target(
-                onStart = {
-                    callback?.onStart()
-                },
-                onSuccess = {
-                    imageLoader.diskCache?.get(uri.toString())?.use { snapshot ->
-                        val imageFile = snapshot.data.toFile()
-                        callback?.onCacheMiss(ImageInfoExtractor.getImageType(imageFile), imageFile)
-                        callback?.onFinish()
-                        callback?.onSuccess(imageFile)
-                    }
-                },
-                onError = { errorDrawable ->
-                    callback?.onFinish()
-                    callback?.onFail(CoilLoaderException(errorDrawable))
-                }
-            )
-            .build()
-        dispose(requestId)
-
-        val disposable = imageLoader.enqueue(request)
-
-        remember(requestId, disposable)
+    override fun prefetch(uri: Uri) {
+        mImageLoader.enqueue(ImageRequest.Builder(context).data(uri).build())
     }
 
-    private fun dispose(requestId: Int) {
-        pendingRequestTargets.remove(requestId)?.dispose()
+    override fun cancel(requestId: Int) {
+        clearTarget(requestId)
     }
 
-    private fun remember(requestId: Int, disposable: Disposable) {
-        pendingRequestTargets[requestId] = disposable
+    private fun clearTarget(requestId: Int) {
+        mRequestDisposableMap.remove(requestId)?.dispose()
+    }
+
+    override fun cancelAll() {
+        for (key in mRequestDisposableMap.keys) {
+            cancel(key)
+        }
+    }
+
+    private fun saveTarget(requestId: Int, disposable: Disposable) {
+        mRequestDisposableMap[requestId] = disposable
     }
 }
