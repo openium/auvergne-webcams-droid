@@ -19,11 +19,10 @@ import com.google.android.material.snackbar.Snackbar
 import com.like.LikeButton
 import com.like.OnLikeListener
 import com.tbruyelle.rxpermissions2.RxPermissions
-import fr.openium.auvergnewebcams.Constants
+import fr.openium.auvergnewebcams.KEY_WEBCAM_ID
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.event.eventCameraFavoris
 import fr.openium.auvergnewebcams.event.eventHasNetwork
-import fr.openium.auvergnewebcams.ext.hasNetwork
 import fr.openium.auvergnewebcams.ext.lastUpdateDate
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.service.DownloadWorker
@@ -71,7 +70,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        arguments?.getLong(Constants.KEY_WEBCAM_ID)?.also {
+        arguments?.getLong(KEY_WEBCAM_ID)?.also {
             setListener(it)
         } ?: requireActivity().finish()
     }
@@ -155,12 +154,13 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
         AnalyticsUtils.favoriteClicked(requireContext(), webcam.title ?: "", webcam.isFavorite)
     }
 
-    private fun getState(): State = when {
-        !requireContext().hasNetwork -> State.NOT_CONNECTED
-        !wasLastTimeLoadingSuccessful -> State.NOT_WORKING
-        dateUtils.isUpToDate(webcam.lastUpdateDate) -> State.LOADED_UP_TO_DATE
-        else -> State.LOADED_NOT_UP_TO_DATE
-    }
+    private fun getState(): State =
+        when {
+            eventHasNetwork.value == false -> State.NOT_CONNECTED
+            !wasLastTimeLoadingSuccessful -> State.NOT_WORKING
+            dateUtils.isUpToDate(webcam.lastUpdateDate) -> State.LOADED_UP_TO_DATE
+            else -> State.LOADED_NOT_UP_TO_DATE
+        }
 
     open fun updateDisplay() {
         // Screen title
@@ -313,7 +313,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     }
 
     private fun startWorker(urlSrc: String, isPhoto: Boolean, fileName: String) {
-        if (requireContext().hasNetwork) {
+        if (eventHasNetwork.value == true) {
             WorkManager.getInstance(requireContext()).enqueue(
                 OneTimeWorkRequestBuilder<DownloadWorker>().apply {
                     setInputData(Data.Builder().apply {

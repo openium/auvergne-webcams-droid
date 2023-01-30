@@ -3,7 +3,7 @@ package fr.openium.auvergnewebcams.ui.sectionDetail
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import fr.openium.auvergnewebcams.Constants
+import fr.openium.auvergnewebcams.KEY_SECTION_ID
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractFragment
 import fr.openium.auvergnewebcams.model.entity.Section
@@ -35,13 +35,13 @@ class FragmentSectionDetail : AbstractFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModelSectionDetail = ViewModelProvider(this).get(ViewModelSectionDetail::class.java)
+        viewModelSectionDetail = ViewModelProvider(this)[ViewModelSectionDetail::class.java]
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val sectionId = arguments?.getLong(Constants.KEY_SECTION_ID, -1L) ?: -1L
+        val sectionId = arguments?.getLong(KEY_SECTION_ID, -1L) ?: -1L
 
         if (sectionId != -1L) {
             setListener(sectionId)

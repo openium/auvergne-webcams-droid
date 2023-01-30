@@ -4,6 +4,7 @@ import android.app.Application
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
 import fr.openium.auvergnewebcams.base.AbstractViewModel
+import fr.openium.auvergnewebcams.event.eventHasNetwork
 import fr.openium.auvergnewebcams.ext.hasNetwork
 import fr.openium.auvergnewebcams.repository.SectionRepository
 import fr.openium.auvergnewebcams.rest.model.SectionList
@@ -27,7 +28,7 @@ class ViewModelSplash(app: Application) : AbstractViewModel(app), KoinComponent 
     // Update all the data the app needs
     fun updateData(): Completable =
         Completable.timer(MINIMUM_SECONDS_TO_WAIT, TimeUnit.SECONDS).fromIOToMain().mergeWith(
-            if (context.hasNetwork) {
+            if (eventHasNetwork.value == true) {
                 sectionRepository.fetch().doOnSuccess {
                     Timber.d("Loading from network")
                 }.doOnError {

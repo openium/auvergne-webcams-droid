@@ -4,7 +4,7 @@ import android.app.Dialog
 import android.os.Bundle
 import android.widget.Button
 import android.widget.NumberPicker
-import fr.openium.auvergnewebcams.Constants
+import fr.openium.auvergnewebcams.KEY_DELAY_VALUE
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractDialog
 import fr.openium.auvergnewebcams.event.eventNewRefreshDelayValue
@@ -19,7 +19,7 @@ class RefreshDelayPickerDialog : AbstractDialog() {
         Dialog(requireContext()).apply {
             setContentView(R.layout.dialog_refresh_delay_picker)
 
-            val delayValue = arguments?.getInt(Constants.KEY_DELAY_VALUE, PreferencesUtils.DEFAULT_REFRESH_DELAY)
+            val delayValue = arguments?.getInt(KEY_DELAY_VALUE, PreferencesUtils.DEFAULT_REFRESH_DELAY)
                 ?: PreferencesUtils.DEFAULT_REFRESH_DELAY
 
             val numberPicker = findViewById<NumberPicker>(R.id.numberPickerDialogRefreshDelay).apply {
@@ -44,7 +44,7 @@ class RefreshDelayPickerDialog : AbstractDialog() {
         fun newInstance(currentValue: Int): RefreshDelayPickerDialog =
             RefreshDelayPickerDialog().apply {
                 arguments = Bundle().apply {
-                    putInt(Constants.KEY_DELAY_VALUE, currentValue)
+                    putInt(KEY_DELAY_VALUE, currentValue)
                 }
             }
     }

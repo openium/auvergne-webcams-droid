@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import fr.openium.auvergnewebcams.Constants
+import fr.openium.auvergnewebcams.KEY_SECTION_ID
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractActivityFragment
 
@@ -39,7 +39,7 @@ class ActivitySectionDetail : AbstractActivityFragment() {
 
         fun getIntent(context: Context, sectionId: Long): Intent =
             Intent(context, ActivitySectionDetail::class.java).apply {
-                putExtra(Constants.KEY_SECTION_ID, sectionId)
+                putExtra(KEY_SECTION_ID, sectionId)
             }
     }
 }

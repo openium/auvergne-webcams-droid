@@ -11,8 +11,8 @@ import com.google.android.material.snackbar.Snackbar
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractFragmentWebcam
 import fr.openium.auvergnewebcams.custom.SimpleImageLoaderCallback
+import fr.openium.auvergnewebcams.event.eventHasNetwork
 import fr.openium.auvergnewebcams.ext.getUrlForWebcam
-import fr.openium.auvergnewebcams.ext.hasNetwork
 import fr.openium.kotlintools.ext.gone
 import fr.openium.kotlintools.ext.goneWithAnimationCompat
 import fr.openium.kotlintools.ext.show
@@ -56,14 +56,12 @@ class FragmentWebcamDetailImage : AbstractFragmentWebcam() {
 
         if (newConfig.orientation != Configuration.ORIENTATION_LANDSCAPE && webcam.imageHD.isNullOrEmpty()) {
             textViewWebcamDetailLowQualityOnly.show()
-        } else {
-            textViewWebcamDetailLowQualityOnly.gone()
-        }
+        } else textViewWebcamDetailLowQualityOnly.gone()
     }
 
     private fun initBigImageViewListener() {
         bigImageViewWebcamImageDetail.setImageLoaderCallback(object : SimpleImageLoaderCallback() {
-            override fun onSuccess(image: File?) {
+            override fun onSuccess(image: File) {
                 wasLastTimeLoadingSuccessful = true
                 progressBarWebcamImageDetail.gone()
 
@@ -71,11 +69,11 @@ class FragmentWebcamDetailImage : AbstractFragmentWebcam() {
                 setZoomTimer()
             }
 
-            override fun onFail(error: Exception?) {
+            override fun onFail(error: Exception) {
                 wasLastTimeLoadingSuccessful = false
                 updateDisplay()
                 progressBarWebcamImageDetail.gone()
-                Timber.e(error, "Error loading big images")
+                Timber.e(error)
             }
 
             override fun onStart() {
@@ -179,10 +177,8 @@ class FragmentWebcamDetailImage : AbstractFragmentWebcam() {
     }
 
     override fun refreshWebcam() {
-        if (requireContext().hasNetwork) {
+        if (eventHasNetwork.value == true) {
             resetWebcam()
-        } else {
-            snackbar(R.string.generic_network_error, Snackbar.LENGTH_SHORT)
-        }
+        } else snackbar(R.string.generic_network_error, Snackbar.LENGTH_SHORT)
     }
 }

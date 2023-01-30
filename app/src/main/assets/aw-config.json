@@ -1920,20 +1920,6 @@
         {
           "uid": 9007,
           "order": 7,
-          "title": "Aérodrome Domérat Montluçon",
-          "imageLD": "https://90.63.169.232:4999/",
-          "imageHD": null,
-          "type": "image",
-          "hidden": false,
-          "tags": [
-            "allier",
-            "Domérat",
-            "Aérodrome"
-          ]
-        },
-        {
-          "uid": 9008,
-          "order": 8,
           "title": "Aérodrome Périgny Lapalisse",
           "imageLD": "https://cam-aero.eu/raspicamaero/LFHX_03_AeroService",
           "imageHD": null,

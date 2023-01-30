@@ -53,7 +53,7 @@ object LoadWebCamUtils {
                 }
 
                 bufferedReader.close()
-                Timber.d("Load done for Video url $urlBase (media = $media)")
+                Timber.d("Load done for Video url $urlBase")
             } catch (e: Exception) {
                 Timber.d("Error loading Video url $urlBase")
                 Timber.e(e)

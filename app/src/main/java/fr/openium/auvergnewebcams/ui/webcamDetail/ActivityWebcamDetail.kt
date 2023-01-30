@@ -5,7 +5,8 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import fr.openium.auvergnewebcams.Constants
+import fr.openium.auvergnewebcams.KEY_WEBCAM_ID
+import fr.openium.auvergnewebcams.KEY_WEBCAM_TYPE
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractActivityFragment
 import fr.openium.auvergnewebcams.enums.WebcamType
@@ -36,7 +37,7 @@ class ActivityWebcamDetail : AbstractActivityFragment() {
     // ---------------------------------------------------
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        typeWebcam = intent?.getStringExtra(Constants.KEY_WEBCAM_TYPE)
+        typeWebcam = intent?.getStringExtra(KEY_WEBCAM_TYPE)
         super.onCreate(savedInstanceState)
         overridePendingTransition(R.anim.animation_from_right, R.anim.animation_to_left)
     }
@@ -64,8 +65,8 @@ class ActivityWebcamDetail : AbstractActivityFragment() {
 
         fun getIntent(context: Context, webcam: Webcam): Intent =
             Intent(context, ActivityWebcamDetail::class.java).apply {
-                putExtra(Constants.KEY_WEBCAM_ID, webcam.uid)
-                putExtra(Constants.KEY_WEBCAM_TYPE, webcam.type)
+                putExtra(KEY_WEBCAM_ID, webcam.uid)
+                putExtra(KEY_WEBCAM_TYPE, webcam.type)
             }
     }
 }

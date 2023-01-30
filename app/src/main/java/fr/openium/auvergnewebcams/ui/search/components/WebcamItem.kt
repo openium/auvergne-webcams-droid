@@ -1,5 +1,6 @@
 package fr.openium.auvergnewebcams.ui.search.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,17 +31,22 @@ fun WebcamItem(
     ) {
         Card(
             modifier = Modifier
-                .padding(horizontal = 32.dp)
+                .fillMaxWidth()
                 .height(150.dp)
         ) {
             WebcamPicture(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(AWAppTheme.colors.blue),
                 webcam = webcam,
                 canBeHD = canBeHD,
                 imageLoader = imageLoader,
                 goToWebcamDetail = goToWebcamDetail
             )
         }
+
         Spacer(modifier = Modifier.height(16.dp))
+
         Text(
             modifier = Modifier
                 .fillMaxWidth()

@@ -5,6 +5,7 @@ import fr.openium.auvergnewebcams.ext.jsonKey
 import fr.openium.auvergnewebcams.ext.populateId
 import fr.openium.auvergnewebcams.model.AWClient
 import fr.openium.auvergnewebcams.model.entity.Section
+import fr.openium.auvergnewebcams.model.entity.SectionWithCameras
 import fr.openium.auvergnewebcams.rest.AWApi
 import fr.openium.auvergnewebcams.rest.model.SectionList
 import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
@@ -12,6 +13,7 @@ import fr.openium.auvergnewebcams.utils.LogUtils
 import fr.openium.auvergnewebcams.utils.Optional
 import io.reactivex.Completable
 import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
 import timber.log.Timber
 
 /**
@@ -84,7 +86,8 @@ class SectionRepository(private val client: AWClient, private val api: AWApi, pr
     fun getSections(): List<Section> =
         client.database.sectionDao().getSections()
 
-    fun watchSectionsWithCameras() = client.database.sectionDao().watchSectionsWithCameras()
+    fun watchSectionsWithCameras(): Flow<List<SectionWithCameras>> =
+        client.database.sectionDao().watchSectionsWithCameras()
 
     fun update(section: Section): Int =
         client.database.sectionDao().update(section)

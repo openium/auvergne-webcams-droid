@@ -2,6 +2,7 @@ package fr.openium.auvergnewebcams
 
 import android.app.Application
 import androidx.lifecycle.ProcessLifecycleOwner
+import coil.ImageLoader
 import com.github.piasy.biv.BigImageViewer
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import fr.openium.auvergnewebcams.custom.CoilImageLoader
@@ -19,6 +20,8 @@ import timber.log.Timber
  */
 
 abstract class CustomApplication : Application() {
+
+    private val imageLoader by inject<ImageLoader>()
 
     override fun onCreate() {
         super.onCreate()
@@ -55,7 +58,7 @@ abstract class CustomApplication : Application() {
 
     private fun initBigImageViewer() {
         BigImageViewer.initialize(
-            CoilImageLoader(applicationContext)
+            CoilImageLoader(applicationContext, imageLoader)
         )
     }
 

@@ -5,9 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import fr.openium.auvergnewebcams.ext.hasNetwork
 import fr.openium.auvergnewebcams.utils.PreferencesUtils
 import io.reactivex.Observable
@@ -19,7 +18,9 @@ import org.koin.core.inject
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
-class ForegroundBackgroundListener(val context: Context) : LifecycleObserver, KoinComponent {
+class ForegroundBackgroundListener(
+    val context: Context
+) : DefaultLifecycleObserver, KoinComponent {
 
     private val prefUtils by inject<PreferencesUtils>()
 
@@ -33,25 +34,21 @@ class ForegroundBackgroundListener(val context: Context) : LifecycleObserver, Ko
         }
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-    fun onCreate() {
-        Timber.d("onCreate")
-
+    override fun onCreate(owner: LifecycleOwner) {
+        super.onCreate(owner)
         // Init once
         setTimer()
 
         eventRefreshDelayValueChanged.subscribe({
             setTimer()
-        }, { Timber.e(it, "Error listening to refresh value change in background") }).addTo(disposables)
+        }, { Timber.e(it) }).addTo(disposables)
 
         // Register to network connectivity changes
         context.registerReceiver(networkReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    fun onDestroy() {
-        Timber.d("onDestroy")
-
+    override fun onDestroy(owner: LifecycleOwner) {
+        super.onDestroy(owner)
         // Unregister to network connectivity changes
         context.unregisterReceiver(networkReceiver)
 
@@ -62,22 +59,9 @@ class ForegroundBackgroundListener(val context: Context) : LifecycleObserver, Ko
         refreshTimer?.dispose()
         refreshTimer = null
 
-        refreshTimer = Observable.timer(prefUtils.webcamsDelayRefreshValue.toLong(), TimeUnit.MINUTES).subscribe({
-            removeGlideCache()
-
-            setTimer()
-        }, { Timber.e(it, "Error refresh timer") }).addTo(disposables)
-    }
-
-    private fun removeGlideCache() {
-        // TODO
-//        Observable
-//            .fromCallable {
-//                Glide.get(context).clearDiskCache()
-//            }
-//            .fromIOToMain()
-//            .subscribe({
-//                Glide.get(context).clearMemory()
-//            }, { Timber.e(it, "Error cleaning Glide cache") }).addTo(disposables)
+        refreshTimer = Observable.timer(prefUtils.webcamsDelayRefreshValue.toLong(), TimeUnit.MINUTES)
+            .subscribe({
+                setTimer()
+            }, { Timber.e(it) }).addTo(disposables)
     }
 }

@@ -1,6 +1,5 @@
 package fr.openium.auvergnewebcams.ui.main.components
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.defaultMinSize
@@ -13,13 +12,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.lerp
 import coil.ImageLoader
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -47,7 +43,9 @@ fun SectionItem(
     val state = rememberPagerState(initialPage = startIndex)
 
     val image = ImageUtils.getImageResourceAssociatedToSection(context, section.section)
-    val webcams = section.webcams.sortedBy { it.order }
+    val webcams by remember(section) {
+        mutableStateOf(section.webcams.sortedBy { it.order })
+    }
 
     var currentTitle by remember { mutableStateOf("") }
     LaunchedEffect(key1 = state.currentPage, block = {
@@ -71,38 +69,16 @@ fun SectionItem(
             val realIndex = (index - startIndex).floorMod(webcams.size)
             val webcam = webcams[realIndex]
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .graphicsLayer {
-                        val pageOffset = calculateCurrentOffsetForPage(index).absoluteValue
-                        // We animate the scaleX + scaleY, between 85% and 100%
-                        lerp(
-                            start = 0.85f,
-                            stop = 1f,
-                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                        ).also { scale ->
-                            scaleX = scale
-                            scaleY = scale / 1.2f
-                        }
-                        // We animate the alpha, between 50% and 100%
-                        alpha = lerp(
-                            start = 0.5f,
-                            stop = 1f,
-                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                        )
-                    }
-            ) {
-                WebcamPicture(
-                    modifier = Modifier.align(Alignment.Center),
-                    webcam = webcam,
-                    imageLoader = imageLoader,
-                    canBeHD = canBeHD,
-                    goToWebcamDetail = {
-                        goToWebcamDetail(webcam)
-                    }
-                )
-            }
+            WebcamPicture(
+                pageOffset = calculateCurrentOffsetForPage(index).absoluteValue,
+                modifier = Modifier.fillMaxWidth(),
+                webcam = webcam,
+                imageLoader = imageLoader,
+                canBeHD = canBeHD,
+                goToWebcamDetail = {
+                    goToWebcamDetail(webcam)
+                }
+            )
         }
     }
 
