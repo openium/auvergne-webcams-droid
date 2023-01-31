@@ -150,7 +150,7 @@ class FragmentWebcamDetailImage : AbstractFragmentWebcam() {
             val image = FileProvider.getUriForFile(
                 requireContext(),
                 requireContext().packageName + ".provider",
-                bigImageViewWebcamImageDetail.currentImageFile
+                it
             )
 
             val intent = Intent(Intent.ACTION_SEND).apply {

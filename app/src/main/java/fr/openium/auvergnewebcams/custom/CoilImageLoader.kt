@@ -25,7 +25,7 @@ class CoilImageLoader(var context: Context, imageLoader: coil.ImageLoader) : Ima
     private val mImageLoader = imageLoader
 
     override fun loadImage(requestId: Int, uri: Uri, callback: ImageLoader.Callback) {
-        val file = File(context.filesDir.toString(), "latestImageDownloaded.jpg")
+        val file = File(context.externalCacheDir.toString(), "latestImageDownloaded.jpg")
 
         var isCacheHit = false
 

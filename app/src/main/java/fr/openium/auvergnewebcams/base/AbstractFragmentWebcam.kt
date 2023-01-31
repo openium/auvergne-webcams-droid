@@ -323,9 +323,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
                     }.build())
                 }.build()
             )
-        } else {
-            snackbar(R.string.generic_network_error, Snackbar.LENGTH_SHORT)
-        }
+        } else snackbar(R.string.generic_network_error, Snackbar.LENGTH_SHORT)
     }
 
     enum class State {
