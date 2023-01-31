@@ -31,7 +31,6 @@ import fr.openium.rxtools.ext.fromIOToMain
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.exo_player_view.exo_buffering
 import kotlinx.android.synthetic.main.footer_webcam_detail.textViewWebcamDetailLowQualityOnly
 import kotlinx.android.synthetic.main.fragment_webcam_video.linearLayoutWebcamVideoDetailContent
 import kotlinx.android.synthetic.main.fragment_webcam_video.playerViewWebcamVideo
@@ -111,10 +110,6 @@ class FragmentWebcamDetailVideo : AbstractFragmentWebcam() {
                 if (error.cause is HttpDataSource.InvalidResponseCodeException) {
                     wasLastTimeLoadingSuccessful = false
                     updateDisplay()
-                }
-
-                if (error.cause is HttpDataSource.HttpDataSourceException) {
-                    exo_buffering.showWithAnimationCompat()
                 }
 
                 if (error.cause is FileDataSource.FileDataSourceException) {

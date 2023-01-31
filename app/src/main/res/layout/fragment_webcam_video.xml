@@ -32,6 +32,8 @@
             android:layout_weight="1"
             android:background="@color/grey_medium"
             android:focusable="true"
+            app:controller_layout_id="@layout/exo_playback_control_view"
+            app:player_layout_id="@layout/exo_player_view"
             app:show_buffering="always"
             app:shutter_background_color="@color/grey_medium" />
 
