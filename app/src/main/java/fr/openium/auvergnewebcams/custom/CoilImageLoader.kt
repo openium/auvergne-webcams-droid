@@ -25,7 +25,7 @@ class CoilImageLoader(var context: Context, imageLoader: coil.ImageLoader) : Ima
     private val mImageLoader = imageLoader
 
     override fun loadImage(requestId: Int, uri: Uri, callback: ImageLoader.Callback) {
-        val file = File(context.externalCacheDir.toString(), "latestImageDownloaded.jpg")
+        val file = File(context.externalCacheDir, "latestImageDownloaded.jpg")
 
         var isCacheHit = false
 
@@ -34,7 +34,10 @@ class CoilImageLoader(var context: Context, imageLoader: coil.ImageLoader) : Ima
                 .data(uri)
                 .listener(
                     onSuccess = { _, result ->
-                        isCacheHit = result.dataSource == DataSource.DISK || result.dataSource == DataSource.MEMORY
+                        isCacheHit = result.dataSource == DataSource.MEMORY_CACHE
+                    },
+                    onError = { _, result ->
+                        Timber.e(result.throwable)
                     }
                 )
                 .target(
@@ -43,8 +46,6 @@ class CoilImageLoader(var context: Context, imageLoader: coil.ImageLoader) : Ima
                         if (result is BitmapDrawable) {
                             saveBitmapToFile(file, result.bitmap, CompressFormat.JPEG, 100)
                         }
-
-                        Timber.d("TEST isCacheHit: $isCacheHit")
 
                         if (isCacheHit) {
                             callback.onCacheHit(ImageInfoExtractor.getImageType(file), file)
