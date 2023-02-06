@@ -1,5 +1,6 @@
 package fr.openium.auvergnewebcams.log
 
+import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import timber.log.Timber
 
@@ -10,7 +11,9 @@ import timber.log.Timber
 class FirebaseCrashlyticsTree(private val firebaseCrashlytics: FirebaseCrashlytics) : Timber.Tree() {
 
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-        firebaseCrashlytics.log(message)
-        t?.let { firebaseCrashlytics.recordException(it) }
+        if (priority == Log.ERROR || priority == Log.WARN) {
+            firebaseCrashlytics.log(message)
+            t?.let { firebaseCrashlytics.recordException(it) }
+        }
     }
 }
