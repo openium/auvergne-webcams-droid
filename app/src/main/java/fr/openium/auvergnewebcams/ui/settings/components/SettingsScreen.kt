@@ -11,11 +11,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.ui.core.AWDialogMessage
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 
 @Composable
@@ -33,6 +38,10 @@ fun SettingsScreen(
     proposeNewWebcam: () -> Unit,
     rateApp: () -> Unit
 ) {
+
+    var showDialogNewWebcam by remember {
+        mutableStateOf(false)
+    }
 
     Column(
         modifier = Modifier
@@ -79,7 +88,9 @@ fun SettingsScreen(
         )
         SettingsItem(
             text = stringResource(id = R.string.settings_send_new_webcam),
-            onClick = proposeNewWebcam
+            onClick = {
+                showDialogNewWebcam = true
+            }
         )
         SettingsItem(
             text = stringResource(id = R.string.settings_credits_note),
@@ -96,6 +107,21 @@ fun SettingsScreen(
                 .align(Alignment.End)
         )
 
+    }
+
+    if (showDialogNewWebcam) {
+        AWDialogMessage(
+            title = stringResource(id = R.string.settings_send_new_webcam_title),
+            message = stringResource(id = R.string.settings_send_new_webcam_message),
+            buttonText = stringResource(id = R.string.generic_ok),
+            onButtonClick = {
+                showDialogNewWebcam = false
+                proposeNewWebcam()
+            },
+            onDismiss = {
+                showDialogNewWebcam = false
+            }
+        )
     }
 
 }

@@ -10,7 +10,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.core.content.pm.PackageInfoCompat
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractFragment
@@ -94,14 +93,8 @@ class FragmentSettings : AbstractFragment() {
                         startActivityForUrl(getString(R.string.url_pirates))
                     },
                     proposeNewWebcam = {
-                        MaterialAlertDialogBuilder(requireContext(), R.style.MaterialAlertDialogTheme)
-                            .setTitle(R.string.settings_send_new_webcam_title)
-                            .setMessage(R.string.settings_send_new_webcam_message)
-                            .setNeutralButton(R.string.generic_ok) { dialog, _ ->
-                                AnalyticsUtils.suggestWebcamClicked(requireContext())
-                                sendEmail()
-                                dialog.dismiss()
-                            }.show()
+                        AnalyticsUtils.suggestWebcamClicked(requireContext())
+                        sendEmail()
                     },
                     rateApp = {
                         AnalyticsUtils.rateAppClicked(requireContext())
