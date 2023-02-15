@@ -1,26 +1,22 @@
 package fr.openium.auvergnewebcams.ui.splash
 
 import android.os.Bundle
-import android.view.animation.AnimationUtils
 import androidx.lifecycle.ViewModelProvider
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractActivity
 import fr.openium.auvergnewebcams.ui.main.ActivityMain
 import fr.openium.auvergnewebcams.ui.splash.components.SplashScreen
 import fr.openium.auvergnewebcams.ui.theme.AWTheme
-import fr.openium.kotlintools.ext.show
 import fr.openium.kotlintools.ext.startActivity
-import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
-import kotlinx.android.synthetic.main.activity_splash.*
+import kotlinx.android.synthetic.main.compose_view.*
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 
 
 class ActivitySplash : AbstractActivity() {
 
-    override val layoutId: Int = R.layout.activity_splash
+    override val layoutId: Int = R.layout.compose_view
 
     private lateinit var viewModelSplash: ViewModelSplash
 

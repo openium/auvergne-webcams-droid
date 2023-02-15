@@ -23,6 +23,7 @@ import com.google.accompanist.pager.calculateCurrentOffsetForPage
 import com.google.accompanist.pager.rememberPagerState
 import fr.openium.auvergnewebcams.model.entity.SectionWithCameras
 import fr.openium.auvergnewebcams.model.entity.Webcam
+import fr.openium.auvergnewebcams.ui.core.SectionHeader
 import fr.openium.auvergnewebcams.ui.core.WebcamPicture
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 import fr.openium.auvergnewebcams.utils.ImageUtils

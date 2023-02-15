@@ -1,12 +1,10 @@
-package fr.openium.auvergnewebcams.ui.search.components
+package fr.openium.auvergnewebcams.ui.core
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -15,7 +13,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.ImageLoader
 import fr.openium.auvergnewebcams.model.entity.Webcam
-import fr.openium.auvergnewebcams.ui.core.WebcamPicture
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 
 @Composable
@@ -29,21 +26,16 @@ fun WebcamItem(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Card(
+
+        WebcamPicture(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(150.dp)
-        ) {
-            WebcamPicture(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(AWAppTheme.colors.blue),
-                webcam = webcam,
-                canBeHD = canBeHD,
-                imageLoader = imageLoader,
-                goToWebcamDetail = goToWebcamDetail
-            )
-        }
+                .padding(horizontal = 24.dp)
+                .fillMaxWidth(),
+            webcam = webcam,
+            canBeHD = canBeHD,
+            imageLoader = imageLoader,
+            goToWebcamDetail = goToWebcamDetail
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 

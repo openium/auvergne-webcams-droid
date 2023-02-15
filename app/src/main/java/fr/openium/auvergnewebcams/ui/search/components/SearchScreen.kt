@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import coil.ImageLoader
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.model.entity.Webcam
+import fr.openium.auvergnewebcams.ui.core.WebcamItem
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 import kotlinx.coroutines.delay
 

@@ -9,7 +9,7 @@ class ActivityMain : AbstractActivityFragment() {
 
     override val layoutId: Int = R.layout.container_toolbar
 
-    override fun getDefaultFragment(): Fragment? = FragmentMain()
+    override fun getDefaultFragment(): Fragment = FragmentMain()
 
     // --- Life cycle
     // ---------------------------------------------------

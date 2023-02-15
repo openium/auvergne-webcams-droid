@@ -14,7 +14,7 @@ import fr.openium.auvergnewebcams.ui.theme.AWTheme
 import fr.openium.auvergnewebcams.ui.webcamDetail.ActivityWebcamDetail
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import fr.openium.kotlintools.ext.setTitle
-import kotlinx.android.synthetic.main.fragment_search.composeView
+import kotlinx.android.synthetic.main.compose_view.*
 import org.koin.android.ext.android.inject
 
 
@@ -23,7 +23,7 @@ import org.koin.android.ext.android.inject
  */
 class FragmentSearch : AbstractFragment() {
 
-    override val layoutId: Int = R.layout.fragment_search
+    override val layoutId: Int = R.layout.compose_view
 
     private lateinit var viewModelSearch: SearchViewModel
 

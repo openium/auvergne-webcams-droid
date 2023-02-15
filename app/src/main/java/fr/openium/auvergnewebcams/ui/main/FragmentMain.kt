@@ -27,7 +27,7 @@ import fr.openium.kotlintools.ext.applicationContext
 import fr.openium.kotlintools.ext.snackbar
 import fr.openium.kotlintools.ext.startActivity
 import io.reactivex.rxkotlin.addTo
-import kotlinx.android.synthetic.main.fragment_main.composeView
+import kotlinx.android.synthetic.main.compose_view.*
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 import java.net.SocketTimeoutException
@@ -36,7 +36,7 @@ import java.net.UnknownHostException
 
 class FragmentMain : AbstractFragment() {
 
-    override val layoutId: Int = R.layout.fragment_main
+    override val layoutId: Int = R.layout.compose_view
 
     private lateinit var viewModelMain: ViewModelMain
 

@@ -48,7 +48,7 @@ fun SectionsListScreen(
     Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 16.dp)
+            contentPadding = PaddingValues(bottom = 16.dp, top = 16.dp)
         ) {
             item {
                 Row(
