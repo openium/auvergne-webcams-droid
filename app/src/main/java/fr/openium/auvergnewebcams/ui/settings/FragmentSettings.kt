@@ -13,7 +13,6 @@ import androidx.core.content.pm.PackageInfoCompat
 import com.google.android.material.snackbar.Snackbar
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractFragment
-import fr.openium.auvergnewebcams.event.eventNewRefreshDelayValue
 import fr.openium.auvergnewebcams.event.eventRefreshDelayValueChanged
 import fr.openium.auvergnewebcams.ui.about.ActivitySettingsAbout
 import fr.openium.auvergnewebcams.ui.settings.components.SettingsScreen
@@ -22,7 +21,6 @@ import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import fr.openium.auvergnewebcams.utils.FirebaseUtils
 import fr.openium.kotlintools.ext.snackbar
 import fr.openium.kotlintools.ext.startActivity
-import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.compose_view.*
 import timber.log.Timber
 
@@ -52,13 +50,6 @@ class FragmentSettings : AbstractFragment() {
                 mutableStateOf(prefUtils.isWebcamsHighQuality)
             }
 
-            eventNewRefreshDelayValue.subscribe {
-                FirebaseUtils.setUserPropertiesRefreshIntervalPreferences(requireContext(), it)
-                prefUtils.webcamsDelayRefreshValue = it
-                eventRefreshDelayValueChanged.accept(Unit)
-                webcamsDelayRefreshValue = it
-            }.addTo(disposables)
-
             AWTheme {
                 SettingsScreen(
                     isWebcamsDelayRefreshActive = isWebcamsDelayRefreshActive,
@@ -69,10 +60,10 @@ class FragmentSettings : AbstractFragment() {
                     },
                     webcamsDelayRefreshValue = webcamsDelayRefreshValue,
                     changeWebcamDelayRefreshValue = {
-                        val numberPickerDialog = RefreshDelayPickerDialog.newInstance(prefUtils.webcamsDelayRefreshValue)
-                        childFragmentManager.beginTransaction()
-                            .add(numberPickerDialog, "dialog_picker")
-                            .commitAllowingStateLoss()
+                        FirebaseUtils.setUserPropertiesRefreshIntervalPreferences(requireContext(), it)
+                        prefUtils.webcamsDelayRefreshValue = it
+                        eventRefreshDelayValueChanged.accept(Unit)
+                        webcamsDelayRefreshValue = it
                     },
                     isWebcamsHighQuality = isWebcamsHighQuality,
                     changeWebcamHighQuality = { isChecked ->

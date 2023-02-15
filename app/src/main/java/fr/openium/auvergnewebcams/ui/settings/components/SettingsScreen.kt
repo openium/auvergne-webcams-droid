@@ -30,7 +30,7 @@ fun SettingsScreen(
     isWebcamsHighQuality: Boolean,
     version: String,
     changeSettingsRefreshDelay: (Boolean) -> Unit,
-    changeWebcamDelayRefreshValue: () -> Unit,
+    changeWebcamDelayRefreshValue: (Int) -> Unit,
     changeWebcamHighQuality: (Boolean) -> Unit,
     navigateToAbout: () -> Unit,
     navigateToOpeniumWebsite: () -> Unit,
@@ -40,6 +40,10 @@ fun SettingsScreen(
 ) {
 
     var showDialogNewWebcam by remember {
+        mutableStateOf(false)
+    }
+
+    var showRefreshDelayDialog by remember {
         mutableStateOf(false)
     }
 
@@ -61,7 +65,9 @@ fun SettingsScreen(
             SettingsItem(
                 text = stringResource(id = R.string.settings_global_refresh_delay),
                 value = webcamsDelayRefreshValue.toString(),
-                onClick = changeWebcamDelayRefreshValue
+                onClick = {
+                    showRefreshDelayDialog = true
+                }
             )
         }
 
@@ -120,6 +126,19 @@ fun SettingsScreen(
             },
             onDismiss = {
                 showDialogNewWebcam = false
+            }
+        )
+    }
+
+    if(showRefreshDelayDialog) {
+        SettingsRefreshDelayDialog(
+            currentValue = webcamsDelayRefreshValue,
+            onClickCancel = {
+                showRefreshDelayDialog = false
+            },
+            onValidateNewValue = {
+                showRefreshDelayDialog = false
+                changeWebcamDelayRefreshValue(it)
             }
         )
     }
