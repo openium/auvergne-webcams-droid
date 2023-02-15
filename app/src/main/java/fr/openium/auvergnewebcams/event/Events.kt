@@ -12,6 +12,4 @@ val eventHasNetwork: BehaviorRelay<Boolean> =
 
 val eventCameraFavoris = PublishRelay.create<Long>() // TODO
 
-val eventNewRefreshDelayValue = PublishRelay.create<Int>()
-
 val eventRefreshDelayValueChanged = PublishRelay.create<Unit>()

@@ -61,7 +61,7 @@ fun AWDialogMessage(
             ) {
                 Text(
                     text = buttonText.uppercase(),
-                    style = AWAppTheme.typography.p1
+                    style = AWAppTheme.typography.button
                 )
             }
         }
