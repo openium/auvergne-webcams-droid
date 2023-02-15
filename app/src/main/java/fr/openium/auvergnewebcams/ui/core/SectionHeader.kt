@@ -1,4 +1,4 @@
-package fr.openium.auvergnewebcams.ui.main.components
+package fr.openium.auvergnewebcams.ui.core
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
@@ -35,12 +35,15 @@ fun SectionHeader(
     title: String,
     webcamsCount: Int,
     @DrawableRes image: Int,
-    goToSectionList: () -> Unit
+    goToSectionList: (() -> Unit)? = null
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = goToSectionList)
+            .clickable(enabled = goToSectionList != null,
+                onClick = {
+                    goToSectionList?.invoke()
+                })
             .padding(horizontal = 24.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -71,11 +74,13 @@ fun SectionHeader(
                     color = AWAppTheme.colors.greyLight,
                     style = AWAppTheme.typography.p2Italic
                 )
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_arrow_right_extra_small),
-                    contentDescription = title,
-                    tint = AWAppTheme.colors.greyLight
-                )
+                if (goToSectionList != null) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_arrow_right_extra_small),
+                        contentDescription = title,
+                        tint = AWAppTheme.colors.greyLight
+                    )
+                }
             }
         }
     }

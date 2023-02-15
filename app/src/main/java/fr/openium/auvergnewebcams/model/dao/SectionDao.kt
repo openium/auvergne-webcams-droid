@@ -29,6 +29,9 @@ interface SectionDao {
     @Query("SELECT * FROM Section ORDER BY `order`")
     fun watchSectionsWithCameras(): Flow<List<SectionWithCameras>>
 
+    @Query("SELECT * FROM Section WHERE uid = :id ORDER BY `order`")
+    fun watchSectionWithCameras(id: Long): Flow<SectionWithCameras>
+
     // Update
 
     @Update

@@ -1,4 +1,4 @@
-package fr.openium.auvergnewebcams.ui.search.components
+package fr.openium.auvergnewebcams.ui.core
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -15,7 +15,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.ImageLoader
 import fr.openium.auvergnewebcams.model.entity.Webcam
-import fr.openium.auvergnewebcams.ui.core.WebcamPicture
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 
 @Composable
@@ -32,6 +31,7 @@ fun WebcamItem(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(horizontal = 24.dp)
                 .height(150.dp),
             elevation = 0.dp
         ) {

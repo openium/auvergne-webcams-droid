@@ -89,6 +89,8 @@ class SectionRepository(private val client: AWClient, private val api: AWApi, pr
     fun watchSectionsWithCameras(): Flow<List<SectionWithCameras>> =
         client.database.sectionDao().watchSectionsWithCameras()
 
+    fun watchSectionWithCameras(id: Long) = client.database.sectionDao().watchSectionWithCameras(id = id)
+
     fun update(section: Section): Int =
         client.database.sectionDao().update(section)
 
