@@ -4,6 +4,11 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.core.content.pm.PackageInfoCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
@@ -12,14 +17,14 @@ import fr.openium.auvergnewebcams.base.AbstractFragment
 import fr.openium.auvergnewebcams.event.eventNewRefreshDelayValue
 import fr.openium.auvergnewebcams.event.eventRefreshDelayValueChanged
 import fr.openium.auvergnewebcams.ui.about.ActivitySettingsAbout
+import fr.openium.auvergnewebcams.ui.settings.components.SettingsScreen
+import fr.openium.auvergnewebcams.ui.theme.AWTheme
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import fr.openium.auvergnewebcams.utils.FirebaseUtils
-import fr.openium.kotlintools.ext.gone
-import fr.openium.kotlintools.ext.show
 import fr.openium.kotlintools.ext.snackbar
 import fr.openium.kotlintools.ext.startActivity
 import io.reactivex.rxkotlin.addTo
-import kotlinx.android.synthetic.main.fragment_settings.*
+import kotlinx.android.synthetic.main.compose_view.*
 import timber.log.Timber
 
 
@@ -28,91 +33,90 @@ import timber.log.Timber
  */
 class FragmentSettings : AbstractFragment() {
 
-    override val layoutId: Int = R.layout.fragment_settings
+    override val layoutId: Int = R.layout.compose_view
 
     // --- Life cycle
     // ---------------------------------------------------
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        setListeners()
 
-        initVersion()
+        composeView.setContent {
+            var isWebcamsDelayRefreshActive by remember {
+                mutableStateOf(prefUtils.isWebcamsDelayRefreshActive)
+            }
+            var webcamsDelayRefreshValue by remember {
+                mutableStateOf(prefUtils.webcamsDelayRefreshValue)
+            }
+            var isWebcamsHighQuality by remember {
+                mutableStateOf(prefUtils.isWebcamsHighQuality)
+            }
+
+            eventNewRefreshDelayValue.subscribe {
+                FirebaseUtils.setUserPropertiesRefreshIntervalPreferences(requireContext(), it)
+                prefUtils.webcamsDelayRefreshValue = it
+                eventRefreshDelayValueChanged.accept(Unit)
+                webcamsDelayRefreshValue = it
+            }.addTo(disposables)
+
+            AWTheme {
+                SettingsScreen(
+                    isWebcamsDelayRefreshActive = isWebcamsDelayRefreshActive,
+                    changeSettingsRefreshDelay = { isChecked ->
+                        FirebaseUtils.setUserPropertiesRefreshPreferences(requireContext(), isChecked)
+                        prefUtils.isWebcamsDelayRefreshActive = isChecked
+                        isWebcamsDelayRefreshActive = isChecked
+                    },
+                    webcamsDelayRefreshValue = webcamsDelayRefreshValue,
+                    changeWebcamDelayRefreshValue = {
+                        val numberPickerDialog = RefreshDelayPickerDialog.newInstance(prefUtils.webcamsDelayRefreshValue)
+                        childFragmentManager.beginTransaction()
+                            .add(numberPickerDialog, "dialog_picker")
+                            .commitAllowingStateLoss()
+                    },
+                    isWebcamsHighQuality = isWebcamsHighQuality,
+                    changeWebcamHighQuality = { isChecked ->
+                        FirebaseUtils.setUserPropertiesWebcamQualityPreferences(requireContext(), if (isChecked) "high" else "low")
+                        prefUtils.isWebcamsHighQuality = isChecked
+                        isWebcamsHighQuality = isChecked
+                    },
+                    navigateToAbout = {
+                        AnalyticsUtils.aboutClicked(requireContext())
+                        startActivity<ActivitySettingsAbout>()
+                    },
+                    navigateToOpeniumWebsite = {
+                        AnalyticsUtils.websiteOpeniumClicked(requireContext())
+                        startActivityForUrl(getString(R.string.url_openium))
+                    },
+                    navigateToPiratesWebsite = {
+                        AnalyticsUtils.lesPiratesClicked(requireContext())
+                        startActivityForUrl(getString(R.string.url_pirates))
+                    },
+                    proposeNewWebcam = {
+                        MaterialAlertDialogBuilder(requireContext(), R.style.MaterialAlertDialogTheme)
+                            .setTitle(R.string.settings_send_new_webcam_title)
+                            .setMessage(R.string.settings_send_new_webcam_message)
+                            .setNeutralButton(R.string.generic_ok) { dialog, _ ->
+                                AnalyticsUtils.suggestWebcamClicked(requireContext())
+                                sendEmail()
+                                dialog.dismiss()
+                            }.show()
+                    },
+                    rateApp = {
+                        AnalyticsUtils.rateAppClicked(requireContext())
+                        startActivityForUrl(getString(R.string.url_note_format, requireContext().packageName))
+                    },
+                    version = getVersion()
+                )
+            }
+        }
+
     }
 
     // --- Methods
     // ---------------------------------------------------
 
-    private fun setListeners() {
-        // Auto refresh
-        showDelayRefresh(prefUtils.isWebcamsDelayRefreshActive)
-        switchSettingsRefreshDelay.isChecked = prefUtils.isWebcamsDelayRefreshActive
-        switchSettingsRefreshDelay.setOnCheckedChangeListener { _, isChecked ->
-            FirebaseUtils.setUserPropertiesRefreshPreferences(requireContext(), isChecked)
-            prefUtils.isWebcamsDelayRefreshActive = isChecked
-            showDelayRefresh(isChecked)
-        }
-
-        // Auto refresh delay
-        linearLayoutSettingsDelayRefresh.setOnClickListener {
-            val numberPickerDialog = RefreshDelayPickerDialog.newInstance(prefUtils.webcamsDelayRefreshValue)
-            childFragmentManager.beginTransaction()
-                .add(numberPickerDialog, "dialog_picker")
-                .commitAllowingStateLoss()
-        }
-        textViewSettingsDelayValue.text = prefUtils.webcamsDelayRefreshValue.toString()
-
-        eventNewRefreshDelayValue.subscribe {
-            FirebaseUtils.setUserPropertiesRefreshIntervalPreferences(requireContext(), it)
-            prefUtils.webcamsDelayRefreshValue = it
-            textViewSettingsDelayValue.text = it.toString()
-            eventRefreshDelayValueChanged.accept(Unit)
-        }.addTo(disposables)
-
-        // Webcams quality
-        switchSettingsQualityWebcams.setOnCheckedChangeListener { _, isChecked ->
-            FirebaseUtils.setUserPropertiesWebcamQualityPreferences(requireContext(), if (isChecked) "high" else "low")
-            prefUtils.isWebcamsHighQuality = isChecked
-        }
-        switchSettingsQualityWebcams.isChecked = prefUtils.isWebcamsHighQuality
-
-        // About screen
-        textViewSettingsAbout.setOnClickListener {
-            AnalyticsUtils.aboutClicked(requireContext())
-            startActivity<ActivitySettingsAbout>()
-        }
-
-        // Openium website
-        textViewSettingsOpenium.setOnClickListener {
-            AnalyticsUtils.websiteOpeniumClicked(requireContext())
-            startActivityForUrl(getString(R.string.url_openium))
-        }
-
-        // Les pirates website
-        textViewSettingsPirates.setOnClickListener {
-            AnalyticsUtils.lesPiratesClicked(requireContext())
-            startActivityForUrl(getString(R.string.url_pirates))
-        }
-
-        // Send new webcam
-        textViewSettingsSendNewWebcam.setOnClickListener {
-            MaterialAlertDialogBuilder(requireContext(), R.style.MaterialAlertDialogTheme)
-                .setTitle(R.string.settings_send_new_webcam_title)
-                .setMessage(R.string.settings_send_new_webcam_message)
-                .setNeutralButton(R.string.generic_ok) { dialog, _ ->
-                    AnalyticsUtils.suggestWebcamClicked(requireContext())
-                    sendEmail()
-                    dialog.dismiss()
-                }.show()
-        }
-
-        // Rate app
-        textViewSettingsNote.setOnClickListener {
-            AnalyticsUtils.rateAppClicked(requireContext())
-            startActivityForUrl(getString(R.string.url_note_format, requireContext().packageName))
-        }
-    }
 
     private fun sendEmail() {
         val intentEmail = Intent(Intent.ACTION_SENDTO).apply {
@@ -129,14 +133,6 @@ class FragmentSettings : AbstractFragment() {
         } ?: snackbar(R.string.generic_no_email_app, Snackbar.LENGTH_SHORT)
     }
 
-    private fun showDelayRefresh(show: Boolean) {
-        if (show) {
-            linearLayoutSettingsDelayRefresh.show()
-        } else {
-            linearLayoutSettingsDelayRefresh.gone()
-        }
-    }
-
     private fun startActivityForUrl(url: String) {
         val intent = Intent(Intent.ACTION_VIEW).apply {
             data = Uri.parse(url)
@@ -149,15 +145,17 @@ class FragmentSettings : AbstractFragment() {
         } ?: snackbar(R.string.generic_no_application_for_action, Snackbar.LENGTH_SHORT)
     }
 
-    private fun initVersion() {
-        try {
-            requireContext().packageManager.getPackageInfo(requireContext().packageName, 0)?.also {
-                val version =
-                    getString(R.string.settings_version_format, it.versionName, PackageInfoCompat.getLongVersionCode(it).toString())
-                textViewSettingsVersion.text = version
-            }
+    private fun getVersion(): String {
+        return try {
+            val packageInfo = requireContext().packageManager.getPackageInfo(requireContext().packageName, 0)
+            getString(
+                R.string.settings_version_format,
+                packageInfo.versionName,
+                PackageInfoCompat.getLongVersionCode(packageInfo).toString()
+            )
         } catch (e: PackageManager.NameNotFoundException) {
             Timber.e(e)
+            ""
         }
     }
 }
