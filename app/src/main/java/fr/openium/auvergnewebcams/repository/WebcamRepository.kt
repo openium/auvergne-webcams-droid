@@ -19,13 +19,11 @@ class WebcamRepository(private val client: AWClient, private val dateUtils: Date
             Optional.of(it)
         }
 
-    fun getWebcamsSingle(sectionId: Long): Single<List<Webcam>> =
-        client.database.webcamDao().getWebcamsSingle(sectionId)
+    fun watchWebcamForId(webcamId: Long?) = client.database.webcamDao().watchWebcamForId(webcamId = webcamId)
 
     fun watchAllWebcams() = client.database.webcamDao().watchAllWebcams()
 
-    fun update(webcam: Webcam): Int =
-        client.database.webcamDao().update(webcam)
+    suspend fun update(webcam: Webcam): Int = client.database.webcamDao().update(webcam)
 
     fun update(webcams: List<Webcam>): Int =
         client.database.webcamDao().update(webcams)
@@ -42,7 +40,7 @@ class WebcamRepository(private val client: AWClient, private val dateUtils: Date
     private fun getWebcamWithPartialUrl(url: String): Webcam? =
         client.database.webcamDao().getWebcamWithPartialUrl(url)
 
-    fun updateLastUpdateDate(lastModified: String, urlMedia: String) {
+    suspend fun updateLastUpdateDate(lastModified: String, urlMedia: String) {
         getWebcamWithPartialUrl(urlMedia)?.let {
             if (lastModified.isNotBlank()) {
                 val newTime = dateUtils.parseDateGMT(lastModified) ?: 0L

@@ -20,7 +20,6 @@ import org.koin.core.inject
 class ViewModelSectionDetail(app: Application) : AbstractViewModel(app), KoinComponent {
 
     private val sectionRepository by inject<SectionRepository>()
-    private val webcamRepository by inject<WebcamRepository>()
 
     private val sectionId: StateFlow<Long?>
         get() = _sectionId.asStateFlow()
