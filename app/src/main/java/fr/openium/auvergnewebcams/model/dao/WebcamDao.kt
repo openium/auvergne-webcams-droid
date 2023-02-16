@@ -19,7 +19,7 @@ interface WebcamDao {
     fun getWebcamSingle(webcamId: Long): Single<Webcam?>
 
     @Query("SELECT * FROM Webcam WHERE uid == :webcamId LIMIT 1")
-    fun watchWebcamForId(webcamId: Long?): Flow<Webcam?>
+    suspend fun getWebcamForId(webcamId: Long?): Webcam?
 
     @Query("SELECT * FROM Webcam")
     fun getWebcamsSingle(): Single<List<Webcam>>

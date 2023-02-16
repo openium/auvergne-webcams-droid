@@ -49,14 +49,16 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     override val layoutId: Int
         get() = R.layout.compose_view
 
-    protected lateinit var viewModelWebcamDetail: ViewModelWebcamDetail
+    private lateinit var viewModelWebcamDetail: ViewModelWebcamDetail
 
     private var itemMenuRefresh: MenuItem? = null
 
-    protected var wasLastTimeLoadingSuccessful = true
+    private var wasLastTimeLoadingSuccessful = true
 
     private var orientation by mutableStateOf(Configuration.ORIENTATION_PORTRAIT)
     private var fileImage by mutableStateOf<File?>(null)
+
+    private var webcamLoaded: Webcam? = null
 
     // --- Life cycle
     // ---------------------------------------------------
@@ -71,59 +73,66 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         arguments?.getLong(KEY_WEBCAM_ID)?.also {
-            viewModelWebcamDetail.setWebcamId(id = it)
+            viewModelWebcamDetail.loadWebcamForId(id = it)
         } ?: requireActivity().finish()
 
+        eventHasNetwork.distinctUntilChanged()
+            .filter { it }
+            .fromIOToMain()
+            .subscribe({
+                Timber.d("REFRESH WEBCAM")
+                refreshWebcam()
+            }, { Timber.e(it, "Error when listening for network state changing") }).addTo(disposables)
 
 
         composeView.setContent {
             AWTheme {
-                val webcam by viewModelWebcamDetail.webcam.collectAsState()
-                Timber.d("WEBCAM !!!!!")
+                val webcamState by viewModelWebcamDetail.webcamState.collectAsState()
+                
+                if (webcamState is ViewModelWebcamDetail.WebcamLoadState.Loaded) {
+                    Timber.d("REFRESH LOADED")
+                    val webcam = (webcamState as ViewModelWebcamDetail.WebcamLoadState.Loaded).webcam
+                    webcamLoaded = webcam
 
-                eventHasNetwork.filter { it }.fromIOToMain().subscribe({
-                    refreshWebcam()
-                }, { Timber.e(it, "Error when listening for network state changing") }).addTo(disposables)
+                    val state = getState(webcam)
+                    val isUpToDate = state != State.LOADED_NOT_UP_TO_DATE
 
-                val state = getState(webcam)
-                val isUpToDate = state != State.LOADED_NOT_UP_TO_DATE
+                    val isLowQualityOnly = if (isVideo()) {
+                        webcam?.viewsurf.isNullOrEmpty()
+                    } else {
+                        webcam?.imageHD.isNullOrEmpty()
+                    }
 
-                val isLowQualityOnly = if (isVideo()) {
-                    webcam?.viewsurf.isNullOrEmpty()
-                } else {
-                    webcam?.imageHD.isNullOrEmpty()
+                    setTitle(webcam?.title ?: "")
+
+                    if (state == State.NOT_WORKING) {
+                        // TODO screen no working
+                        //signalProblem = {
+                        //                        signalProblem(webcam)
+                        //                    }
+                        // linearLayoutWebcamDetailNotWorking.setOnClickListener {
+                        //                signalProblem()
+                        //            }
+                    } else if (state == State.NOT_CONNECTED) {
+                        // TODO screen not connected
+                    } else {
+                        WebcamDetailScreen(
+                            webcam = webcam,
+                            isVideo = isVideo(),
+                            dateUtils = dateUtils,
+                            isLowQualityOnly = isLowQualityOnly,
+                            isUpToDate = isUpToDate,
+                            isWebcamsHighQuality = prefUtils.isWebcamsHighQuality,
+                            setLastLoadingSuccess = {
+                                wasLastTimeLoadingSuccessful = it
+                            },
+                            isOrientationPortrait = orientation == Configuration.ORIENTATION_PORTRAIT,
+                            onGetImageFile = { file ->
+                                fileImage = file
+                            }
+                        )
+                    }
                 }
-
-                setTitle(webcam?.title ?: "")
-
-                if (state == State.NOT_WORKING) {
-                    // TODO screen no working
-                    //signalProblem = {
-                    //                        signalProblem(webcam)
-                    //                    }
-                    // linearLayoutWebcamDetailNotWorking.setOnClickListener {
-                    //                signalProblem()
-                    //            }
-                } else if (state == State.NOT_CONNECTED) {
-                    // TODO screen not connected
-                } else {
-                    WebcamDetailScreen(
-                        webcam = webcam,
-                        isVideo = isVideo(),
-                        dateUtils = dateUtils,
-                        isLowQualityOnly = isLowQualityOnly,
-                        isUpToDate = isUpToDate,
-                        isWebcamsHighQuality = prefUtils.isWebcamsHighQuality,
-                        setLastLoadingSuccess = {
-                            wasLastTimeLoadingSuccessful = it
-                        },
-                        isOrientationPortrait = orientation == Configuration.ORIENTATION_PORTRAIT,
-                        onGetImageFile = { file ->
-                            fileImage = file
-                        }
-                    )
-                }
-
             }
         }
 
@@ -279,7 +288,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     }
 
     private fun saveWebcam() {
-        viewModelWebcamDetail.webcam.value?.let { webcam ->
+        webcamLoaded?.let { webcam ->
             val urlSrc = if (isVideo()) {
                 webcam.getUrlForWebcam(canBeHD = true, canBeVideo = true)
             } else {
@@ -296,13 +305,13 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
 
     private fun refreshWebcam() {
         if (eventHasNetwork.value == true) {
-            viewModelWebcamDetail.refreshWebCam()
+            viewModelWebcamDetail.refreshWebCam(webcamLoaded)
         } else snackbar(R.string.generic_network_error, Snackbar.LENGTH_SHORT)
     }
 
 
     private fun shareWebCam() {
-        viewModelWebcamDetail.webcam.value?.let { webcam ->
+        webcamLoaded?.let { webcam ->
             val chooser = if (isVideo()) {
                 val url = webcam.getUrlForWebcam(canBeHD = true, canBeVideo = true)
                 val intent = Intent(Intent.ACTION_SEND).apply {

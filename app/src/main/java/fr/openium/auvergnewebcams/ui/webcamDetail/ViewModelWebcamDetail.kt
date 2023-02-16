@@ -5,43 +5,34 @@ import androidx.lifecycle.viewModelScope
 import fr.openium.auvergnewebcams.base.AbstractViewModel
 import fr.openium.auvergnewebcams.enums.WebcamType
 import fr.openium.auvergnewebcams.ext.jsonKey
+import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.repository.WebcamRepository
 import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.koin.core.KoinComponent
 import org.koin.core.inject
-import timber.log.Timber
-import kotlin.random.Random
 
 
 class ViewModelWebcamDetail(app: Application) : AbstractViewModel(app), KoinComponent {
 
     private val webcamRepository by inject<WebcamRepository>()
 
-    private val _webcamId = MutableStateFlow<Long?>(null)
+    val webcamState: StateFlow<WebcamLoadState>
+        get() = _webcamState.asStateFlow()
+    private val _webcamState = MutableStateFlow<WebcamLoadState>(WebcamLoadState.Loading)
 
-    val webcam by lazy {
-        _webcamId.filterNotNull()
-            .flatMapLatest { id ->
-                webcamRepository.watchWebcamForId(webcamId = id)
-            }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000L), null)
+    fun loadWebcamForId(id: Long) = viewModelScope.launch {
+        _webcamState.emit(WebcamLoadState.Loading)
+        val webcam = webcamRepository.getWebcamForId(id)
+        _webcamState.emit(WebcamLoadState.Loaded(webcam = webcam))
     }
 
-    fun setWebcamId(id: Long) = viewModelScope.launch {
-        _webcamId.emit(id)
-    }
-
-    fun refreshWebCam() = viewModelScope.launch(Dispatchers.IO) {
-        webcam.value?.let { webcam ->
+    fun refreshWebCam(webcam: Webcam?) = viewModelScope.launch(Dispatchers.IO) {
+        webcam?.let { webcam ->
             if (webcam.type != WebcamType.IMAGE.jsonKey) {
                 val isViewSurf = webcam.type == WebcamType.VIEWSURF.jsonKey
                 val media = if (isViewSurf) {
@@ -50,9 +41,13 @@ class ViewModelWebcamDetail(app: Application) : AbstractViewModel(app), KoinComp
                 webcam.mediaViewSurfLD = media
                 webcam.mediaViewSurfHD = media
             }
-            webcam.title = Random.nextInt().toString()
-            val update = webcamRepository.update(webcam)
-            Timber.d("UPDATE $update - ${webcam.title}")
+            webcamRepository.update(webcam)
+            loadWebcamForId(webcam.uid)
         }
+    }
+
+    sealed class WebcamLoadState {
+        object Loading : WebcamLoadState()
+        data class Loaded(val webcam: Webcam?) : WebcamLoadState()
     }
 }
