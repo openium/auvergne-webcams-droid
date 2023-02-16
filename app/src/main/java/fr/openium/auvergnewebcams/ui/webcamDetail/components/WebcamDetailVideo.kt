@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -77,7 +78,9 @@ fun WebcamDetailVideo(
                 modifier = Modifier.fillMaxSize()
             ) {
                 AndroidView(
-                    modifier = Modifier.align(Alignment.Center).fillMaxSize(),
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .fillMaxSize(),
                     factory = {
                         player
                     }

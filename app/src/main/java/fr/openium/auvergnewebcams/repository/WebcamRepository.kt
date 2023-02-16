@@ -19,7 +19,7 @@ class WebcamRepository(private val client: AWClient, private val dateUtils: Date
             Optional.of(it)
         }
 
-    fun watchWebcamForId(webcamId: Long?) = client.database.webcamDao().watchWebcamForId(webcamId = webcamId)
+    suspend fun getWebcamForId(webcamId: Long?) = client.database.webcamDao().getWebcamForId(webcamId = webcamId)
 
     fun watchAllWebcams() = client.database.webcamDao().watchAllWebcams()
 
