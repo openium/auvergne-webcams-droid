@@ -27,6 +27,7 @@ data class AWTypography(
     val h2: TextStyle,
     val p1: TextStyle,
     val p1Italic: TextStyle,
+    val p2: TextStyle,
     val p2Italic: TextStyle,
     val p3: TextStyle,
     val button: TextStyle
@@ -59,6 +60,11 @@ val Typography = AWTypography(
         fontWeight = FontWeight.Normal,
         fontStyle = FontStyle.Italic
     ),
+    p2 = TextStyle(
+        fontSize = 13.sp,
+        fontFamily = Proxima,
+        fontWeight = FontWeight.Normal
+    ),
     p2Italic = TextStyle(
         fontSize = 13.sp,
         fontFamily = Proxima,
@@ -84,6 +90,7 @@ val LocalTypography = staticCompositionLocalOf {
         h2 = TextStyle.Default,
         p1 = TextStyle.Default,
         p1Italic = TextStyle.Default,
+        p2 = TextStyle.Default,
         p2Italic = TextStyle.Default,
         p3 = TextStyle.Default,
         button = TextStyle.Default

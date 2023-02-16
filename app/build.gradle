@@ -168,6 +168,7 @@ dependencies {
 
     // ExoPlayer
     implementation "com.google.android.exoplayer:exoplayer:2.18.2"
+    implementation "com.google.android.exoplayer:exoplayer-ui:2.18.2"
 
     // Like button (Twitter)
     implementation "com.github.jd-alexander:LikeButton:0.2.3"
