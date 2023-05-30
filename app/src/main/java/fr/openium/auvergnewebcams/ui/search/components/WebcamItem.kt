@@ -32,12 +32,13 @@ fun WebcamItem(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(150.dp)
+                .height(150.dp),
+            elevation = 0.dp
         ) {
             WebcamPicture(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(AWAppTheme.colors.blue),
+                    .background(AWAppTheme.colors.greyDark),
                 webcam = webcam,
                 canBeHD = canBeHD,
                 imageLoader = imageLoader,
