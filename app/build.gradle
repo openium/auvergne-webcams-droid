@@ -11,12 +11,12 @@ def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
-    compileSdkVersion 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "fr.openium.auvergnewebcams"
         minSdkVersion 21
-        targetSdkVersion 33
+        targetSdkVersion 34
 
         versionCode openiumVersion.versionCode
         versionName openiumVersion.versionName
@@ -117,8 +117,7 @@ dependencies {
     implementation "fr.openium:rx-tools:1.0.5"
 
     // --- Koin
-    implementation "org.koin:koin-android:2.1.4"
-    implementation "org.koin:koin-androidx-viewmodel:2.1.4"
+    implementation "io.insert-koin:koin-android:2.0.1"
 
     // --- Rx ---
     implementation "io.reactivex.rxjava2:rxjava:2.2.21"
