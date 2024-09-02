@@ -56,7 +56,7 @@ object Modules {
     val coilModule = module {
         single {
             ImageLoader.Builder(get())
-                .okHttpClient(get<OkHttpClient>(named("COIL")))
+                .okHttpClient(get<OkHttpClient>(named("COIL_OK_HTTP")))
                 .crossfade(true)
                 .allowRgb565(true)
                 .logger(DebugLogger(Log.VERBOSE))
@@ -65,16 +65,16 @@ object Modules {
                 }.build()
         }
 
-        single(named("COIL")) {
+        single(named("COIL_OK_HTTP")) {
             OkHttpClient.Builder()
                 .retryOnConnectionFailure(true)
-                .addInterceptor(get<LastUpdateDateInterceptor>(named("COIL")))
+                .addInterceptor(get<LastUpdateDateInterceptor>(named("COIL_LAST_UPDATE_INTERCEPTOR")))
                 .readTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
                 .build()
         }
 
-        single(named("COIL")) {
+        single(named("COIL_LAST_UPDATE_INTERCEPTOR")) {
             LastUpdateDateInterceptor(get())
         }
     }
