@@ -1,11 +1,11 @@
 plugins {
-    id("com.android.application")
-    id("com.google.gms.google-services")
-    id("com.google.firebase.crashlytics")
-    id("kotlin-android")
-    id("kotlin-android-extensions")
-    id("kotlin-kapt")
-    id("fr.openium.publish")
+    id 'com.android.application'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
+    id 'kotlin-android'
+    id 'kotlin-android-extensions'
+    id 'kotlin-kapt'
+    id 'fr.openium.publish'
 }
 
 def keystorePropertiesFile = rootProject.file("private/keys/keystore.properties")
@@ -20,8 +20,8 @@ android {
         minSdkVersion 21
         targetSdkVersion 34
 
-        versionCode openiumVersion.versionCode
-        versionName openiumVersion.versionName
+        versionCode publish.versionCode
+        versionName publish.versionName
 
         ndk {
             abiFilters "arm64-v8a", "armeabi-v7a", "x86", "x86_64"
