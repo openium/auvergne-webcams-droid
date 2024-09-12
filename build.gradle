@@ -2,6 +2,8 @@
 buildscript {
     ext {
         kotlin_version = "1.7.20"
+        agp_version = '7.4.0'
+        agp_version1 = '8.5.0'
     }
 
     repositories {
@@ -9,12 +11,12 @@ buildscript {
         mavenCentral()
         maven { url "https://www.jitpack.io" }
         maven { url "https://plugins.gradle.org/m2/" }
-        maven { url 'https://maven.openium.fr' }
+        maven { url "https://maven.openium.fr/releases" }
     }
 
     dependencies {
         // Gradle
-        classpath 'com.android.tools.build:gradle:7.2.2'
+        classpath "com.android.tools.build:gradle:$agp_version1"
 
         // Kotlin
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -25,8 +27,6 @@ buildscript {
         // Crashlytics
         classpath "com.google.firebase:firebase-crashlytics-gradle:2.9.2"
 
-        // Version
-        classpath "fr.openium:version-plugin:1.2"
     }
 }
 
@@ -34,17 +34,21 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-subprojects {
-    tasks {
-        withType(JavaCompile).all {
-            sourceCompatibility = JavaVersion.VERSION_1_8
-            targetCompatibility = JavaVersion.VERSION_1_8
-        }
+allprojects {
+//    tasks {
+//        withType(JavaCompile).all {
+//            sourceCompatibility = JavaVersion.VERSION_1_8
+//            targetCompatibility = JavaVersion.VERSION_1_8
+//        }
+//
+//        withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+//            kotlinOptions {
+//                jvmTarget = "1.8"
+//            }
+//        }
+//    }
 
-        withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
-        }
+    repositories {
+        maven { url "https://maven.openium.fr/releases" }
     }
 }
