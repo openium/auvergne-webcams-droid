@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext {
-        kotlin_version = "1.7.20"
+        kotlin_version = "2.0.20"
         agp_version = '7.4.0'
         agp_version1 = '8.6.0'
     }
@@ -13,7 +13,6 @@ buildscript {
         maven { url "https://www.jitpack.io" }
         maven { url "https://plugins.gradle.org/m2/" }
     }
-
     dependencies {
         // Gradle
         classpath "com.android.tools.build:gradle:$agp_version1"
@@ -27,26 +26,10 @@ buildscript {
         // Crashlytics
         classpath "com.google.firebase:firebase-crashlytics-gradle:2.9.2"
 
+        //Openium
         classpath "fr.openium:publish-plugin:1.2"
 
-    }
-}
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
-}
 
-subprojects {
-    tasks {
-        withType(JavaCompile).all {
-            sourceCompatibility = JavaVersion.VERSION_17
-            targetCompatibility = JavaVersion.VERSION_17
-        }
-
-        withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
-        }
     }
 }

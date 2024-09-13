@@ -23,6 +23,8 @@ class ActivitySettingsAbout : AbstractActivity() {
         super.onCreate(savedInstanceState)
         overridePendingTransition(R.anim.animation_from_right, R.anim.animation_to_left)
 
+
+
         composeView.setContent {
             AWTheme {
                 AboutScreen(
