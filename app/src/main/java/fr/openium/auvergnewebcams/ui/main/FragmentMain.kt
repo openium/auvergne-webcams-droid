@@ -14,6 +14,7 @@ import coil.ImageLoader
 import com.google.android.material.snackbar.Snackbar
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractFragment
+import fr.openium.auvergnewebcams.databinding.ComposeViewBinding
 import fr.openium.auvergnewebcams.model.entity.Section
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.ui.main.components.SectionsListScreen
@@ -27,39 +28,40 @@ import fr.openium.kotlintools.ext.applicationContext
 import fr.openium.kotlintools.ext.snackbar
 import fr.openium.kotlintools.ext.startActivity
 import io.reactivex.rxkotlin.addTo
-import kotlinx.android.synthetic.main.compose_view.*
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
 
-class FragmentMain : AbstractFragment() {
-
-    override val layoutId: Int = R.layout.compose_view
+class FragmentMain : AbstractFragment<ComposeViewBinding>() {
 
     private lateinit var viewModelMain: ViewModelMain
 
     private val imageLoader by inject<ImageLoader>()
+
+    override fun provideViewBinding(): ComposeViewBinding =
+        ComposeViewBinding.inflate(layoutInflater)
 
     // --- Life cycle
     // ---------------------------------------------------
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setHasOptionsMenu(true)
 
+        // Analytics
         AnalyticsUtils.appIsOpen(requireContext())
         AnalyticsUtils.sendAllUserProperties(requireContext())
 
+        // Initialize ViewModel
         viewModelMain = ViewModelProvider(this)[ViewModelMain::class.java]
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        composeView.setContent {
+        binding.composeView.setContent {
             AWTheme {
                 val sectionsList by viewModelMain.sections.collectAsState(initial = emptyList())
                 val refresh by viewModelMain.isRefreshing.observeAsState(false)

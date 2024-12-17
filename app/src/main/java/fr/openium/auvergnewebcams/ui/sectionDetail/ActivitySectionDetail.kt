@@ -7,17 +7,22 @@ import androidx.fragment.app.Fragment
 import fr.openium.auvergnewebcams.KEY_SECTION_ID
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractActivityFragment
+import fr.openium.auvergnewebcams.databinding.ContainerToolbarBinding
 
 /**
  * Created by Openium on 19/02/2019.
  */
-class ActivitySectionDetail : AbstractActivityFragment() {
+class ActivitySectionDetail : AbstractActivityFragment<ContainerToolbarBinding>() {
 
     override val layoutId: Int = R.layout.container_toolbar
 
     override val showHomeAsUp: Boolean = true
 
-    override fun getDefaultFragment(): Fragment? = FragmentSectionDetail()
+    override fun provideViewBinding(): ContainerToolbarBinding =
+        ContainerToolbarBinding.inflate(layoutInflater)
+
+    override fun getDefaultFragment(): Fragment? =
+        FragmentSectionDetail()
 
     // --- Life cycle
     // ---------------------------------------------------

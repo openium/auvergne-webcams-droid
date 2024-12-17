@@ -4,10 +4,14 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractActivityFragment
+import fr.openium.auvergnewebcams.databinding.ContainerToolbarBinding
 
-class ActivitySearch : AbstractActivityFragment() {
+class ActivitySearch : AbstractActivityFragment<ContainerToolbarBinding>() {
 
     override val showHomeAsUp: Boolean = true
+
+    override fun provideViewBinding(): ContainerToolbarBinding =
+        ContainerToolbarBinding.inflate(layoutInflater)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

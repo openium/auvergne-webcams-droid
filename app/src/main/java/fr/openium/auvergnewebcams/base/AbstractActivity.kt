@@ -3,19 +3,20 @@ package fr.openium.auvergnewebcams.base
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.viewbinding.ViewBinding
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.custom.OnBackPressedListener
 import fr.openium.auvergnewebcams.utils.DateUtils
 import fr.openium.auvergnewebcams.utils.PreferencesUtils
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.toolbar.*
 import org.koin.android.ext.android.inject
 
 /**
  * Created by Openium on 19/02/2019.
  */
 
-abstract class AbstractActivity : AppCompatActivity() {
+abstract class AbstractActivity<T : ViewBinding> : AppCompatActivity() {
+
     protected val disposables: CompositeDisposable = CompositeDisposable()
 
     protected val prefUtils by inject<PreferencesUtils>()
@@ -23,12 +24,20 @@ abstract class AbstractActivity : AppCompatActivity() {
 
     protected open val handleFragmentBackPressed: Boolean = true
 
+    private var _binding: T? = null
+    protected val binding get() = _binding!!
+
+    abstract fun provideViewBinding(): T
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(layoutId)
+        _binding = provideViewBinding()
+        setContentView(binding.root)
 
-        toolbar?.also { setSupportActionBar(it) }
+        binding.root.findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)?.also {
+            setSupportActionBar(it)
+        }
         setHomeAsUp(showHomeAsUp)
     }
 
@@ -42,6 +51,7 @@ abstract class AbstractActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         disposables.clear()
+        _binding = null
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -64,9 +74,9 @@ abstract class AbstractActivity : AppCompatActivity() {
         }
     }
 
-    // Si true la fleche back est affichée
+    // If true, the back arrow is displayed
     protected open val showHomeAsUp: Boolean = false
 
-    // Retourne le layout qui est associé à l'activité
+    // Returns the layout associated with the activity
     protected open val layoutId: Int = R.layout.container_toolbar
 }

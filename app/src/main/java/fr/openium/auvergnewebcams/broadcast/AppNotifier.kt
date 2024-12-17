@@ -74,12 +74,14 @@ object AppNotifier {
                 NotificationCompat.PRIORITY_DEFAULT
             }
 
+            val bitmap: Bitmap? = null
+
             image?.let {
                 setLargeIcon(it)
                 setStyle(
                     NotificationCompat.BigPictureStyle()
                         .bigPicture(it)
-                        .bigLargeIcon(null)
+                        .bigLargeIcon(bitmap)
                 )
             } ?: setStyle(NotificationCompat.BigTextStyle().bigText(description))
 

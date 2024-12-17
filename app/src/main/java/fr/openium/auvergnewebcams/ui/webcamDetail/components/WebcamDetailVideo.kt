@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,13 +18,9 @@ import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.PlaybackException
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.StyledPlayerView
-import com.google.android.exoplayer2.upstream.FileDataSource
-import com.google.android.exoplayer2.upstream.HttpDataSource
 import fr.openium.auvergnewebcams.ext.getUrlForWebcam
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
-import fr.openium.kotlintools.ext.showWithAnimationCompat
-import kotlinx.android.synthetic.main.fragment_webcam_video.*
 
 @Composable
 fun WebcamDetailVideo(
@@ -56,7 +51,7 @@ fun WebcamDetailVideo(
             player?.addListener(object : Player.Listener {
                 override fun onPlaybackStateChanged(playbackState: Int) {
                     super.onPlaybackStateChanged(playbackState)
-                    if(playbackState == Player.STATE_READY) {
+                    if (playbackState == Player.STATE_READY) {
                         showProgress = false
                         setLastLoadingSuccess(true)
                     }
@@ -98,5 +93,4 @@ fun WebcamDetailVideo(
             )
         }
     }
-
 }

@@ -14,25 +14,21 @@ import io.reactivex.rxkotlin.addTo
 import timber.log.Timber
 
 
-class ActivitySplash : AbstractActivity() {
+class ActivitySplash : AbstractActivity<ComposeViewBinding>() {
 
     override val layoutId: Int = R.layout.compose_view
 
     private lateinit var viewModelSplash: ViewModelSplash
 
-    private lateinit var binding: ComposeViewBinding
-
+    override fun provideViewBinding(): ComposeViewBinding =
+        ComposeViewBinding.inflate(layoutInflater)
 
     // --- Life cycle
     // ---------------------------------------------------
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        viewModelSplash = ViewModelProvider(this).get(ViewModelSplash::class.java)
-
-        binding = ComposeViewBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        viewModelSplash = ViewModelProvider(this)[ViewModelSplash::class.java]
 
         binding.composeView.setContent {
             AWTheme {

@@ -7,28 +7,27 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModelProvider
 import coil.ImageLoader
 import fr.openium.auvergnewebcams.KEY_SECTION_ID
-import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractFragment
+import fr.openium.auvergnewebcams.databinding.ComposeViewBinding
 import fr.openium.auvergnewebcams.ui.sectionDetail.components.SectionDetailScreen
 import fr.openium.auvergnewebcams.ui.theme.AWTheme
 import fr.openium.auvergnewebcams.ui.webcamDetail.ActivityWebcamDetail
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import fr.openium.kotlintools.ext.setTitle
-import kotlinx.android.synthetic.main.compose_view.*
 import org.koin.android.ext.android.inject
 
 
 /**
  * Created by Openium on 19/02/2019.
  */
-class FragmentSectionDetail : AbstractFragment() {
-
-    override val layoutId: Int = R.layout.compose_view
+class FragmentSectionDetail : AbstractFragment<ComposeViewBinding>() {
 
     private lateinit var viewModelSectionDetail: ViewModelSectionDetail
 
     private val imageLoader by inject<ImageLoader>()
 
+    override fun provideViewBinding(): ComposeViewBinding =
+        ComposeViewBinding.inflate(layoutInflater)
 
     // --- Life cycle
     // ---------------------------------------------------
@@ -46,7 +45,7 @@ class FragmentSectionDetail : AbstractFragment() {
         if (sectionId != -1L) {
             viewModelSectionDetail.setSectionId(sectionId)
 
-            composeView.setContent {
+            binding.composeView.setContent {
                 AWTheme {
                     val section by viewModelSectionDetail.sectionAndWebcams.collectAsState()
                     setTitle(section?.section?.title ?: "")
@@ -64,5 +63,4 @@ class FragmentSectionDetail : AbstractFragment() {
             }
         } else requireActivity().finish()
     }
-
 }

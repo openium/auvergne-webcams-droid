@@ -9,6 +9,7 @@ import fr.openium.auvergnewebcams.KEY_WEBCAM_ID
 import fr.openium.auvergnewebcams.KEY_WEBCAM_TYPE
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractActivityFragment
+import fr.openium.auvergnewebcams.databinding.ContainerToolbarBinding
 import fr.openium.auvergnewebcams.enums.WebcamType
 import fr.openium.auvergnewebcams.ext.hideSystemUI
 import fr.openium.auvergnewebcams.ext.jsonKey
@@ -16,22 +17,23 @@ import fr.openium.auvergnewebcams.ext.showSystemUI
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.kotlintools.ext.gone
 import fr.openium.kotlintools.ext.show
-import kotlinx.android.synthetic.main.toolbar.toolbar
-
 
 /**
  * Created by Openium on 19/02/2019.
  */
-class ActivityWebcamDetail : AbstractActivityFragment() {
+class ActivityWebcamDetail : AbstractActivityFragment<ContainerToolbarBinding>() {
 
     override val showHomeAsUp: Boolean = true
+
+    private var typeWebcam: String? = null
+
+    override fun provideViewBinding(): ContainerToolbarBinding =
+        ContainerToolbarBinding.inflate(layoutInflater)
 
     override fun getDefaultFragment(): Fragment =
         if (typeWebcam == WebcamType.VIEWSURF.jsonKey || typeWebcam == WebcamType.VIDEO.jsonKey) {
             FragmentWebcamDetailVideo()
         } else FragmentWebcamDetailImage()
-
-    private var typeWebcam: String? = null
 
     // --- Life cycle
     // ---------------------------------------------------
@@ -46,10 +48,10 @@ class ActivityWebcamDetail : AbstractActivityFragment() {
         super.onConfigurationChanged(newConfig)
         if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             window.showSystemUI()
-            toolbar.show()
+            binding.toolbarContainer.toolbar.show()
         } else {
             window.hideSystemUI()
-            toolbar.gone()
+            binding.toolbarContainer.toolbar.gone()
         }
     }
 

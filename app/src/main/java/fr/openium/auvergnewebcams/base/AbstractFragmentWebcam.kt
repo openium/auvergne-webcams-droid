@@ -23,6 +23,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.tbruyelle.rxpermissions2.RxPermissions
 import fr.openium.auvergnewebcams.KEY_WEBCAM_ID
 import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.databinding.ComposeViewBinding
 import fr.openium.auvergnewebcams.event.eventHasNetwork
 import fr.openium.auvergnewebcams.ext.getUrlForWebcam
 import fr.openium.auvergnewebcams.ext.lastUpdateDate
@@ -36,7 +37,6 @@ import fr.openium.kotlintools.ext.setTitle
 import fr.openium.kotlintools.ext.snackbar
 import fr.openium.rxtools.ext.fromIOToMain
 import io.reactivex.rxkotlin.addTo
-import kotlinx.android.synthetic.main.compose_view.*
 import timber.log.Timber
 import java.io.File
 
@@ -44,10 +44,7 @@ import java.io.File
 /**
  * Created by Openium on 19/02/2019.
  */
-abstract class AbstractFragmentWebcam : AbstractFragment() {
-
-    override val layoutId: Int
-        get() = R.layout.compose_view
+abstract class AbstractFragmentWebcam : AbstractFragment<ComposeViewBinding>() {
 
     private lateinit var viewModelWebcamDetail: ViewModelWebcamDetail
 
@@ -59,6 +56,9 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     private var fileImage by mutableStateOf<File?>(null)
 
     private var webcamLoaded: Webcam? = null
+
+    override fun provideViewBinding(): ComposeViewBinding =
+        ComposeViewBinding.inflate(layoutInflater)
 
     // --- Life cycle
     // ---------------------------------------------------
@@ -85,10 +85,10 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
             }, { Timber.e(it, "Error when listening for network state changing") }).addTo(disposables)
 
 
-        composeView.setContent {
+        binding.composeView.setContent {
             AWTheme {
                 val webcamState by viewModelWebcamDetail.webcamState.collectAsState()
-                
+
                 if (webcamState is ViewModelWebcamDetail.WebcamLoadState.Loaded) {
                     Timber.d("REFRESH LOADED")
                     val webcam = (webcamState as ViewModelWebcamDetail.WebcamLoadState.Loaded).webcam
@@ -135,9 +135,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
                 }
             }
         }
-
     }
-
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_detail, menu)
@@ -181,7 +179,7 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
     private fun setFavChanged(isLiked: Boolean) {
         /*  webcam.isFavorite = isLiked
           viewModelWebcamDetail.updateWebcam(webcam)
-  
+
           eventCameraFavoris.accept(webcam.uid)
           AnalyticsUtils.favoriteClicked(requireContext(), webcam.title ?: "", webcam.isFavorite)*/
     }
@@ -352,5 +350,4 @@ abstract class AbstractFragmentWebcam : AbstractFragment() {
         NOT_WORKING,
         NOT_CONNECTED
     }
-
 }

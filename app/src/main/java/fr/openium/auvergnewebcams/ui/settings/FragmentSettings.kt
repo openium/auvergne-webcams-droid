@@ -13,6 +13,7 @@ import androidx.core.content.pm.PackageInfoCompat
 import com.google.android.material.snackbar.Snackbar
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractFragment
+import fr.openium.auvergnewebcams.databinding.ComposeViewBinding
 import fr.openium.auvergnewebcams.event.eventRefreshDelayValueChanged
 import fr.openium.auvergnewebcams.ui.about.ActivitySettingsAbout
 import fr.openium.auvergnewebcams.ui.settings.components.SettingsScreen
@@ -21,16 +22,16 @@ import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import fr.openium.auvergnewebcams.utils.FirebaseUtils
 import fr.openium.kotlintools.ext.snackbar
 import fr.openium.kotlintools.ext.startActivity
-import kotlinx.android.synthetic.main.compose_view.*
 import timber.log.Timber
 
 
 /**
  * Created by Openium on 19/02/2019.
  */
-class FragmentSettings : AbstractFragment() {
+class FragmentSettings : AbstractFragment<ComposeViewBinding>() {
 
-    override val layoutId: Int = R.layout.compose_view
+    override fun provideViewBinding(): ComposeViewBinding =
+        ComposeViewBinding.inflate(layoutInflater)
 
     // --- Life cycle
     // ---------------------------------------------------
@@ -38,8 +39,7 @@ class FragmentSettings : AbstractFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-        composeView.setContent {
+        binding.composeView.setContent {
             var isWebcamsDelayRefreshActive by remember {
                 mutableStateOf(prefUtils.isWebcamsDelayRefreshActive)
             }

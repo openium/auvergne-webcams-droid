@@ -5,20 +5,21 @@ import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material.LocalContentColor
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ProvideTextStyle
-import androidx.compose.material.ripple.LocalRippleTheme
-import androidx.compose.material.ripple.RippleTheme
-import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material.ripple.RippleAlpha
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LocalRippleConfiguration
+import androidx.compose.material3.RippleConfiguration
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.res.colorResource
 import fr.openium.auvergnewebcams.R
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AWTheme(content: @Composable () -> Unit) {
     val colors = AWColors(
@@ -47,11 +48,31 @@ fun AWTheme(content: @Composable () -> Unit) {
         )
     }
 
+    val rippleConfiguration =
+        RippleConfiguration(
+            color = AWAppTheme.colors.black,
+            rippleAlpha = if (AWAppTheme.colors.black.luminance() > 0.5) {
+                RippleAlpha(
+                    pressedAlpha = 0.24f,
+                    focusedAlpha = 0.24f,
+                    draggedAlpha = 0.16f,
+                    hoveredAlpha = 0.08f
+                )
+            } else {
+                RippleAlpha(
+                    pressedAlpha = 0.12f,
+                    focusedAlpha = 0.12f,
+                    draggedAlpha = 0.08f,
+                    hoveredAlpha = 0.04f
+                )
+            }
+        )
+
     CompositionLocalProvider(
         LocalColors provides colors,
         LocalContentAlpha provides ContentAlpha.high,
-        LocalIndication provides rememberRipple(),
-        LocalRippleTheme provides MaterialRippleTheme,
+        LocalIndication provides ripple(),
+        LocalRippleConfiguration provides rippleConfiguration,
         LocalTextSelectionColors provides selectionColors,
         LocalTypography provides Typography
     ) {
@@ -72,20 +93,4 @@ object AWAppTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalTypography.current
-}
-
-@Immutable
-private object MaterialRippleTheme : RippleTheme {
-
-    @Composable
-    override fun defaultColor() = RippleTheme.defaultRippleColor(
-        contentColor = LocalContentColor.current,
-        lightTheme = MaterialTheme.colors.isLight
-    )
-
-    @Composable
-    override fun rippleAlpha() = RippleTheme.defaultRippleAlpha(
-        contentColor = LocalContentColor.current,
-        lightTheme = MaterialTheme.colors.isLight
-    )
 }
