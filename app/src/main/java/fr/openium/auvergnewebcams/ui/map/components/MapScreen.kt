@@ -17,6 +17,12 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.mapbox.geojson.Point
+import com.mapbox.geojson.Polygon
+import com.mapbox.maps.CameraOptions
+import com.mapbox.maps.EdgeInsets
+import com.mapbox.maps.MapView
+import com.mapbox.maps.coroutine.awaitCameraForCoordinates
+import com.mapbox.maps.dsl.cameraOptions
 import com.mapbox.maps.extension.compose.MapEffect
 import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
@@ -82,10 +88,20 @@ fun MapScreen(
                 true
             }
         ) {
-            MapEffect(Unit) { mapView ->
+            MapEffect(sections) { mapView ->
                 mapView.location.updateSettings {
                     locationPuck = createDefault2DPuck()
                     enabled = true
+                }
+                // Only for single section
+                if (sections.size == 1) {
+                    // Set camera position
+                    mapViewportState.setCameraOptions(
+                        getCameraPositionBySection(
+                            mapView,
+                            sections.first()
+                        )
+                    )
                 }
             }
 
@@ -115,4 +131,31 @@ fun MapScreen(
             }
         }
     }
+}
+
+private suspend fun getCameraPositionBySection(
+    mapView: MapView,
+    sectionWithCameras: SectionWithCameras,
+): CameraOptions {
+
+    val triangleCoordinates: ArrayList<Point> = ArrayList()
+
+    sectionWithCameras.webcams
+        .filter { it.hidden == false && it.longitude != null && it.latitude != null }
+        .forEach { webcam ->
+            triangleCoordinates.add(
+                Point.fromLngLat(
+                    webcam.longitude ?: sectionWithCameras.section.longitude,
+                    webcam.latitude ?: sectionWithCameras.section.latitude
+                )
+            )
+        }
+
+    val polygon = Polygon.fromLngLats(listOf(triangleCoordinates))
+
+    return mapView.mapboxMap.awaitCameraForCoordinates(
+        polygon.coordinates().flatten(),
+        cameraOptions { },
+        EdgeInsets(50.0, 50.0, 50.0, 50.0)
+    )
 }

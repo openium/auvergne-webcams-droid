@@ -14,10 +14,6 @@ import fr.openium.auvergnewebcams.ui.webcamDetail.ActivityWebcamDetail
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import kotlinx.android.synthetic.main.fragment_search.composeView
 
-
-/**
- * Created by Openium on 19/02/2019.
- */
 class FragmentMap : AbstractFragment() {
 
     override val layoutId: Int = R.layout.fragment_map

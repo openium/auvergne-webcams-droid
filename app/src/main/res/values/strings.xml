@@ -33,6 +33,7 @@
 
     <!-- Maps -->
     <string name="map_title">Carte</string>
+    <string name="map_title_with_name">Carte - %s</string>
 
     <!-- Settings -->
     <string name="settings_title">Paramètres</string>

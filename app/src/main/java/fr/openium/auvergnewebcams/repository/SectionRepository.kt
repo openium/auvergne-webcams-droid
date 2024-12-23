@@ -19,7 +19,11 @@ import timber.log.Timber
 /**
  * Created by Openium on 19/02/2019.
  */
-class SectionRepository(private val client: AWClient, private val api: AWApi, private val webcamRepository: WebcamRepository) {
+class SectionRepository(
+    private val client: AWClient,
+    private val api: AWApi,
+    private val webcamRepository: WebcamRepository,
+) {
 
     // WS
 
@@ -70,7 +74,10 @@ class SectionRepository(private val client: AWClient, private val api: AWApi, pr
             val webcamsSectionFiltered = section.webcams.filter { it.hidden == false }
             val rowsWebcam = webcamRepository.insert(webcamsSectionFiltered)
             Timber.d("${rowsWebcam.count()} webcams inserted for section ${section.title} | ${section.webcams.count() - webcamsSectionFiltered.count()} are hidden")
-            webcamRepository.deleteAllNoMoreInSection(webcamsSectionFiltered.map { it.uid }, section.uid)
+            webcamRepository.deleteAllNoMoreInSection(
+                webcamsSectionFiltered.map { it.uid },
+                section.uid
+            )
         }
 
         val rowsSection = insert(sectionsList.sections)
@@ -80,6 +87,11 @@ class SectionRepository(private val client: AWClient, private val api: AWApi, pr
 
     fun getSectionSingle(sectionId: Long): Single<Optional<Section>> =
         client.database.sectionDao().getSectionSingle(sectionId).map {
+            Optional.of(it)
+        }
+
+    fun watchSectionWithCameras(sectionId: Long): Single<Optional<SectionWithCameras>> =
+        client.database.sectionDao().watchSectionWithCameras(sectionId).map {
             Optional.of(it)
         }
 

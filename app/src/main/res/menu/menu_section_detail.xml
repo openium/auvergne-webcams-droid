@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_map"
+        android:icon="@drawable/map_icon_3"
+        android:title="@string/map_title"
+        app:showAsAction="always" />
+
+</menu>

@@ -62,6 +62,12 @@
 
         <activity
             android:name=".ui.map.ActivityMap"
+            android:label="@string/map_title"
+            android:configChanges="orientation|screenSize"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+
+        <activity
+            android:name=".ui.mapSection.ActivityMapSection"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
