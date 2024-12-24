@@ -34,6 +34,12 @@
     <!-- Maps -->
     <string name="map_title">Carte</string>
     <string name="map_title_with_name">Carte - %s</string>
+    <string name="map_style_menu">Style de carte</string>
+    <string name="map_style_outside_menu">Extérieur</string>
+    <string name="map_style_dark_menu">Vecteurs sombre</string>
+    <string name="map_style_light_menu">Vecteurs clair</string>
+    <string name="map_style_satellite_menu">Satellite</string>
+    <string name="map_style_roads_menu">Routes</string>
 
     <!-- Settings -->
     <string name="settings_title">Paramètres</string>

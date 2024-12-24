@@ -6,24 +6,20 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModelProvider
 import fr.openium.auvergnewebcams.R
-import fr.openium.auvergnewebcams.base.AbstractFragment
-import fr.openium.auvergnewebcams.model.entity.Webcam
+import fr.openium.auvergnewebcams.base.AbstractFragmentMap
 import fr.openium.auvergnewebcams.ui.map.components.MapScreen
 import fr.openium.auvergnewebcams.ui.theme.AWTheme
-import fr.openium.auvergnewebcams.ui.webcamDetail.ActivityWebcamDetail
-import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import kotlinx.android.synthetic.main.fragment_search.composeView
 
-class FragmentMap : AbstractFragment() {
+class FragmentMap : AbstractFragmentMap() {
 
     override val layoutId: Int = R.layout.fragment_map
-
-    private lateinit var viewModelMap: MapViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         viewModelMap = ViewModelProvider(this)[MapViewModel::class.java]
+        viewModelMap.switchMapStyle(prefUtils.mapStyle ?: "")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -31,20 +27,19 @@ class FragmentMap : AbstractFragment() {
 
         composeView.setContent {
             AWTheme {
-                val sectionsList by viewModelMap.sections.collectAsState(initial = emptyList())
+                val sections by viewModelMap.sections.collectAsState(initial = emptyList())
+                val mapStyle by viewModelMap.mapStyle.collectAsState()
+                val canBeHD = prefUtils.isWebcamsHighQuality
 
                 MapScreen(
-                    sections = sectionsList,
+                    sections = sections,
+                    canBeHD = canBeHD,
+                    mapStyle = mapStyle,
                     goToWebcamDetail = {
                         goToWebcamDetail(it)
                     },
                 )
             }
         }
-    }
-
-    private fun goToWebcamDetail(webcam: Webcam) {
-        AnalyticsUtils.webcamDetailsClicked(requireContext(), webcam.title ?: "")
-        requireContext().startActivity(ActivityWebcamDetail.getIntent(requireContext(), webcam))
     }
 }

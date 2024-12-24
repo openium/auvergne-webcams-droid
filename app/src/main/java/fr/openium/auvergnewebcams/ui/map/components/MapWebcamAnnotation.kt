@@ -28,7 +28,8 @@ import fr.openium.auvergnewebcams.ui.theme.TriangleEdgeShape
 fun MapWebcamAnnotation(
     webcam: Webcam,
     section: Section,
-    showWebcamPreview: Boolean,
+    webcamPreviewUid: Long,
+    canBeHD: Boolean,
     onWebcamClick: () -> Unit,
     goToWebcamDetail: () -> Unit,
 ) {
@@ -37,9 +38,7 @@ fun MapWebcamAnnotation(
     val imageLoader by remember { mutableStateOf(ImageLoader(context)) }
 
     val webcamBackgroundColor by remember(section.mapColor) {
-        derivedStateOf {
-            section.mapColor
-        }
+        mutableStateOf(section.mapColor)
     }
 
     val webcamLongitude by remember(webcam.longitude, section.longitude) {
@@ -72,6 +71,12 @@ fun MapWebcamAnnotation(
                 webcamLongitude,
                 webcamLatitude
             )
+        }
+    }
+
+    val showWebcamPreview by remember(webcamPreviewUid, webcam) {
+        derivedStateOf {
+            webcamPreviewUid == webcam.uid
         }
     }
 
@@ -108,7 +113,7 @@ fun MapWebcamAnnotation(
             WebcamPicture(
                 webcam = webcam,
                 imageLoader = imageLoader,
-                canBeHD = false,
+                canBeHD = canBeHD,
                 goToWebcamDetail = goToWebcamDetail,
                 modifier = Modifier
                     .padding(bottom = 20.dp)

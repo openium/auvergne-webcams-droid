@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,8 +25,10 @@ import com.mapbox.maps.dsl.cameraOptions
 import com.mapbox.maps.extension.compose.MapEffect
 import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
+import com.mapbox.maps.extension.compose.style.GenericStyle
 import com.mapbox.maps.plugin.locationcomponent.createDefault2DPuck
 import com.mapbox.maps.plugin.locationcomponent.location
+import fr.openium.auvergnewebcams.enums.MapStyle
 import fr.openium.auvergnewebcams.ext.navigateToLocationSettings
 import fr.openium.auvergnewebcams.model.entity.SectionWithCameras
 import fr.openium.auvergnewebcams.model.entity.Webcam
@@ -36,7 +37,9 @@ import fr.openium.auvergnewebcams.model.entity.Webcam
 @Composable
 fun MapScreen(
     sections: List<SectionWithCameras>,
+    canBeHD: Boolean,
     goToWebcamDetail: (Webcam) -> Unit,
+    mapStyle: MapStyle = MapStyle.ROADS,
 ) {
     val context = LocalContext.current
 
@@ -86,6 +89,11 @@ fun MapScreen(
             onMapClickListener = {
                 webcamPreviewUid = 0
                 true
+            },
+            style = {
+                GenericStyle(
+                    style = mapStyle.style
+                )
             }
         ) {
             MapEffect(sections) { mapView ->
@@ -95,7 +103,7 @@ fun MapScreen(
                 }
                 // Only for single section
                 if (sections.size == 1) {
-                    // Set camera position
+                    // Focus on section position
                     mapViewportState.setCameraOptions(
                         getCameraPositionBySection(
                             mapView,
@@ -110,16 +118,11 @@ fun MapScreen(
                 sectionWithCamera.webcams
                     .filter { it.hidden == false && it.longitude != null && it.latitude != null }
                     .forEach { webcam ->
-                        val showWebcamPreview by remember(webcamPreviewUid, webcam) {
-                            derivedStateOf {
-                                webcamPreviewUid == webcam.uid
-                            }
-                        }
-
                         MapWebcamAnnotation(
                             webcam = webcam,
                             section = section,
-                            showWebcamPreview = showWebcamPreview,
+                            webcamPreviewUid = webcamPreviewUid,
+                            canBeHD = canBeHD,
                             onWebcamClick = {
                                 webcamPreviewUid = webcam.uid
                             },
@@ -156,6 +159,6 @@ private suspend fun getCameraPositionBySection(
     return mapView.mapboxMap.awaitCameraForCoordinates(
         polygon.coordinates().flatten(),
         cameraOptions { },
-        EdgeInsets(50.0, 50.0, 50.0, 50.0)
+        EdgeInsets(100.0, 100.0, 100.0, 100.0)
     )
 }
