@@ -34,7 +34,6 @@ import timber.log.Timber
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
-
 class FragmentMain : AbstractFragment() {
 
     override val layoutId: Int = R.layout.fragment_main

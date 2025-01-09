@@ -19,7 +19,7 @@ import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 class ForegroundBackgroundListener(
-    val context: Context
+    val context: Context,
 ) : DefaultLifecycleObserver, KoinComponent {
 
     private val prefUtils by inject<PreferencesUtils>()
@@ -44,7 +44,10 @@ class ForegroundBackgroundListener(
         }, { Timber.e(it) }).addTo(disposables)
 
         // Register to network connectivity changes
-        context.registerReceiver(networkReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+        context.registerReceiver(
+            networkReceiver,
+            IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+        )
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
@@ -59,9 +62,10 @@ class ForegroundBackgroundListener(
         refreshTimer?.dispose()
         refreshTimer = null
 
-        refreshTimer = Observable.timer(prefUtils.webcamsDelayRefreshValue.toLong(), TimeUnit.MINUTES)
-            .subscribe({
-                setTimer()
-            }, { Timber.e(it) }).addTo(disposables)
+        refreshTimer =
+            Observable.timer(prefUtils.webcamsDelayRefreshValue.toLong(), TimeUnit.MINUTES)
+                .subscribe({
+                    setTimer()
+                }, { Timber.e(it) }).addTo(disposables)
     }
 }

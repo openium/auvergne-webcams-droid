@@ -35,7 +35,9 @@ fun SectionHeader(
     title: String,
     webcamsCount: Int,
     @DrawableRes image: Int,
-    goToSectionList: () -> Unit
+    goToSectionList: () -> Unit,
+    weatherIcon: Int? = null,
+    weatherTemp: Int? = null,
 ) {
     Row(
         modifier = Modifier
@@ -52,31 +54,47 @@ fun SectionHeader(
             painter = painterResource(id = image),
             contentScale = ContentScale.Fit
         )
+
         Spacer(modifier = Modifier.width(20.dp))
+
         Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.Center
+            modifier = Modifier.weight(2f),
+            verticalArrangement = Arrangement.Center,
         ) {
             Text(
                 text = title,
                 color = AWAppTheme.colors.white,
                 style = AWAppTheme.typography.h1
             )
+
             Row(
                 modifier = Modifier.wrapContentWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = pluralStringResource(id = R.plurals.nb_cameras_format, count = webcamsCount, webcamsCount),
+                    text = pluralStringResource(
+                        id = R.plurals.nb_cameras_format,
+                        count = webcamsCount,
+                        webcamsCount
+                    ),
                     color = AWAppTheme.colors.greyLight,
                     style = AWAppTheme.typography.p2Italic
                 )
+
                 Icon(
                     painter = painterResource(id = R.drawable.ic_arrow_right_extra_small),
                     contentDescription = title,
                     tint = AWAppTheme.colors.greyLight
                 )
             }
+        }
+
+        if (weatherIcon != null && weatherTemp != null) {
+            SectionWeather(
+                weatherIcon = weatherIcon,
+                weatherTemp = weatherTemp,
+                modifier = Modifier.weight(1f),
+            )
         }
     }
 }
@@ -89,7 +107,9 @@ fun SectionHeaderPreview() {
             title = "test",
             webcamsCount = 3,
             image = R.drawable.categ_allier_landscape,
-            goToSectionList = {}
+            goToSectionList = {},
+            weatherIcon = R.drawable.ic_weather_cloudy,
+            weatherTemp = 12
         )
     }
 }
