@@ -28,10 +28,10 @@
             style="@style/Font.Text.Bold"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAllCaps="true"
+            android:singleLine="true"
             android:textColor="@color/white"
             android:textSize="18sp"
-            tools:text="Puy de dôme" />
+            tools:text="Puy de Dôme" />
 
         <TextView
             android:id="@+id/textViewSectionNbCameras"

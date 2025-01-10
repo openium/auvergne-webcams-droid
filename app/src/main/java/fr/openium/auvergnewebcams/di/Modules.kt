@@ -129,7 +129,7 @@ object Modules {
 
     val weatherModule = module {
         single(named("WEATHER_HTTP_URL")) {
-            get<Context>().getString(R.string.url_weather).toHttpUrl()
+            BuildConfig.OPEN_WEATHER_API_URL.toHttpUrl()
         }
 
         single(named("WEATHER_HTTP_CACHE")) {
@@ -161,7 +161,7 @@ object Modules {
 
     val repositoryModule = module {
         single {
-            SectionRepository(get(), get(), get(named("WEATHER_HTTP_INIT")), get(), get())
+            SectionRepository(get(), get(), get(named("WEATHER_HTTP_INIT")), get())
         }
         single {
             WebcamRepository(get(), get())

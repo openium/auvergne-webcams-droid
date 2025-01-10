@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.mapbox.common.MapboxOptions
 import com.mapbox.geojson.Point
 import com.mapbox.geojson.Polygon
 import com.mapbox.maps.CameraOptions
@@ -28,6 +29,7 @@ import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportS
 import com.mapbox.maps.extension.compose.style.GenericStyle
 import com.mapbox.maps.plugin.locationcomponent.createDefault2DPuck
 import com.mapbox.maps.plugin.locationcomponent.location
+import fr.openium.auvergnewebcams.BuildConfig
 import fr.openium.auvergnewebcams.enums.MapStyle
 import fr.openium.auvergnewebcams.ext.navigateToLocationSettings
 import fr.openium.auvergnewebcams.model.entity.SectionWithCameras
@@ -41,6 +43,8 @@ fun MapScreen(
     goToWebcamDetail: (Webcam) -> Unit,
     mapStyle: MapStyle = MapStyle.ROADS,
 ) {
+    MapboxOptions.accessToken = BuildConfig.MAPBOX_ACCESS_TOKEN
+
     val context = LocalContext.current
 
     var webcamPreviewUid by remember {

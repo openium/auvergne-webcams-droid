@@ -1,7 +1,6 @@
 package fr.openium.auvergnewebcams.repository
 
-import android.content.Context
-import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.BuildConfig
 import fr.openium.auvergnewebcams.enums.WebcamType
 import fr.openium.auvergnewebcams.ext.jsonKey
 import fr.openium.auvergnewebcams.ext.populateId
@@ -28,7 +27,6 @@ class SectionRepository(
     private val api: AWApi,
     private val weatherApi: AWWeatherApi,
     private val webcamRepository: WebcamRepository,
-    private val context: Context,
 ) {
 
     // WS
@@ -132,7 +130,7 @@ class SectionRepository(
             weatherApi.queryByGeographicCoordinates(
                 section.latitude,
                 section.longitude,
-                context.getString(R.string.app_weather_id)
+                BuildConfig.OPEN_WEATHER_API_KEY,
             ).doOnSuccess { res ->
                 if (res.isSuccessful) {
                     section.weatherUid = res?.body()?.weather?.get(0)?.id

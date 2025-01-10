@@ -4,6 +4,7 @@ apply plugin: "com.google.firebase.crashlytics"
 apply plugin: "kotlin-android"
 apply plugin: "kotlin-android-extensions"
 apply plugin: "kotlin-kapt"
+apply plugin: "com.google.android.libraries.mapsplatform.secrets-gradle-plugin"
 apply plugin: "fr.openium.version"
 
 def keystorePropertiesFile = rootProject.file("private/keys/keystore.properties")
@@ -175,4 +176,8 @@ dependencies {
     // Mapbox
     implementation "com.mapbox.maps:android:11.8.1"
     implementation "com.mapbox.extension:maps-compose:11.8.1"
+}
+
+secrets {
+    propertiesFileName = "private/keys/secrets.properties"
 }
