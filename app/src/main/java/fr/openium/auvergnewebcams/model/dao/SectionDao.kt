@@ -1,13 +1,17 @@
 package fr.openium.auvergnewebcams.model.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
 import fr.openium.auvergnewebcams.model.entity.Section
 import fr.openium.auvergnewebcams.model.entity.SectionWithCameras
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import kotlinx.coroutines.flow.Flow
-
 
 @Dao
 interface SectionDao {
@@ -16,6 +20,9 @@ interface SectionDao {
 
     @Query("SELECT * FROM Section WHERE uid == :sectionId LIMIT 1")
     fun getSectionSingle(sectionId: Long): Single<Section>
+
+    @Query("SELECT * FROM Section WHERE uid == :sectionId LIMIT 1")
+    fun watchSectionWithCameras(sectionId: Long): Single<SectionWithCameras>
 
     @Query("SELECT * FROM Section")
     fun getSections(): List<Section>

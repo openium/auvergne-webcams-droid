@@ -17,6 +17,7 @@ import fr.openium.auvergnewebcams.base.AbstractFragment
 import fr.openium.auvergnewebcams.model.entity.Section
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.ui.main.components.SectionsListScreen
+import fr.openium.auvergnewebcams.ui.map.ActivityMap
 import fr.openium.auvergnewebcams.ui.search.ActivitySearch
 import fr.openium.auvergnewebcams.ui.sectionDetail.ActivitySectionDetail
 import fr.openium.auvergnewebcams.ui.settings.ActivitySettings
@@ -91,12 +92,21 @@ class FragmentMain : AbstractFragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return if (item.itemId == R.id.menu_settings) {
-            AnalyticsUtils.settingsClicked(requireContext())
-            startActivity<ActivitySettings>()
-            true
-        } else {
-            super.onOptionsItemSelected(item)
+        return when (item.itemId) {
+            R.id.menu_settings -> {
+                AnalyticsUtils.settingsClicked(requireContext())
+                startActivity<ActivitySettings>()
+                true
+            }
+
+            R.id.menu_map -> {
+                startActivity<ActivityMap>()
+                true
+            }
+
+            else -> {
+                super.onOptionsItemSelected(item)
+            }
         }
     }
 
@@ -110,7 +120,12 @@ class FragmentMain : AbstractFragment() {
 
     private fun goToSectionList(section: Section) {
         AnalyticsUtils.webcamDetailsClicked(requireContext(), section.title ?: "")
-        requireContext().startActivity(ActivitySectionDetail.getIntent(requireContext(), sectionId = section.uid))
+        requireContext().startActivity(
+            ActivitySectionDetail.getIntent(
+                requireContext(),
+                sectionId = section.uid
+            )
+        )
     }
 
     private fun goToSearch() {

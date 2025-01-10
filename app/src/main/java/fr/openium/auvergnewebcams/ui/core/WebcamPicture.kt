@@ -3,11 +3,13 @@ package fr.openium.auvergnewebcams.ui.core
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
@@ -41,12 +43,15 @@ fun WebcamPicture(
     canBeHD: Boolean,
     goToWebcamDetail: () -> Unit,
     modifier: Modifier = Modifier,
-    pageOffset: Float? = null
+    pageOffset: Float? = null,
 ) {
     var showProgress by remember { mutableStateOf(false) }
     var showError by remember { mutableStateOf(false) }
 
-    val urlForWebcam by remember(webcam.lastUpdate, canBeHD) { mutableStateOf(webcam.getUrlForWebcam(canBeHD = canBeHD, canBeVideo = false)) }
+    val urlForWebcam by remember(
+        webcam.lastUpdate,
+        canBeHD
+    ) { mutableStateOf(webcam.getUrlForWebcam(canBeHD = canBeHD, canBeVideo = false)) }
 
     val painter = rememberAsyncImagePainter(
         model = urlForWebcam,
@@ -105,6 +110,7 @@ fun WebcamPicture(
                 }
                 .aspectRatio(16f / 10f)
                 .clip(RoundedCornerShape(4.dp))
+                .background(color = AWAppTheme.colors.greyVeryDark)
                 .clickable(onClick = goToWebcamDetail),
             painter = painter,
             contentDescription = "",
@@ -119,7 +125,8 @@ fun WebcamPicture(
 
         if (showError) {
             Box(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .let { modifier ->
                         pageOffset?.let {
                             modifier.graphicsLayer {
@@ -142,25 +149,30 @@ fun WebcamPicture(
                         } ?: modifier
                     }
             ) {
-                Image(
-                    modifier = Modifier.aspectRatio(16f / 10f),
-                    painter = painterResource(id = R.drawable.ic_broken_camera),
-                    contentDescription = "",
-                    contentScale = ContentScale.Inside
-                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.padding(8.dp)
+                ) {
+                    Image(
+                        modifier = Modifier
+                            .size(104.dp)
+                            .aspectRatio(16f / 10f),
+                        painter = painterResource(id = R.drawable.ic_broken_camera),
+                        contentDescription = "",
+                        contentScale = ContentScale.Inside
+                    )
 
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .padding(10.dp)
-                        .background(color = AWAppTheme.colors.greyVeryDarkTransparent)
-                        .align(Alignment.BottomCenter),
-                    text = stringResource(id = R.string.generic_not_up_to_date),
-                    color = AWAppTheme.colors.greyLight,
-                    style = AWAppTheme.typography.p3,
-                    textAlign = TextAlign.Center
-                )
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(color = AWAppTheme.colors.greyVeryDarkTransparent),
+                        text = stringResource(id = R.string.generic_not_up_to_date),
+                        color = AWAppTheme.colors.white,
+                        style = AWAppTheme.typography.p3,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         }
     }

@@ -1,7 +1,16 @@
 package fr.openium.auvergnewebcams.utils
 
 import android.content.Context
-import fr.openium.kotlintools.ext.*
+import fr.openium.auvergnewebcams.enums.MapStyle
+import fr.openium.kotlintools.ext.getBooleanPref
+import fr.openium.kotlintools.ext.getIntPref
+import fr.openium.kotlintools.ext.getLongPref
+import fr.openium.kotlintools.ext.getStringPref
+import fr.openium.kotlintools.ext.setBooleanPref
+import fr.openium.kotlintools.ext.setIntPref
+import fr.openium.kotlintools.ext.setLongPref
+import fr.openium.kotlintools.ext.setStringPref
+import fr.openium.kotlintools.ext.toUnixTimestamp
 
 /**
  * Created by Openium on 19/02/2019.
@@ -19,6 +28,10 @@ class PreferencesUtils(val context: Context) {
     var isWebcamsHighQuality: Boolean
         get() = context.getBooleanPref(KEY_WEBCAM_QUALITY, true)
         set(accepted) = context.setBooleanPref(KEY_WEBCAM_QUALITY, accepted)
+
+    var mapStyle: String?
+        get() = context.getStringPref(KEY_MAP_STYLE, MapStyle.ROADS.style)
+        set(mapStyle) = context.setStringPref(KEY_MAP_STYLE, mapStyle)
 
     // TODO
     var lastUpdateWebcamsTimestamp: Long
@@ -59,5 +72,6 @@ class PreferencesUtils(val context: Context) {
         private const val KEY_WEBCAM_DELAY_REFRESH_VALUE = "KEY_WEBCAM_DELAY_REFRESH_VALUE"
         private const val KEY_WEBCAM_LAST_UPDATE_TIMESTAMP = "KEY_WEBCAM_LAST_UPDATE_TIMESTAMP"
         private const val KEY_NOTIF_ID = "KEY_NOTIF_ID"
+        private const val KEY_MAP_STYLE = "KEY_MAP_STYLE"
     }
 }

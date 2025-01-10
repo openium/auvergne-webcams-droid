@@ -111,6 +111,7 @@ dependencies {
     // Accompanist
     implementation "com.google.accompanist:accompanist-pager:0.28.0"
     implementation "com.google.accompanist:accompanist-swiperefresh:0.28.0"
+    implementation "com.google.accompanist:accompanist-permissions:0.28.0"
 
     // --- Openium Tools ---
     implementation "fr.openium:kotlin-tools:1.0.14"
@@ -170,4 +171,8 @@ dependencies {
 
     // Like button (Twitter)
     implementation "com.github.jd-alexander:LikeButton:0.2.3"
+
+    // Mapbox
+    implementation "com.mapbox.maps:android:11.8.1"
+    implementation "com.mapbox.extension:maps-compose:11.8.1"
 }

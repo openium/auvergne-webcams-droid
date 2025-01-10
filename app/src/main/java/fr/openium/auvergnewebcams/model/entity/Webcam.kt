@@ -23,5 +23,8 @@ data class Webcam(
     var mediaViewSurfHD: String? = null,
     var lastUpdate: Long? = null,
     var hidden: Boolean? = null,
-    var isFavorite: Boolean = false
+    var isFavorite: Boolean = false,
+    var latitude: Double? = null,
+    var longitude: Double? = null,
+    var mapImageName: String? = null,
 )
