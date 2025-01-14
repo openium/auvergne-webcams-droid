@@ -58,11 +58,11 @@ class AdapterSectionDetail(
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
             SECTION_VIEWTYPE -> SectionHolder(
-                inflater.inflate(
+                view = inflater.inflate(
                     R.layout.header_section,
                     parent,
                     false
-                )
+                ),
             )
 
             WEBCAM_VIEWTYPE -> WebcamHolder(inflater.inflate(R.layout.item_webcam, parent, false))
@@ -144,7 +144,7 @@ class AdapterSectionDetail(
                     itemView.weatherViewSectionText.text =
                         itemView.context.getString(
                             R.string.weather_degree_celsius_format,
-                            WeatherUtils.convertKelvinToCelsius(weatherTemp)
+                            WeatherUtils.convertKelvinToCelsius(temp = weatherTemp),
                         )
                 }
 
@@ -176,8 +176,8 @@ class AdapterSectionDetail(
                 if (it.type == WebcamType.VIDEO.jsonKey) {
                     request.decoderFactory { result, options, _ ->
                         VideoFrameDecoder(
-                            result.source,
-                            options
+                            source = result.source,
+                            options = options,
                         )
                     }
                 }
