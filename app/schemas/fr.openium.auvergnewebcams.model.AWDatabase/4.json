@@ -6,7 +6,7 @@
     "entities": [
       {
         "tableName": "Section",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uid` INTEGER NOT NULL, `order` INTEGER NOT NULL, `title` TEXT, `imageName` TEXT, `mapImageName` TEXT, `mapColor` TEXT, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, PRIMARY KEY(`uid`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uid` INTEGER NOT NULL, `order` INTEGER NOT NULL, `title` TEXT, `imageName` TEXT, `mapImageName` TEXT, `mapColor` TEXT, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `weatherUid` INTEGER, `weatherTemp` REAL, PRIMARY KEY(`uid`))",
         "fields": [
           {
             "fieldPath": "uid",
@@ -55,6 +55,18 @@
             "columnName": "longitude",
             "affinity": "REAL",
             "notNull": true
+          },
+          {
+            "fieldPath": "weatherUid",
+            "columnName": "weatherUid",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "weatherTemp",
+            "columnName": "weatherTemp",
+            "affinity": "REAL",
+            "notNull": false
           }
         ],
         "primaryKey": {

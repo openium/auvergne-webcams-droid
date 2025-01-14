@@ -36,6 +36,7 @@ abstract class CustomApplication : Application() {
                     Modules.preferenceModule,
                     Modules.databaseService,
                     Modules.restModule,
+                    Modules.weatherModule,
                     Modules.repositoryModule
                 )
             )

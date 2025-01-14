@@ -16,8 +16,6 @@
     <string name="url_prod" translatable="false">https://raw.githubusercontent.com/Drusy/auvergne-webcams-ios/master/</string>
 
     <!-- Weather -->
-    <string name="url_weather">http://api.openweathermap.org/data/2.5/</string>
-    <string name="app_weather_id">42d33e867dce175dc8e99755ad62b66f</string>
     <string name="weather_degree_celsius_format">%d°C</string>
 
     <!-- Generic -->

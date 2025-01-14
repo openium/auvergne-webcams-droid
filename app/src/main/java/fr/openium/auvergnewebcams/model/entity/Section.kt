@@ -27,6 +27,10 @@ class Section {
 
     var longitude: Double = 0.0
 
+    var weatherUid: Long? = null
+
+    var weatherTemp: Float? = null
+
     @Ignore
     var webcams: List<Webcam> = listOf()
 }
