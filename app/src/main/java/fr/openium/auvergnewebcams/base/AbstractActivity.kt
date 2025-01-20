@@ -8,7 +8,7 @@ import fr.openium.auvergnewebcams.custom.OnBackPressedListener
 import fr.openium.auvergnewebcams.utils.DateUtils
 import fr.openium.auvergnewebcams.utils.PreferencesUtils
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.toolbar.*
+import kotlinx.android.synthetic.main.toolbar.toolbar
 import org.koin.android.ext.android.inject
 
 /**
@@ -55,7 +55,8 @@ abstract class AbstractActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         if (handleFragmentBackPressed) {
-            val currentFragment = supportFragmentManager.findFragmentById(R.id.container_framelayout)
+            val currentFragment =
+                supportFragmentManager.findFragmentById(R.id.container_framelayout)
             if (currentFragment !is OnBackPressedListener || !currentFragment.onBackPressed()) {
                 super.onBackPressed()
             }

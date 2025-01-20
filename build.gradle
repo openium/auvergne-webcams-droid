@@ -25,6 +25,9 @@ buildscript {
         // Crashlytics
         classpath "com.google.firebase:firebase-crashlytics-gradle:2.9.2"
 
+        // Gradle Secrets
+        classpath "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin:2.0.1"
+
         // Version
         classpath "fr.openium:version-plugin:1.2"
     }

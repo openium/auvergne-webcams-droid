@@ -63,7 +63,7 @@ class CoilImageLoader(var context: Context, imageLoader: coil.ImageLoader) : Ima
         saveTarget(requestId, disposable)
     }
 
-    private fun saveBitmapToFile(imageFile: File, bitmap: Bitmap, format: CompressFormat?, quality: Int) {
+    private fun saveBitmapToFile(imageFile: File, bitmap: Bitmap, format: CompressFormat, quality: Int) {
         val os: OutputStream
         try {
             os = FileOutputStream(imageFile)

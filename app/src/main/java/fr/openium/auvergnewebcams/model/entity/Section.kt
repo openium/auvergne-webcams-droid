@@ -19,9 +19,17 @@ class Section {
 
     var imageName: String? = null
 
+    var mapImageName: String? = null
+
+    var mapColor: String? = null
+
     var latitude: Double = 0.0
 
     var longitude: Double = 0.0
+
+    var weatherUid: Long? = null
+
+    var weatherTemp: Float? = null
 
     @Ignore
     var webcams: List<Webcam> = listOf()

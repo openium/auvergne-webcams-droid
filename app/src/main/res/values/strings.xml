@@ -16,13 +16,11 @@
     <string name="url_prod" translatable="false">https://raw.githubusercontent.com/Drusy/auvergne-webcams-ios/master/</string>
 
     <!-- Weather -->
-    <string name="url_weather">http://api.openweathermap.org/data/2.5/</string>
-    <string name="app_weather_id">42d33e867dce175dc8e99755ad62b66f</string>
     <string name="weather_degree_celsius_format">%d°C</string>
 
     <!-- Generic -->
     <string name="generic_last_update_format">Mise à jour le %s</string>
-    <string name="generic_not_up_to_date">La webcam ne semble pas être à jour</string>
+    <string name="generic_not_up_to_date">La webcam ne semble pas fonctionnelle</string>
     <string name="generic_no_application_for_action">Aucune application installée sur votre appareil ne permet d\&#39;effectuer cette action</string>
     <string name="generic_no_email_app">Aucune application mail n\'est disponible sur cet appareil</string>
     <string name="generic_ok">OK</string>
@@ -30,6 +28,16 @@
     <string name="generic_error">Une erreur est survenue</string>
     <string name="generic_network_error">Serveur inaccessible ou connexion réseau inexistante</string>
     <string name="generic_chooser">Choisir une application</string>
+
+    <!-- Maps -->
+    <string name="map_title">Carte</string>
+    <string name="map_title_with_name">Carte - %s</string>
+    <string name="map_style_menu">Style de carte</string>
+    <string name="map_style_outside_menu">Extérieur</string>
+    <string name="map_style_dark_menu">Vecteurs sombre</string>
+    <string name="map_style_light_menu">Vecteurs clair</string>
+    <string name="map_style_satellite_menu">Satellite</string>
+    <string name="map_style_roads_menu">Routes</string>
 
     <!-- Settings -->
     <string name="settings_title">Paramètres</string>

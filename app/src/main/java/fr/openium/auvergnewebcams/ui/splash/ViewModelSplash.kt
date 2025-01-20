@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
 import fr.openium.auvergnewebcams.base.AbstractViewModel
 import fr.openium.auvergnewebcams.event.eventHasNetwork
-import fr.openium.auvergnewebcams.ext.hasNetwork
 import fr.openium.auvergnewebcams.repository.SectionRepository
 import fr.openium.auvergnewebcams.rest.model.SectionList
 import fr.openium.rxtools.ext.fromIOToMain
@@ -15,7 +14,6 @@ import org.koin.core.inject
 import timber.log.Timber
 import java.io.InputStreamReader
 import java.util.concurrent.TimeUnit
-
 
 class ViewModelSplash(app: Application) : AbstractViewModel(app), KoinComponent {
 
@@ -54,6 +52,8 @@ class ViewModelSplash(app: Application) : AbstractViewModel(app), KoinComponent 
             getSectionsFromAssets()?.also {
                 sectionRepository.insertSectionsAndWebcams(it)
             }
+        } else {
+            sectionRepository.updateSectionsWeather(sections)
         }
     }
 

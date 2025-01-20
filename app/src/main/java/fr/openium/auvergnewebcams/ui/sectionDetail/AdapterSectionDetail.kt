@@ -20,12 +20,15 @@ import fr.openium.auvergnewebcams.model.entity.Section
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.utils.DateUtils
 import fr.openium.auvergnewebcams.utils.ImageUtils
+import fr.openium.auvergnewebcams.utils.WeatherUtils
 import fr.openium.kotlintools.ext.gone
 import fr.openium.kotlintools.ext.goneWithAnimationCompat
 import fr.openium.kotlintools.ext.show
 import kotlinx.android.synthetic.main.header_section.view.imageViewSection
 import kotlinx.android.synthetic.main.header_section.view.textViewSectionName
 import kotlinx.android.synthetic.main.header_section.view.textViewSectionNbCameras
+import kotlinx.android.synthetic.main.header_section.view.weatherViewSectionImage
+import kotlinx.android.synthetic.main.header_section.view.weatherViewSectionText
 import kotlinx.android.synthetic.main.item_webcam.view.imageViewWebcamImage
 import kotlinx.android.synthetic.main.item_webcam.view.progressBarWebcam
 import kotlinx.android.synthetic.main.item_webcam.view.textViewWebcamError
@@ -34,13 +37,12 @@ import org.koin.core.KoinComponent
 import org.koin.core.inject
 import java.util.Locale
 
-
 /**
  * Created by Openium on 19/02/2019.
  */
 class AdapterSectionDetail(
     private var data: List<Data>,
-    private val onWebcamClicked: ((Webcam) -> Unit)
+    private val onWebcamClicked: ((Webcam) -> Unit),
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), KoinComponent {
 
     companion object {
@@ -55,7 +57,14 @@ class AdapterSectionDetail(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
-            SECTION_VIEWTYPE -> SectionHolder(inflater.inflate(R.layout.header_section, parent, false))
+            SECTION_VIEWTYPE -> SectionHolder(
+                view = inflater.inflate(
+                    R.layout.header_section,
+                    parent,
+                    false
+                ),
+            )
+
             WEBCAM_VIEWTYPE -> WebcamHolder(inflater.inflate(R.layout.item_webcam, parent, false))
             else -> error("Unknown viewType $viewType")
         }
@@ -99,7 +108,7 @@ class AdapterSectionDetail(
 
     data class Data(
         var section: Section? = null,
-        var webcam: Webcam? = null
+        var webcam: Webcam? = null,
     )
 
     class SectionHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -113,7 +122,8 @@ class AdapterSectionDetail(
                 itemView.textViewSectionNbCameras.setCompoundDrawables(null, null, null, null)
 
                 // Image name have "-" instead of "_", we need to do the change
-                val imageResourceID = ImageUtils.getImageResourceAssociatedToSection(itemView.context, section)
+                val imageResourceID =
+                    ImageUtils.getImageResourceAssociatedToSection(itemView.context, section)
 
                 // Set the right section icon
                 itemView.imageViewSection.load(imageResourceID)
@@ -128,6 +138,20 @@ class AdapterSectionDetail(
                     )
                 )
                 itemView.textViewSectionNbCameras.text = nbWebCams
+
+                // Weather temperature
+                section.weatherTemp?.let { weatherTemp ->
+                    itemView.weatherViewSectionText.text =
+                        itemView.context.getString(
+                            R.string.weather_degree_celsius_format,
+                            WeatherUtils.convertKelvinToCelsius(temp = weatherTemp),
+                        )
+                }
+
+                // Weather icon
+                section.weatherUid?.let { weatherUid ->
+                    itemView.weatherViewSectionImage.load(WeatherUtils.weatherImage(weatherUid))
+                }
             }
         }
     }
@@ -139,7 +163,7 @@ class AdapterSectionDetail(
         fun bindView(
             webcam: Webcam?,
             onWebcamClicked: (Webcam) -> Unit,
-            dateUtils: DateUtils
+            dateUtils: DateUtils,
         ) {
             webcam?.let {
                 itemView.textViewWebcamName.text = webcam.title ?: ""
@@ -150,7 +174,12 @@ class AdapterSectionDetail(
                 val request = ImageRequest.Builder(itemView.context)
 
                 if (it.type == WebcamType.VIDEO.jsonKey) {
-                    request.decoderFactory { result, options, _ -> VideoFrameDecoder(result.source, options) }
+                    request.decoderFactory { result, options, _ ->
+                        VideoFrameDecoder(
+                            source = result.source,
+                            options = options,
+                        )
+                    }
                 }
 
                 request
@@ -162,14 +191,16 @@ class AdapterSectionDetail(
                         }
 
                         override fun onError(error: Drawable?) {
-                            itemView.imageViewWebcamImage.scaleType = ImageView.ScaleType.CENTER_INSIDE
+                            itemView.imageViewWebcamImage.scaleType =
+                                ImageView.ScaleType.CENTER_INSIDE
                             itemView.imageViewWebcamImage.setImageDrawable(error)
                             updateErrorText(dateUtils, webcam, true)
                             itemView.progressBarWebcam.goneWithAnimationCompat()
                         }
 
                         override fun onSuccess(result: Drawable) {
-                            itemView.imageViewWebcamImage.scaleType = ImageView.ScaleType.CENTER_CROP
+                            itemView.imageViewWebcamImage.scaleType =
+                                ImageView.ScaleType.CENTER_CROP
                             itemView.imageViewWebcamImage.setImageDrawable(result)
                             updateErrorText(dateUtils, webcam)
                             itemView.progressBarWebcam.goneWithAnimationCompat()
@@ -184,10 +215,15 @@ class AdapterSectionDetail(
             }
         }
 
-        private fun updateErrorText(dateUtils: DateUtils, webcam: Webcam, isFullError: Boolean = false) {
+        private fun updateErrorText(
+            dateUtils: DateUtils,
+            webcam: Webcam,
+            isFullError: Boolean = false,
+        ) {
             when {
                 isFullError -> {
-                    itemView.textViewWebcamError.text = itemView.context.getString(R.string.loading_not_working_error)
+                    itemView.textViewWebcamError.text =
+                        itemView.context.getString(R.string.loading_not_working_error)
                     itemView.textViewWebcamError.show()
                 }
 
@@ -196,7 +232,8 @@ class AdapterSectionDetail(
                 }
 
                 else -> {
-                    itemView.textViewWebcamError.text = itemView.context.getString(R.string.generic_not_up_to_date)
+                    itemView.textViewWebcamError.text =
+                        itemView.context.getString(R.string.generic_not_up_to_date)
                     itemView.textViewWebcamError.show()
                 }
             }

@@ -26,6 +26,7 @@ import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.ui.core.WebcamPicture
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 import fr.openium.auvergnewebcams.utils.ImageUtils
+import fr.openium.auvergnewebcams.utils.WeatherUtils
 import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalPagerApi::class)
@@ -35,7 +36,7 @@ fun SectionItem(
     imageLoader: ImageLoader,
     canBeHD: Boolean,
     goToWebcamDetail: (Webcam) -> Unit,
-    goToSectionList: () -> Unit
+    goToSectionList: () -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -53,13 +54,26 @@ fun SectionItem(
         currentTitle = section.webcams[page].title ?: ""
     })
 
-    Column(modifier = Modifier.fillMaxWidth()) {
+    val weatherIcon by remember(section) {
+        mutableStateOf(section.section.weatherUid?.let { WeatherUtils.weatherImage(it) })
+    }
+
+    val weatherTemp by remember(section) {
+        mutableStateOf(section.section.weatherTemp?.let { WeatherUtils.convertKelvinToCelsius(it) })
+    }
+
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
         SectionHeader(
             title = section.section.title ?: "",
             webcamsCount = webcams.size,
             image = image,
-            goToSectionList = goToSectionList
+            goToSectionList = goToSectionList,
+            weatherIcon = weatherIcon,
+            weatherTemp = weatherTemp
         )
+
         HorizontalPager(
             modifier = Modifier.fillMaxWidth(),
             count = Int.MAX_VALUE,

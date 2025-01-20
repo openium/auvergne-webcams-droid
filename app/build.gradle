@@ -4,6 +4,7 @@ apply plugin: "com.google.firebase.crashlytics"
 apply plugin: "kotlin-android"
 apply plugin: "kotlin-android-extensions"
 apply plugin: "kotlin-kapt"
+apply plugin: "com.google.android.libraries.mapsplatform.secrets-gradle-plugin"
 apply plugin: "fr.openium.version"
 
 def keystorePropertiesFile = rootProject.file("private/keys/keystore.properties")
@@ -11,12 +12,12 @@ def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
-    compileSdkVersion 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "fr.openium.auvergnewebcams"
         minSdkVersion 21
-        targetSdkVersion 33
+        targetSdkVersion 34
 
         versionCode openiumVersion.versionCode
         versionName openiumVersion.versionName
@@ -111,14 +112,14 @@ dependencies {
     // Accompanist
     implementation "com.google.accompanist:accompanist-pager:0.28.0"
     implementation "com.google.accompanist:accompanist-swiperefresh:0.28.0"
+    implementation "com.google.accompanist:accompanist-permissions:0.28.0"
 
     // --- Openium Tools ---
     implementation "fr.openium:kotlin-tools:1.0.14"
     implementation "fr.openium:rx-tools:1.0.5"
 
     // --- Koin
-    implementation "org.koin:koin-android:2.1.4"
-    implementation "org.koin:koin-androidx-viewmodel:2.1.4"
+    implementation "io.insert-koin:koin-android:2.0.1"
 
     // --- Rx ---
     implementation "io.reactivex.rxjava2:rxjava:2.2.21"
@@ -170,5 +171,13 @@ dependencies {
     implementation "com.google.android.exoplayer:exoplayer:2.18.2"
 
     // Like button (Twitter)
-    implementation "com.github.jd-alexander:LikeButton:0.2.3"
+    implementation "com.github.jd-alexander:LikeButton:0.2.2"
+
+    // Mapbox
+    implementation "com.mapbox.maps:android:11.8.1"
+    implementation "com.mapbox.extension:maps-compose:11.8.1"
+}
+
+secrets {
+    propertiesFileName = "private/keys/secrets.properties"
 }

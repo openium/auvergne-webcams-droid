@@ -10,9 +10,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        jcenter()
         maven { url 'https://jitpack.io' }
         maven { url 'https://maven.openium.fr' }
+        maven { url 'https://api.mapbox.com/downloads/v2/releases/maven' }
 
         flatDir {
             dirs 'libs'
