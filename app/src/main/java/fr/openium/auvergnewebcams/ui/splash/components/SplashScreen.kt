@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,20 +24,38 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.ui.splash.ViewModelSplash
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.addTo
 import kotlinx.coroutines.delay
+import org.koin.androidx.compose.koinViewModel
+import timber.log.Timber
 
 
 @SuppressLint("UseOfNonLambdaOffsetOverload")
 @Composable
-fun SplashScreen() {
+fun SplashScreen(vm: ViewModelSplash = koinViewModel(), startActivityMain: () -> Unit) {
+
     var isVisible by remember { mutableStateOf(false) }
 
+    val disposables = remember { CompositeDisposable() }
+
     LaunchedEffect(Unit) {
+        vm.updateData()
+            .subscribe({
+                startActivityMain()
+            }, { Timber.e(it) })
+            .addTo(disposables)
         delay(500)
         isVisible = true
     }
 
-    //Ajouter animations nuages
+    DisposableEffect(Unit) {
+        onDispose {
+            disposables.clear()
+        }
+    }
+
     val imageOffset by animateDpAsState(
         targetValue = if (isVisible) (-50).dp else 0.dp,
         animationSpec = tween(durationMillis = 500)
