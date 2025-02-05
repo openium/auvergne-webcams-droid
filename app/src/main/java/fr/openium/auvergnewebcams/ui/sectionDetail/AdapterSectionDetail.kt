@@ -33,8 +33,8 @@ import kotlinx.android.synthetic.main.item_webcam.view.imageViewWebcamImage
 import kotlinx.android.synthetic.main.item_webcam.view.progressBarWebcam
 import kotlinx.android.synthetic.main.item_webcam.view.textViewWebcamError
 import kotlinx.android.synthetic.main.item_webcam.view.textViewWebcamName
-import org.koin.core.KoinComponent
-import org.koin.core.inject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import java.util.Locale
 
 /**

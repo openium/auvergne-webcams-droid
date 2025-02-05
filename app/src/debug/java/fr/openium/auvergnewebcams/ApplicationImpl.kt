@@ -15,7 +15,7 @@ class ApplicationImpl : CustomApplication() {
         loadKoinModules(
             listOf(
                 DebugModules.databaseService,
-                DebugModules.restModule
+                DebugModules.restModule,
             )
         )
     }

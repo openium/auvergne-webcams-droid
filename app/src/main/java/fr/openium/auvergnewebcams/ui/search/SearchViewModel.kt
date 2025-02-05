@@ -14,8 +14,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.koin.core.KoinComponent
-import org.koin.core.inject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 class SearchViewModel(app: Application) : AbstractViewModel(app), KoinComponent {
 
@@ -35,7 +35,12 @@ class SearchViewModel(app: Application) : AbstractViewModel(app), KoinComponent 
         }.combine(
             webcamRepository.watchAllWebcams()
         ) { currentSearch: String, webcams: List<Webcam> ->
-            webcams.filter { currentSearch.isNotBlank() && it.title?.contains(currentSearch, true) == true }
+            webcams.filter {
+                currentSearch.isNotBlank() && it.title?.contains(
+                    currentSearch,
+                    true
+                ) == true
+            }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000L), emptyList())
     }
 

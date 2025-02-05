@@ -9,8 +9,8 @@ import io.reactivex.Single
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import org.koin.core.KoinComponent
-import org.koin.core.inject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 abstract class AbstractMapViewModel(app: Application) : AbstractViewModel(app), KoinComponent {
     private val defaultMapStyle = MapStyle.ROADS
