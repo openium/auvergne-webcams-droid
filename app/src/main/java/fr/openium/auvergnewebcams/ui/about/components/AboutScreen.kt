@@ -113,17 +113,6 @@ fun AboutScreen() {
     }
 }
 
-//@Composable
-//fun Toolbar() {
-//    Text(
-//        text = "Toolbar",
-//        color = Color.White,
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(16.dp)
-//    )
-//}
-
 @Composable
 fun CenteredImages() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
