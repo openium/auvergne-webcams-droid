@@ -1,25 +1,17 @@
 package fr.openium.auvergnewebcams.ui.splash.components
 
 import android.annotation.SuppressLint
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,9 +20,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.ui.splash.ViewModelSplash
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.addTo
-import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 
@@ -39,59 +28,40 @@ import timber.log.Timber
 @Composable
 fun SplashScreen(vm: ViewModelSplash = koinViewModel(), startActivityMain: () -> Unit) {
 
-    var isVisible by remember { mutableStateOf(false) }
-
-    val disposables = remember { CompositeDisposable() }
-
-    LaunchedEffect(Unit) {
-        delay(500)
-        isVisible = true
-    }
-
     DisposableEffect(Unit) {
-        
-        vm.updateData()
+        val job = vm.updateData()
             .subscribe({
                 startActivityMain()
             }, { Timber.e(it) })
-            .addTo(disposables)
+
         onDispose {
-            disposables.clear()
+            job.dispose()
         }
     }
-
-    val imageOffset by animateDpAsState(
-        targetValue = if (isVisible) (-50).dp else 0.dp,
-        animationSpec = tween(durationMillis = 500)
-    )
 
     Box(
         modifier = Modifier
             .background(Color.DarkGray)
             .fillMaxSize()
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_splash),
-            contentDescription = "Splash Image",
-            modifier = Modifier
-                .align(Alignment.Center)
-                .size(250.dp)
-                .offset(y = imageOffset),
-            contentScale = ContentScale.Fit
-        )
-
-        Box(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .padding(top = 250.dp)
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.align(Alignment.Center)
         ) {
-            AnimatedVisibility(
-                visible = isVisible,
-                enter = fadeIn(animationSpec = androidx.compose.animation.core.tween(600)),
-                exit = fadeOut(animationSpec = androidx.compose.animation.core.tween(300))
-            ) {
-                SplashText()
-            }
+            Image(
+                painter = painterResource(id = R.drawable.ic_splash),
+                contentDescription = "Splash Image",
+                modifier = Modifier
+                    .size(250.dp),
+                contentScale = ContentScale.Fit
+            )
+            SplashText(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(top = 20.dp)
+            )
         }
+
     }
 }
