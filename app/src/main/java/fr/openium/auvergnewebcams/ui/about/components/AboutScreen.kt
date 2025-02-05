@@ -49,7 +49,7 @@ fun AboutScreen() {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 10.dp),
+                    .padding(10.dp),
                 contentAlignment = Alignment.Center
             ) {
                 CenteredImages()
@@ -64,7 +64,6 @@ fun AboutScreen() {
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 10.dp)
             )
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -90,15 +89,17 @@ fun AboutScreen() {
             }
 
             Spacer(modifier = Modifier.height(10.dp))
+            if (!isLoading) {
 
-            Image(
-                painter = painterResource(id = R.drawable.logo_openium),
-                contentDescription = "Logo",
-                modifier = Modifier
-                    .width(150.dp)
-                    .align(Alignment.CenterHorizontally)
-                    .padding(bottom = 25.dp)
-            )
+                Image(
+                    painter = painterResource(id = R.drawable.logo_openium),
+                    contentDescription = "Logo",
+                    modifier = Modifier
+                        .width(150.dp)
+                        .align(Alignment.CenterHorizontally)
+                        .padding(bottom = 25.dp)
+                )
+            }
         }
 
         if (isLoading) {
