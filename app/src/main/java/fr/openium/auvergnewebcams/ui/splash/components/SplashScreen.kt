@@ -1,8 +1,11 @@
 package fr.openium.auvergnewebcams.ui.splash.components
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -41,16 +44,17 @@ fun SplashScreen(vm: ViewModelSplash = koinViewModel(), startActivityMain: () ->
     val disposables = remember { CompositeDisposable() }
 
     LaunchedEffect(Unit) {
-        vm.updateData()
-            .subscribe({
-                startActivityMain()
-            }, { Timber.e(it) })
-            .addTo(disposables)
         delay(500)
         isVisible = true
     }
 
     DisposableEffect(Unit) {
+        
+        vm.updateData()
+            .subscribe({
+                startActivityMain()
+            }, { Timber.e(it) })
+            .addTo(disposables)
         onDispose {
             disposables.clear()
         }
@@ -81,7 +85,13 @@ fun SplashScreen(vm: ViewModelSplash = koinViewModel(), startActivityMain: () ->
                 .align(Alignment.Center)
                 .padding(top = 250.dp)
         ) {
-            SplashText(isVisible = isVisible)
+            AnimatedVisibility(
+                visible = isVisible,
+                enter = fadeIn(animationSpec = androidx.compose.animation.core.tween(600)),
+                exit = fadeOut(animationSpec = androidx.compose.animation.core.tween(300))
+            ) {
+                SplashText()
+            }
         }
     }
 }

@@ -1,8 +1,5 @@
 package fr.openium.auvergnewebcams.ui.splash.components
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,35 +21,30 @@ import androidx.compose.ui.unit.sp
 import fr.openium.auvergnewebcams.R
 
 @Composable
-fun SplashText(isVisible: Boolean = false) {
-    AnimatedVisibility(
-        visible = isVisible,
-        enter = fadeIn(animationSpec = androidx.compose.animation.core.tween(600)),
-        exit = fadeOut(animationSpec = androidx.compose.animation.core.tween(300))
+fun SplashText() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(top = 20.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
+        Text(
+            text = stringResource(id = R.string.splash_loading_cameras),
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Normal,
             modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(top = 20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = stringResource(id = R.string.splash_loading_cameras),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Normal,
-                modifier = Modifier
-                    .padding(10.dp),
-                textAlign = TextAlign.Center,
-                color = Color.White
-            )
+                .padding(10.dp),
+            textAlign = TextAlign.Center,
+            color = Color.White
+        )
 
-            Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
-            CircularProgressIndicator(
-                modifier = Modifier.size(40.dp),
-                color = Color.White
-            )
-        }
+        CircularProgressIndicator(
+            modifier = Modifier.size(40.dp),
+            color = Color.White
+        )
     }
+
 }
