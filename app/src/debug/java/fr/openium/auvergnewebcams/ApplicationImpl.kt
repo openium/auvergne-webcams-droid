@@ -1,7 +1,6 @@
 package fr.openium.auvergnewebcams
 
 import fr.openium.auvergnewebcams.di.DebugModules
-import fr.openium.auvergnewebcams.di.KoinModules
 import org.koin.core.context.loadKoinModules
 import timber.log.Timber
 
@@ -17,7 +16,6 @@ class ApplicationImpl : CustomApplication() {
             listOf(
                 DebugModules.databaseService,
                 DebugModules.restModule,
-                KoinModules.vmSplash
             )
         )
     }
