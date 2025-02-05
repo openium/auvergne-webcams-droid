@@ -77,105 +77,102 @@ kapt { useBuildCache = true }
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar", "*.aar"])
 
-    // --- Kotlin ---
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    // Kotlin
+    implementation libs.kotlin.stdlib
 
-    // --- AndroidX ---
-    implementation "androidx.appcompat:appcompat:1.6.0"
-    implementation "androidx.core:core-ktx:1.9.0"
-    implementation "com.google.android.material:material:1.8.0"
-    implementation "androidx.work:work-runtime-ktx:2.7.1"
-    implementation "androidx.preference:preference-ktx:1.2.0"
-    implementation "androidx.constraintlayout:constraintlayout:2.1.4"
+    // AndroidX
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.core
+    implementation libs.material
+    implementation libs.work.runtime.ktx
+    implementation libs.preference.ktx
+    implementation libs.constraintlayout
 
-    // --- Lifecycle ---
-    implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
-    implementation "androidx.lifecycle:lifecycle-common-java8:2.5.1"
+    // Lifecycle
+    implementation libs.lifecycle.extensions
+    implementation libs.lifecycle.viewmodel.ktx
+    implementation libs.lifecycle.common.java8
 
-    // --- Firebase ---
-    implementation platform("com.google.firebase:firebase-bom:31.2.0")
-    implementation "com.google.firebase:firebase-crashlytics-ktx"
-    implementation "com.google.firebase:firebase-analytics-ktx"
+    // Firebase
+    implementation platform(libs.firebase.bom)
+    implementation libs.firebase.crashlytics
+    implementation libs.firebase.analytics
 
     // Compose
-    def composeBom = platform("androidx.compose:compose-bom:2023.01.00")
-    implementation composeBom
-    androidTestImplementation composeBom
-
-    implementation "androidx.compose.material:material"
-    implementation "androidx.compose.ui:ui"
-    implementation "androidx.compose.ui:ui-util"
-    implementation "androidx.compose.ui:ui-tooling-preview"
-    debugImplementation "androidx.compose.ui:ui-tooling"
+    implementation platform(libs.compose.bom)
+    implementation libs.compose.material
+    implementation libs.compose.ui
+    implementation libs.compose.ui.util
+    implementation libs.compose.ui.tooling.preview
+    debugImplementation libs.compose.ui.tooling
+    implementation libs.compose.runtime.livedata
 
     // Accompanist
-    implementation "com.google.accompanist:accompanist-pager:0.28.0"
-    implementation "com.google.accompanist:accompanist-swiperefresh:0.28.0"
-    implementation "com.google.accompanist:accompanist-permissions:0.28.0"
+    implementation libs.accompanist.pager
+    implementation libs.accompanist.swiperefresh
+    implementation libs.accompanist.permissions
 
-    // --- Openium Tools ---
-    implementation "fr.openium:kotlin-tools:1.0.14"
-    implementation "fr.openium:rx-tools:1.0.5"
+    // Openium Tools
+    implementation libs.openium.tools
+    implementation libs.openium.rx.tools
 
-    // --- Koin
-    implementation "io.insert-koin:koin-android:2.0.1"
+    // Koin
+    implementation libs.koin
 
-    // --- Rx ---
-    implementation "io.reactivex.rxjava2:rxjava:2.2.21"
-    implementation "com.jakewharton.rxbinding3:rxbinding:3.1.0"
-    implementation "com.jakewharton.rxbinding3:rxbinding-appcompat:3.1.0"
-    implementation "com.jakewharton.rxrelay2:rxrelay:2.1.1"
-    implementation "com.github.tbruyelle:rxpermissions:0.10.2"
+    // RxJava and related libraries
+    implementation libs.rxjava
+    implementation libs.rxbinding
+    implementation libs.rxbinding.appcompat
+    implementation libs.rxrelay
+    implementation libs.rxpermissions
 
-    // --- Retrofit ---
-    implementation "com.squareup.retrofit2:retrofit:2.9.0"
-    implementation "com.squareup.retrofit2:converter-gson:2.9.0"
-    implementation "com.squareup.retrofit2:adapter-rxjava2:2.9.0"
-    implementation "com.squareup.okhttp3:logging-interceptor:4.10.0"
-    debugImplementation "com.squareup.retrofit2:retrofit-mock:2.9.0"
+    // Retrofit and OkHttp
+    implementation libs.retrofit
+    implementation libs.converter.gson
+    implementation libs.adapter.rxjava2
+    implementation libs.okhttp.logging.interceptor
+    debugImplementation libs.retrofit.mock
 
-    // --- Maps ---
-    implementation "com.google.android.gms:play-services-maps:18.1.0"
+    // Maps
+    implementation libs.maps
 
-    // --- Room ---
-    implementation "androidx.room:room-runtime:2.5.0"
-    implementation "androidx.room:room-ktx:2.5.0"
-    kapt "androidx.room:room-compiler:2.5.0"
-    implementation "androidx.room:room-rxjava2:2.5.0"
+    // Room
+    implementation libs.room.runtime
+    implementation libs.room.ktx
+    kapt libs.room.compiler
+    implementation libs.room.rxjava2
 
     // Coil
-    implementation "io.coil-kt:coil:2.2.2"
-    implementation "io.coil-kt:coil-video:2.2.2"
-    implementation "io.coil-kt:coil-compose:2.2.2"
-    implementation "androidx.compose.runtime:runtime-livedata:1.3.3"
+    implementation libs.coil
+    implementation libs.coil.video
+    implementation libs.coil.compose
 
-    // Big image viewer
-    implementation "com.github.piasy:BigImageViewer:1.8.1"
+    // Big Image Viewer
+    implementation libs.big.image.viewer
 
     // Coroutines
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
+    implementation libs.coroutines.core
+    implementation libs.coroutines.android
 
-    // --- Log ---
-    implementation "com.jakewharton.timber:timber:5.0.1"
+    // Logging
+    implementation libs.timber
 
-    // --- Test ---
-    testImplementation "junit:junit:4.13.2"
-    androidTestImplementation "androidx.test:core:1.5.0"
-    androidTestImplementation "androidx.test:core-ktx:1.5.0"
-    androidTestImplementation "androidx.test.espresso:espresso-core:3.5.1"
-    androidTestImplementation "androidx.test.ext:junit:1.1.5"
+    // Testing
+    testImplementation libs.junit
+    androidTestImplementation libs.test.core
+    androidTestImplementation libs.test.core.ktx
+    androidTestImplementation libs.espresso.core
+    androidTestImplementation libs.test.junit
 
     // ExoPlayer
-    implementation "com.google.android.exoplayer:exoplayer:2.18.2"
+    implementation libs.exoplayer
 
-    // Like button (Twitter)
-    implementation "com.github.jd-alexander:LikeButton:0.2.2"
+    // Like Button (Twitter)
+    implementation libs.like.button
 
     // Mapbox
-    implementation "com.mapbox.maps:android:11.8.1"
-    implementation "com.mapbox.extension:maps-compose:11.8.1"
+    implementation libs.mapbox
+    implementation libs.mapbox.compose
 }
 
 secrets {

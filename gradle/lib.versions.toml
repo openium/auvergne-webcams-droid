@@ -1,0 +1,112 @@
+[versions]
+kotlin = "1.7.10"
+androidx-core = "1.9.0"
+androidx-appcompat = "1.6.0"
+material = "1.8.0"
+work-runtime-ktx = "2.7.1"
+preference-ktx = "1.2.0"
+constraintlayout = "2.1.4"
+lifecycle = "2.5.1"
+firebase-bom = "31.2.0"
+compose-bom = "2023.01.00"
+accompanist = "0.28.0"
+openium-tools = "1.0.14"
+openium-rx-tools = "1.0.5"
+koin = "2.0.1"
+rxjava = "2.2.21"
+rxbinding = "3.1.0"
+rxrelay = "2.1.1"
+rxpermissions = "0.10.2"
+retrofit = "2.9.0"
+okhttp-logging-interceptor = "4.10.0"
+maps = "18.1.0"
+room = "2.5.0"
+coil = "2.2.2"
+big-image-viewer = "1.8.1"
+coroutines = "1.6.4"
+timber = "5.0.1"
+junit = "4.13.2"
+test-core = "1.5.0"
+espresso = "3.5.1"
+test-junit = "1.1.5"
+exoplayer = "2.18.2"
+like-button = "0.2.2"
+mapbox = "11.8.1"
+
+[libraries]
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk7", version.ref = "kotlin" }
+
+androidx-core = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat" }
+material = { module = "com.google.android.material:material", version.ref = "material" }
+work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work-runtime-ktx" }
+preference-ktx = { module = "androidx.preference:preference-ktx", version.ref = "preference-ktx" }
+constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
+
+lifecycle-extensions = { module = "androidx.lifecycle:lifecycle-extensions", version = "2.2.0" }
+lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+lifecycle-common-java8 = { module = "androidx.lifecycle:lifecycle-common-java8", version.ref = "lifecycle" }
+
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ktx" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
+
+compose-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-bom" }
+compose-material = { module = "androidx.compose.material:material" }
+compose-ui = { module = "androidx.compose.ui:ui" }
+compose-ui-util = { module = "androidx.compose.ui:ui-util" }
+compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
+compose-runtime-livedata = { module = "androidx.compose.runtime:runtime-livedata" }
+
+accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
+accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
+accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
+
+openium-tools = { module = "fr.openium:kotlin-tools", version.ref = "openium-tools" }
+openium-rx-tools = { module = "fr.openium:rx-tools", version.ref = "openium-rx-tools" }
+
+koin = { module = "io.insert-koin:koin-android", version.ref = "koin" }
+
+rxjava = { module = "io.reactivex.rxjava2:rxjava", version.ref = "rxjava" }
+rxbinding = { module = "com.jakewharton.rxbinding3:rxbinding", version.ref = "rxbinding" }
+rxbinding-appcompat = { module = "com.jakewharton.rxbinding3:rxbinding-appcompat", version.ref = "rxbinding" }
+rxrelay = { module = "com.jakewharton.rxrelay2:rxrelay", version.ref = "rxrelay" }
+rxpermissions = { module = "com.github.tbruyelle:rxpermissions", version.ref = "rxpermissions" }
+
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
+adapter-rxjava2 = { module = "com.squareup.retrofit2:adapter-rxjava2", version.ref = "retrofit" }
+okhttp-logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp-logging-interceptor" }
+retrofit-mock = { module = "com.squareup.retrofit2:retrofit-mock", version.ref = "retrofit" }
+
+maps = { module = "com.google.android.gms:play-services-maps", version.ref = "maps" }
+
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+room-rxjava2 = { module = "androidx.room:room-rxjava2", version.ref = "room" }
+
+coil = { module = "io.coil-kt:coil", version.ref = "coil" }
+coil-video = { module = "io.coil-kt:coil-video", version.ref = "coil" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+
+big-image-viewer = { module = "com.github.piasy:BigImageViewer", version.ref = "big-image-viewer" }
+
+coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+
+junit = { module = "junit:junit", version.ref = "junit" }
+test-core = { module = "androidx.test:core", version.ref = "test-core" }
+test-core-ktx = { module = "androidx.test:core-ktx", version.ref = "test-core" }
+espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso" }
+test-junit = { module = "androidx.test.ext:junit", version.ref = "test-junit" }
+
+exoplayer = { module = "com.google.android.exoplayer:exoplayer", version.ref = "exoplayer" }
+
+like-button = { module = "com.github.jd-alexander:LikeButton", version.ref = "like-button" }
+
+mapbox = { module = "com.mapbox.maps:android", version.ref = "mapbox" }
+mapbox-compose = { module = "com.mapbox.extension:maps-compose", version.ref = "mapbox" }

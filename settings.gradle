@@ -18,6 +18,11 @@ dependencyResolutionManagement {
             dirs 'libs'
         }
     }
+    versionCatalogs {
+        libs {
+            from(files("gradle/lib.versions.toml"))
+        }
+    }
 }
 rootProject.name = "AuvergneWebcams"
 include ":app"
