@@ -48,13 +48,63 @@ fun SplashScreen(vm: ViewModelSplash = koinViewModel(), startActivityMain: () ->
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.align(Alignment.Center)
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_splash),
-                contentDescription = "Splash Image",
-                modifier = Modifier
-                    .size(250.dp),
-                contentScale = ContentScale.Fit
-            )
+            Box(modifier = Modifier.size(250.dp)) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_splash),
+                    contentDescription = "Splash Image",
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Fit
+                )
+                CloudWithAnimation(
+                    cloud = painterResource(R.drawable.ic_splash_cloud1),
+                    initialOffsetX = 55.dp,
+                    initialOffsetY = 67.27.dp,
+                    animatedOffsetX = (15).dp,
+                    size = 50.50.dp
+                )
+                CloudWithAnimation(
+                    cloud = painterResource(R.drawable.ic_splash_cloud2),
+                    initialOffsetX = 150.dp,
+                    initialOffsetY = 67.27.dp,
+                    animatedOffsetX = (-15).dp,
+                    size = 50.50.dp
+                )
+                CloudWithAnimation(
+                    cloud = painterResource(R.drawable.ic_splash_cloud3),
+                    initialOffsetX = 40.dp,
+                    initialOffsetY = 67.27.dp,
+                    animatedOffsetX = (15).dp,
+                    size = 32.32.dp
+                )
+                CloudWithAnimation(
+                    cloud = painterResource(R.drawable.ic_splash_cloud4),
+                    initialOffsetX = 185.dp,
+                    initialOffsetY = 67.27.dp,
+                    animatedOffsetX = (-15).dp,
+                    size = 32.32.dp
+                )
+                CloudWithAnimation(
+                    cloud = painterResource(R.drawable.ic_splash_cloud5),
+                    initialOffsetX = 40.dp,
+                    initialOffsetY = 40.dp,
+                    animatedOffsetX = 0.dp,
+                    size = 40.40.dp,
+                )
+                CloudWithAnimation(
+                    cloud = painterResource(R.drawable.ic_splash_cloud6),
+                    initialOffsetX = 100.dp,
+                    initialOffsetY = 10.0.dp,
+                    animatedOffsetX = 0.dp,
+                    size = 50.50.dp,
+                )
+                CloudWithAnimation(
+                    cloud = painterResource(R.drawable.ic_splash_cloud7),
+                    initialOffsetX = 191.dp,
+                    initialOffsetY = 35.0.dp,
+                    animatedOffsetX = 0.dp,
+                    size = 40.40.dp,
+                )
+            }
             SplashText(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -62,6 +112,5 @@ fun SplashScreen(vm: ViewModelSplash = koinViewModel(), startActivityMain: () ->
                     .padding(top = 20.dp)
             )
         }
-
     }
 }
