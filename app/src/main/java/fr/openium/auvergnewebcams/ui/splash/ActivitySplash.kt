@@ -10,8 +10,8 @@ import fr.openium.kotlintools.ext.startActivity
 import kotlinx.android.synthetic.main.fragment_search.composeView
 
 class ActivitySplash : AbstractActivity() {
-    
-    override val layoutId: Int = R.layout.fragment_splash
+
+    override val layoutId: Int = R.layout.activity_splash
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
