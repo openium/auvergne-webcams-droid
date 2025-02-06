@@ -2,116 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:animateLayoutChanges="true"
     android:background="@color/grey_dark"
-    android:gravity="center"
     android:orientation="vertical">
 
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="250dp"
-            android:layout_height="250dp"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_splash" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/mCloud3"
-            android:layout_width="32.32dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="35.49dp"
-            android:layout_marginTop="67.27dp"
-            android:adjustViewBounds="true"
-            android:visibility="gone"
-            android:src="@drawable/ic_splash_cloud3" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/mCloud4"
-            android:layout_width="41.08dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="173.36dp"
-            android:layout_marginTop="64.73dp"
-            android:adjustViewBounds="true"
-            android:visibility="gone"
-            android:src="@drawable/ic_splash_cloud4" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/mCloud1"
-            android:layout_width="44.57dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="58.81dp"
-            android:layout_marginTop="68.79dp"
-            android:adjustViewBounds="true"
-            android:visibility="gone"
-            android:src="@drawable/ic_splash_cloud1" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/mCloud2"
-            android:layout_width="42.59dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="144.83dp"
-            android:layout_marginTop="72.63dp"
-            android:adjustViewBounds="true"
-            android:visibility="gone"
-            android:src="@drawable/ic_splash_cloud2" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/mCloud5"
-            android:layout_width="56.64dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="101.07dp"
-            android:layout_marginTop="24.41dp"
-            android:adjustViewBounds="true"
-            android:visibility="gone"
-            android:src="@drawable/ic_splash_cloud5" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/mCloud6"
-            android:layout_width="42.48dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="51.27dp"
-            android:layout_marginTop="40.53dp"
-            android:adjustViewBounds="true"
-            android:visibility="gone"
-            android:src="@drawable/ic_splash_cloud6" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/mCloud7"
-            android:layout_width="31.25dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="188.48dp"
-            android:layout_marginTop="32.71dp"
-            android:adjustViewBounds="true"
-            android:visibility="gone"
-            android:src="@drawable/ic_splash_cloud7" />
-
-    </FrameLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayoutSplashText"
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/composeView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <TextView
-            style="@style/Font.Text.Regular"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:padding="10dp"
-            android:text="@string/splash_loading_cameras"
-            android:textSize="16sp" />
-
-        <ProgressBar
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="10dp" />
-
-    </LinearLayout>
+        android:layout_height="match_parent" />
 
 </LinearLayout>
