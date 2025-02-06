@@ -12,7 +12,7 @@ compose-bom = "2023.01.00"
 accompanist = "0.28.0"
 openium-tools = "1.0.14"
 openium-rx-tools = "1.0.5"
-koin = "2.0.1"
+koin = "3.2.0"
 rxjava = "2.2.21"
 rxbinding = "3.1.0"
 rxrelay = "2.1.1"
@@ -67,6 +67,9 @@ openium-tools = { module = "fr.openium:kotlin-tools", version.ref = "openium-too
 openium-rx-tools = { module = "fr.openium:rx-tools", version.ref = "openium-rx-tools" }
 
 koin = { module = "io.insert-koin:koin-android", version.ref = "koin" }
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
+
 
 rxjava = { module = "io.reactivex.rxjava2:rxjava", version.ref = "rxjava" }
 rxbinding = { module = "com.jakewharton.rxbinding3:rxbinding", version.ref = "rxbinding" }

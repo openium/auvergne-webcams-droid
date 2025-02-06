@@ -6,6 +6,7 @@ import coil.ImageLoader
 import com.github.piasy.biv.BigImageViewer
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import fr.openium.auvergnewebcams.custom.CoilImageLoader
+import fr.openium.auvergnewebcams.di.KoinModules
 import fr.openium.auvergnewebcams.di.Modules
 import fr.openium.auvergnewebcams.event.ForegroundBackgroundListener
 import fr.openium.auvergnewebcams.log.FirebaseCrashlyticsTree
@@ -37,7 +38,9 @@ abstract class CustomApplication : Application() {
                     Modules.databaseService,
                     Modules.restModule,
                     Modules.weatherModule,
-                    Modules.repositoryModule
+                    Modules.repositoryModule,
+                    KoinModules.vmSplash,
+                    KoinModules.vmSettings
                 )
             )
         }

@@ -9,8 +9,8 @@ import fr.openium.auvergnewebcams.repository.SectionRepository
 import fr.openium.auvergnewebcams.rest.model.SectionList
 import fr.openium.rxtools.ext.fromIOToMain
 import io.reactivex.Completable
-import org.koin.core.KoinComponent
-import org.koin.core.inject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import timber.log.Timber
 import java.io.InputStreamReader
 import java.util.concurrent.TimeUnit

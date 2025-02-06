@@ -118,6 +118,8 @@ dependencies {
 
     // Koin
     implementation libs.koin
+    implementation libs.koin.core
+    implementation libs.koin.androidx.compose
 
     // RxJava and related libraries
     implementation libs.rxjava

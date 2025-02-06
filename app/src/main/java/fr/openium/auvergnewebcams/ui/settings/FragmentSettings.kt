@@ -1,10 +1,8 @@
 package fr.openium.auvergnewebcams.ui.settings
 
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import androidx.core.content.pm.PackageInfoCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import fr.openium.auvergnewebcams.R
@@ -19,8 +17,15 @@ import fr.openium.kotlintools.ext.show
 import fr.openium.kotlintools.ext.snackbar
 import fr.openium.kotlintools.ext.startActivity
 import io.reactivex.rxkotlin.addTo
-import kotlinx.android.synthetic.main.fragment_settings.*
-import timber.log.Timber
+import kotlinx.android.synthetic.main.fragment_settings.linearLayoutSettingsDelayRefresh
+import kotlinx.android.synthetic.main.fragment_settings.switchSettingsQualityWebcams
+import kotlinx.android.synthetic.main.fragment_settings.switchSettingsRefreshDelay
+import kotlinx.android.synthetic.main.fragment_settings.textViewSettingsAbout
+import kotlinx.android.synthetic.main.fragment_settings.textViewSettingsDelayValue
+import kotlinx.android.synthetic.main.fragment_settings.textViewSettingsNote
+import kotlinx.android.synthetic.main.fragment_settings.textViewSettingsOpenium
+import kotlinx.android.synthetic.main.fragment_settings.textViewSettingsPirates
+import kotlinx.android.synthetic.main.fragment_settings.textViewSettingsSendNewWebcam
 
 
 /**
@@ -38,7 +43,6 @@ class FragmentSettings : AbstractFragment() {
 
         setListeners()
 
-        initVersion()
     }
 
     // --- Methods
@@ -56,7 +60,8 @@ class FragmentSettings : AbstractFragment() {
 
         // Auto refresh delay
         linearLayoutSettingsDelayRefresh.setOnClickListener {
-            val numberPickerDialog = RefreshDelayPickerDialog.newInstance(prefUtils.webcamsDelayRefreshValue)
+            val numberPickerDialog =
+                RefreshDelayPickerDialog.newInstance(prefUtils.webcamsDelayRefreshValue)
             childFragmentManager.beginTransaction()
                 .add(numberPickerDialog, "dialog_picker")
                 .commitAllowingStateLoss()
@@ -72,7 +77,10 @@ class FragmentSettings : AbstractFragment() {
 
         // Webcams quality
         switchSettingsQualityWebcams.setOnCheckedChangeListener { _, isChecked ->
-            FirebaseUtils.setUserPropertiesWebcamQualityPreferences(requireContext(), if (isChecked) "high" else "low")
+            FirebaseUtils.setUserPropertiesWebcamQualityPreferences(
+                requireContext(),
+                if (isChecked) "high" else "low"
+            )
             prefUtils.isWebcamsHighQuality = isChecked
         }
         switchSettingsQualityWebcams.isChecked = prefUtils.isWebcamsHighQuality
@@ -149,15 +157,4 @@ class FragmentSettings : AbstractFragment() {
         } ?: snackbar(R.string.generic_no_application_for_action, Snackbar.LENGTH_SHORT)
     }
 
-    private fun initVersion() {
-        try {
-            requireContext().packageManager.getPackageInfo(requireContext().packageName, 0)?.also {
-                val version =
-                    getString(R.string.settings_version_format, it.versionName, PackageInfoCompat.getLongVersionCode(it).toString())
-                textViewSettingsVersion.text = version
-            }
-        } catch (e: PackageManager.NameNotFoundException) {
-            Timber.e(e)
-        }
-    }
 }

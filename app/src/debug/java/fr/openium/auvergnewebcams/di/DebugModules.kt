@@ -30,20 +30,22 @@ object DebugModules {
     const val mock = true
 
     val databaseService = module {
-        single(override = true) {
+        single() {
             AWClient.getInstance(get())
         }
     }
 
     val restModule = module {
-        single(override = true) {
+        single() {
             OkHttpClient.Builder()
-                .addInterceptor(HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY })
+                .addInterceptor(HttpLoggingInterceptor().apply {
+                    level = HttpLoggingInterceptor.Level.BODY
+                })
                 .cache(get())
                 .build()
         }
 
-        single(override = true) {
+        single() {
             Retrofit.Builder()
                 .baseUrl(get<HttpUrl>()).client(get())
                 .addConverterFactory(GsonConverterFactory.create(get()))
@@ -51,7 +53,7 @@ object DebugModules {
                 .build()
         }
 
-        single(override = true) {
+        single() {
             if (mock) {
                 val networkBehaviour = NetworkBehavior.create()
                 networkBehaviour.setDelay(0, TimeUnit.MILLISECONDS)
@@ -76,7 +78,8 @@ object DebugModules {
                             .serializeNulls()
                             .create()
 
-                        val listLoaded = sObjectMapper.fromJson(reader, SectionList::class.java) as SectionList
+                        val listLoaded =
+                            sObjectMapper.fromJson(reader, SectionList::class.java) as SectionList
 
                         return delegate.returning(Calls.response(listLoaded)).getSections()
                     }
