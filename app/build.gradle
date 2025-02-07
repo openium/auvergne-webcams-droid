@@ -175,6 +175,9 @@ dependencies {
     // Mapbox
     implementation libs.mapbox
     implementation libs.mapbox.compose
+
+    //Number Picker
+    implementation libs.numberpicker
 }
 
 secrets {
