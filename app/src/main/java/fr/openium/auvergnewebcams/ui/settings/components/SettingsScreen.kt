@@ -43,14 +43,13 @@ import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.chargemap.compose.numberpicker.NumberPicker
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.ui.settings.NavigationEvent
 import fr.openium.auvergnewebcams.ui.settings.SettingsViewModel
+import fr.openium.auvergnewebcams.ui.theme.LocalTypography
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import org.koin.androidx.compose.koinViewModel
 
@@ -100,8 +99,7 @@ fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
     ) {
         Text(
             text = stringResource(R.string.settings_global_title).uppercase(),
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Normal,
+            style = LocalTypography.current.p3,
             color = colorResource(id = R.color.grey),
             modifier = Modifier.padding(bottom = 10.dp)
         )
@@ -120,8 +118,7 @@ fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
         ) {
             Text(
                 text = stringResource(R.string.settings_global_refresh),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Normal,
+                style = LocalTypography.current.p1,
                 color = Color.White,
                 modifier = Modifier.weight(1f)
             )
@@ -144,16 +141,14 @@ fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
             ) {
                 Text(
                     text = stringResource(R.string.settings_global_refresh_delay),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Normal,
+                    style = LocalTypography.current.p1,
                     color = colorResource(id = R.color.selector_color_white_to_grey),
                     modifier = Modifier.weight(1f)
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = vm.refreshDelay.toString(),
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Normal,
+                        style = LocalTypography.current.p1,
                         color = colorResource(id = R.color.selector_color_white_to_grey)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -180,8 +175,7 @@ fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
         ) {
             Text(
                 text = stringResource(R.string.settings_global_quality_high),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Normal,
+                style = LocalTypography.current.p1,
                 color = Color.White,
                 modifier = Modifier.weight(1f)
             )
@@ -193,8 +187,7 @@ fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
 
         Text(
             text = stringResource(R.string.settings_credits_title).uppercase(),
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Normal,
+            style = LocalTypography.current.p3,
             color = colorResource(id = R.color.grey),
             modifier = Modifier.padding(top = 32.dp, bottom = 12.dp)
         )
@@ -219,8 +212,7 @@ fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
 
         Text(
             text = version,
-            fontSize = 13.sp,
-            fontWeight = FontWeight.Normal,
+            style = LocalTypography.current.p3,
             color = colorResource(id = R.color.grey),
             modifier = Modifier
                 .fillMaxWidth()
@@ -285,8 +277,7 @@ fun SettingItem(textResId: Int, onClick: () -> Unit) {
     ) {
         Text(
             text = stringResource(id = textResId),
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Normal,
+            style = LocalTypography.current.p1,
             color = colorResource(id = R.color.selector_color_white_to_grey),
             modifier = Modifier.weight(1f)
         )
