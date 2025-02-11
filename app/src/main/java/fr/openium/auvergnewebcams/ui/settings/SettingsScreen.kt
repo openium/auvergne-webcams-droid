@@ -309,7 +309,8 @@ fun RefreshDelayPickerDialog(
                     value = selectedDelay,
                     range = 1..120,
                     onValueChange = { selectedDelay = it },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    textStyle = AWAppTheme.typography.p1
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
