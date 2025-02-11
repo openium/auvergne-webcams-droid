@@ -1,9 +1,10 @@
 package fr.openium.auvergnewebcams.ui.settings
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractActivity
-import fr.openium.auvergnewebcams.ui.settings.components.SettingsScreen
 import fr.openium.auvergnewebcams.ui.theme.AWTheme
 import kotlinx.android.synthetic.main.fragment_search.composeView
 
@@ -22,7 +23,15 @@ class ActivitySettings : AbstractActivity() {
 
         composeView.setContent {
             AWTheme {
-                SettingsScreen()
+                SettingsScreen(
+                    navigateToActivity = { activityClass ->
+                        val intent = Intent(this, activityClass)
+                        startActivity(intent)
+                    },
+                    navigateToUrl = { url ->
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                        startActivity(intent)
+                    })
             }
         }
     }
@@ -31,5 +40,6 @@ class ActivitySettings : AbstractActivity() {
         super.finish()
         overridePendingTransition(R.anim.animation_from_left, R.anim.animation_to_right)
     }
+
 
 }

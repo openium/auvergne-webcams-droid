@@ -24,8 +24,7 @@ import java.io.OutputStream
 import java.net.URL
 
 
-class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
-    Worker(appContext, workerParams), KoinComponent {
+class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : Worker(appContext, workerParams), KoinComponent {
 
     private var url: String? = null
     private var fileName: String = ""
@@ -74,12 +73,7 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
                         val progress = (total * 100) / contentLength
                         if (currentProgress != progress) {
                             Timber.d("[Worker] Downloading $currentProgress%")
-                            AppNotifier.SaveWebcamAction.downloadingFile(
-                                applicationContext,
-                                webcamName,
-                                notifBaseId,
-                                progress
-                            )
+                            AppNotifier.SaveWebcamAction.downloadingFile(applicationContext, webcamName, notifBaseId, progress)
                             currentProgress = progress
                         }
                         oS.write(buffer, 0, count)
@@ -102,22 +96,12 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
                     SystemClock.sleep(100)
 
                     Timber.d("[Worker] Finish download notification n°$notifBaseId with SUCCESS")
-                    AppNotifier.SaveWebcamAction.downloadSuccess(
-                        applicationContext,
-                        webcamName,
-                        notifBaseId,
-                        bitmap,
-                        uri
-                    )
+                    AppNotifier.SaveWebcamAction.downloadSuccess(applicationContext, webcamName, notifBaseId, bitmap, uri)
                 } catch (e: Exception) {
                     Timber.e(e)
 
                     Timber.d("[Worker] Finish download notification n°$notifBaseId with ERROR")
-                    AppNotifier.SaveWebcamAction.downloadError(
-                        applicationContext,
-                        webcamName,
-                        notifBaseId
-                    )
+                    AppNotifier.SaveWebcamAction.downloadError(applicationContext, webcamName, notifBaseId)
                     result = Result.failure()
                 }
             }

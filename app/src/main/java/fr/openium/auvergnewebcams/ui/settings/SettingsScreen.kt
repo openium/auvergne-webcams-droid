@@ -1,6 +1,7 @@
-package fr.openium.auvergnewebcams.ui.settings.components
+package fr.openium.auvergnewebcams.ui.settings
 
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -30,7 +31,6 @@ import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,8 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.chargemap.compose.numberpicker.NumberPicker
 import fr.openium.auvergnewebcams.R
-import fr.openium.auvergnewebcams.ui.settings.NavigationEvent
-import fr.openium.auvergnewebcams.ui.settings.SettingsViewModel
+import fr.openium.auvergnewebcams.ui.about.ActivitySettingsAbout
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import org.koin.androidx.compose.koinViewModel
@@ -56,27 +55,15 @@ import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
+fun SettingsScreen(
+    vm: SettingsViewModel = koinViewModel(),
+    navigateToActivity: (activityClass: Class<out Activity>) -> Unit,
+    navigateToUrl: (url: String) -> Unit
+) {
 
     val context = LocalContext.current
 
-    LaunchedEffect(Unit) {
-        vm.navigationEvent.collect { event ->
-            when (event) {
-                is NavigationEvent.ToActivity -> {
-                    val intent = Intent(context, event.activityClass.java)
-                    context.startActivity(intent)
-                }
-
-                is NavigationEvent.ToUrl -> {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(event.url))
-                    context.startActivity(intent)
-                }
-            }
-        }
-    }
-
-    val version = vm.getAppVersion()
+    val version = vm.getAppVersion(context)
 
     val scrollState = rememberScrollState()
 
@@ -113,7 +100,7 @@ fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
                 .clickable(
                     indication = null,
                     interactionSource = interactionSourceRefresh
-                ) { vm.onDelayRefreshChanged(!isDelayRefreshActive) },
+                ) { vm.onDelayRefreshChanged(!isDelayRefreshActive, context) },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -124,7 +111,7 @@ fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
             )
             Switch(
                 checked = isDelayRefreshActive,
-                onCheckedChange = { vm.onDelayRefreshChanged(it) },
+                onCheckedChange = { vm.onDelayRefreshChanged(it, context) },
             )
         }
 
@@ -170,7 +157,7 @@ fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
                 .clickable(
                     indication = null,
                     interactionSource = interactionSourceQuality
-                ) { vm.onQualityChanged(!qualityHighEnabled) },
+                ) { vm.onQualityChanged(!qualityHighEnabled, context) },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -181,7 +168,7 @@ fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
             )
             Switch(
                 checked = qualityHighEnabled,
-                onCheckedChange = { isChecked -> vm.onQualityChanged(isChecked) }
+                onCheckedChange = { isChecked -> vm.onQualityChanged(isChecked, context) }
             )
         }
 
@@ -193,13 +180,16 @@ fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
         )
 
         SettingItem(textResId = R.string.settings_credits_about) {
-            vm.onAboutClicked()
+            AnalyticsUtils.aboutClicked(context)
+            navigateToActivity(ActivitySettingsAbout::class.java)
         }
         SettingItem(textResId = R.string.settings_credits_openium) {
-            vm.onOpeniumClicked()
+            AnalyticsUtils.websiteOpeniumClicked(context)
+            navigateToUrl(context.getString(R.string.url_openium))
         }
         SettingItem(textResId = R.string.settings_credits_pirates) {
-            vm.onLesPiratesClicked()
+            AnalyticsUtils.lesPiratesClicked(context)
+            navigateToUrl(context.getString(R.string.url_pirates))
         }
 
         SettingItem(textResId = R.string.settings_send_new_webcam) {
@@ -207,7 +197,13 @@ fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
         }
 
         SettingItem(textResId = R.string.settings_credits_note) {
-            vm.onRateClicked()
+            AnalyticsUtils.rateAppClicked(context)
+            navigateToUrl(
+                context.getString(
+                    R.string.url_note_format,
+                    context.packageName
+                )
+            )
         }
 
         Text(
@@ -252,7 +248,7 @@ fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
             currentDelay = vm.refreshDelay,
             onDismiss = { showDelayDialog = false },
             onConfirm = { newDelay ->
-                vm.onRefreshDelayChanged(newDelay)
+                vm.onRefreshDelayChanged(newDelay, context)
             }
         )
     }
