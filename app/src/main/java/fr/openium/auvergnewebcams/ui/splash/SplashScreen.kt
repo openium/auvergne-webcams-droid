@@ -1,4 +1,4 @@
-package fr.openium.auvergnewebcams.ui.splash.components
+package fr.openium.auvergnewebcams.ui.splash
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
@@ -19,7 +19,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import fr.openium.auvergnewebcams.R
-import fr.openium.auvergnewebcams.ui.splash.ViewModelSplash
+import fr.openium.auvergnewebcams.ui.splash.components.CloudWithAnimation
+import fr.openium.auvergnewebcams.ui.splash.components.SplashText
 import org.koin.androidx.compose.koinViewModel
 import timber.log.Timber
 

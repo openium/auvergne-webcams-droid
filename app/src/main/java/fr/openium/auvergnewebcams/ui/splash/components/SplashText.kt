@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import fr.openium.auvergnewebcams.R
-import fr.openium.auvergnewebcams.ui.theme.LocalTypography
+import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 
 @Composable
 fun SplashText(modifier: Modifier) {
@@ -24,7 +24,7 @@ fun SplashText(modifier: Modifier) {
     ) {
         Text(
             text = stringResource(id = R.string.splash_loading_cameras),
-            style = LocalTypography.current.splashText,
+            style = AWAppTheme.typography.splashText,
             modifier = Modifier
                 .padding(10.dp),
             color = Color.White
