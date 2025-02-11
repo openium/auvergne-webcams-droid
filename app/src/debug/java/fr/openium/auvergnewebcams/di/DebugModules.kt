@@ -30,22 +30,17 @@ object DebugModules {
     const val mock = true
 
     val databaseService = module {
-        single() {
+        single {
             AWClient.getInstance(get())
         }
     }
 
     val restModule = module {
-        single() {
-            OkHttpClient.Builder()
-                .addInterceptor(HttpLoggingInterceptor().apply {
-                    level = HttpLoggingInterceptor.Level.BODY
-                })
-                .cache(get())
-                .build()
+        single {
+            OkHttpClient.Builder().addInterceptor(HttpLoggingInterceptor().apply { level = HttpLoggingInterceptor.Level.BODY }).cache(get()).build()
         }
 
-        single() {
+        single {
             Retrofit.Builder()
                 .baseUrl(get<HttpUrl>()).client(get())
                 .addConverterFactory(GsonConverterFactory.create(get()))
@@ -53,7 +48,7 @@ object DebugModules {
                 .build()
         }
 
-        single() {
+        single {
             if (mock) {
                 val networkBehaviour = NetworkBehavior.create()
                 networkBehaviour.setDelay(0, TimeUnit.MILLISECONDS)
@@ -65,21 +60,17 @@ object DebugModules {
                         val thisValue = get<Context>().assets.open("aw-config.json")
                         val reader = InputStreamReader(thisValue)
 
-                        val sObjectMapper = GsonBuilder()
-                            .setExclusionStrategies(object : ExclusionStrategy {
-                                override fun shouldSkipClass(clazz: Class<*>?): Boolean {
-                                    return false
-                                }
+                        val sObjectMapper = GsonBuilder().setExclusionStrategies(object : ExclusionStrategy {
+                            override fun shouldSkipClass(clazz: Class<*>?): Boolean {
+                                return false
+                            }
 
-                                override fun shouldSkipField(f: FieldAttributes): Boolean {
-                                    return f.declaredClass == SectionList::class.java
-                                }
-                            })
-                            .serializeNulls()
-                            .create()
+                            override fun shouldSkipField(f: FieldAttributes): Boolean {
+                                return f.declaredClass == SectionList::class.java
+                            }
+                        }).serializeNulls().create()
 
-                        val listLoaded =
-                            sObjectMapper.fromJson(reader, SectionList::class.java) as SectionList
+                        val listLoaded = sObjectMapper.fromJson(reader, SectionList::class.java) as SectionList
 
                         return delegate.returning(Calls.response(listLoaded)).getSections()
                     }

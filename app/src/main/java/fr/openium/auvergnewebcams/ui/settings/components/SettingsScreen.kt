@@ -49,7 +49,7 @@ import com.chargemap.compose.numberpicker.NumberPicker
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.ui.settings.NavigationEvent
 import fr.openium.auvergnewebcams.ui.settings.SettingsViewModel
-import fr.openium.auvergnewebcams.ui.theme.LocalTypography
+import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import org.koin.androidx.compose.koinViewModel
 
@@ -99,7 +99,7 @@ fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
     ) {
         Text(
             text = stringResource(R.string.settings_global_title).uppercase(),
-            style = LocalTypography.current.p3,
+            style = AWAppTheme.typography.p3,
             color = colorResource(id = R.color.grey),
             modifier = Modifier.padding(bottom = 10.dp)
         )
@@ -118,7 +118,7 @@ fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
         ) {
             Text(
                 text = stringResource(R.string.settings_global_refresh),
-                style = LocalTypography.current.p1,
+                style = AWAppTheme.typography.p1,
                 color = Color.White,
                 modifier = Modifier.weight(1f)
             )
@@ -141,14 +141,14 @@ fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
             ) {
                 Text(
                     text = stringResource(R.string.settings_global_refresh_delay),
-                    style = LocalTypography.current.p1,
+                    style = AWAppTheme.typography.p1,
                     color = colorResource(id = R.color.selector_color_white_to_grey),
                     modifier = Modifier.weight(1f)
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = vm.refreshDelay.toString(),
-                        style = LocalTypography.current.p1,
+                        style = AWAppTheme.typography.p1,
                         color = colorResource(id = R.color.selector_color_white_to_grey)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -175,7 +175,7 @@ fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
         ) {
             Text(
                 text = stringResource(R.string.settings_global_quality_high),
-                style = LocalTypography.current.p1,
+                style = AWAppTheme.typography.p1,
                 color = Color.White,
                 modifier = Modifier.weight(1f)
             )
@@ -187,7 +187,7 @@ fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
 
         Text(
             text = stringResource(R.string.settings_credits_title).uppercase(),
-            style = LocalTypography.current.p3,
+            style = AWAppTheme.typography.p3,
             color = colorResource(id = R.color.grey),
             modifier = Modifier.padding(top = 32.dp, bottom = 12.dp)
         )
@@ -212,7 +212,7 @@ fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
 
         Text(
             text = version,
-            style = LocalTypography.current.p3,
+            style = AWAppTheme.typography.p3,
             color = colorResource(id = R.color.grey),
             modifier = Modifier
                 .fillMaxWidth()
@@ -225,10 +225,10 @@ fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
         AlertDialog(
             onDismissRequest = { showWebcamDialog = false },
             title = {
-                Text(text = stringResource(id = R.string.settings_send_new_webcam_title))
+                Text(text = stringResource(id = R.string.settings_send_new_webcam_title), style = AWAppTheme.typography.p1)
             },
             text = {
-                Text(text = stringResource(id = R.string.settings_send_new_webcam_message))
+                Text(text = stringResource(id = R.string.settings_send_new_webcam_message), style = AWAppTheme.typography.p1)
             },
             confirmButton = {
                 TextButton(onClick = {
@@ -236,12 +236,12 @@ fun SettingsScreen(vm: SettingsViewModel = koinViewModel()) {
                     sendEmail(context)
                     showWebcamDialog = false
                 }) {
-                    Text(text = stringResource(id = R.string.generic_ok))
+                    Text(text = stringResource(id = R.string.generic_ok), style = AWAppTheme.typography.p1)
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showWebcamDialog = false }) {
-                    Text(text = stringResource(id = R.string.generic_cancel))
+                    Text(text = stringResource(id = R.string.generic_cancel), style = AWAppTheme.typography.p1)
                 }
             }
         )
@@ -277,7 +277,7 @@ fun SettingItem(textResId: Int, onClick: () -> Unit) {
     ) {
         Text(
             text = stringResource(id = textResId),
-            style = LocalTypography.current.p1,
+            style = AWAppTheme.typography.p1,
             color = colorResource(id = R.color.selector_color_white_to_grey),
             modifier = Modifier.weight(1f)
         )
@@ -338,14 +338,14 @@ fun RefreshDelayPickerDialog(
                     horizontalArrangement = Arrangement.End
                 ) {
                     TextButton(onClick = onDismiss) {
-                        Text(text = stringResource(id = R.string.generic_cancel))
+                        Text(text = stringResource(id = R.string.generic_cancel), style = AWAppTheme.typography.p1)
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     TextButton(onClick = {
                         onConfirm(selectedDelay)
                         onDismiss()
                     }) {
-                        Text(text = stringResource(id = R.string.generic_ok))
+                        Text(text = stringResource(id = R.string.generic_ok), style = AWAppTheme.typography.p1)
                     }
                 }
             }
