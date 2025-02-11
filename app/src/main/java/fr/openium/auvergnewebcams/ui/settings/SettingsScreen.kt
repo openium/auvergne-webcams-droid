@@ -9,7 +9,6 @@ import android.view.MotionEvent
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,6 +30,7 @@ import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.chargemap.compose.numberpicker.NumberPicker
 import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.ext.getAppVersion
 import fr.openium.auvergnewebcams.ui.about.ActivitySettingsAbout
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
@@ -63,16 +64,11 @@ fun SettingsScreen(
 
     val context = LocalContext.current
 
-    val version = vm.getAppVersion(context)
-
     val scrollState = rememberScrollState()
 
-    val interactionSourceRefresh = remember { MutableInteractionSource() }
-    val interactionSourceIntRefresh = remember { MutableInteractionSource() }
-    val interactionSourceQuality = remember { MutableInteractionSource() }
-
-    val qualityHighEnabled = vm.isWebcamsHighQuality
-    val isDelayRefreshActive = vm.isDelayRefreshActive
+    val qualityHighEnabled by vm.isWebcamsHighQuality.collectAsState()
+    val isDelayRefreshActive by vm.isDelayRefreshActive.collectAsState()
+    val refreshDelay by vm.refreshDelay.collectAsState()
 
     var showDelayDialog by remember { mutableStateOf(false) }
     var showWebcamDialog by remember { mutableStateOf(false) }
@@ -97,10 +93,7 @@ fun SettingsScreen(
                 .pointerInteropFilter { event ->
                     (event.action == MotionEvent.ACTION_HOVER_EXIT)
                 }
-                .clickable(
-                    indication = null,
-                    interactionSource = interactionSourceRefresh
-                ) { vm.onDelayRefreshChanged(!isDelayRefreshActive, context) },
+                .clickable { vm.onDelayRefreshChanged(!isDelayRefreshActive, context) },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -120,10 +113,8 @@ fun SettingsScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 10.dp)
-                    .clickable(
-                        indication = null,
-                        interactionSource = interactionSourceIntRefresh
-                    ) { showDelayDialog = true },
+                    .clickable
+                    { showDelayDialog = true },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -134,7 +125,7 @@ fun SettingsScreen(
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = vm.refreshDelay.toString(),
+                        text = refreshDelay.toString(),
                         style = AWAppTheme.typography.p1,
                         color = colorResource(id = R.color.selector_color_white_to_grey)
                     )
@@ -154,10 +145,7 @@ fun SettingsScreen(
                 .pointerInteropFilter { event ->
                     event.action == MotionEvent.ACTION_HOVER_EXIT
                 }
-                .clickable(
-                    indication = null,
-                    interactionSource = interactionSourceQuality
-                ) { vm.onQualityChanged(!qualityHighEnabled, context) },
+                .clickable { vm.onQualityChanged(!qualityHighEnabled, context) },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
@@ -207,7 +195,7 @@ fun SettingsScreen(
         }
 
         Text(
-            text = version,
+            text = context.getAppVersion(),
             style = AWAppTheme.typography.p3,
             color = colorResource(id = R.color.grey),
             modifier = Modifier
@@ -245,7 +233,7 @@ fun SettingsScreen(
 
     if (showDelayDialog) {
         RefreshDelayPickerDialog(
-            currentDelay = vm.refreshDelay,
+            currentDelay = refreshDelay,
             onDismiss = { showDelayDialog = false },
             onConfirm = { newDelay ->
                 vm.onRefreshDelayChanged(newDelay, context)
@@ -257,7 +245,6 @@ fun SettingsScreen(
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SettingItem(textResId: Int, onClick: () -> Unit) {
-    val interactionSourceItem = remember { MutableInteractionSource() }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -265,10 +252,7 @@ fun SettingItem(textResId: Int, onClick: () -> Unit) {
             .pointerInteropFilter { event ->
                 event.action == MotionEvent.ACTION_HOVER_EXIT
             }
-            .clickable(
-                indication = null,
-                interactionSource = interactionSourceItem
-            ) { onClick() },
+            .clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
