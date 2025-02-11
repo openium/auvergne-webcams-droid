@@ -181,6 +181,7 @@ fun SettingsScreen(
         }
 
         SettingItem(textResId = R.string.settings_send_new_webcam) {
+            AnalyticsUtils.suggestWebcamClicked(context)
             showWebcamDialog = true
         }
 
