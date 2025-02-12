@@ -61,14 +61,14 @@ fun SplashScreen(vm: ViewModelSplash = koinViewModel(), goToMain: () -> Unit) {
                     initialOffsetX = 55.dp,
                     initialOffsetY = 67.27.dp,
                     animatedOffsetX = (15).dp,
-                    size = 50.50.dp
+                    size = 50.dp
                 )
                 CloudWithAnimation(
                     cloud = painterResource(R.drawable.ic_splash_cloud2),
                     initialOffsetX = 150.dp,
                     initialOffsetY = 67.27.dp,
                     animatedOffsetX = (-15).dp,
-                    size = 50.50.dp
+                    size = 50.dp
                 )
                 CloudWithAnimation(
                     cloud = painterResource(R.drawable.ic_splash_cloud3),
