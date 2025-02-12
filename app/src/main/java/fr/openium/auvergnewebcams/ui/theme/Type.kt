@@ -6,7 +6,6 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.google.errorprone.annotations.Immutable
 import fr.openium.auvergnewebcams.R
@@ -28,7 +27,6 @@ data class AWTypography(
     val p1Italic: TextStyle,
     val p2Italic: TextStyle,
     val p3: TextStyle,
-    val splashText: TextStyle
 )
 
 val Typography = AWTypography(
@@ -58,12 +56,6 @@ val Typography = AWTypography(
         fontSize = 13.sp,
         fontFamily = Proxima,
         fontWeight = FontWeight.Normal
-    ),
-    splashText = TextStyle(
-        fontSize = 16.sp,
-        fontFamily = Proxima,
-        fontWeight = FontWeight.Normal,
-        textAlign = TextAlign.Center,
     )
 )
 
@@ -74,6 +66,5 @@ val LocalTypography = staticCompositionLocalOf {
         p1Italic = TextStyle.Default,
         p2Italic = TextStyle.Default,
         p3 = TextStyle.Default,
-        splashText = TextStyle.Default
     )
 }

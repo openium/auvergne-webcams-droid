@@ -84,6 +84,7 @@ object DebugModules {
                         .build()
                 ).networkBehavior(networkBehaviour).build().create(AWApi::class.java)
                 apiMock
+                
             } else {
                 get<Retrofit>().create(AWApi::class.java)
             }

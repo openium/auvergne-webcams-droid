@@ -27,12 +27,12 @@ import timber.log.Timber
 
 @SuppressLint("UseOfNonLambdaOffsetOverload")
 @Composable
-fun SplashScreen(vm: ViewModelSplash = koinViewModel(), startActivityMain: () -> Unit) {
+fun SplashScreen(vm: ViewModelSplash = koinViewModel(), goToMain: () -> Unit) {
 
     DisposableEffect(Unit) {
         val job = vm.updateData()
             .subscribe({
-                startActivityMain()
+                goToMain()
             }, { Timber.e(it) })
 
         onDispose {
@@ -75,35 +75,35 @@ fun SplashScreen(vm: ViewModelSplash = koinViewModel(), startActivityMain: () ->
                     initialOffsetX = 40.dp,
                     initialOffsetY = 67.27.dp,
                     animatedOffsetX = (15).dp,
-                    size = 32.32.dp
+                    size = 32.dp
                 )
                 CloudWithAnimation(
                     cloud = painterResource(R.drawable.ic_splash_cloud4),
                     initialOffsetX = 185.dp,
                     initialOffsetY = 67.27.dp,
                     animatedOffsetX = (-15).dp,
-                    size = 32.32.dp
+                    size = 32.dp
                 )
                 CloudWithAnimation(
                     cloud = painterResource(R.drawable.ic_splash_cloud5),
                     initialOffsetX = 40.dp,
                     initialOffsetY = 40.dp,
                     animatedOffsetX = 0.dp,
-                    size = 40.40.dp,
+                    size = 40.dp,
                 )
                 CloudWithAnimation(
                     cloud = painterResource(R.drawable.ic_splash_cloud6),
                     initialOffsetX = 100.dp,
                     initialOffsetY = 10.0.dp,
                     animatedOffsetX = 0.dp,
-                    size = 50.50.dp,
+                    size = 50.dp,
                 )
                 CloudWithAnimation(
                     cloud = painterResource(R.drawable.ic_splash_cloud7),
                     initialOffsetX = 191.dp,
                     initialOffsetY = 35.0.dp,
                     animatedOffsetX = 0.dp,
-                    size = 40.40.dp,
+                    size = 40.dp,
                 )
             }
             SplashText(

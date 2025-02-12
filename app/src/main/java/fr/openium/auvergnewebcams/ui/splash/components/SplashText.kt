@@ -12,19 +12,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 
 @Composable
-fun SplashText(modifier: Modifier) {
+fun SplashText(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = stringResource(id = R.string.splash_loading_cameras),
-            style = AWAppTheme.typography.splashText,
+            style = AWAppTheme.typography.p1,
+            textAlign = TextAlign.Center,
             modifier = Modifier
                 .padding(10.dp),
             color = Color.White

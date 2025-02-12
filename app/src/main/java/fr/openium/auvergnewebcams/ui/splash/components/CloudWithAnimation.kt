@@ -27,7 +27,7 @@ fun CloudWithAnimation(
     initialOffsetX: Dp = 0.dp,
     initialOffsetY: Dp = 0.dp,
     animatedOffsetX: Dp = 0.dp,
-    size: Dp = 32.32.dp,
+    size: Dp = 32.dp,
     animationAlphaDuration: Int = 1500,
     animationOffsetDuration: Int = 2000
 ) {

@@ -35,12 +35,7 @@ class SearchViewModel(app: Application) : AbstractViewModel(app), KoinComponent 
         }.combine(
             webcamRepository.watchAllWebcams()
         ) { currentSearch: String, webcams: List<Webcam> ->
-            webcams.filter {
-                currentSearch.isNotBlank() && it.title?.contains(
-                    currentSearch,
-                    true
-                ) == true
-            }
+            webcams.filter { currentSearch.isNotBlank() && it.title?.contains(currentSearch, true) == true }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000L), emptyList())
     }
 

@@ -16,7 +16,7 @@ class ActivitySplash : AbstractActivity() {
         super.onCreate(savedInstanceState)
         composeView.setContent {
             AWTheme {
-                SplashScreen(startActivityMain = { startActivityMain() })
+                SplashScreen(goToMain = { startActivityMain() })
             }
         }
     }
