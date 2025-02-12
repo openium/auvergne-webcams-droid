@@ -11,7 +11,6 @@ import io.reactivex.Single
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-
 class ViewModelSectionDetail(app: Application) : AbstractViewModel(app), KoinComponent {
 
     private val sectionRepository by inject<SectionRepository>()

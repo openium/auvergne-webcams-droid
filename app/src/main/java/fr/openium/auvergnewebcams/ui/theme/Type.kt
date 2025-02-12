@@ -26,7 +26,7 @@ data class AWTypography(
     val p1: TextStyle,
     val p1Italic: TextStyle,
     val p2Italic: TextStyle,
-    val p3: TextStyle
+    val p3: TextStyle,
 )
 
 val Typography = AWTypography(
@@ -65,6 +65,6 @@ val LocalTypography = staticCompositionLocalOf {
         p1 = TextStyle.Default,
         p1Italic = TextStyle.Default,
         p2Italic = TextStyle.Default,
-        p3 = TextStyle.Default
+        p3 = TextStyle.Default,
     )
 }

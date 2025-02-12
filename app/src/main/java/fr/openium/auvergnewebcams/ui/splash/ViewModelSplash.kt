@@ -64,4 +64,5 @@ class ViewModelSplash(app: Application) : AbstractViewModel(app), KoinComponent 
         val jsonReader = JsonParser().parse(InputStreamReader(inputStream))
         return gson.fromJson(jsonReader, SectionList::class.java)
     }
+
 }
