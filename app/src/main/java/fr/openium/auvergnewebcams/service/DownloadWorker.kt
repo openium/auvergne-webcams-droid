@@ -15,8 +15,8 @@ import androidx.work.WorkerParameters
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.broadcast.AppNotifier
 import fr.openium.auvergnewebcams.utils.PreferencesUtils
-import org.koin.core.KoinComponent
-import org.koin.core.inject
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
@@ -96,13 +96,7 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) : Work
                     SystemClock.sleep(100)
 
                     Timber.d("[Worker] Finish download notification n°$notifBaseId with SUCCESS")
-                    AppNotifier.SaveWebcamAction.downloadSuccess(
-                        applicationContext,
-                        webcamName,
-                        notifBaseId,
-                        bitmap,
-                        uri
-                    )
+                    AppNotifier.SaveWebcamAction.downloadSuccess(applicationContext, webcamName, notifBaseId, bitmap, uri)
                 } catch (e: Exception) {
                     Timber.e(e)
 
