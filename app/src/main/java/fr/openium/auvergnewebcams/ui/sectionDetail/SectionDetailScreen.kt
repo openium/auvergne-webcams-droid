@@ -67,30 +67,25 @@ fun SectionDetailScreen(
             val section = loadedState.section
             val webcams = loadedState.webcams.sortedBy { it.order }
 
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
+            LazyColumn {
                 item {
-
-                    section.title?.let { title ->
-                        section.weatherUid?.let { WeatherUtils.weatherImage(it) }?.let { image ->
-                            SectionHeader(
-                                title = title,
-                                webcamsCount = webcams.count(),
-                                image = ImageUtils.getImageResourceAssociatedToSection(context, section),
-                                goToSectionList = {},
-                                weatherIcon = image,
-                                weatherTemp = section.weatherTemp?.let { WeatherUtils.convertKelvinToCelsius(it) }
-                            )
-                        }
-                    }
+                    SectionHeader(
+                        title = section.title ?: "",
+                        webcamsCount = webcams.count(),
+                        image = ImageUtils.getImageResourceAssociatedToSection(context, section),
+                        goToSectionList = {},
+                        weatherIcon = section.weatherUid?.let { WeatherUtils.weatherImage(it) },
+                        weatherTemp = section.weatherTemp?.let { WeatherUtils.convertKelvinToCelsius(it) }
+                    )
                 }
                 items(items = webcams) { webcam ->
                     WebcamPicture(
-                        pageOffset = 100f,
-                        modifier = Modifier.fillMaxWidth(),
+                        pageOffset = 0.5f,
                         webcam = webcam,
                         imageLoader = vm.imageLoader,
                         canBeHD = vm.prefUtils.isWebcamsHighQuality,
                         startingAlpha = 1f,
+                        aspectRatio = 8f,
                         goToWebcamDetail = {
                             goToWebcamDetail(webcam)
                         }

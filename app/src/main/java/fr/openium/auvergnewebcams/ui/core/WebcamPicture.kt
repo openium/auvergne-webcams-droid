@@ -44,6 +44,7 @@ fun WebcamPicture(
     goToWebcamDetail: () -> Unit,
     modifier: Modifier = Modifier,
     startingAlpha: Float = 0.5f,
+    aspectRatio: Float = 10f,
     pageOffset: Float? = null,
 ) {
     var showProgress by remember { mutableStateOf(false) }
@@ -109,7 +110,7 @@ fun WebcamPicture(
                         }
                     } ?: modifier
                 }
-                .aspectRatio(16f / 10f)
+                .aspectRatio(16f / aspectRatio)
                 .clip(RoundedCornerShape(4.dp))
                 .background(color = AWAppTheme.colors.greyVeryDark)
                 .clickable(onClick = goToWebcamDetail),
@@ -158,7 +159,7 @@ fun WebcamPicture(
                     Image(
                         modifier = Modifier
                             .size(104.dp)
-                            .aspectRatio(16f / 10f),
+                            .aspectRatio(16f / aspectRatio),
                         painter = painterResource(id = R.drawable.ic_broken_camera),
                         contentDescription = "",
                         contentScale = ContentScale.Inside
