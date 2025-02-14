@@ -43,6 +43,7 @@ fun WebcamPicture(
     canBeHD: Boolean,
     goToWebcamDetail: () -> Unit,
     modifier: Modifier = Modifier,
+    startingAlpha: Float = 0.5f,
     pageOffset: Float? = null,
 ) {
     var showProgress by remember { mutableStateOf(false) }
@@ -101,7 +102,7 @@ fun WebcamPicture(
                             }
                             // We animate the alpha, between 50% and 100%
                             alpha = lerp(
-                                start = 0.5f,
+                                start = startingAlpha,
                                 stop = 1f,
                                 fraction = 1f - pageOffset.coerceIn(0f, 1f)
                             )
@@ -141,7 +142,7 @@ fun WebcamPicture(
                                 }
                                 // We animate the alpha, between 50% and 100%
                                 alpha = lerp(
-                                    start = 0.5f,
+                                    start = startingAlpha,
                                     stop = 1f,
                                     fraction = 1f - pageOffset.coerceIn(0f, 1f)
                                 )

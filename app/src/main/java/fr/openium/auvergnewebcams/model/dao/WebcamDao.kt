@@ -1,6 +1,10 @@
 package fr.openium.auvergnewebcams.model.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import io.reactivex.Single
 import kotlinx.coroutines.flow.Flow
@@ -17,6 +21,12 @@ interface WebcamDao {
 
     @Query("SELECT * FROM Webcam WHERE uid == :webcamId LIMIT 1")
     fun getWebcamSingle(webcamId: Long): Single<Webcam?>
+
+    @Query("SELECT * FROM Webcam WHERE uid = :webcamId LIMIT 1")
+    fun getWebcamFlow(webcamId: Long): Flow<Webcam?>
+
+    @Query("SELECT * FROM Webcam WHERE sectionUid = :sectionId")
+    fun getWebcamsFlow(sectionId: Long): Flow<List<Webcam>>
 
     @Query("SELECT * FROM Webcam")
     fun getWebcamsSingle(): Single<List<Webcam>>

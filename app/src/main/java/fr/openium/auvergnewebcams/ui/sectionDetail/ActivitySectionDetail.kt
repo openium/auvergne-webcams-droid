@@ -7,6 +7,8 @@ import fr.openium.auvergnewebcams.KEY_SECTION_ID
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractActivity
 import fr.openium.auvergnewebcams.ui.theme.AWTheme
+import fr.openium.auvergnewebcams.ui.webcamDetail.ActivityWebcamDetail
+import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import kotlinx.android.synthetic.main.activity_section_detail.composeView
 
 /**
@@ -25,7 +27,7 @@ class ActivitySectionDetail : AbstractActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
         val sectionId = intent.getLongExtra(KEY_SECTION_ID, -1L)
         if (sectionId == -1L) {
             finish()
@@ -34,12 +36,16 @@ class ActivitySectionDetail : AbstractActivity() {
 
         composeView.setContent {
             AWTheme {
-                SectionDetailScreen(sectionId)
+                SectionDetailScreen(sectionId, goToWebcamDetail = {
+                    AnalyticsUtils.webcamDetailsClicked(this, it.title ?: "")
+                    startActivity(ActivityWebcamDetail.getIntent(this, it))
+                })
             }
         }
 
         overridePendingTransition(R.anim.animation_from_right, R.anim.animation_to_left)
     }
+
 
     override fun finish() {
         super.finish()
