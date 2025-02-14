@@ -1,5 +1,6 @@
 package fr.openium.auvergnewebcams.di
 
+import fr.openium.auvergnewebcams.ui.sectionDetail.ViewModelSectionDetail
 import fr.openium.auvergnewebcams.ui.settings.SettingsViewModel
 import fr.openium.auvergnewebcams.ui.splash.ViewModelSplash
 import org.koin.androidx.viewmodel.dsl.viewModelOf
@@ -13,6 +14,10 @@ object KoinModules {
 
     val vmSettings = module {
         viewModelOf(::SettingsViewModel)
+    }
+
+    val vmSection = module {
+        viewModelOf(::ViewModelSectionDetail)
     }
 
 
