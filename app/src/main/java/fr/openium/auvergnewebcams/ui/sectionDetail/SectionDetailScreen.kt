@@ -67,6 +67,7 @@ fun SectionDetailScreen(
             val section = loadedState.section
             val webcams = loadedState.webcams.sortedBy { it.order }
 
+
             LazyColumn {
                 item {
                     SectionHeader(

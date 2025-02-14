@@ -1,8 +1,13 @@
 package fr.openium.auvergnewebcams.ui.sectionDetail
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
+import androidx.compose.ui.res.colorResource
 import fr.openium.auvergnewebcams.KEY_SECTION_ID
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractActivity
@@ -25,6 +30,7 @@ class ActivitySectionDetail : AbstractActivity() {
     // --- Life cycle
     // ---------------------------------------------------
 
+    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -36,10 +42,23 @@ class ActivitySectionDetail : AbstractActivity() {
 
         composeView.setContent {
             AWTheme {
-                SectionDetailScreen(sectionId, goToWebcamDetail = {
-                    AnalyticsUtils.webcamDetailsClicked(this, it.title ?: "")
-                    startActivity(ActivityWebcamDetail.getIntent(this, it))
-                })
+                Scaffold(
+                    backgroundColor = colorResource(id = R.color.grey_dark),
+                    topBar = {
+                        TopAppBar(
+                            title = { Text("Toolbar") },
+                            backgroundColor = colorResource(id = R.color.grey_very_dark)
+                        )
+                    }
+                ) {
+                    SectionDetailScreen(
+                        sectionId = sectionId,
+                        goToWebcamDetail = {
+                            AnalyticsUtils.webcamDetailsClicked(this, it.title ?: "")
+                            startActivity(ActivityWebcamDetail.getIntent(this, it))
+                        },
+                    )
+                }
             }
         }
 
