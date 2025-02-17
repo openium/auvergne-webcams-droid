@@ -1,16 +1,12 @@
 package fr.openium.auvergnewebcams.ui.sectionDetail
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
-import androidx.compose.ui.res.colorResource
 import fr.openium.auvergnewebcams.KEY_SECTION_ID
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractActivity
+import fr.openium.auvergnewebcams.ui.mapSection.ActivityMapSection
 import fr.openium.auvergnewebcams.ui.theme.AWTheme
 import fr.openium.auvergnewebcams.ui.webcamDetail.ActivityWebcamDetail
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
@@ -24,13 +20,10 @@ class ActivitySectionDetail : AbstractActivity() {
     override val layoutId: Int = R.layout.activity_section_detail
 
     override val showHomeAsUp: Boolean = true
-
-    // override fun getDefaultFragment(): Fragment? = FragmentSectionDetail()
-
+    
     // --- Life cycle
     // ---------------------------------------------------
 
-    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -42,23 +35,20 @@ class ActivitySectionDetail : AbstractActivity() {
 
         composeView.setContent {
             AWTheme {
-                Scaffold(
-                    backgroundColor = colorResource(id = R.color.grey_dark),
-                    topBar = {
-                        TopAppBar(
-                            title = { Text("Toolbar") },
-                            backgroundColor = colorResource(id = R.color.grey_very_dark)
+                SectionDetailScreen(
+                    sectionId = sectionId,
+                    goToWebcamDetail = {
+                        AnalyticsUtils.webcamDetailsClicked(this, it.title ?: "")
+                        startActivity(ActivityWebcamDetail.getIntent(this, it))
+                    },
+                    onNavigateBack = { finish() },
+                    onNavigateToMap = {
+                        startActivity(
+                            ActivityMapSection.getIntent(this, sectionId = sectionId)
                         )
-                    }
-                ) {
-                    SectionDetailScreen(
-                        sectionId = sectionId,
-                        goToWebcamDetail = {
-                            AnalyticsUtils.webcamDetailsClicked(this, it.title ?: "")
-                            startActivity(ActivityWebcamDetail.getIntent(this, it))
-                        },
-                    )
-                }
+                    },
+                )
+
             }
         }
 

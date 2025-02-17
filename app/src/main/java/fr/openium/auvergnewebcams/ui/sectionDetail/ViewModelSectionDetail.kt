@@ -14,11 +14,11 @@ import io.reactivex.Single
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import timber.log.Timber
 
 class ViewModelSectionDetail(app: Application) : AbstractViewModel(app), KoinComponent {
 
@@ -49,14 +49,11 @@ class ViewModelSectionDetail(app: Application) : AbstractViewModel(app), KoinCom
                     val section = sectionOptional.value ?: throw IllegalStateException("Section not found")
                     section to webcams
                 }
-                    .catch { e ->
-                        _state.value = State.Error(e)
-                    }
                     .collect { (section, webcams) ->
                         _state.value = State.Loaded(section, webcams)
                     }
             } catch (e: Exception) {
-                _state.value = State.Error(e)
+                Timber.e(e)
             }
         }
     }
@@ -64,7 +61,6 @@ class ViewModelSectionDetail(app: Application) : AbstractViewModel(app), KoinCom
     sealed interface State {
         object Loading : State
         data class Loaded(val section: Section, val webcams: List<Webcam>) : State
-        data class Error(val throwable: Throwable) : State
     }
 
 
