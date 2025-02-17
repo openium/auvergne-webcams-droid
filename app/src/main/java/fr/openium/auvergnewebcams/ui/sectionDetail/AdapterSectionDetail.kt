@@ -40,6 +40,9 @@ import java.util.Locale
 /**
  * Created by Openium on 19/02/2019.
  */
+
+//adapter a supprimer avec l'utilisation de la lazycolumn
+
 class AdapterSectionDetail(
     private var data: List<Data>,
     private val onWebcamClicked: ((Webcam) -> Unit),

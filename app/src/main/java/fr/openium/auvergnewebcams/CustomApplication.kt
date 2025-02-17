@@ -40,7 +40,8 @@ abstract class CustomApplication : Application() {
                     Modules.weatherModule,
                     Modules.repositoryModule,
                     KoinModules.vmSplash,
-                    KoinModules.vmSettings
+                    KoinModules.vmSettings,
+                    KoinModules.vmSection,
                 )
             )
         }

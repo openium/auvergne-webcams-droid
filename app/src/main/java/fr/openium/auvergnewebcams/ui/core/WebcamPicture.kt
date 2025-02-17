@@ -43,6 +43,8 @@ fun WebcamPicture(
     canBeHD: Boolean,
     goToWebcamDetail: () -> Unit,
     modifier: Modifier = Modifier,
+    startingAlpha: Float = 0.5f,
+    aspectRatio: Float = 10f,
     pageOffset: Float? = null,
 ) {
     var showProgress by remember { mutableStateOf(false) }
@@ -101,14 +103,14 @@ fun WebcamPicture(
                             }
                             // We animate the alpha, between 50% and 100%
                             alpha = lerp(
-                                start = 0.5f,
+                                start = startingAlpha,
                                 stop = 1f,
                                 fraction = 1f - pageOffset.coerceIn(0f, 1f)
                             )
                         }
                     } ?: modifier
                 }
-                .aspectRatio(16f / 10f)
+                .aspectRatio(16f / aspectRatio)
                 .clip(RoundedCornerShape(4.dp))
                 .background(color = AWAppTheme.colors.greyVeryDark)
                 .clickable(onClick = goToWebcamDetail),
@@ -141,7 +143,7 @@ fun WebcamPicture(
                                 }
                                 // We animate the alpha, between 50% and 100%
                                 alpha = lerp(
-                                    start = 0.5f,
+                                    start = startingAlpha,
                                     stop = 1f,
                                     fraction = 1f - pageOffset.coerceIn(0f, 1f)
                                 )
@@ -157,7 +159,7 @@ fun WebcamPicture(
                     Image(
                         modifier = Modifier
                             .size(104.dp)
-                            .aspectRatio(16f / 10f),
+                            .aspectRatio(16f / aspectRatio),
                         painter = painterResource(id = R.drawable.ic_broken_camera),
                         contentDescription = "",
                         contentScale = ContentScale.Inside
