@@ -8,28 +8,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.model.entity.Webcam
+import fr.openium.auvergnewebcams.ui.core.AWTopBar
 import fr.openium.auvergnewebcams.ui.core.SectionHeader
 import fr.openium.auvergnewebcams.ui.core.WebcamPicture
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
@@ -53,7 +46,7 @@ fun SectionDetailScreen(
         vm.loadSectionAndWebcams(sectionId)
     }
     val state by vm.state.collectAsState()
-    
+
     when (state) {
 
         is ViewModelSectionDetail.State.Loading -> {
@@ -70,40 +63,13 @@ fun SectionDetailScreen(
             val section = loadedState.section
             val webcams = loadedState.webcams.sortedBy { it.order }
 
-            Scaffold(
-                backgroundColor = colorResource(id = R.color.grey_dark),
-                topBar = {
-                    TopAppBar(
-                        title = {
-                            Text(text = section.title ?: "")
-                        },
-                        navigationIcon = {
-                            IconButton(onClick = {
-                                onNavigateBack()
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Default.ArrowBack,
-                                    contentDescription = "Arrow"
-                                )
-                            }
-                        },
-                        actions = {
-                            IconButton(onClick = {
-                                onNavigateToMap()
-                            }) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.map_icon_3),
-                                    contentDescription = stringResource(id = R.string.map_title)
-                                )
-                            }
-                        },
-                        backgroundColor = colorResource(id = R.color.grey_very_dark),
-                        contentColor = Color.White
-                    )
-                }
-            ) { paddingValues ->
+            Box(modifier = Modifier.fillMaxSize()) {
 
-                LazyColumn(modifier = Modifier.padding(paddingValues)) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 56.dp)
+                ) {
                     item {
                         SectionHeader(
                             title = section.title ?: "",
@@ -139,6 +105,15 @@ fun SectionDetailScreen(
                         )
                     }
                 }
+                AWTopBar(
+                    section.title ?: "",
+                    onNavigateBack,
+                    onNavigateToMap,
+                    icon = painterResource(id = R.drawable.map_icon_3),
+                    iconDescription = stringResource(id = R.string.map_title),
+                    modifier = Modifier.align(Alignment.TopCenter)
+                )
+
             }
         }
     }
