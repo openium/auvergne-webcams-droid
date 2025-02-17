@@ -1,6 +1,5 @@
 package fr.openium.auvergnewebcams.ui.sectionDetail
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,7 +38,6 @@ import fr.openium.auvergnewebcams.utils.WeatherUtils
 import org.koin.androidx.compose.koinViewModel
 
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun SectionDetailScreen(
     sectionId: Long,
@@ -55,9 +53,7 @@ fun SectionDetailScreen(
         vm.loadSectionAndWebcams(sectionId)
     }
     val state by vm.state.collectAsState()
-
-
-
+    
     when (state) {
 
         is ViewModelSectionDetail.State.Loading -> {
@@ -105,10 +101,9 @@ fun SectionDetailScreen(
                         contentColor = Color.White
                     )
                 }
-            ) {
+            ) { paddingValues ->
 
-
-                LazyColumn {
+                LazyColumn(modifier = Modifier.padding(paddingValues)) {
                     item {
                         SectionHeader(
                             title = section.title ?: "",
