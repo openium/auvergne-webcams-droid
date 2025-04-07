@@ -92,7 +92,8 @@ fun SectionItem(
                 canBeHD = canBeHD,
                 goToWebcamDetail = {
                     goToWebcamDetail(webcam)
-                }
+                },
+
             )
         }
     }

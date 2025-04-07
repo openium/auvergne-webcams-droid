@@ -92,7 +92,6 @@ fun WebcamPicture(
                 .let { modifier ->
                     pageOffset?.let {
                         modifier.graphicsLayer {
-                            // We animate the scaleX + scaleY, between 85% and 100%
                             lerp(
                                 start = 0.85f,
                                 stop = 1f,
@@ -101,7 +100,6 @@ fun WebcamPicture(
                                 scaleX = scale
                                 scaleY = scale / 1.2f
                             }
-                            // We animate the alpha, between 50% and 100%
                             alpha = lerp(
                                 start = startingAlpha,
                                 stop = 1f,
@@ -132,7 +130,6 @@ fun WebcamPicture(
                     .let { modifier ->
                         pageOffset?.let {
                             modifier.graphicsLayer {
-                                // We animate the scaleX + scaleY, between 85% and 100%
                                 lerp(
                                     start = 0.85f,
                                     stop = 1f,
@@ -141,7 +138,6 @@ fun WebcamPicture(
                                     scaleX = scale
                                     scaleY = scale
                                 }
-                                // We animate the alpha, between 50% and 100%
                                 alpha = lerp(
                                     start = startingAlpha,
                                     stop = 1f,

@@ -103,9 +103,9 @@ class SectionRepository(
             Optional.of(it)
         }
 
-    fun getSectionFlow(sectionId: Long): Flow<Optional<Section>> =
-        client.database.sectionDao().getSectionFlow(sectionId)
-            .map { section ->
+    fun getSectionWithCameras(sectionId: Long): Flow<Optional<SectionWithCameras>> =
+        client.database.sectionDao().getSectionWithCamerasFlow(sectionId)
+            .map { section: SectionWithCameras ->
                 Optional.of(section)
             }
 

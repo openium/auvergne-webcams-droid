@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 
 
 @Composable
@@ -26,7 +27,11 @@ fun AWTopBar(
 ) {
     TopAppBar(
         title = {
-            Text(text = title)
+            Text(
+                text = title,
+                color = AWAppTheme.colors.white,
+                style = AWAppTheme.typography.h1
+            )
         },
         navigationIcon = {
             IconButton(onClick = {
