@@ -86,6 +86,7 @@ fun SectionDetailScreen(
                             webcam = webcam,
                             imageLoader = vm.imageLoader,
                             canBeHD = vm.prefUtils.isWebcamsHighQuality,
+                            shouldDisplayBanner = true,
                             startingAlpha = 1f,
                             aspectRatio = 8f,
                             goToWebcamDetail = {

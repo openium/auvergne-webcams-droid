@@ -98,11 +98,6 @@ class SectionRepository(
         updateSectionsWeather(sectionsList.sections)
     }
 
-    fun getSectionSingle(sectionId: Long): Single<Optional<Section>> =
-        client.database.sectionDao().getSectionSingle(sectionId).map {
-            Optional.of(it)
-        }
-
     fun getSectionWithCameras(sectionId: Long): Flow<Optional<SectionWithCameras>> =
         client.database.sectionDao().getSectionWithCamerasFlow(sectionId)
             .map { section: SectionWithCameras ->

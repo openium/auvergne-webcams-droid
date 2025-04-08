@@ -42,7 +42,7 @@ fun WebcamItem(
                 webcam = webcam,
                 canBeHD = canBeHD,
                 imageLoader = imageLoader,
-                goToWebcamDetail = goToWebcamDetail
+                goToWebcamDetail = goToWebcamDetail,
             )
         }
 

@@ -22,18 +22,6 @@ interface WebcamDao {
     @Query("SELECT * FROM Webcam WHERE uid == :webcamId LIMIT 1")
     fun getWebcamSingle(webcamId: Long): Single<Webcam?>
 
-    @Query("SELECT * FROM Webcam WHERE uid = :webcamId LIMIT 1")
-    fun getWebcamFlow(webcamId: Long): Flow<Webcam?>
-
-    @Query("SELECT * FROM Webcam WHERE sectionUid = :sectionId")
-    fun getWebcamsFlow(sectionId: Long): Flow<List<Webcam>>
-
-    @Query("SELECT * FROM Webcam")
-    fun getWebcamsSingle(): Single<List<Webcam>>
-
-    @Query("SELECT * FROM Webcam WHERE sectionUid == :sectionId")
-    fun getWebcamsSingle(sectionId: Long): Single<List<Webcam>>
-
     @Query("SELECT * FROM Webcam WHERE imageLD LIKE '%' || :url || '%' OR imageHD LIKE '%' || :url || '%' OR mediaViewSurfLD LIKE '%' || :url || '%' OR mediaViewSurfHD LIKE '%' || :url || '%' ORDER BY uid ASC LIMIT 1")
     fun getWebcamWithPartialUrl(url: String): Webcam?
 

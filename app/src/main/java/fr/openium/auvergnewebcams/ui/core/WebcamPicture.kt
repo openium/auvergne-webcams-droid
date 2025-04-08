@@ -1,5 +1,6 @@
 package fr.openium.auvergnewebcams.ui.core
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -35,6 +37,7 @@ import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.ext.getUrlForWebcam
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
+import fr.openium.auvergnewebcams.utils.DateUtils
 
 @Composable
 fun WebcamPicture(
@@ -42,13 +45,18 @@ fun WebcamPicture(
     imageLoader: ImageLoader,
     canBeHD: Boolean,
     goToWebcamDetail: () -> Unit,
+    shouldDisplayBanner: Boolean = false,
     modifier: Modifier = Modifier,
     startingAlpha: Float = 0.5f,
     aspectRatio: Float = 10f,
     pageOffset: Float? = null,
 ) {
+    val dateUtils: DateUtils = org.koin.androidx.compose.get()
+    val context = LocalContext.current
+
     var showProgress by remember { mutableStateOf(false) }
     var showError by remember { mutableStateOf(false) }
+    var errorText by remember { mutableStateOf("") }
 
     val urlForWebcam by remember(
         webcam.lastUpdate,
@@ -78,6 +86,7 @@ fun WebcamPicture(
                 is AsyncImagePainter.State.Success -> {
                     showProgress = false
                     showError = false
+                    errorText = updateErrorText(context, dateUtils, webcam, shouldDisplayBanner)
                 }
             }
         }
@@ -122,35 +131,39 @@ fun WebcamPicture(
                 color = AWAppTheme.colors.white
             )
         }
-
-        if (showError) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .let { modifier ->
-                        pageOffset?.let {
-                            modifier.graphicsLayer {
-                                lerp(
-                                    start = 0.85f,
-                                    stop = 1f,
-                                    fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                                ).also { scale ->
-                                    scaleX = scale
-                                    scaleY = scale
-                                }
-                                alpha = lerp(
-                                    start = startingAlpha,
-                                    stop = 1f,
-                                    fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                                )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .let { modifier ->
+                    pageOffset?.let {
+                        modifier.graphicsLayer {
+                            lerp(
+                                start = 0.85f,
+                                stop = 1f,
+                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                            ).also { scale ->
+                                scaleX = scale
+                                scaleY = scale
                             }
-                        } ?: modifier
-                    }
-            ) {
+                            alpha = lerp(
+                                start = startingAlpha,
+                                stop = 1f,
+                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                            )
+                        }
+                    } ?: modifier
+                },
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            if (showError) {
                 Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(AWAppTheme.colors.greyVeryDarkTransparent)
+                        .padding(8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.padding(8.dp)
+                    verticalArrangement = Arrangement.Bottom
                 ) {
                     Image(
                         modifier = Modifier
@@ -160,18 +173,41 @@ fun WebcamPicture(
                         contentDescription = "",
                         contentScale = ContentScale.Inside
                     )
-
                     Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(color = AWAppTheme.colors.greyVeryDarkTransparent),
+                        modifier = Modifier.fillMaxWidth(),
                         text = stringResource(id = R.string.generic_not_up_to_date),
                         color = AWAppTheme.colors.white,
                         style = AWAppTheme.typography.p3,
                         textAlign = TextAlign.Center
                     )
                 }
+            } else {
+                if (errorText.isNotEmpty()) {
+                    Text(
+                        text = errorText,
+                        color = AWAppTheme.colors.greyLight,
+                        style = AWAppTheme.typography.p3,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(AWAppTheme.colors.greyVeryDarkTransparent)
+                            .padding(8.dp)
+                    )
+                }
             }
         }
+    }
+}
+
+fun updateErrorText(
+    context: Context,
+    dateUtils: DateUtils,
+    webcam: Webcam,
+    shouldDisplay: Boolean = false
+): String {
+    return when {
+        !shouldDisplay -> ""
+        dateUtils.isUpToDate(webcam.lastUpdate) -> ""
+        else -> context.getString(R.string.generic_not_up_to_date)
     }
 }
