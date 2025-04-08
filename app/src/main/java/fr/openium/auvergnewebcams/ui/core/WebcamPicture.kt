@@ -154,7 +154,6 @@ fun WebcamPicture(
                         }
                     } ?: modifier
                 },
-            contentAlignment = Alignment.BottomCenter
         ) {
             if (showError) {
                 Column(
@@ -163,7 +162,7 @@ fun WebcamPicture(
                         .background(AWAppTheme.colors.greyVeryDarkTransparent)
                         .padding(8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Bottom
+                    verticalArrangement = Arrangement.Center
                 ) {
                     Image(
                         modifier = Modifier
