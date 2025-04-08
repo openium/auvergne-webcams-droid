@@ -1,6 +1,5 @@
 package fr.openium.auvergnewebcams.ui.core
 
-import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -45,8 +44,8 @@ fun WebcamPicture(
     imageLoader: ImageLoader,
     canBeHD: Boolean,
     goToWebcamDetail: () -> Unit,
-    shouldDisplayBanner: Boolean = false,
     modifier: Modifier = Modifier,
+    shouldDisplayBanner: Boolean = false,
     startingAlpha: Float = 0.5f,
     aspectRatio: Float = 10f,
     pageOffset: Float? = null,
@@ -56,7 +55,7 @@ fun WebcamPicture(
 
     var showProgress by remember { mutableStateOf(false) }
     var showError by remember { mutableStateOf(false) }
-    var errorText by remember { mutableStateOf("") }
+    var errorText by remember { mutableStateOf(false) }
 
     val urlForWebcam by remember(
         webcam.lastUpdate,
@@ -86,7 +85,7 @@ fun WebcamPicture(
                 is AsyncImagePainter.State.Success -> {
                     showProgress = false
                     showError = false
-                    errorText = updateErrorText(context, dateUtils, webcam, shouldDisplayBanner)
+                    errorText = updateErrorText(dateUtils, webcam, shouldDisplayBanner)
                 }
             }
         }
@@ -181,9 +180,9 @@ fun WebcamPicture(
                     )
                 }
             } else {
-                if (errorText.isNotEmpty()) {
+                if (errorText) {
                     Text(
-                        text = errorText,
+                        text = context.getString(R.string.generic_not_up_to_date),
                         color = AWAppTheme.colors.greyLight,
                         style = AWAppTheme.typography.p3,
                         textAlign = TextAlign.Center,
@@ -199,14 +198,13 @@ fun WebcamPicture(
 }
 
 fun updateErrorText(
-    context: Context,
     dateUtils: DateUtils,
     webcam: Webcam,
     shouldDisplay: Boolean = false
-): String {
+): Boolean {
     return when {
-        !shouldDisplay -> ""
-        dateUtils.isUpToDate(webcam.lastUpdate) -> ""
-        else -> context.getString(R.string.generic_not_up_to_date)
+        !shouldDisplay -> false
+        dateUtils.isUpToDate(webcam.lastUpdate) -> false
+        else -> true
     }
 }

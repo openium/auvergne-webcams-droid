@@ -21,9 +21,9 @@ fun AWTopBar(
     title: String,
     onNavigateBack: () -> Unit,
     onNavigateTo: () -> Unit,
+    modifier: Modifier = Modifier,
     icon: Painter = painterResource(id = R.drawable.ic_close),
     iconDescription: String = "",
-    modifier: Modifier,
 ) {
     TopAppBar(
         title = {
@@ -39,6 +39,7 @@ fun AWTopBar(
             }) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
+                    tint = AWAppTheme.colors.white,
                     contentDescription = "Arrow"
                 )
             }
