@@ -42,6 +42,7 @@ abstract class CustomApplication : Application() {
                     KoinModules.vmSplash,
                     KoinModules.vmSettings,
                     KoinModules.vmSection,
+                    KoinModules.vmDetails,
                 )
             )
         }

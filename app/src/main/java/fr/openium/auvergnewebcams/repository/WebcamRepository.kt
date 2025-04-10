@@ -5,6 +5,7 @@ import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.utils.DateUtils
 import fr.openium.auvergnewebcams.utils.Optional
 import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 /**
@@ -17,6 +18,11 @@ class WebcamRepository(private val client: AWClient, private val dateUtils: Date
 
     fun getWebcamSingle(webcamId: Long): Single<Optional<Webcam>> =
         client.database.webcamDao().getWebcamSingle(webcamId).map {
+            Optional.of(it)
+        }
+
+    fun getWebcamFlow(webcamId: Long): Flow<Optional<Webcam>> =
+        client.database.webcamDao().getWebcamFlow(webcamId).map {
             Optional.of(it)
         }
 
