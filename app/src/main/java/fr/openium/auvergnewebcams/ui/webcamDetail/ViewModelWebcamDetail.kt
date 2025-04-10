@@ -1,10 +1,10 @@
 package fr.openium.auvergnewebcams.ui.webcamDetail
 
-import android.app.Application
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import fr.openium.auvergnewebcams.base.AbstractViewModel
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.repository.WebcamRepository
+import fr.openium.auvergnewebcams.utils.DateUtils
 import fr.openium.auvergnewebcams.utils.Optional
 import fr.openium.auvergnewebcams.utils.PreferencesUtils
 import io.reactivex.Single
@@ -18,14 +18,14 @@ import org.koin.core.component.inject
 import timber.log.Timber
 
 
-class ViewModelWebcamDetail(app: Application) : AbstractViewModel(app), KoinComponent {
+class ViewModelWebcamDetail : ViewModel(), KoinComponent {
 
     private val _state = MutableStateFlow<State>(State.Loading)
     val state: StateFlow<State> = _state
 
     private val webcamRepository by inject<WebcamRepository>()
     val prefUtils: PreferencesUtils by inject()
-
+    val dateUtils: DateUtils by inject()
 
     fun loadWebcam(webcamId: Long) {
         viewModelScope.launch {
@@ -34,13 +34,11 @@ class ViewModelWebcamDetail(app: Application) : AbstractViewModel(app), KoinComp
                 .map { optionalWebcam -> optionalWebcam.value }
                 .catch { e ->
                     Timber.e(e)
-                    _state.value = State.Error(e.message ?: "Error loading webcam")
                 }
                 .collect { webcam ->
-                    if (webcam == null) {
-                        _state.value = State.Error("Webcam not found")
-                    } else {
+                    if (webcam != null) {
                         _state.value = State.Loaded(webcam)
+
                     }
                 }
         }
@@ -55,6 +53,5 @@ class ViewModelWebcamDetail(app: Application) : AbstractViewModel(app), KoinComp
     sealed interface State {
         object Loading : State
         data class Loaded(val webcam: Webcam) : State
-        data class Error(val message: String) : State
     }
 }

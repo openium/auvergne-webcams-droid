@@ -1,9 +1,9 @@
 package fr.openium.auvergnewebcams.ui.splash
 
-import android.app.Application
+import android.content.Context
+import androidx.lifecycle.ViewModel
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParser
-import fr.openium.auvergnewebcams.base.AbstractViewModel
 import fr.openium.auvergnewebcams.event.eventHasNetwork
 import fr.openium.auvergnewebcams.repository.SectionRepository
 import fr.openium.auvergnewebcams.rest.model.SectionList
@@ -15,7 +15,7 @@ import timber.log.Timber
 import java.io.InputStreamReader
 import java.util.concurrent.TimeUnit
 
-class ViewModelSplash(app: Application) : AbstractViewModel(app), KoinComponent {
+class ViewModelSplash : ViewModel(), KoinComponent {
 
     private val sectionRepository by inject<SectionRepository>()
 
@@ -24,32 +24,32 @@ class ViewModelSplash(app: Application) : AbstractViewModel(app), KoinComponent 
     }
 
     // Update all the data the app needs
-    fun updateData(): Completable =
+    fun updateData(context: Context): Completable =
         Completable.timer(MINIMUM_SECONDS_TO_WAIT, TimeUnit.SECONDS).fromIOToMain().mergeWith(
             if (eventHasNetwork.value == true) {
                 sectionRepository.fetch().doOnSuccess {
                     Timber.d("Loading from network")
                 }.doOnError {
                     Timber.e(it)
-                    loadFromJson()
+                    loadFromJson(context)
                 }.ignoreElement()
             } else {
                 // If we don't have internet connection
                 Completable.fromCallable {
-                    loadFromJson()
+                    loadFromJson(context)
                 }
             }
         ).fromIOToMain()
 
     // If there is no access to the online content, just load the local one
-    private fun loadFromJson() {
+    private fun loadFromJson(context: Context) {
         Timber.d("Loading local.json")
 
         // Get sections from DB
         val sections = sectionRepository.getSections()
 
         if (sections.isEmpty()) {
-            getSectionsFromAssets()?.also {
+            getSectionsFromAssets(context)?.also {
                 sectionRepository.insertSectionsAndWebcams(it)
             }
         } else {
@@ -58,7 +58,7 @@ class ViewModelSplash(app: Application) : AbstractViewModel(app), KoinComponent 
     }
 
     // The function that load data from .json
-    private fun getSectionsFromAssets(): SectionList? {
+    private fun getSectionsFromAssets(context: Context): SectionList? {
         val inputStream = context.assets.open("aw-config.json")
         val gson = GsonBuilder().create()
         val jsonReader = JsonParser().parse(InputStreamReader(inputStream))

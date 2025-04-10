@@ -36,6 +36,7 @@ class ActivityWebcamDetail : AbstractActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val webcamId = intent?.getLongExtra(KEY_WEBCAM_ID, 0L) ?: 0L
         val typeWebcam = intent?.getStringExtra(KEY_WEBCAM_TYPE)
+        
         super.onCreate(savedInstanceState)
         setContent {
             AWTheme {

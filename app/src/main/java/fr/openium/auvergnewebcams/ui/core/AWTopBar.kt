@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
@@ -30,7 +29,7 @@ fun AWTopBar(
             Text(
                 text = title,
                 color = AWAppTheme.colors.white,
-                style = AWAppTheme.typography.h1
+                style = AWAppTheme.typography.p1
             )
         },
         navigationIcon = {
@@ -53,7 +52,7 @@ fun AWTopBar(
                 )
             }
         },
-        backgroundColor = colorResource(id = R.color.grey_very_dark),
+        backgroundColor = AWAppTheme.colors.greyDark,
         contentColor = Color.White,
         modifier = modifier
     )

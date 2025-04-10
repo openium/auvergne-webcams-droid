@@ -1,8 +1,7 @@
 package fr.openium.auvergnewebcams.ui.search
 
-import android.app.Application
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import fr.openium.auvergnewebcams.base.AbstractViewModel
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.repository.WebcamRepository
 import kotlinx.coroutines.Job
@@ -17,7 +16,7 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class SearchViewModel(app: Application) : AbstractViewModel(app), KoinComponent {
+class SearchViewModel : ViewModel(), KoinComponent {
 
     private val webcamRepository by inject<WebcamRepository>()
 
