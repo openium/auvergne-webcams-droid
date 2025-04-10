@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -35,6 +36,7 @@ import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.ext.getUrlForWebcam
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
+import fr.openium.auvergnewebcams.utils.DateUtils
 
 @Composable
 fun WebcamPicture(
@@ -43,10 +45,17 @@ fun WebcamPicture(
     canBeHD: Boolean,
     goToWebcamDetail: () -> Unit,
     modifier: Modifier = Modifier,
+    shouldDisplayBanner: Boolean = false,
+    startingAlpha: Float = 0.5f,
+    aspectRatio: Float = 10f,
     pageOffset: Float? = null,
 ) {
+    val dateUtils: DateUtils = org.koin.androidx.compose.get()
+    val context = LocalContext.current
+
     var showProgress by remember { mutableStateOf(false) }
     var showError by remember { mutableStateOf(false) }
+    var errorText by remember { mutableStateOf(false) }
 
     val urlForWebcam by remember(
         webcam.lastUpdate,
@@ -76,6 +85,7 @@ fun WebcamPicture(
                 is AsyncImagePainter.State.Success -> {
                     showProgress = false
                     showError = false
+                    errorText = updateErrorText(dateUtils, webcam, shouldDisplayBanner)
                 }
             }
         }
@@ -90,7 +100,6 @@ fun WebcamPicture(
                 .let { modifier ->
                     pageOffset?.let {
                         modifier.graphicsLayer {
-                            // We animate the scaleX + scaleY, between 85% and 100%
                             lerp(
                                 start = 0.85f,
                                 stop = 1f,
@@ -99,16 +108,15 @@ fun WebcamPicture(
                                 scaleX = scale
                                 scaleY = scale / 1.2f
                             }
-                            // We animate the alpha, between 50% and 100%
                             alpha = lerp(
-                                start = 0.5f,
+                                start = startingAlpha,
                                 stop = 1f,
                                 fraction = 1f - pageOffset.coerceIn(0f, 1f)
                             )
                         }
                     } ?: modifier
                 }
-                .aspectRatio(16f / 10f)
+                .aspectRatio(16f / aspectRatio)
                 .clip(RoundedCornerShape(4.dp))
                 .background(color = AWAppTheme.colors.greyVeryDark)
                 .clickable(onClick = goToWebcamDetail),
@@ -122,58 +130,81 @@ fun WebcamPicture(
                 color = AWAppTheme.colors.white
             )
         }
-
-        if (showError) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .let { modifier ->
-                        pageOffset?.let {
-                            modifier.graphicsLayer {
-                                // We animate the scaleX + scaleY, between 85% and 100%
-                                lerp(
-                                    start = 0.85f,
-                                    stop = 1f,
-                                    fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                                ).also { scale ->
-                                    scaleX = scale
-                                    scaleY = scale
-                                }
-                                // We animate the alpha, between 50% and 100%
-                                alpha = lerp(
-                                    start = 0.5f,
-                                    stop = 1f,
-                                    fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                                )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .let { modifier ->
+                    pageOffset?.let {
+                        modifier.graphicsLayer {
+                            lerp(
+                                start = 0.85f,
+                                stop = 1f,
+                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                            ).also { scale ->
+                                scaleX = scale
+                                scaleY = scale
                             }
-                        } ?: modifier
-                    }
-            ) {
+                            alpha = lerp(
+                                start = startingAlpha,
+                                stop = 1f,
+                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                            )
+                        }
+                    } ?: modifier
+                },
+        ) {
+            if (showError) {
                 Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(AWAppTheme.colors.greyVeryDarkTransparent)
+                        .padding(8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.padding(8.dp)
+                    verticalArrangement = Arrangement.Center
                 ) {
                     Image(
                         modifier = Modifier
                             .size(104.dp)
-                            .aspectRatio(16f / 10f),
+                            .aspectRatio(16f / aspectRatio),
                         painter = painterResource(id = R.drawable.ic_broken_camera),
                         contentDescription = "",
                         contentScale = ContentScale.Inside
                     )
-
                     Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(color = AWAppTheme.colors.greyVeryDarkTransparent),
+                        modifier = Modifier.fillMaxWidth(),
                         text = stringResource(id = R.string.generic_not_up_to_date),
                         color = AWAppTheme.colors.white,
                         style = AWAppTheme.typography.p3,
                         textAlign = TextAlign.Center
                     )
                 }
+            } else {
+                if (errorText) {
+                    Text(
+                        text = context.getString(R.string.generic_not_up_to_date),
+                        color = AWAppTheme.colors.greyLight,
+                        style = AWAppTheme.typography.p3,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(AWAppTheme.colors.greyVeryDarkTransparent)
+                            .padding(8.dp)
+                    )
+                }
             }
         }
+    }
+}
+
+fun updateErrorText(
+    dateUtils: DateUtils,
+    webcam: Webcam,
+    shouldDisplay: Boolean = false
+): Boolean {
+    return when {
+        !shouldDisplay -> false
+        dateUtils.isUpToDate(webcam.lastUpdate) -> false
+        else -> true
     }
 }

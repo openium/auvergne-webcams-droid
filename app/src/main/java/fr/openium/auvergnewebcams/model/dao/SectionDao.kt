@@ -18,8 +18,8 @@ interface SectionDao {
 
     // Query
 
-    @Query("SELECT * FROM Section WHERE uid == :sectionId LIMIT 1")
-    fun getSectionSingle(sectionId: Long): Single<Section>
+    @Query("SELECT * FROM Section WHERE uid = :sectionId LIMIT 1")
+    fun getSectionWithCamerasFlow(sectionId: Long): Flow<SectionWithCameras>
 
     @Query("SELECT * FROM Section WHERE uid == :sectionId LIMIT 1")
     fun watchSectionWithCameras(sectionId: Long): Single<SectionWithCameras>

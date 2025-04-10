@@ -5,6 +5,7 @@ import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.utils.DateUtils
 import fr.openium.auvergnewebcams.utils.Optional
 import io.reactivex.Single
+import kotlinx.coroutines.flow.map
 
 /**
  * Created by Openium on 19/02/2019.
@@ -18,9 +19,6 @@ class WebcamRepository(private val client: AWClient, private val dateUtils: Date
         client.database.webcamDao().getWebcamSingle(webcamId).map {
             Optional.of(it)
         }
-
-    fun getWebcamsSingle(sectionId: Long): Single<List<Webcam>> =
-        client.database.webcamDao().getWebcamsSingle(sectionId)
 
     fun watchAllWebcams() = client.database.webcamDao().watchAllWebcams()
 

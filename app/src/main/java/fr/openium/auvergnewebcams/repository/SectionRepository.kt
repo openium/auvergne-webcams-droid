@@ -17,6 +17,7 @@ import fr.openium.rxtools.ext.fromIOToMain
 import io.reactivex.Completable
 import io.reactivex.Single
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import timber.log.Timber
 
 /**
@@ -97,10 +98,11 @@ class SectionRepository(
         updateSectionsWeather(sectionsList.sections)
     }
 
-    fun getSectionSingle(sectionId: Long): Single<Optional<Section>> =
-        client.database.sectionDao().getSectionSingle(sectionId).map {
-            Optional.of(it)
-        }
+    fun getSectionWithCameras(sectionId: Long): Flow<Optional<SectionWithCameras>> =
+        client.database.sectionDao().getSectionWithCamerasFlow(sectionId)
+            .map { section: SectionWithCameras ->
+                Optional.of(section)
+            }
 
     fun watchSectionWithCameras(sectionId: Long): Single<Optional<SectionWithCameras>> =
         client.database.sectionDao().watchSectionWithCameras(sectionId).map {

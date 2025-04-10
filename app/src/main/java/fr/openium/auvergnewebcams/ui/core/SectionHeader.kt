@@ -1,4 +1,4 @@
-package fr.openium.auvergnewebcams.ui.main.components
+package fr.openium.auvergnewebcams.ui.core
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
@@ -26,6 +26,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.ui.main.components.SectionWeather
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 import fr.openium.auvergnewebcams.ui.theme.AWTheme
 
@@ -42,7 +43,9 @@ fun SectionHeader(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = goToSectionList)
+            .clickable(
+                onClick = goToSectionList,
+            )
             .padding(horizontal = 24.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
