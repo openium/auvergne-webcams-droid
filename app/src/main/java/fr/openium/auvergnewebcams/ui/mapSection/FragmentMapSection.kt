@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.ViewModelProvider
 import fr.openium.auvergnewebcams.KEY_SECTION_ID
 import fr.openium.auvergnewebcams.R
@@ -13,7 +14,6 @@ import fr.openium.auvergnewebcams.ui.theme.AWTheme
 import fr.openium.kotlintools.ext.setTitle
 import fr.openium.rxtools.ext.fromIOToMain
 import io.reactivex.rxkotlin.addTo
-import kotlinx.android.synthetic.main.fragment_search.composeView
 import timber.log.Timber
 
 class FragmentMapSection : AbstractFragmentMap() {
@@ -55,7 +55,7 @@ class FragmentMapSection : AbstractFragmentMap() {
                         )
                     )
 
-                    composeView.setContent {
+                    requireView().findViewById<ComposeView>(R.id.composeView).setContent {
                         AWTheme {
                             val mapStyle by viewModelMap.mapStyle.collectAsState()
                             val canBeHD = prefUtils.isWebcamsHighQuality

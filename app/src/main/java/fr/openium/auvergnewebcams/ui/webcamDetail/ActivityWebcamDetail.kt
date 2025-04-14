@@ -3,7 +3,7 @@ package fr.openium.auvergnewebcams.ui.webcamDetail
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.compose.setContent
+import androidx.compose.ui.platform.ComposeView
 import fr.openium.auvergnewebcams.KEY_WEBCAM_ID
 import fr.openium.auvergnewebcams.KEY_WEBCAM_TYPE
 import fr.openium.auvergnewebcams.R
@@ -36,18 +36,21 @@ class ActivityWebcamDetail : AbstractActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val webcamId = intent?.getLongExtra(KEY_WEBCAM_ID, 0L) ?: 0L
         val typeWebcam = intent?.getStringExtra(KEY_WEBCAM_TYPE)
-        
+
         super.onCreate(savedInstanceState)
-        setContent {
+
+        findViewById<ComposeView>(R.id.composeView).setContent {
             AWTheme {
                 DetailScreen(
                     webcamId = webcamId,
                     typeWebcam = typeWebcam,
                     onNavigateBack = { finish() },
                 )
+
             }
         }
     }
+
 
     //
 //    override fun onConfigurationChanged(newConfig: Configuration) {

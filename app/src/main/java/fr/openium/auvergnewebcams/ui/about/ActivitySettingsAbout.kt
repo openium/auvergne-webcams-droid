@@ -1,11 +1,11 @@
 package fr.openium.auvergnewebcams.ui.about
 
 import android.os.Bundle
+import androidx.compose.ui.platform.ComposeView
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractActivity
 import fr.openium.auvergnewebcams.ui.about.components.AboutScreen
 import fr.openium.auvergnewebcams.ui.theme.AWTheme
-import kotlinx.android.synthetic.main.fragment_main.composeView
 
 class ActivitySettingsAbout : AbstractActivity() {
 
@@ -17,7 +17,7 @@ class ActivitySettingsAbout : AbstractActivity() {
         super.onCreate(savedInstanceState)
         overridePendingTransition(R.anim.animation_from_right, R.anim.animation_to_left)
 
-        composeView.setContent {
+        findViewById<ComposeView>(R.id.composeView).setContent {
             AWTheme {
                 AboutScreen()
             }

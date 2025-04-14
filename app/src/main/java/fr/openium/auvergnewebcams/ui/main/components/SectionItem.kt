@@ -94,7 +94,7 @@ fun SectionItem(
                     goToWebcamDetail(webcam)
                 },
 
-            )
+                )
         }
     }
 

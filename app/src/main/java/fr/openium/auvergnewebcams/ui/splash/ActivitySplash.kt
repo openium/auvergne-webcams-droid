@@ -1,12 +1,12 @@
 package fr.openium.auvergnewebcams.ui.splash
 
 import android.os.Bundle
+import androidx.compose.ui.platform.ComposeView
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractActivity
 import fr.openium.auvergnewebcams.ui.main.ActivityMain
 import fr.openium.auvergnewebcams.ui.theme.AWTheme
 import fr.openium.kotlintools.ext.startActivity
-import kotlinx.android.synthetic.main.fragment_search.composeView
 
 class ActivitySplash : AbstractActivity() {
 
@@ -14,7 +14,7 @@ class ActivitySplash : AbstractActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        composeView.setContent {
+        findViewById<ComposeView>(R.id.composeView).setContent {
             AWTheme {
                 SplashScreen(goToMain = { startActivityMain() })
             }

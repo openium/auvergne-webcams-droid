@@ -3,6 +3,7 @@ package fr.openium.auvergnewebcams.ui.sectionDetail
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.compose.ui.platform.ComposeView
 import fr.openium.auvergnewebcams.KEY_SECTION_ID
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractActivity
@@ -10,7 +11,6 @@ import fr.openium.auvergnewebcams.ui.mapSection.ActivityMapSection
 import fr.openium.auvergnewebcams.ui.theme.AWTheme
 import fr.openium.auvergnewebcams.ui.webcamDetail.ActivityWebcamDetail
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
-import kotlinx.android.synthetic.main.activity_section_detail.composeView
 
 /**
  * Created by Openium on 19/02/2019.
@@ -20,7 +20,7 @@ class ActivitySectionDetail : AbstractActivity() {
     override val layoutId: Int = R.layout.activity_section_detail
 
     override val showHomeAsUp: Boolean = true
-    
+
     // --- Life cycle
     // ---------------------------------------------------
 
@@ -33,7 +33,7 @@ class ActivitySectionDetail : AbstractActivity() {
             return
         }
 
-        composeView.setContent {
+        findViewById<ComposeView>(R.id.composeView).setContent {
             AWTheme {
                 SectionDetailScreen(
                     sectionId = sectionId,

@@ -1,11 +1,15 @@
 package fr.openium.auvergnewebcams.broadcast
 
+import android.Manifest
+import android.app.Activity
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import fr.openium.auvergnewebcams.R
@@ -45,6 +49,8 @@ object AppNotifier {
         }
     }
 
+    private const val REQUEST_CODE_POST_NOTIFICATIONS = 1002
+
     private fun sendNotification(
         context: Context,
         idNotif: Int,
@@ -79,7 +85,6 @@ object AppNotifier {
                 setStyle(
                     NotificationCompat.BigPictureStyle()
                         .bigPicture(it)
-                        .bigLargeIcon(null)
                 )
             } ?: setStyle(NotificationCompat.BigTextStyle().bigText(description))
 
@@ -96,11 +101,22 @@ object AppNotifier {
             }
         }
 
-        // Init channels before notify
         NotificationUtils.initChannels(context)
+        val notificationManager = NotificationManagerCompat.from(context)
 
         // Notify
-        val notificationManager = NotificationManagerCompat.from(context)
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            if (context is Activity) {
+                ActivityCompat.requestPermissions(
+                    context,
+                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                    REQUEST_CODE_POST_NOTIFICATIONS
+                )
+            }
+            return
+        }
+
+
         notificationManager.notify(idNotif, builder.build())
     }
 }

@@ -37,6 +37,7 @@ import fr.openium.auvergnewebcams.ext.getUrlForWebcam
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 import fr.openium.auvergnewebcams.utils.DateUtils
+import org.koin.java.KoinJavaComponent
 
 @Composable
 fun WebcamPicture(
@@ -50,7 +51,8 @@ fun WebcamPicture(
     aspectRatio: Float = 10f,
     pageOffset: Float? = null,
 ) {
-    val dateUtils: DateUtils = org.koin.androidx.compose.get()
+    val dateUtils: DateUtils = KoinJavaComponent.get(DateUtils::class.java)
+
     val context = LocalContext.current
 
     var showProgress by remember { mutableStateOf(false) }
