@@ -20,9 +20,13 @@ fun AWTopBar(
     title: String,
     onNavigateBack: () -> Unit,
     onNavigateTo: () -> Unit,
+    onNavigateToOpt: () -> Unit,
     modifier: Modifier = Modifier,
     icon: Painter = painterResource(id = R.drawable.ic_close),
     iconDescription: String = "",
+    iconOpt: Painter = painterResource(id = R.drawable.ic_close),
+    iconDescriptionOpt: String = "",
+    isOptionalButtton: Boolean = false,
 ) {
     TopAppBar(
         title = {
@@ -44,6 +48,15 @@ fun AWTopBar(
             }
         },
         actions = {
+            if (isOptionalButtton) {
+                IconButton(onClick = onNavigateToOpt) {
+                    Icon(
+                        painter = iconOpt,
+                        contentDescription = iconDescriptionOpt,
+                        tint = Color.White
+                    )
+                }
+            }
             IconButton(onClick = onNavigateTo) {
                 Icon(
                     painter = icon,
@@ -52,7 +65,7 @@ fun AWTopBar(
                 )
             }
         },
-        backgroundColor = AWAppTheme.colors.greyDark,
+        backgroundColor = AWAppTheme.colors.greyVeryDark,
         contentColor = Color.White,
         modifier = modifier
     )

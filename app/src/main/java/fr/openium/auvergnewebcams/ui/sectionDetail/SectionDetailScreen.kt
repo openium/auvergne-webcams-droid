@@ -112,7 +112,9 @@ fun SectionDetailScreen(
                     onNavigateToMap,
                     icon = painterResource(id = R.drawable.map_icon_3),
                     iconDescription = stringResource(id = R.string.map_title),
-                    modifier = Modifier.align(Alignment.TopCenter)
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    isOptionalButtton = false,
+                    onNavigateToOpt = {}
                 )
 
             }
