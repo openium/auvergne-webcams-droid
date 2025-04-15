@@ -1,8 +1,11 @@
 package fr.openium.auvergnewebcams.ui.webcamDetail
 
+import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.net.Uri
+import android.os.Environment
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.foundation.Image
@@ -14,8 +17,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -115,45 +119,19 @@ fun DetailScreen(
             )
 
             Scaffold(
+                backgroundColor = AWAppTheme.colors.greyVeryDark,
                 scaffoldState = scaffoldState,
                 topBar = {
                     if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
 
-                        Box(modifier = Modifier.fillMaxWidth()) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .statusBarsPadding()
+                        ) {
+
                             Column {
-                                DropdownMenu(
-                                    expanded = menuExpanded,
-                                    onDismissRequest = { menuExpanded = false },
-                                    modifier = Modifier
-                                        .wrapContentSize(Alignment.TopEnd)
-                                        .background(AWAppTheme.colors.greyMedium)
-                                ) {
-                                    DropdownMenuItem(onClick = {
-                                        menuExpanded = false
-                                        shareWebcam(
-                                            webcam = webcam,
-                                            typeWebcam = typeWebcam ?: "",
-                                            context,
-                                            coroutineScope,
-                                            scaffoldState
-                                        )
-                                    }) {
-                                        Text(
-                                            text = stringResource(id = R.string.detail_share_menu),
-                                            color = AWAppTheme.colors.white,
-                                            style = AWAppTheme.typography.p1
-                                        )
-                                    }
-                                    DropdownMenuItem(onClick = {
-                                        menuExpanded = false
-                                    }) {
-                                        Text(
-                                            text = stringResource(id = R.string.detail_save_menu),
-                                            color = AWAppTheme.colors.white,
-                                            style = AWAppTheme.typography.p1
-                                        )
-                                    }
-                                }
+
                                 AWTopBar(
                                     title = if (state is ViewModelWebcamDetail.State.Loaded)
                                         (state as ViewModelWebcamDetail.State.Loaded).webcam.title ?: ""
@@ -162,11 +140,51 @@ fun DetailScreen(
                                     onNavigateTo = { menuExpanded = true },
                                     icon = painterResource(id = R.drawable.ic_more),
                                     iconDescription = stringResource(id = R.string.map_title),
-                                    isOptionalButtton = true,
+                                    isOptionalButton = true,
                                     iconOpt = painterResource(id = R.drawable.ic_refresh),
                                     iconDescriptionOpt = stringResource(id = R.string.detail_refresh_menu),
                                     onNavigateToOpt = {
                                         vm.loadWebcam(webcamId)
+                                    },
+                                    dropdownMenu = {
+                                        DropdownMenu(
+                                            expanded = menuExpanded,
+                                            onDismissRequest = { menuExpanded = false },
+                                            modifier = Modifier
+                                                .background(AWAppTheme.colors.greyMedium)
+                                        ) {
+                                            DropdownMenuItem(onClick = {
+                                                menuExpanded = false
+                                                shareWebcam(
+                                                    webcam = webcam,
+                                                    typeWebcam = typeWebcam ?: "",
+                                                    context,
+                                                    coroutineScope,
+                                                    scaffoldState
+                                                )
+                                            }) {
+                                                Text(
+                                                    text = stringResource(id = R.string.detail_share_menu),
+                                                    color = AWAppTheme.colors.white,
+                                                    style = AWAppTheme.typography.p1
+                                                )
+                                            }
+                                            DropdownMenuItem(onClick = {
+                                                menuExpanded = false
+                                                if (typeWebcam == "viewsurf" || typeWebcam == "video") {
+                                                    saveWebcam(context, webcam, true, coroutineScope, scaffoldState)
+                                                } else {
+                                                    saveWebcam(context, webcam, false, coroutineScope, scaffoldState)
+
+                                                }
+                                            }) {
+                                                Text(
+                                                    text = stringResource(id = R.string.detail_save_menu),
+                                                    color = AWAppTheme.colors.white,
+                                                    style = AWAppTheme.typography.p1
+                                                )
+                                            }
+                                        }
                                     },
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -184,6 +202,8 @@ fun DetailScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(paddingValues)
+                            .navigationBarsPadding()
+
                     ) {
                         Box(modifier = Modifier.weight(1f)) {
                             if (typeWebcam == "viewsurf" || typeWebcam == "video") {
@@ -406,17 +426,38 @@ fun shareWebcam(
 }
 
 
-//
-//fun saveWebcam(
-//    webcam: Webcam,
-//    typeWebcam: String,
-//    context: Context,
-//    coroutineScope: CoroutineScope,
-//    scaffoldState: ScaffoldState
-//) {
-//    val urlSrc = webcam.getUrlForWebcam(canBeHD = true, canBeVideo = true)
-//    val fileName = String.format("%s_%s.mp4", webcam.title ?: "", System.currentTimeMillis().toString())
-//
-//    startService(urlSrc, false, fileName)
-//}
+fun saveWebcam(
+    context: Context, webcam: Webcam, isVideo: Boolean = false, coroutineScope: CoroutineScope,
+    scaffoldState: ScaffoldState
+) {
+    val urlSrc = if (isVideo) {
+        webcam.getUrlForWebcam(canBeHD = true, canBeVideo = true)
+    } else {
+        webcam.getUrlForWebcam(canBeHD = true, canBeVideo = false)
+    }
 
+    val fileExtension = if (isVideo) "mp4" else "jpg"
+    val sanitizedTitle = webcam.title.orEmpty().replace("\\s+".toRegex(), "_")
+    val fileName = "${sanitizedTitle}_${System.currentTimeMillis()}.$fileExtension"
+
+    try {
+        val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        val uri = Uri.parse(urlSrc)
+        val request = DownloadManager.Request(uri).apply {
+            setTitle(webcam.title)
+            setDescription("Downloading ${if (isVideo) "video" else "image"}...")
+            setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
+            setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+
+        }
+        downloadManager.enqueue(request)
+    } catch (ex: Exception) {
+        ex.printStackTrace()
+        coroutineScope.launch {
+            scaffoldState.snackbarHostState.showSnackbar(
+                message = context.getString(R.string.generic_error),
+                duration = SnackbarDuration.Short
+            )
+        }
+    }
+}

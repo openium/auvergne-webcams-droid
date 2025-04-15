@@ -1,5 +1,6 @@
 package fr.openium.auvergnewebcams.ui.core
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -24,7 +25,8 @@ fun AWTopBar(
     iconDescription: String = "",
     iconOpt: Painter = painterResource(id = R.drawable.ic_close),
     iconDescriptionOpt: String = "",
-    isOptionalButtton: Boolean = false,
+    isOptionalButton: Boolean = false,
+    dropdownMenu: (@Composable () -> Unit)? = null
 ) {
     TopAppBar(
         title = {
@@ -46,7 +48,7 @@ fun AWTopBar(
             }
         },
         actions = {
-            if (isOptionalButtton) {
+            if (isOptionalButton) {
                 IconButton(onClick = onNavigateToOpt) {
                     Icon(
                         painter = iconOpt,
@@ -55,16 +57,24 @@ fun AWTopBar(
                     )
                 }
             }
-            IconButton(onClick = onNavigateTo) {
-                Icon(
-                    painter = icon,
-                    contentDescription = iconDescription,
-                    tint = Color.White
-                )
+            Box {
+                IconButton(onClick = onNavigateTo) {
+                    Icon(
+                        painter = icon,
+                        contentDescription = iconDescription,
+                        tint = Color.White
+                    )
+                }
+
+                dropdownMenu?.let { menu ->
+                    menu()
+                }
             }
         },
         backgroundColor = AWAppTheme.colors.greyVeryDark,
         contentColor = Color.White,
         modifier = modifier
     )
+
+
 }
