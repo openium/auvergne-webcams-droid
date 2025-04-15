@@ -203,7 +203,6 @@ fun DetailScreen(
                             .fillMaxSize()
                             .padding(paddingValues)
                             .navigationBarsPadding()
-
                     ) {
                         Box(modifier = Modifier.weight(1f)) {
                             if (typeWebcam == "viewsurf" || typeWebcam == "video") {
@@ -427,7 +426,10 @@ fun shareWebcam(
 
 
 fun saveWebcam(
-    context: Context, webcam: Webcam, isVideo: Boolean = false, coroutineScope: CoroutineScope,
+    context: Context,
+    webcam: Webcam,
+    isVideo: Boolean = false,
+    coroutineScope: CoroutineScope,
     scaffoldState: ScaffoldState
 ) {
     val urlSrc = if (isVideo) {

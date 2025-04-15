@@ -4,11 +4,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -64,63 +66,67 @@ fun SectionDetailScreen(
             val section = loadedState.section
             val webcams = loadedState.webcams.sortedBy { it.order }
 
-            Box(modifier = Modifier.fillMaxSize()) {
 
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 56.dp)
-                ) {
-                    item {
-                        SectionHeader(
-                            title = section.title ?: "",
-                            webcamsCount = webcams.count(),
-                            image = ImageUtils.getImageResourceAssociatedToSection(context, section),
-                            goToSectionList = {},
-                            weatherIcon = section.weatherUid?.let { WeatherUtils.weatherImage(it) },
-                            weatherTemp = section.weatherTemp?.let { WeatherUtils.convertKelvinToCelsius(it) }
-                        )
-                    }
-                    items(items = webcams) { webcam ->
-                        WebcamPicture(
-                            pageOffset = 0.5f,
-                            webcam = webcam,
-                            imageLoader = vm.imageLoader,
-                            canBeHD = vm.prefUtils.isWebcamsHighQuality,
-                            shouldDisplayBanner = true,
-                            startingAlpha = 1f,
-                            aspectRatio = 8f,
-                            goToWebcamDetail = {
-                                goToWebcamDetail(webcam)
-                            }
-                        )
-                        Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 12.dp)
-                                .defaultMinSize(minHeight = 40.dp),
-                            text = webcam.title ?: "",
-                            color = AWAppTheme.colors.greyLight,
-                            style = AWAppTheme.typography.p1,
-                            textAlign = TextAlign.Center,
-                            maxLines = 2
-                        )
+            Scaffold(
+                backgroundColor = AWAppTheme.colors.greyMedium,
+                topBar = {
+                    AWTopBar(
+                        title = section.title ?: "",
+                        onNavigateBack = onNavigateBack,
+                        onNavigateTo = onNavigateToMap,
+                        onNavigateToOpt = { },
+                        icon = painterResource(id = R.drawable.map_icon_3),
+                        iconDescription = stringResource(id = R.string.map_title),
+                        isOptionalButton = false,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .statusBarsPadding()
+                    )
+                },
+                content = { paddingValues ->
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues)
+                            .navigationBarsPadding()
+
+                    ) {
+                        item {
+                            SectionHeader(
+                                title = section.title ?: "",
+                                webcamsCount = webcams.count(),
+                                image = ImageUtils.getImageResourceAssociatedToSection(context, section),
+                                goToSectionList = { },
+                                weatherIcon = section.weatherUid?.let { WeatherUtils.weatherImage(it) },
+                                weatherTemp = section.weatherTemp?.let { WeatherUtils.convertKelvinToCelsius(it) }
+                            )
+                        }
+                        items(items = webcams) { webcam ->
+                            WebcamPicture(
+                                pageOffset = 0.5f,
+                                webcam = webcam,
+                                imageLoader = vm.imageLoader,
+                                canBeHD = vm.prefUtils.isWebcamsHighQuality,
+                                shouldDisplayBanner = true,
+                                startingAlpha = 1f,
+                                aspectRatio = 8f,
+                                goToWebcamDetail = { goToWebcamDetail(webcam) }
+                            )
+                            Text(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 12.dp, end = 12.dp, top = 6.dp)
+                                    .defaultMinSize(minHeight = 40.dp),
+                                text = webcam.title ?: "",
+                                color = AWAppTheme.colors.greyLight,
+                                style = AWAppTheme.typography.p1,
+                                textAlign = TextAlign.Center,
+                                maxLines = 2
+                            )
+                        }
                     }
                 }
-                AWTopBar(
-                    section.title ?: "",
-                    onNavigateBack,
-                    onNavigateToMap,
-                    icon = painterResource(id = R.drawable.map_icon_3),
-                    iconDescription = stringResource(id = R.string.map_title),
-                    isOptionalButton = false,
-                    onNavigateToOpt = {},
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .statusBarsPadding(),
-                )
-
-            }
+            )
         }
     }
 }
