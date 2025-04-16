@@ -23,16 +23,6 @@ class ActivityWebcamDetail : AbstractActivity() {
 
     override val showHomeAsUp: Boolean = true
 
-    //
-//    override fun getDefaultFragment(): Fragment =
-//        if (typeWebcam == WebcamType.VIEWSURF.jsonKey || typeWebcam == WebcamType.VIDEO.jsonKey) {
-//            FragmentWebcamDetailVideo()
-//        } else FragmentWebcamDetailImage()
-//
-    private var typeWebcam: String? = null
-
-    // --- Life cycle
-    // ---------------------------------------------------
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val webcamId = intent?.getLongExtra(KEY_WEBCAM_ID, 0L) ?: 0L
@@ -53,26 +43,6 @@ class ActivityWebcamDetail : AbstractActivity() {
         }
     }
 
-
-    //    override fun onConfigurationChanged(newConfig: Configuration) {
-//        super.onConfigurationChanged(newConfig)
-//        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-//            window.showSystemUI()
-//            toolbar.show()
-//        } else {
-//            window.hideSystemUI()
-//            toolbar.gone()
-//        }
-//    }
-//
-//    override fun finish() {
-//        super.finish()
-//        overridePendingTransition(R.anim.animation_from_left, R.anim.animation_to_right)
-//    }
-//
-//    // --- Other method
-//    // ---------------------------------------------------
-//
     companion object {
 
         fun getIntent(context: Context, webcam: Webcam): Intent =
