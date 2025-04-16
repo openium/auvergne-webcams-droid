@@ -126,6 +126,7 @@ dependencies {
     implementation libs.accompanist.pager
     implementation libs.accompanist.swiperefresh
     implementation libs.accompanist.permissions
+    implementation libs.accompanist.systemui
 
     // Openium Tools
     implementation libs.openium.tools

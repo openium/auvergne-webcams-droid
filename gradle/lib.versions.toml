@@ -65,6 +65,7 @@ compose-foundation = { module = "androidx.compose.foundation:foundation" }
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
 accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
+accompanist-systemui = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 
 openium-tools = { module = "fr.openium:kotlin-tools", version.ref = "openium-tools" }
 openium-rx-tools = { module = "fr.openium:rx-tools", version.ref = "openium-rx-tools" }

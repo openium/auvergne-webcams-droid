@@ -5,9 +5,7 @@ import androidx.lifecycle.viewModelScope
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.repository.WebcamRepository
 import fr.openium.auvergnewebcams.utils.DateUtils
-import fr.openium.auvergnewebcams.utils.Optional
 import fr.openium.auvergnewebcams.utils.PreferencesUtils
-import io.reactivex.Single
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -43,12 +41,6 @@ class ViewModelWebcamDetail : ViewModel(), KoinComponent {
                 }
         }
     }
-
-    fun getWebcamSingle(webcamId: Long): Single<Optional<Webcam>> =
-        webcamRepository.getWebcamSingle(webcamId)
-
-    fun updateWebcam(webcam: Webcam): Int =
-        webcamRepository.update(webcam)
 
     sealed interface State {
         object Loading : State

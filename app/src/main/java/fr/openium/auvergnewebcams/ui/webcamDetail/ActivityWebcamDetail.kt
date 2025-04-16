@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.compose.ui.platform.ComposeView
+import androidx.core.view.WindowCompat
 import fr.openium.auvergnewebcams.KEY_WEBCAM_ID
 import fr.openium.auvergnewebcams.KEY_WEBCAM_TYPE
 import fr.openium.auvergnewebcams.R
@@ -36,6 +37,7 @@ class ActivityWebcamDetail : AbstractActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val webcamId = intent?.getLongExtra(KEY_WEBCAM_ID, 0L) ?: 0L
         val typeWebcam = intent?.getStringExtra(KEY_WEBCAM_TYPE)
+        WindowCompat.setDecorFitsSystemWindows(window, true)
 
         super.onCreate(savedInstanceState)
 
@@ -52,8 +54,7 @@ class ActivityWebcamDetail : AbstractActivity() {
     }
 
 
-    //
-//    override fun onConfigurationChanged(newConfig: Configuration) {
+    //    override fun onConfigurationChanged(newConfig: Configuration) {
 //        super.onConfigurationChanged(newConfig)
 //        if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
 //            window.showSystemUI()

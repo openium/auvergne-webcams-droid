@@ -32,8 +32,11 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -57,6 +60,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
+import coil.request.CachePolicy
+import coil.request.ImageRequest
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
@@ -72,6 +78,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
+
 @Composable
 fun DetailScreen(
     webcamId: Long,
@@ -79,6 +86,17 @@ fun DetailScreen(
     onNavigateBack: () -> Unit,
     vm: ViewModelWebcamDetail = koinViewModel()
 ) {
+    val statusBarColor = AWAppTheme.colors.greyVeryDark
+
+    val systemUiController = rememberSystemUiController()
+
+    SideEffect {
+        systemUiController.setStatusBarColor(
+            color = statusBarColor,
+            darkIcons = false
+        )
+    }
+
     LaunchedEffect(webcamId) { vm.loadWebcam(webcamId) }
 
     var menuExpanded by remember { mutableStateOf(false) }
@@ -91,13 +109,7 @@ fun DetailScreen(
 
     when (state) {
         is ViewModelWebcamDetail.State.Loading -> {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+
         }
 
 
@@ -106,17 +118,25 @@ fun DetailScreen(
 
             val isHighQuality = vm.prefUtils.isWebcamsHighQuality && !webcam.imageHD.isNullOrBlank()
 
-            val painter = rememberAsyncImagePainter(
-                model = when {
-                    isHighQuality ->
-                        webcam.getUrlForWebcam(canBeHD = true, canBeVideo = false)
+            val isVideo = typeWebcam == "viewsurf" || typeWebcam == "video"
 
-                    !webcam.imageLD.isNullOrBlank() ->
-                        webcam.getUrlForWebcam(canBeHD = false, canBeVideo = false)
+            val request = ImageRequest.Builder(LocalContext.current)
+                .data(
+                    when {
+                        isHighQuality ->
+                            webcam.getUrlForWebcam(canBeHD = true, canBeVideo = isVideo)
 
-                    else -> null
-                }
-            )
+                        !webcam.imageLD.isNullOrBlank() ->
+                            webcam.getUrlForWebcam(canBeHD = false, canBeVideo = isVideo)
+
+                        else -> null
+                    }
+                )
+                .memoryCachePolicy(CachePolicy.DISABLED)
+                .build()
+
+            val painter = rememberAsyncImagePainter(model = request)
+
 
             Scaffold(
                 backgroundColor = AWAppTheme.colors.greyVeryDark,
@@ -190,7 +210,9 @@ fun DetailScreen(
                                         .fillMaxWidth()
                                         .height(56.dp)
                                 )
-                                LastUpdateText(lastUpdate = webcam.lastUpdate, dateUtils = vm.dateUtils)
+                                key(webcam.lastUpdate) {
+                                    LastUpdateText(lastUpdate = webcam.lastUpdate, dateUtils = vm.dateUtils)
+                                }
                             }
                         }
                     }
@@ -209,7 +231,7 @@ fun DetailScreen(
                                 Media3VideoPlayer(videoUrl = webcam.getUrlForWebcam(vm.prefUtils.isWebcamsHighQuality, canBeVideo = true))
                             } else {
 
-                                var scale by remember { mutableStateOf(1f) }
+                                var scale by remember { mutableFloatStateOf(1f) }
                                 var offset by remember { mutableStateOf(Offset.Zero) }
                                 var boxSize by remember { mutableStateOf(IntSize.Zero) }
                                 Box(
@@ -269,20 +291,21 @@ fun DetailScreen(
                             }
                         }
                         if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                            if (!isVideo) {
+                                when (painter.state) {
 
-                            when (painter.state) {
-
-                                is AsyncImagePainter.State.Error -> {
-                                    WebcamNotWorking()
-                                }
-
-                                is AsyncImagePainter.State.Success -> {
-                                    if (!vm.dateUtils.isUpToDate(webcam.lastUpdate)) {
+                                    is AsyncImagePainter.State.Error -> {
                                         WebcamNotWorking()
                                     }
-                                }
 
-                                else -> {
+                                    is AsyncImagePainter.State.Success -> {
+                                        if (!vm.dateUtils.isUpToDate(webcam.lastUpdate)) {
+                                            WebcamNotWorking()
+                                        }
+                                    }
+
+                                    else -> {
+                                    }
                                 }
                             }
                         }
