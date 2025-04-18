@@ -10,8 +10,10 @@ import android.os.Handler
 import android.os.Looper
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +22,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -44,6 +47,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -72,6 +76,7 @@ import fr.openium.auvergnewebcams.ext.getUrlForWebcam
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.ui.core.AWTopBar
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
+import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import fr.openium.auvergnewebcams.utils.DateUtils
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.coroutineScope
@@ -295,7 +300,7 @@ fun DetailScreen(
                                 when (painter.state) {
 
                                     is AsyncImagePainter.State.Error -> {
-                                        WebcamNotWorking()
+                                        WebcamNotWorkingFull(webcam, scaffoldState, coroutineScope)
                                     }
 
                                     is AsyncImagePainter.State.Success -> {
@@ -412,6 +417,77 @@ fun WebcamNotWorking() {
         textAlign = TextAlign.Center
     )
 }
+
+@Composable
+fun WebcamNotWorkingFull(
+    webcam: Webcam,
+    scaffoldState: ScaffoldState,
+    coroutineScope: CoroutineScope
+) {
+    val context = LocalContext.current
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp)
+            .clickable {
+                AnalyticsUtils.signalProblemClicked(context)
+                val subject = context.getString(
+                    R.string.detail_signal_problem_subject,
+                    webcam.title ?: ""
+                )
+                val body = context.getString(
+                    R.string.detail_signal_problem_body_format,
+                    webcam.title ?: "",
+                    webcam.uid.toString()
+                )
+                val mailUri = Uri.parse(
+                    "mailto:${context.getString(R.string.detail_signal_problem_email)}" +
+                            "?subject=" + Uri.encode(subject) +
+                            "&body=" + Uri.encode(body)
+                )
+                val intent = Intent(Intent.ACTION_SENDTO, mailUri)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+                val chooser = Intent.createChooser(intent, context.getString(R.string.generic_chooser))
+                if (chooser.resolveActivity(context.packageManager) != null) {
+                    context.startActivity(chooser)
+                } else {
+                    coroutineScope.launch {
+                        scaffoldState.snackbarHostState.showSnackbar(
+                            message = context.getString(R.string.generic_no_email_app),
+                            duration = SnackbarDuration.Short
+                        )
+                    }
+                }
+            }
+    ) {
+        Image(
+            painter = painterResource(R.drawable.ic_broken_camera),
+            contentDescription = null,
+            modifier = Modifier.width(100.dp)
+        )
+
+        Text(
+            text = stringResource(id = R.string.detail_not_working_title),
+            style = MaterialTheme.typography.body1,
+            color = Color.White,
+            modifier = Modifier.padding(top = 50.dp),
+            textAlign = TextAlign.Center
+        )
+
+        Text(
+            text = stringResource(id = R.string.detail_not_working_text),
+            style = MaterialTheme.typography.h6,
+            color = AWAppTheme.colors.blue,
+            modifier = Modifier.padding(top = 24.dp),
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
 
 fun shareWebcam(
     webcam: Webcam,
