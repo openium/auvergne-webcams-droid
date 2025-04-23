@@ -1,6 +1,7 @@
 package fr.openium.auvergnewebcams.ui.map
 
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -83,6 +84,11 @@ class ActivityMap : AbstractActivity() {
 
             else -> super.onOptionsItemSelected(item)
         }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_map, menu)
+        return true
+    }
 
     protected fun goToWebcamDetail(webcam: Webcam) {
         AnalyticsUtils.webcamDetailsClicked(this, webcam.title ?: "")
