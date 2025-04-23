@@ -1,5 +1,6 @@
 package fr.openium.auvergnewebcams.di
 
+import fr.openium.auvergnewebcams.ui.map.MapViewModel
 import fr.openium.auvergnewebcams.ui.sectionDetail.ViewModelSectionDetail
 import fr.openium.auvergnewebcams.ui.settings.SettingsViewModel
 import fr.openium.auvergnewebcams.ui.splash.ViewModelSplash
@@ -23,5 +24,9 @@ object KoinModules {
 
     val vmDetails = module {
         viewModel { ViewModelWebcamDetail() }
+    }
+
+    val vmMap = module {
+        viewModel { MapViewModel() }
     }
 }
