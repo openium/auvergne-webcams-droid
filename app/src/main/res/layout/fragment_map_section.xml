@@ -5,7 +5,7 @@
     android:background="@color/grey_dark"
     android:orientation="vertical">
 
-    <include layout="@layout/toolbar" />
+    <!-- <include layout="@layout/toolbar" /> -->
 
     <androidx.compose.ui.platform.ComposeView
         android:id="@+id/composeView"

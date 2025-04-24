@@ -22,7 +22,6 @@ class ActivitySearch : AbstractActivity() {
     private lateinit var viewModelSearch: SearchViewModel
 
     private val imageLoader by inject<ImageLoader>()
-    override val showHomeAsUp: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +39,7 @@ class ActivitySearch : AbstractActivity() {
                     canBeHD = prefUtils.isWebcamsHighQuality,
                     imageLoader = imageLoader,
                     webcams = webcams,
+                    onNavigateBack = { finish() },
                     goToWebcamDetail = {
                         goToWebcamDetail(it)
                     }

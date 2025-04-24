@@ -15,8 +15,6 @@ class ActivitySettings : AbstractActivity() {
 
     override val layoutId: Int = R.layout.activity_settings
 
-    override val showHomeAsUp: Boolean = true
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         overridePendingTransition(R.anim.animation_from_right, R.anim.animation_to_left)
@@ -24,6 +22,7 @@ class ActivitySettings : AbstractActivity() {
         findViewById<ComposeView>(R.id.composeView).setContent {
             AWTheme {
                 SettingsScreen(
+                    onNavigateBack = { finish() },
                     navigateToActivity = { activityClass ->
                         val intent = Intent(this, activityClass)
                         startActivity(intent)

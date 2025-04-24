@@ -8,12 +8,15 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -29,6 +32,7 @@ import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.model.entity.Section
 import fr.openium.auvergnewebcams.model.entity.SectionWithCameras
 import fr.openium.auvergnewebcams.model.entity.Webcam
+import fr.openium.auvergnewebcams.ui.core.AWTopBar
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -41,55 +45,88 @@ fun SectionsListScreen(
     imageLoader: ImageLoader,
     goToWebcamDetail: (Webcam) -> Unit,
     goToSectionList: (Section) -> Unit,
-    goToSearch: () -> Unit
+    goToSearch: () -> Unit,
+    goToMap: () -> Unit,
+    goToSettings: () -> Unit
 ) {
     val pullRefreshState = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = refresh)
 
-    Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(bottom = 16.dp)
-        ) {
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(color = AWAppTheme.colors.grey)
-                        .clickable(onClick = goToSearch)
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
+    Scaffold(
+        backgroundColor = AWAppTheme.colors.greyVeryDark,
+        topBar =
+        {
+            AWTopBar(
+                title = stringResource(R.string.app_name),
+                onNavigateBack = {},
+                onNavigateTo = goToSettings,
+                onNavigateToOpt = goToMap,
+                icon = painterResource(id = R.drawable.ic_settings),
+                iconDescription = stringResource(id = R.string.settings_title),
+                iconOpt = painterResource(id = R.drawable.map_icon_3),
+                iconDescriptionOpt = stringResource(id = R.string.map_title),
+                isPrimaryButton = true,
+                isOptionalButton = true,
+                isNavBack = false,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding()
+            )
+        },
+        content = { paddingValues ->
+            Box(
+                modifier = Modifier
+                    .pullRefresh(pullRefreshState)
+                    .padding(paddingValues)
+                    .navigationBarsPadding()
+                    .background(color = AWAppTheme.colors.greyMedium)
+            ) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(bottom = 16.dp)
                 ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_search),
-                        contentDescription = stringResource(id = R.string.search_hint),
-                        tint = AWAppTheme.colors.white
-                    )
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Text(
-                        text = stringResource(id = R.string.search_hint),
-                        color = AWAppTheme.colors.greyLight,
-                        style = AWAppTheme.typography.p1Italic
-                    )
-                }
-            }
-            items(sections) { section ->
-                SectionItem(
-                    section = section,
-                    canBeHD = canBeHD,
-                    imageLoader = imageLoader,
-                    goToWebcamDetail = goToWebcamDetail,
-                    goToSectionList = {
-                        goToSectionList(section.section)
+                    item {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(color = AWAppTheme.colors.grey)
+                                .clickable(onClick = goToSearch)
+                                .padding(16.dp)
+                                .padding(paddingValues)
+                                .navigationBarsPadding(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_search),
+                                contentDescription = stringResource(id = R.string.search_hint),
+                                tint = AWAppTheme.colors.white
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+                            Text(
+                                text = stringResource(id = R.string.search_hint),
+                                color = AWAppTheme.colors.greyLight,
+                                style = AWAppTheme.typography.p1Italic
+                            )
+                        }
                     }
+                    items(sections) { section ->
+                        SectionItem(
+                            section = section,
+                            canBeHD = canBeHD,
+                            imageLoader = imageLoader,
+                            goToWebcamDetail = goToWebcamDetail,
+                            goToSectionList = {
+                                goToSectionList(section.section)
+                            }
+                        )
+                    }
+                }
+                PullRefreshIndicator(
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    refreshing = isRefreshing,
+                    state = pullRefreshState
                 )
             }
         }
-        PullRefreshIndicator(
-            modifier = Modifier.align(Alignment.TopCenter),
-            refreshing = isRefreshing,
-            state = pullRefreshState
-        )
-    }
+    )
 }
-
 

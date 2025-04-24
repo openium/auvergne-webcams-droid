@@ -10,13 +10,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,91 +30,117 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.ui.core.AWTopBar
+import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 
 @Composable
-fun AboutScreen() {
+fun AboutScreen(
+    onNavigateBack: () -> Unit,
+) {
     var isLoading by remember { mutableStateOf(true) }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.DarkGray)
-    ) {
-        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Box(
+    Scaffold(
+        backgroundColor = AWAppTheme.colors.greyVeryDark,
+        topBar =
+        {
+            AWTopBar(
+                title = stringResource(R.string.settings_credits_about),
+                onNavigateBack = onNavigateBack,
+                onNavigateTo = { },
+                onNavigateToOpt = { },
+                isPrimaryButton = false,
+                isOptionalButton = false,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(10.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                CenteredImages()
-            }
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Text(
-                text = "Auvergne Webcams",
-                color = Color.White,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .fillMaxWidth()
+                    .statusBarsPadding(),
             )
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-                AndroidView(
-                    factory = { context ->
-                        WebView(context).apply {
-                            webChromeClient = object : WebChromeClient() {
-                                override fun onProgressChanged(
-                                    view: WebView?,
-                                    newProgress: Int
-                                ) {
-                                    if (newProgress == 100) isLoading = false
-                                }
-                            }
-                            setBackgroundColor(android.graphics.Color.TRANSPARENT)
-                            loadUrl("file:///android_asset/about.html")
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-
-            Spacer(modifier = Modifier.height(10.dp))
-            if (!isLoading) {
-
-                Image(
-                    painter = painterResource(id = R.drawable.logo_openium),
-                    contentDescription = "Logo",
-                    modifier = Modifier
-                        .width(150.dp)
-                        .align(Alignment.CenterHorizontally)
-                        .padding(bottom = 25.dp)
-                )
-            }
-        }
-
-        if (isLoading) {
+        },
+        content = { paddingValues ->
             Box(
                 modifier = Modifier
-                    .fillMaxSize(),
-                contentAlignment = Alignment.Center
+                    .fillMaxSize()
+                    .background(Color.DarkGray)
+                    .padding(paddingValues)
+                    .navigationBarsPadding()
             ) {
-                CircularProgressIndicator()
+                Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CenteredImages()
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Text(
+                        text = "Auvergne Webcams",
+                        color = Color.White,
+                        textAlign = TextAlign.Center,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Box(modifier = Modifier.padding(horizontal = 16.dp)) {
+                        AndroidView(
+                            factory = { context ->
+                                WebView(context).apply {
+                                    webChromeClient = object : WebChromeClient() {
+                                        override fun onProgressChanged(
+                                            view: WebView?,
+                                            newProgress: Int
+                                        ) {
+                                            if (newProgress == 100) isLoading = false
+                                        }
+                                    }
+                                    setBackgroundColor(android.graphics.Color.TRANSPARENT)
+                                    loadUrl("file:///android_asset/about.html")
+                                }
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+                    if (!isLoading) {
+
+                        Image(
+                            painter = painterResource(id = R.drawable.logo_openium),
+                            contentDescription = "Logo",
+                            modifier = Modifier
+                                .width(150.dp)
+                                .align(Alignment.CenterHorizontally)
+                                .padding(bottom = 25.dp)
+                        )
+                    }
+                }
+
+                if (isLoading) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
             }
         }
-    }
+    )
 }
 
 @Composable
