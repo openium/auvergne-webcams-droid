@@ -16,7 +16,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
@@ -24,6 +26,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -48,6 +51,7 @@ import com.chargemap.compose.numberpicker.NumberPicker
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.ext.getAppVersion
 import fr.openium.auvergnewebcams.ui.about.ActivitySettingsAbout
+import fr.openium.auvergnewebcams.ui.core.AWTopBar
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import org.koin.androidx.compose.koinViewModel
@@ -57,6 +61,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun SettingsScreen(
     vm: SettingsViewModel = koinViewModel(),
+    onNavigateBack: () -> Unit,
     navigateToActivity: (activityClass: Class<out Activity>) -> Unit,
     navigateToUrl: (url: String) -> Unit
 ) {
@@ -72,174 +77,196 @@ fun SettingsScreen(
     var showDelayDialog by remember { mutableStateOf(false) }
     var showWebcamDialog by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colorResource(id = R.color.grey_dark))
-            .verticalScroll(scrollState)
-            .padding(start = 20.dp, top = 24.dp, end = 20.dp, bottom = 24.dp)
-    ) {
-        Text(
-            text = stringResource(R.string.settings_global_title).uppercase(),
-            style = AWAppTheme.typography.p3,
-            color = colorResource(id = R.color.grey),
-            modifier = Modifier.padding(bottom = 10.dp)
-        )
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .pointerInteropFilter { event ->
-                    (event.action == MotionEvent.ACTION_HOVER_EXIT)
-                }
-                .clickable { vm.onDelayRefreshChanged(!isDelayRefreshActive, context) },
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(R.string.settings_global_refresh),
-                style = AWAppTheme.typography.p1,
-                color = Color.White,
-                modifier = Modifier.weight(1f)
-            )
-            Switch(
-                checked = isDelayRefreshActive,
-                onCheckedChange = { vm.onDelayRefreshChanged(it, context) },
-            )
-        }
-
-        if (isDelayRefreshActive) {
-            Row(
+    Scaffold(
+        backgroundColor = AWAppTheme.colors.greyVeryDark,
+        topBar =
+        {
+            AWTopBar(
+                title = stringResource(R.string.settings_title),
+                onNavigateBack = onNavigateBack,
+                onNavigateTo = { },
+                onNavigateToOpt = { },
+                isPrimaryButton = false,
+                isOptionalButton = false,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 10.dp)
-                    .clickable
-                    { showDelayDialog = true },
-                verticalAlignment = Alignment.CenterVertically
+                    .statusBarsPadding()
+            )
+        },
+        content = { paddingValues ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(colorResource(id = R.color.grey_dark))
+                    .verticalScroll(scrollState)
+                    .padding(paddingValues)
+                    .padding(start = 20.dp, top = 24.dp, end = 20.dp, bottom = 24.dp)
+                    .navigationBarsPadding()
             ) {
                 Text(
-                    text = stringResource(R.string.settings_global_refresh_delay),
-                    style = AWAppTheme.typography.p1,
-                    color = colorResource(id = R.color.selector_color_white_to_grey),
-                    modifier = Modifier.weight(1f)
+                    text = stringResource(R.string.settings_global_title).uppercase(),
+                    style = AWAppTheme.typography.p3,
+                    color = colorResource(id = R.color.grey),
+                    modifier = Modifier.padding(bottom = 10.dp)
                 )
-                Row(verticalAlignment = Alignment.CenterVertically) {
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .pointerInteropFilter { event ->
+                            (event.action == MotionEvent.ACTION_HOVER_EXIT)
+                        }
+                        .clickable { vm.onDelayRefreshChanged(!isDelayRefreshActive, context) },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(
-                        text = refreshDelay.toString(),
+                        text = stringResource(R.string.settings_global_refresh),
                         style = AWAppTheme.typography.p1,
-                        color = colorResource(id = R.color.selector_color_white_to_grey)
+                        color = Color.White,
+                        modifier = Modifier.weight(1f)
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Icon(
-                        painter = painterResource(R.drawable.ic_arrow_right_small),
-                        contentDescription = null,
-                        tint = Color.White
+                    Switch(
+                        checked = isDelayRefreshActive,
+                        onCheckedChange = { vm.onDelayRefreshChanged(it, context) },
                     )
                 }
-            }
-        }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .pointerInteropFilter { event ->
-                    event.action == MotionEvent.ACTION_HOVER_EXIT
+                if (isDelayRefreshActive) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 10.dp)
+                            .clickable
+                            { showDelayDialog = true },
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(R.string.settings_global_refresh_delay),
+                            style = AWAppTheme.typography.p1,
+                            color = colorResource(id = R.color.selector_color_white_to_grey),
+                            modifier = Modifier.weight(1f)
+                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = refreshDelay.toString(),
+                                style = AWAppTheme.typography.p1,
+                                color = colorResource(id = R.color.selector_color_white_to_grey)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Icon(
+                                painter = painterResource(R.drawable.ic_arrow_right_small),
+                                contentDescription = null,
+                                tint = Color.White
+                            )
+                        }
+                    }
                 }
-                .clickable { vm.onQualityChanged(!qualityHighEnabled, context) },
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(R.string.settings_global_quality_high),
-                style = AWAppTheme.typography.p1,
-                color = Color.White,
-                modifier = Modifier.weight(1f)
-            )
-            Switch(
-                checked = qualityHighEnabled,
-                onCheckedChange = { isChecked -> vm.onQualityChanged(isChecked, context) }
-            )
-        }
 
-        Text(
-            text = stringResource(R.string.settings_credits_title).uppercase(),
-            style = AWAppTheme.typography.p3,
-            color = colorResource(id = R.color.grey),
-            modifier = Modifier.padding(top = 32.dp, bottom = 12.dp)
-        )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .pointerInteropFilter { event ->
+                            event.action == MotionEvent.ACTION_HOVER_EXIT
+                        }
+                        .clickable { vm.onQualityChanged(!qualityHighEnabled, context) },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.settings_global_quality_high),
+                        style = AWAppTheme.typography.p1,
+                        color = Color.White,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Switch(
+                        checked = qualityHighEnabled,
+                        onCheckedChange = { isChecked -> vm.onQualityChanged(isChecked, context) }
+                    )
+                }
 
-        SettingItem(textResId = R.string.settings_credits_about) {
-            AnalyticsUtils.aboutClicked(context)
-            navigateToActivity(ActivitySettingsAbout::class.java)
-        }
-        SettingItem(textResId = R.string.settings_credits_openium) {
-            AnalyticsUtils.websiteOpeniumClicked(context)
-            navigateToUrl(context.getString(R.string.url_openium))
-        }
-        SettingItem(textResId = R.string.settings_credits_pirates) {
-            AnalyticsUtils.lesPiratesClicked(context)
-            navigateToUrl(context.getString(R.string.url_pirates))
-        }
-
-        SettingItem(textResId = R.string.settings_send_new_webcam) {
-            AnalyticsUtils.suggestWebcamClicked(context)
-            showWebcamDialog = true
-        }
-
-        SettingItem(textResId = R.string.settings_credits_note) {
-            AnalyticsUtils.rateAppClicked(context)
-            navigateToUrl(
-                context.getString(
-                    R.string.url_note_format,
-                    context.packageName
+                Text(
+                    text = stringResource(R.string.settings_credits_title).uppercase(),
+                    style = AWAppTheme.typography.p3,
+                    color = colorResource(id = R.color.grey),
+                    modifier = Modifier.padding(top = 32.dp, bottom = 12.dp)
                 )
-            )
-        }
 
-        Text(
-            text = context.getAppVersion(),
-            style = AWAppTheme.typography.p3,
-            color = colorResource(id = R.color.grey),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp)
-                .wrapContentWidth(Alignment.End)
-        )
-    }
+                SettingItem(textResId = R.string.settings_credits_about) {
+                    AnalyticsUtils.aboutClicked(context)
+                    navigateToActivity(ActivitySettingsAbout::class.java)
+                }
+                SettingItem(textResId = R.string.settings_credits_openium) {
+                    AnalyticsUtils.websiteOpeniumClicked(context)
+                    navigateToUrl(context.getString(R.string.url_openium))
+                }
+                SettingItem(textResId = R.string.settings_credits_pirates) {
+                    AnalyticsUtils.lesPiratesClicked(context)
+                    navigateToUrl(context.getString(R.string.url_pirates))
+                }
 
-    if (showWebcamDialog) {
-        AlertDialog(
-            onDismissRequest = { showWebcamDialog = false },
-            title = {
-                Text(text = stringResource(id = R.string.settings_send_new_webcam_title), style = AWAppTheme.typography.p1)
-            },
-            text = {
-                Text(text = stringResource(id = R.string.settings_send_new_webcam_message), style = AWAppTheme.typography.p1)
-            },
-            confirmButton = {
-                TextButton(onClick = {
+                SettingItem(textResId = R.string.settings_send_new_webcam) {
                     AnalyticsUtils.suggestWebcamClicked(context)
-                    sendEmail(context)
-                    showWebcamDialog = false
-                }) {
-                    Text(text = stringResource(id = R.string.generic_ok), style = AWAppTheme.typography.p1)
+                    showWebcamDialog = true
                 }
-            },
-            dismissButton = {
-                TextButton(onClick = { showWebcamDialog = false }) {
-                    Text(text = stringResource(id = R.string.generic_cancel), style = AWAppTheme.typography.p1)
-                }
-            }
-        )
-    }
 
-    if (showDelayDialog) {
-        RefreshDelayPickerDialog(
-            currentDelay = refreshDelay,
-            onDismiss = { showDelayDialog = false },
-            onConfirm = { newDelay ->
-                vm.onRefreshDelayChanged(newDelay, context)
+                SettingItem(textResId = R.string.settings_credits_note) {
+                    AnalyticsUtils.rateAppClicked(context)
+                    navigateToUrl(
+                        context.getString(
+                            R.string.url_note_format,
+                            context.packageName
+                        )
+                    )
+                }
+
+                Text(
+                    text = context.getAppVersion(),
+                    style = AWAppTheme.typography.p3,
+                    color = colorResource(id = R.color.grey),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp)
+                        .wrapContentWidth(Alignment.End)
+                )
             }
-        )
-    }
+
+            if (showWebcamDialog) {
+                AlertDialog(
+                    onDismissRequest = { showWebcamDialog = false },
+                    title = {
+                        Text(text = stringResource(id = R.string.settings_send_new_webcam_title), style = AWAppTheme.typography.p1)
+                    },
+                    text = {
+                        Text(text = stringResource(id = R.string.settings_send_new_webcam_message), style = AWAppTheme.typography.p1)
+                    },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            AnalyticsUtils.suggestWebcamClicked(context)
+                            sendEmail(context)
+                            showWebcamDialog = false
+                        }) {
+                            Text(text = stringResource(id = R.string.generic_ok), style = AWAppTheme.typography.p1)
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showWebcamDialog = false }) {
+                            Text(text = stringResource(id = R.string.generic_cancel), style = AWAppTheme.typography.p1)
+                        }
+                    }
+                )
+            }
+
+            if (showDelayDialog) {
+                RefreshDelayPickerDialog(
+                    currentDelay = refreshDelay,
+                    onDismiss = { showDelayDialog = false },
+                    onConfirm = { newDelay ->
+                        vm.onRefreshDelayChanged(newDelay, context)
+                    }
+                )
+            }
+        }
+    )
+
 }
 
 @OptIn(ExperimentalComposeUiApi::class)

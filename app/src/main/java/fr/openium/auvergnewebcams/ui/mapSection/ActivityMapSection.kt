@@ -4,8 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.ViewModelProvider
 import fr.openium.auvergnewebcams.KEY_SECTION_ID
@@ -60,13 +58,9 @@ class ActivityMapSection : AbstractActivity() {
 
                     findViewById<ComposeView>(R.id.composeView).setContent {
                         AWTheme {
-                            val mapStyle by viewModelMap.mapStyle.collectAsState()
-                            val canBeHD = prefUtils.isWebcamsHighQuality
-
                             MapScreen(
                                 sections = listOf(sectionWithCameras),
-                                canBeHD = canBeHD,
-                                mapStyle = mapStyle,
+                                onNavigateBack = { finish() },
                                 goToWebcamDetail = { webcam ->
                                     goToWebcamDetail(webcam)
                                 },

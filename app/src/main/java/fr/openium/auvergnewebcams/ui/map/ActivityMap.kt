@@ -31,15 +31,12 @@ class ActivityMap : AbstractActivity() {
         viewModelMap.switchMapStyle(prefUtils.mapStyle ?: "")
 
         findViewById<ComposeView>(R.id.composeView).setContent {
-            AWTheme {
-                val sections by viewModelMap.sections.collectAsState(initial = emptyList())
-                val mapStyle by viewModelMap.mapStyle.collectAsState()
-                val canBeHD = prefUtils.isWebcamsHighQuality
+            val sections by viewModelMap.sections.collectAsState(initial = emptyList())
 
+            AWTheme {
                 MapScreen(
                     sections = sections,
-                    canBeHD = canBeHD,
-                    mapStyle = mapStyle,
+                    onNavigateBack = { finish() },
                     goToWebcamDetail = {
                         goToWebcamDetail(it)
                     },

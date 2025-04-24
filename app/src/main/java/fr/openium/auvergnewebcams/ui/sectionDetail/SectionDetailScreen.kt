@@ -1,5 +1,6 @@
 package fr.openium.auvergnewebcams.ui.sectionDetail
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
@@ -68,7 +69,7 @@ fun SectionDetailScreen(
 
 
             Scaffold(
-                backgroundColor = AWAppTheme.colors.greyMedium,
+                backgroundColor = AWAppTheme.colors.greyVeryDark,
                 topBar = {
                     AWTopBar(
                         title = section.title ?: "",
@@ -89,6 +90,7 @@ fun SectionDetailScreen(
                             .fillMaxSize()
                             .padding(paddingValues)
                             .navigationBarsPadding()
+                            .background(color = AWAppTheme.colors.greyMedium)
 
                     ) {
                         item {

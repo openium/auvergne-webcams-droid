@@ -36,8 +36,6 @@ class ActivityMain : AbstractActivity() {
 
     override val layoutId: Int = R.layout.fragment_main
 
-    override val showHomeAsUp: Boolean = true
-
     private lateinit var viewModelMain: ViewModelMain
 
     private val imageLoader by inject<ImageLoader>()
@@ -76,7 +74,14 @@ class ActivityMain : AbstractActivity() {
                     goToSectionList = {
                         goToSectionList(it)
                     },
-                    goToSearch = ::goToSearch
+                    goToSearch = ::goToSearch,
+                    goToMap = {
+                        startActivity<ActivityMap>()
+                    },
+                    goToSettings = {
+                        AnalyticsUtils.settingsClicked(this)
+                        startActivity<ActivitySettings>()
+                    },
                 )
             }
         }
