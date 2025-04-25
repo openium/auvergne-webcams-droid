@@ -1,8 +1,6 @@
 package fr.openium.auvergnewebcams.ui.map
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
@@ -10,7 +8,6 @@ import androidx.lifecycle.ViewModelProvider
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractActivity
 import fr.openium.auvergnewebcams.base.AbstractMapViewModel
-import fr.openium.auvergnewebcams.enums.MapStyle
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.ui.map.components.MapScreen
 import fr.openium.auvergnewebcams.ui.theme.AWTheme
@@ -21,8 +18,6 @@ class ActivityMap : AbstractActivity() {
 
     override val layoutId: Int = R.layout.fragment_map
     protected lateinit var viewModelMap: AbstractMapViewModel
-
-    override val showHomeAsUp: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,46 +40,6 @@ class ActivityMap : AbstractActivity() {
         }
 
         overridePendingTransition(R.anim.animation_from_right, R.anim.animation_to_left)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean =
-        when (item.itemId) {
-            R.id.menu_map_style_outside -> {
-                prefUtils.mapStyle = MapStyle.OUTSIDE.style
-                viewModelMap.switchMapStyle(MapStyle.OUTSIDE)
-                true
-            }
-
-            R.id.menu_map_style_dark -> {
-                prefUtils.mapStyle = MapStyle.DARK.style
-                viewModelMap.switchMapStyle(MapStyle.DARK)
-                true
-            }
-
-            R.id.menu_map_style_light -> {
-                prefUtils.mapStyle = MapStyle.LIGHT.style
-                viewModelMap.switchMapStyle(MapStyle.LIGHT)
-                true
-            }
-
-            R.id.menu_map_style_satellite -> {
-                prefUtils.mapStyle = MapStyle.SATELLITE.style
-                viewModelMap.switchMapStyle(MapStyle.SATELLITE)
-                true
-            }
-
-            R.id.menu_map_style_roads -> {
-                prefUtils.mapStyle = MapStyle.ROADS.style
-                viewModelMap.switchMapStyle(MapStyle.ROADS)
-                true
-            }
-
-            else -> super.onOptionsItemSelected(item)
-        }
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_map, menu)
-        return true
     }
 
     protected fun goToWebcamDetail(webcam: Webcam) {

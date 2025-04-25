@@ -25,8 +25,6 @@ class ActivityMapSection : AbstractActivity() {
     override val layoutId: Int = R.layout.fragment_map_section
     protected lateinit var viewModelMap: AbstractMapViewModel
 
-    override val showHomeAsUp: Boolean = true
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         overridePendingTransition(R.anim.animation_from_right, R.anim.animation_to_left)
