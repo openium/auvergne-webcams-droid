@@ -2,8 +2,6 @@ package fr.openium.auvergnewebcams.ui.main
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -87,31 +85,6 @@ class ActivityMain : AbstractActivity() {
         }
     }
 
-
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_settings, menu)
-        return true
-    }
-
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.menu_settings -> {
-                AnalyticsUtils.settingsClicked(this)
-                startActivity<ActivitySettings>()
-                true
-            }
-
-            R.id.menu_map -> {
-                startActivity<ActivityMap>()
-                true
-            }
-
-            else -> {
-                super.onOptionsItemSelected(item)
-            }
-        }
-    }
 
     // --- Methods
     // ---------------------------------------------------

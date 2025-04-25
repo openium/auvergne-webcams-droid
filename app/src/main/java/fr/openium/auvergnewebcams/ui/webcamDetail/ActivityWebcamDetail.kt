@@ -20,10 +20,6 @@ class ActivityWebcamDetail : AbstractActivity() {
 
     override val layoutId: Int = R.layout.activity_details
 
-
-    override val showHomeAsUp: Boolean = true
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         val webcamId = intent?.getLongExtra(KEY_WEBCAM_ID, 0L) ?: 0L
         val typeWebcam = intent?.getStringExtra(KEY_WEBCAM_TYPE)
