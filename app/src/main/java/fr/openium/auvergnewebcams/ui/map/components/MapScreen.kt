@@ -42,6 +42,7 @@ import com.mapbox.maps.plugin.locationcomponent.createDefault2DPuck
 import com.mapbox.maps.plugin.locationcomponent.location
 import fr.openium.auvergnewebcams.BuildConfig
 import fr.openium.auvergnewebcams.R
+import fr.openium.auvergnewebcams.enums.MapStyle
 import fr.openium.auvergnewebcams.ext.navigateToLocationSettings
 import fr.openium.auvergnewebcams.model.entity.SectionWithCameras
 import fr.openium.auvergnewebcams.model.entity.Webcam
@@ -59,7 +60,6 @@ fun MapScreen(
     goToWebcamDetail: (Webcam) -> Unit,
 ) {
     MapboxOptions.accessToken = BuildConfig.MAPBOX_ACCESS_TOKEN
-
     val mapStyle by vm.mapStyle.collectAsState()
     val canBeHD = vm.prefUtils.isWebcamsHighQuality
 
@@ -124,6 +124,8 @@ fun MapScreen(
                     ) {
                         DropdownMenuItem(onClick = {
                             menuExpanded = false
+                            vm.prefUtils.mapStyle = MapStyle.OUTSIDE.style
+                            vm.switchMapStyle(MapStyle.OUTSIDE)
                         }) {
                             Text(
                                 text = stringResource(id = R.string.map_style_outside_menu),
@@ -133,7 +135,8 @@ fun MapScreen(
                         }
                         DropdownMenuItem(onClick = {
                             menuExpanded = false
-
+                            vm.prefUtils.mapStyle = MapStyle.DARK.style
+                            vm.switchMapStyle(MapStyle.DARK)
                         }) {
                             Text(
                                 text = stringResource(id = R.string.map_style_dark_menu),
@@ -143,6 +146,8 @@ fun MapScreen(
                         }
                         DropdownMenuItem(onClick = {
                             menuExpanded = false
+                            vm.prefUtils.mapStyle = MapStyle.LIGHT.style
+                            vm.switchMapStyle(MapStyle.LIGHT)
                         }) {
                             Text(
                                 text = stringResource(id = R.string.map_style_light_menu),
@@ -152,7 +157,8 @@ fun MapScreen(
                         }
                         DropdownMenuItem(onClick = {
                             menuExpanded = false
-
+                            vm.prefUtils.mapStyle = MapStyle.SATELLITE.style
+                            vm.switchMapStyle(MapStyle.SATELLITE)
                         }) {
                             Text(
                                 text = stringResource(id = R.string.map_style_satellite_menu),
@@ -162,6 +168,8 @@ fun MapScreen(
                         }
                         DropdownMenuItem(onClick = {
                             menuExpanded = false
+                            vm.prefUtils.mapStyle = MapStyle.ROADS.style
+                            vm.switchMapStyle(MapStyle.ROADS)
                         }) {
                             Text(
                                 text = stringResource(id = R.string.map_style_roads_menu),
@@ -263,3 +271,4 @@ private suspend fun getCameraPositionBySection(
         EdgeInsets(100.0, 100.0, 100.0, 100.0)
     )
 }
+
