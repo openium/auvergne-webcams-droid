@@ -3,7 +3,6 @@ package fr.openium.auvergnewebcams.ui.mapSection
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
 import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.ViewModelProvider
 import fr.openium.auvergnewebcams.KEY_SECTION_ID
@@ -77,12 +76,6 @@ class ActivityMapSection : AbstractActivity() {
         overridePendingTransition(R.anim.animation_from_left, R.anim.animation_to_right)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_map, menu)
-        return true
-    }
-
-    //fun getDefaultFragment(): Fragment = FragmentMapSection()
 
     // --- Other methods
     // ---------------------------------------------------
