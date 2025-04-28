@@ -1,7 +1,5 @@
 package fr.openium.auvergnewebcams.ui.settings
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import androidx.compose.ui.platform.ComposeView
 import fr.openium.auvergnewebcams.R
@@ -23,14 +21,9 @@ class ActivitySettings : AbstractActivity() {
             AWTheme {
                 SettingsScreen(
                     onNavigateBack = { finish() },
-                    navigateToActivity = { activityClass ->
-                        val intent = Intent(this, activityClass)
-                        startActivity(intent)
+                    navigateTo = { destination ->
                     },
-                    navigateToUrl = { url ->
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                        startActivity(intent)
-                    })
+                )
             }
         }
     }

@@ -1,7 +1,6 @@
 package fr.openium.auvergnewebcams.ui.settings
 
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -47,11 +46,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.core.net.toUri
 import com.chargemap.compose.numberpicker.NumberPicker
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.ext.getAppVersion
-import fr.openium.auvergnewebcams.ui.about.ActivitySettingsAbout
 import fr.openium.auvergnewebcams.ui.core.AWTopBar
+import fr.openium.auvergnewebcams.ui.ext.navigateToLink
+import fr.openium.auvergnewebcams.ui.navigation.Destination
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import org.koin.androidx.compose.koinViewModel
@@ -62,8 +63,7 @@ import org.koin.androidx.compose.koinViewModel
 fun SettingsScreen(
     vm: SettingsViewModel = koinViewModel(),
     onNavigateBack: () -> Unit,
-    navigateToActivity: (activityClass: Class<out Activity>) -> Unit,
-    navigateToUrl: (url: String) -> Unit
+    navigateTo: (Destination) -> Unit,
 ) {
 
     val context = LocalContext.current
@@ -192,15 +192,11 @@ fun SettingsScreen(
 
                 SettingItem(textResId = R.string.settings_credits_about) {
                     AnalyticsUtils.aboutClicked(context)
-                    navigateToActivity(ActivitySettingsAbout::class.java)
+                    navigateTo(Destination.About)
                 }
                 SettingItem(textResId = R.string.settings_credits_openium) {
                     AnalyticsUtils.websiteOpeniumClicked(context)
-                    navigateToUrl(context.getString(R.string.url_openium))
-                }
-                SettingItem(textResId = R.string.settings_credits_pirates) {
-                    AnalyticsUtils.lesPiratesClicked(context)
-                    navigateToUrl(context.getString(R.string.url_pirates))
+                    context.navigateToLink(context.getString(R.string.url_openium).toUri())
                 }
 
                 SettingItem(textResId = R.string.settings_send_new_webcam) {
@@ -210,12 +206,13 @@ fun SettingsScreen(
 
                 SettingItem(textResId = R.string.settings_credits_note) {
                     AnalyticsUtils.rateAppClicked(context)
-                    navigateToUrl(
+                    context.navigateToLink(
                         context.getString(
                             R.string.url_note_format,
                             context.packageName
-                        )
+                        ).toUri()
                     )
+
                 }
 
                 Text(

@@ -116,18 +116,6 @@
             android:textColor="@color/selector_color_white_to_grey"
             android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/textViewSettingsPirates"
-            style="@style/Font.Text.Regular"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:drawableEnd="@drawable/selector_arrow_right_small_white_to_grey"
-            android:gravity="center_vertical"
-            android:text="@string/settings_credits_pirates"
-            android:textColor="@color/selector_color_white_to_grey"
-            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/textViewSettingsSendNewWebcam"

@@ -19,9 +19,9 @@
         android:usesCleartextTraffic="true">
 
         <activity
-            android:name=".ui.splash.ActivitySplash"
-            android:screenOrientation="portrait"
-            android:exported="true">
+            android:name=".ui.CoreActivity"
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -62,8 +62,8 @@
 
         <activity
             android:name=".ui.map.ActivityMap"
-            android:label="@string/map_title"
             android:configChanges="orientation|screenSize"
+            android:label="@string/map_title"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
         <activity
