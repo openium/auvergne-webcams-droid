@@ -39,11 +39,11 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SectionDetailScreen(
+    vm: ViewModelSectionDetail = koinViewModel(),
     sectionId: Long,
     goToWebcamDetail: (Webcam) -> Unit,
     onNavigateBack: () -> Unit,
     onNavigateToMap: () -> Unit,
-    vm: ViewModelSectionDetail = koinViewModel(),
 ) {
 
     val context = LocalContext.current

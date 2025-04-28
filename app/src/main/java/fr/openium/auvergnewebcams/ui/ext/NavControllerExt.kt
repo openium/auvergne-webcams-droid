@@ -1,4 +1,4 @@
-package fr.openium.afu.ext
+package fr.openium.auvergnewebcams.ext
 
 import androidx.annotation.IdRes
 import androidx.lifecycle.Lifecycle

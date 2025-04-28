@@ -7,7 +7,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.ViewModelProvider
-import coil.ImageLoader
 import com.google.android.material.snackbar.Snackbar
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.base.AbstractActivity
@@ -24,7 +23,6 @@ import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import fr.openium.kotlintools.ext.snackbar
 import fr.openium.kotlintools.ext.startActivity
 import io.reactivex.rxkotlin.addTo
-import org.koin.android.ext.android.inject
 import timber.log.Timber
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -35,8 +33,6 @@ class ActivityMain : AbstractActivity() {
     override val layoutId: Int = R.layout.fragment_main
 
     private lateinit var viewModelMain: ViewModelMain
-
-    private val imageLoader by inject<ImageLoader>()
 
 
     // --- Life cycle
@@ -58,14 +54,6 @@ class ActivityMain : AbstractActivity() {
                 val refresh by viewModelMain.isRefreshing.observeAsState(false)
                 val canBeHD = prefUtils.isWebcamsHighQuality
                 SectionsListScreen(
-                    sections = sectionsList,
-                    isRefreshing = refresh,
-                    refresh = {
-                        AnalyticsUtils.homeRefreshed(this)
-                        refreshMethod()
-                    },
-                    canBeHD = canBeHD,
-                    imageLoader = imageLoader,
                     goToWebcamDetail = {
                         goToWebcamDetail(it)
                     },
@@ -110,6 +98,8 @@ class ActivityMain : AbstractActivity() {
 
     private fun refreshMethod() {
         // Get new data
+        AnalyticsUtils.homeRefreshed(this)
+
         viewModelMain.setRefreshing(true)
         viewModelMain.updateData()
             .doFinally {

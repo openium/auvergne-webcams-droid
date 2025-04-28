@@ -16,6 +16,21 @@ sealed interface Destination {
     @Serializable
     data object About : Destination
 
+    @Serializable
+    data class SectionDetails(val sectionID: Long) : Destination
+
+    @Serializable
+    data object Search : Destination
+
+    @Serializable
+    data object Map : Destination
+
+    @Serializable
+    data object MapSection : Destination
+
+    @Serializable
+    data object WebcamDetails : Destination
+
 
 }
 

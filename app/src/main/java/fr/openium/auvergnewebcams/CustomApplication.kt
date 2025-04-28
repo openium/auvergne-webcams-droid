@@ -45,6 +45,8 @@ abstract class CustomApplication : Application() {
                     KoinModules.vmDetails,
                     KoinModules.vmMap,
                     KoinModules.vmMapSection,
+                    KoinModules.vmMain,
+                    KoinModules.vmSearch,
                 )
             )
         }

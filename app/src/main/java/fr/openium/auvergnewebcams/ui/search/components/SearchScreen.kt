@@ -15,6 +15,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -29,25 +31,31 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import coil.ImageLoader
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.ui.core.AWTopBar
+import fr.openium.auvergnewebcams.ui.search.SearchViewModel
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
+import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import kotlinx.coroutines.delay
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchScreen(
-    webcams: List<Webcam>,
-    canBeHD: Boolean,
-    imageLoader: ImageLoader,
+    vm: SearchViewModel = koinViewModel(),
     onNavigateBack: () -> Unit,
-    onNewSearch: (String) -> Unit,
     goToWebcamDetail: (Webcam) -> Unit
 ) {
+    val context = LocalContext.current
+
     var currentSearch by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
+
+    val webcams by vm.webcams.collectAsState()
+
+    val canBeHD = vm.prefUtils.isWebcamsHighQuality
+
     LaunchedEffect(Unit) {
         delay(400L) // delay to show keyboard
         focusRequester.requestFocus()
@@ -82,11 +90,11 @@ fun SearchScreen(
                     currentSearch = currentSearch,
                     onSearchChange = {
                         currentSearch = it
-                        onNewSearch(it)
+                        vm.onNewSearch(it)
                     },
                     clearSearch = {
                         currentSearch = ""
-                        onNewSearch("")
+                        vm.onNewSearch("")
                     },
                     focusRequester = focusRequester
                 )
@@ -128,8 +136,9 @@ fun SearchScreen(
                         WebcamItem(
                             webcam = webcam,
                             canBeHD = canBeHD,
-                            imageLoader = imageLoader,
+                            imageLoader = vm.imageLoader,
                             goToWebcamDetail = {
+                                AnalyticsUtils.webcamDetailsClicked(context, webcam.title ?: "")
                                 goToWebcamDetail(webcam)
                             }
                         )
