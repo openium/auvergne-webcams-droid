@@ -31,7 +31,7 @@ buildscript {
         classpath "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin:2.0.1"
 
         // Version
-        classpath "fr.openium:publish:1.3"
+        classpath "fr.openium:publish:1.0"
     }
 }
 
@@ -48,7 +48,7 @@ subprojects {
         withType(KotlinCompile).configureEach {
             kotlinOptions {
                 jvmTarget = JavaVersion.VERSION_17
-           }
+            }
         }
     }
 }
