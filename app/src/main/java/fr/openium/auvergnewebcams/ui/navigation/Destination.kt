@@ -29,7 +29,7 @@ sealed interface Destination {
     data object MapSection : Destination
 
     @Serializable
-    data object WebcamDetails : Destination
+    data class WebcamDetails(val webcamID: Long, val type: String?) : Destination
 
 
 }

@@ -44,6 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import coil.request.CachePolicy
@@ -66,10 +67,11 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun DetailScreen(
-    webcamId: Long, onNavigateBack: () -> Unit, viewModel: ViewModelWebcamDetail = koinViewModel()
+    onNavigateBack: () -> Unit,
+    viewModel: ViewModelWebcamDetail = koinViewModel()
 ) {
 
-    LaunchedEffect(webcamId) { viewModel.loadWebcam(webcamId) }
+    LaunchedEffect(viewModel) { viewModel.loadWebcam() }
 
     var menuExpanded by remember { mutableStateOf(false) }
     val state by viewModel.state.collectAsState()
@@ -128,7 +130,7 @@ fun DetailScreen(
                                     iconOpt = painterResource(id = R.drawable.ic_refresh),
                                     iconDescriptionOpt = stringResource(id = R.string.detail_refresh_menu),
                                     onNavigateToOpt = {
-                                        viewModel.loadWebcam(webcamId)
+                                        viewModel.loadWebcam()
                                     },
                                     dropdownMenu = {
                                         DropdownMenu(

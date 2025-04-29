@@ -29,7 +29,6 @@ class ActivityMapSection : AbstractActivity() {
         overridePendingTransition(R.anim.animation_from_right, R.anim.animation_to_left)
 
         viewModelMap = ViewModelProvider(this)[MapSectionViewModel::class.java]
-        viewModelMap.switchMapStyle(prefUtils.mapStyle ?: "")
         val sectionId = intent.getLongExtra(KEY_SECTION_ID, -1L)
         if (sectionId == -1L) {
             finish()

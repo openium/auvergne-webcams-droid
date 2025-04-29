@@ -14,14 +14,14 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 abstract class AbstractMapViewModel : ViewModel(), KoinComponent {
-    private val defaultMapStyle = MapStyle.ROADS
 
-    private val _mapStyle: MutableStateFlow<MapStyle> = MutableStateFlow(defaultMapStyle)
-    val mapStyle = _mapStyle.asStateFlow()
 
     val prefUtils: PreferencesUtils by inject()
 
     protected val sectionRepository by inject<SectionRepository>()
+
+    private val _mapStyle: MutableStateFlow<MapStyle> = MutableStateFlow(prefUtils.mapStyle?.let { MapStyle.from(it) } ?: defaultMapStyle)
+    val mapStyle = _mapStyle.asStateFlow()
 
     abstract val sections: StateFlow<List<SectionWithCameras>>
 
@@ -35,4 +35,8 @@ abstract class AbstractMapViewModel : ViewModel(), KoinComponent {
 
     fun getSectionWithCameras(sectionId: Long): Single<Optional<SectionWithCameras>> =
         sectionRepository.watchSectionWithCameras(sectionId)
+
+    companion object {
+        private val defaultMapStyle = MapStyle.ROADS
+    }
 }

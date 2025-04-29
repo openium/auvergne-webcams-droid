@@ -3,8 +3,10 @@ package fr.openium.auvergnewebcams.ui.webcamDetail
 import android.content.Context
 import android.content.Intent
 import androidx.annotation.StringRes
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
@@ -13,6 +15,7 @@ import fr.openium.auvergnewebcams.ext.getUrlForWebcam
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.repository.WebcamRepository
 import fr.openium.auvergnewebcams.service.DownloadWorker
+import fr.openium.auvergnewebcams.ui.navigation.Destination
 import fr.openium.auvergnewebcams.utils.DateUtils
 import fr.openium.auvergnewebcams.utils.PreferencesUtils
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -29,7 +32,7 @@ import org.koin.core.component.inject
 import timber.log.Timber
 
 
-class ViewModelWebcamDetail : ViewModel(), KoinComponent {
+class ViewModelWebcamDetail(val savedStateHandle: SavedStateHandle) : ViewModel(), KoinComponent {
 
     private val _state by lazy { MutableStateFlow<State>(State.Loading) }
     val state: StateFlow<State> by lazy {
@@ -43,11 +46,13 @@ class ViewModelWebcamDetail : ViewModel(), KoinComponent {
         _errorMessage.asSharedFlow()
     }
 
+    private val webcamId = savedStateHandle.toRoute(Destination.WebcamDetails::class).webcamID
+    
     private val webcamRepository by inject<WebcamRepository>()
     val prefUtils: PreferencesUtils by inject()
     val dateUtils: DateUtils by inject()
 
-    fun loadWebcam(webcamId: Long) {
+    fun loadWebcam() {
         viewModelScope.launch {
             _state.value = State.Loading
             webcamRepository.getWebcamFlow(webcamId)

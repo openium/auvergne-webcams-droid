@@ -23,11 +23,9 @@ class ActivityMap : AbstractActivity() {
         super.onCreate(savedInstanceState)
 
         viewModelMap = ViewModelProvider(this)[MapViewModel::class.java]
-        viewModelMap.switchMapStyle(prefUtils.mapStyle ?: "")
 
         findViewById<ComposeView>(R.id.composeView).setContent {
             val sections by viewModelMap.sections.collectAsState(initial = emptyList())
-
             AWTheme {
                 MapScreen(
                     sections = sections,

@@ -26,7 +26,7 @@ object KoinModules {
     }
 
     val vmDetails = module {
-        viewModel { ViewModelWebcamDetail() }
+        viewModel { ViewModelWebcamDetail(get()) }
     }
 
     val vmMap = module {
