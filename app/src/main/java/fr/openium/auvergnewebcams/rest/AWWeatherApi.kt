@@ -1,8 +1,6 @@
 package fr.openium.auvergnewebcams.rest
 
 import fr.openium.auvergnewebcams.rest.model.weather.WeatherRest
-import io.reactivex.Single
-import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -12,9 +10,9 @@ import retrofit2.http.Query
 interface AWWeatherApi {
 
     @GET("weather")
-    fun queryByGeographicCoordinates(
+    suspend fun queryByGeographicCoordinates(
         @Query("lat") lat: Double,
         @Query("lon") lon: Double,
         @Query("appid") appid: String,
-    ): Single<Response<WeatherRest>>
+    ): WeatherRest
 }

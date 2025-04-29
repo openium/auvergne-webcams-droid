@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 sealed interface Destination {
 
-    @kotlinx.serialization.Serializable
+    @Serializable
     data object Splash : Destination
 
     @Serializable
@@ -17,19 +17,16 @@ sealed interface Destination {
     data object About : Destination
 
     @Serializable
-    data class SectionDetails(val sectionID: Long) : Destination
+    data class SectionDetails(val sectionId: Long) : Destination
 
     @Serializable
     data object Search : Destination
 
     @Serializable
-    data object Map : Destination
+    data class Map(val sectionId: Long?, val sectionTitle: String?) : Destination
 
     @Serializable
-    data object MapSection : Destination
-
-    @Serializable
-    data class WebcamDetails(val webcamID: Long) : Destination
+    data class WebcamDetails(val webcamId: Long) : Destination
 
 
 }

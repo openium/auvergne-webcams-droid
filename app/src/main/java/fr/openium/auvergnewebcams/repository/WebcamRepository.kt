@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.map
  */
 class WebcamRepository(private val client: AWClient, private val dateUtils: DateUtils) {
 
-    fun getWebcam(webcamId: Long): Webcam? =
+    suspend fun getWebcam(webcamId: Long): Webcam? =
         client.database.webcamDao().getWebcam(webcamId)
 
     fun getWebcamFlow(webcamId: Long): Flow<Optional<Webcam>> =
@@ -22,19 +22,19 @@ class WebcamRepository(private val client: AWClient, private val dateUtils: Date
 
     fun watchAllWebcams() = client.database.webcamDao().watchAllWebcams()
 
-    fun update(webcam: Webcam): Int =
+    suspend fun update(webcam: Webcam): Int =
         client.database.webcamDao().update(webcam)
 
-    fun insert(webcams: List<Webcam>): List<Long> =
+    suspend fun insert(webcams: List<Webcam>): List<Long> =
         client.database.webcamDao().insert(webcams)
 
-    fun deleteAllNoMoreInSection(map: List<Long>, sectionUid: Long) =
+    suspend fun deleteAllNoMoreInSection(map: List<Long>, sectionUid: Long) =
         client.database.webcamDao().deleteAllNoMoreInSection(map, sectionUid)
 
-    private fun getWebcamWithPartialUrl(url: String): Webcam? =
+    private suspend fun getWebcamWithPartialUrl(url: String): Webcam? =
         client.database.webcamDao().getWebcamWithPartialUrl(url)
 
-    fun updateLastUpdateDate(lastModified: String, urlMedia: String) {
+    suspend fun updateLastUpdateDate(lastModified: String, urlMedia: String) {
         getWebcamWithPartialUrl(urlMedia)?.let {
             if (lastModified.isNotBlank()) {
                 val newTime = dateUtils.parseDateGMT(lastModified) ?: 0L

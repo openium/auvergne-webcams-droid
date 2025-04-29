@@ -1,6 +1,5 @@
 package fr.openium.auvergnewebcams.ui.main.components
 
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -39,10 +38,7 @@ import fr.openium.auvergnewebcams.ui.core.AWTopBar
 import fr.openium.auvergnewebcams.ui.main.ViewModelMain
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.addTo
 import org.koin.androidx.compose.koinViewModel
-import timber.log.Timber
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -55,8 +51,6 @@ fun SectionsListScreen(
     goToSettings: () -> Unit
 ) {
 
-    val disposables: CompositeDisposable = CompositeDisposable()
-
     val sections by vm.sections.collectAsState(initial = emptyList())
     val isRefreshing by vm.isRefreshing.observeAsState(false)
     val canBeHD = vm.prefUtils.isWebcamsHighQuality
@@ -66,7 +60,7 @@ fun SectionsListScreen(
     val pullRefreshState = rememberPullRefreshState(
         refreshing = isRefreshing, onRefresh = {
             AnalyticsUtils.homeRefreshed(context = context)
-            refreshMethod(vm, context, disposables)
+            vm.updateData()
         }
     )
 
@@ -137,7 +131,6 @@ fun SectionsListScreen(
                             imageLoader = vm.imageLoader,
                             goToWebcamDetail = goToWebcamDetail,
                             goToSectionList = {
-                                AnalyticsUtils.webcamDetailsClicked(context, section.section.title ?: "")
                                 goToSectionList(section.section)
                             }
                         )
@@ -153,17 +146,4 @@ fun SectionsListScreen(
     )
 }
 
-private fun refreshMethod(vm: ViewModelMain, context: Context, disposables: CompositeDisposable) {
-    AnalyticsUtils.homeRefreshed(context)
-
-    vm.setRefreshing(true)
-    vm.updateData()
-        .doFinally {
-            vm.setRefreshing(false)
-        }.subscribe({
-            Timber.d("Sections refreshed correctly")
-        }, {
-
-        }).addTo(disposables)
-}
 

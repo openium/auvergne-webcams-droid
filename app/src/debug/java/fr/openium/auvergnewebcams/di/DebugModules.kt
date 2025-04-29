@@ -8,7 +8,6 @@ import fr.openium.auvergnewebcams.model.AWClient
 import fr.openium.auvergnewebcams.rest.AWApi
 import fr.openium.auvergnewebcams.rest.MockApi
 import fr.openium.auvergnewebcams.rest.model.SectionList
-import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
@@ -56,7 +55,7 @@ object DebugModules {
                 networkBehaviour.setVariancePercent(0)
                 val apiMock = object : MockApi() {
 
-                    override fun getSections(): Single<SectionList> {
+                    override suspend fun getSections(): Result<SectionList> {
                         val thisValue = get<Context>().assets.open("aw-config.json")
                         val reader = InputStreamReader(thisValue)
 
@@ -72,7 +71,7 @@ object DebugModules {
 
                         val listLoaded = sObjectMapper.fromJson(reader, SectionList::class.java) as SectionList
 
-                        return delegate.returning(Calls.response(listLoaded)).getSections()
+                        return delegate.returning(Calls.response(Result.success(listLoaded))).getSections()
                     }
                 }
 
@@ -84,7 +83,7 @@ object DebugModules {
                         .build()
                 ).networkBehavior(networkBehaviour).build().create(AWApi::class.java)
                 apiMock
-                
+
             } else {
                 get<Retrofit>().create(AWApi::class.java)
             }

@@ -6,14 +6,11 @@ import androidx.lifecycle.viewModelScope
 import coil.ImageLoader
 import fr.openium.auvergnewebcams.repository.SectionRepository
 import fr.openium.auvergnewebcams.utils.PreferencesUtils
-import fr.openium.rxtools.ext.fromIOToMain
-import io.reactivex.Completable
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import timber.log.Timber
-import java.util.concurrent.TimeUnit
 
 
 class ViewModelMain : ViewModel(), KoinComponent {
@@ -32,21 +29,12 @@ class ViewModelMain : ViewModel(), KoinComponent {
     }
 
     // Update all the data the app needs
-    fun updateData(): Completable =
-        Completable.timer(MINIMUM_SECONDS_TO_WAIT, TimeUnit.SECONDS)
-            .mergeWith(sectionRepository.fetch()
-                .doOnSuccess {
-                    Timber.d("Loading from network: OK")
-                }.doOnError {
-                    Timber.e(it, "Loading from network: KO")
-                }.ignoreElement()
-            ).fromIOToMain()
-
-    fun setRefreshing(refresh: Boolean) {
-        isRefreshing.postValue(refresh)
+    fun updateData() {
+        viewModelScope.launch {
+            isRefreshing.postValue(true)
+            sectionRepository.fetch()
+            isRefreshing.postValue(false)
+        }
     }
 
-    companion object {
-        const val MINIMUM_SECONDS_TO_WAIT = 2L
-    }
 }

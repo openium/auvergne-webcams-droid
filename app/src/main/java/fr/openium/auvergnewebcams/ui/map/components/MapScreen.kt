@@ -2,12 +2,14 @@ package fr.openium.auvergnewebcams.ui.map.components
 
 import android.Manifest
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Scaffold
@@ -19,10 +21,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -54,10 +58,9 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MapScreen(
-    sections: List<SectionWithCameras>,
-    vm: MapViewModel = koinViewModel(),
     onNavigateBack: () -> Unit,
     goToWebcamDetail: (Webcam) -> Unit,
+    vm: MapViewModel = koinViewModel(),
 ) {
     MapboxOptions.accessToken = BuildConfig.MAPBOX_ACCESS_TOKEN
     val mapStyle by vm.mapStyle.collectAsState()
@@ -92,6 +95,8 @@ fun MapScreen(
             }
         )
 
+    val sectionState by vm.state.collectAsStateWithLifecycle()
+
     if (!locationPermissionState.allPermissionsGranted) {
         LaunchedEffect(key1 = Unit) {
             locationPermissionState.launchMultiplePermissionRequest()
@@ -105,7 +110,11 @@ fun MapScreen(
         backgroundColor = AWAppTheme.colors.greyVeryDark,
         topBar = {
             AWTopBar(
-                title = stringResource(id = R.string.map_title),
+                title = if (vm.sectionTitle != null) {
+                    stringResource(R.string.map_title_with_name, vm.sectionTitle)
+                } else {
+                    stringResource(id = R.string.map_title)
+                },
                 onNavigateBack = onNavigateBack,
                 onNavigateTo = { menuExpanded = true },
                 onNavigateToOpt = { },
@@ -182,63 +191,77 @@ fun MapScreen(
             )
         },
         content = { paddingValues ->
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(paddingValues)
-                    .navigationBarsPadding()
-            ) {
-                MapboxMap(
-                    Modifier.fillMaxSize(),
-                    mapViewportState = mapViewportState,
-                    onMapClickListener = {
-                        webcamPreviewUid = 0
-                        true
-                    },
-                    style = {
-                        GenericStyle(
-                            style = mapStyle.style
-                        )
-                    }
-                ) {
-                    MapEffect(sections) { mapView ->
-                        mapView.location.updateSettings {
-                            locationPuck = createDefault2DPuck()
-                            enabled = true
-                        }
-                        // Only for single section
-                        if (sections.size == 1) {
-                            // Focus on section position
-                            mapViewportState.setCameraOptions(
-                                getCameraPositionBySection(
-                                    mapView,
-                                    sections.first()
-                                )
-                            )
-                        }
-                    }
-
-                    sections.forEach { sectionWithCamera ->
-                        val section = sectionWithCamera.section
-                        sectionWithCamera.webcams
-                            .filter { it.hidden == false && it.longitude != null && it.latitude != null }
-                            .forEach { webcam ->
-                                MapWebcamAnnotation(
-                                    webcam = webcam,
-                                    section = section,
-                                    webcamPreviewUid = webcamPreviewUid,
-                                    canBeHD = canBeHD,
-                                    onWebcamClick = {
-                                        webcamPreviewUid = webcam.uid
-                                    },
-                                    goToWebcamDetail = {
-                                        goToWebcamDetail(webcam)
-                                    },
-                                )
-                            }
+            when (val state = sectionState) {
+                MapViewModel.State.Loading -> {
+                    Box(
+                        modifier = Modifier
+                            .padding(paddingValues)
+                            .fillMaxSize()
+                    ) {
+                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                     }
                 }
+
+                is MapViewModel.State.Loaded -> {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(paddingValues)
+                            .navigationBarsPadding()
+                    ) {
+                        MapboxMap(
+                            Modifier.fillMaxSize(),
+                            mapViewportState = mapViewportState,
+                            onMapClickListener = {
+                                webcamPreviewUid = 0
+                                true
+                            },
+                            style = {
+                                GenericStyle(
+                                    style = mapStyle.style
+                                )
+                            }
+                        ) {
+                            MapEffect(state.sections) { mapView ->
+                                mapView.location.updateSettings {
+                                    locationPuck = createDefault2DPuck()
+                                    enabled = true
+                                }
+                                // Only for single section
+                                if (state.sections.size == 1) {
+                                    // Focus on section position
+                                    mapViewportState.setCameraOptions(
+                                        getCameraPositionBySection(
+                                            mapView,
+                                            state.sections.first()
+                                        )
+                                    )
+                                }
+                            }
+
+                            state.sections.forEach { sectionWithCamera ->
+                                val section = sectionWithCamera.section
+                                sectionWithCamera.webcams
+                                    .filter { it.hidden == false && it.longitude != null && it.latitude != null }
+                                    .forEach { webcam ->
+                                        MapWebcamAnnotation(
+                                            webcam = webcam,
+                                            section = section,
+                                            webcamPreviewUid = webcamPreviewUid,
+                                            canBeHD = canBeHD,
+                                            onWebcamClick = {
+                                                webcamPreviewUid = webcam.uid
+                                            },
+                                            goToWebcamDetail = {
+                                                goToWebcamDetail(webcam)
+                                            },
+                                        )
+                                    }
+                            }
+                        }
+                    }
+                }
+
             }
         }
     )

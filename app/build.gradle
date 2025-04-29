@@ -134,19 +134,11 @@ dependencies {
 
     // Openium Tools
     implementation libs.openium.tools
-    implementation libs.openium.rx.tools
 
     // Koin
     implementation libs.koin
     implementation libs.koin.core
     implementation libs.koin.androidx.compose
-
-    // RxJava and related libraries
-    implementation libs.rxjava
-    implementation libs.rxbinding
-    implementation libs.rxbinding.appcompat
-    implementation libs.rxrelay
-    implementation libs.rxpermissions
 
     // Retrofit and OkHttp
     implementation libs.retrofit

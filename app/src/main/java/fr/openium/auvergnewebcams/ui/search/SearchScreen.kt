@@ -1,4 +1,4 @@
-package fr.openium.auvergnewebcams.ui.search.components
+package fr.openium.auvergnewebcams.ui.search
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,10 +20,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -34,21 +32,18 @@ import androidx.compose.ui.unit.dp
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.ui.core.AWTopBar
-import fr.openium.auvergnewebcams.ui.search.SearchViewModel
+import fr.openium.auvergnewebcams.ui.search.components.SearchItem
+import fr.openium.auvergnewebcams.ui.search.components.WebcamItem
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
-import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchScreen(
     vm: SearchViewModel = koinViewModel(),
     onNavigateBack: () -> Unit,
     goToWebcamDetail: (Webcam) -> Unit
 ) {
-    val context = LocalContext.current
-
     var currentSearch by remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
 
@@ -138,7 +133,6 @@ fun SearchScreen(
                             canBeHD = canBeHD,
                             imageLoader = vm.imageLoader,
                             goToWebcamDetail = {
-                                AnalyticsUtils.webcamDetailsClicked(context, webcam.title ?: "")
                                 goToWebcamDetail(webcam)
                             }
                         )

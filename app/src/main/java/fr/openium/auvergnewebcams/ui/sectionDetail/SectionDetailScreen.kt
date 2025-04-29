@@ -43,7 +43,7 @@ fun SectionDetailScreen(
     sectionId: Long,
     goToWebcamDetail: (Webcam) -> Unit,
     onNavigateBack: () -> Unit,
-    onNavigateToMap: () -> Unit,
+    onNavigateToMap: (sectionId: Long, sectionTitle: String?) -> Unit,
 ) {
 
     val context = LocalContext.current
@@ -53,7 +53,7 @@ fun SectionDetailScreen(
     }
     val state by vm.state.collectAsState()
 
-    when (state) {
+    when (val currentState = state) {
 
         is ViewModelSectionDetail.State.Loading -> {
             Box(
@@ -65,17 +65,15 @@ fun SectionDetailScreen(
         }
 
         is ViewModelSectionDetail.State.Loaded -> {
-            val loadedState = state as ViewModelSectionDetail.State.Loaded
-
-            val webcams by remember(loadedState) { mutableStateOf(loadedState.webcams.sortedBy { it.order }) }
+            val webcams by remember(currentState) { mutableStateOf(currentState.webcams.sortedBy { it.order }) }
 
             Scaffold(
                 backgroundColor = AWAppTheme.colors.greyVeryDark,
                 topBar = {
                     AWTopBar(
-                        title = loadedState.section.title ?: "",
+                        title = currentState.section.title ?: "",
                         onNavigateBack = onNavigateBack,
-                        onNavigateTo = onNavigateToMap,
+                        onNavigateTo = { onNavigateToMap(sectionId, currentState.section.title) },
                         onNavigateToOpt = { },
                         icon = painterResource(id = R.drawable.map_icon_3),
                         iconDescription = stringResource(id = R.string.map_title),
@@ -95,12 +93,12 @@ fun SectionDetailScreen(
                     ) {
                         item {
                             SectionHeader(
-                                title = loadedState.section.title ?: "",
+                                title = currentState.section.title ?: "",
                                 webcamsCount = webcams.count(),
-                                image = ImageUtils.getImageResourceAssociatedToSection(context, loadedState.section),
+                                image = ImageUtils.getImageResourceAssociatedToSection(context, currentState.section),
                                 goToSectionList = null,
-                                weatherIcon = loadedState.section.weatherUid?.let { WeatherUtils.weatherImage(it) },
-                                weatherTemp = loadedState.section.weatherTemp?.let { WeatherUtils.convertKelvinToCelsius(it) }
+                                weatherIcon = currentState.section.weatherUid?.let { WeatherUtils.weatherImage(it) },
+                                weatherTemp = currentState.section.weatherTemp?.let { WeatherUtils.convertKelvinToCelsius(it) }
                             )
                         }
                         items(items = webcams) { webcam ->

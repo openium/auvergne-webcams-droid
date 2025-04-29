@@ -1,41 +1,29 @@
 package fr.openium.auvergnewebcams.ui.navigation
 
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import fr.openium.auvergnewebcams.ext.navigateWithLifecycle
 import fr.openium.auvergnewebcams.ext.popBackStackWithLifecycle
-import fr.openium.auvergnewebcams.ui.about.components.AboutScreen
+import fr.openium.auvergnewebcams.ui.about.AboutScreen
 import fr.openium.auvergnewebcams.ui.main.components.SectionsListScreen
-import fr.openium.auvergnewebcams.ui.search.components.SearchScreen
+import fr.openium.auvergnewebcams.ui.map.components.MapScreen
+import fr.openium.auvergnewebcams.ui.search.SearchScreen
 import fr.openium.auvergnewebcams.ui.sectionDetail.SectionDetailScreen
 import fr.openium.auvergnewebcams.ui.settings.SettingsScreen
 import fr.openium.auvergnewebcams.ui.splash.SplashScreen
 import fr.openium.auvergnewebcams.ui.webcamDetail.DetailScreen
+import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 
 @Composable
 fun AWNavGraph(navHostController: NavHostController) {
-
+    val context = LocalContext.current
     NavHost(
         navController = navHostController,
         startDestination = Destination.Splash,
-        enterTransition = {
-            slideInHorizontally(
-                initialOffsetX = { fullWidth -> fullWidth },
-                animationSpec = tween(500)
-            )
-        },
-        exitTransition = {
-            slideOutHorizontally(
-                targetOffsetX = { fullWidth -> -fullWidth },
-                animationSpec = tween(500)
-            )
-        },
     ) {
 
         composable<Destination.Splash> {
@@ -47,11 +35,13 @@ fun AWNavGraph(navHostController: NavHostController) {
         composable<Destination.Main> {
             SectionsListScreen(
                 goToWebcamDetail = { webcam ->
+                    AnalyticsUtils.webcamDetailsClicked(context = context, webcamTitle = webcam.title ?: "")
                     navHostController.navigateWithLifecycle(
                         Destination.WebcamDetails(webcam.uid)
                     )
                 },
                 goToSectionList = { section ->
+                    AnalyticsUtils.webcamDetailsClicked(context = context, webcamTitle = section.title ?: "")
                     navHostController.navigateWithLifecycle(
                         Destination.SectionDetails(section.uid)
                     )
@@ -62,7 +52,7 @@ fun AWNavGraph(navHostController: NavHostController) {
                     )
                 },
                 goToMap = {
-                    //TODO
+                    navHostController.navigateWithLifecycle(Destination.Map(null, null))
                 },
                 goToSettings = {
                     navHostController.navigateWithLifecycle(
@@ -90,15 +80,16 @@ fun AWNavGraph(navHostController: NavHostController) {
 
         composable<Destination.SectionDetails> {
             SectionDetailScreen(
-                sectionId = it.savedStateHandle.toRoute(Destination.SectionDetails::class).sectionID,
+                sectionId = it.savedStateHandle.toRoute(Destination.SectionDetails::class).sectionId,
                 onNavigateBack = { navHostController.popBackStackWithLifecycle() },
                 goToWebcamDetail = { webcam ->
+                    AnalyticsUtils.webcamDetailsClicked(context = context, webcamTitle = webcam.title ?: "")
                     navHostController.navigateWithLifecycle(
                         Destination.WebcamDetails(webcam.uid)
                     )
                 },
-                onNavigateToMap = {
-                    //TODO
+                onNavigateToMap = { sectionId, sectionTitle ->
+                    navHostController.navigateWithLifecycle(Destination.Map(sectionId, sectionTitle))
                 }
             )
         }
@@ -107,6 +98,7 @@ fun AWNavGraph(navHostController: NavHostController) {
             SearchScreen(
                 onNavigateBack = { navHostController.popBackStackWithLifecycle() },
                 goToWebcamDetail = { webcam ->
+                    AnalyticsUtils.webcamDetailsClicked(context = context, webcamTitle = webcam.title ?: "")
                     navHostController.navigateWithLifecycle(
                         Destination.WebcamDetails(webcam.uid)
                     )
@@ -115,14 +107,16 @@ fun AWNavGraph(navHostController: NavHostController) {
         }
 
         composable<Destination.Map> {
-            //MapScreen
-            //TODO
+            MapScreen(onNavigateBack = navHostController::popBackStackWithLifecycle,
+                goToWebcamDetail = { webcam ->
+                    AnalyticsUtils.webcamDetailsClicked(
+                        context = context,
+                        webcamTitle = webcam.title ?: "",
+                    )
+                    navHostController.navigateWithLifecycle(Destination.WebcamDetails(webcamId = webcam.uid))
+                })
         }
 
-        composable<Destination.MapSection> {
-            //MapScreen
-            //TODO
-        }
 
 
         composable<Destination.WebcamDetails> {

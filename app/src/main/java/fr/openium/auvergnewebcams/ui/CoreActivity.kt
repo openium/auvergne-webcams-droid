@@ -6,11 +6,13 @@ import androidx.activity.compose.setContent
 import androidx.navigation.compose.rememberNavController
 import fr.openium.auvergnewebcams.ui.navigation.AWNavGraph
 import fr.openium.auvergnewebcams.ui.theme.AWTheme
+import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 
 class CoreActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        AnalyticsUtils.appIsOpen(this)
+        AnalyticsUtils.sendAllUserProperties(this)
         setContent {
             val navHostController = rememberNavController()
             AWTheme {
@@ -18,5 +20,4 @@ class CoreActivity : ComponentActivity() {
             }
         }
     }
-
 }

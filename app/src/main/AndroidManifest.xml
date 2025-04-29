@@ -18,57 +18,13 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".ui.splash.ActivitySplash"
-            android:exported="true"
-            android:screenOrientation="portrait">
+            android:name=".ui.CoreActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".ui.main.ActivityMain"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
-
-        <activity
-            android:name=".ui.settings.ActivitySettings"
-            android:label="@string/settings_title"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
-
-        <activity
-            android:name=".ui.about.ActivitySettingsAbout"
-            android:label="@string/settings_credits_about"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
-
-        <activity
-            android:name=".ui.webcamDetail.ActivityWebcamDetail"
-            android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
-
-        <activity
-            android:name=".ui.sectionDetail.ActivitySectionDetail"
-            android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
-
-        <activity
-            android:name=".ui.search.ActivitySearch"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
-
-        <activity
-            android:name=".ui.map.ActivityMap"
-            android:label="@string/map_title"
-            android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
-
-        <activity
-            android:name=".ui.mapSection.ActivityMapSection"
-            android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

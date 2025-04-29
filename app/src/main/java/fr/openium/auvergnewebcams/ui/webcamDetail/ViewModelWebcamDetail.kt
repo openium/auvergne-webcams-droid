@@ -32,7 +32,7 @@ import org.koin.core.component.inject
 import timber.log.Timber
 
 
-class ViewModelWebcamDetail(val savedStateHandle: SavedStateHandle) : ViewModel(), KoinComponent {
+class ViewModelWebcamDetail(savedStateHandle: SavedStateHandle) : ViewModel(), KoinComponent {
 
     private val _state by lazy { MutableStateFlow<State>(State.Loading) }
     val state: StateFlow<State> by lazy {
@@ -46,8 +46,8 @@ class ViewModelWebcamDetail(val savedStateHandle: SavedStateHandle) : ViewModel(
         _errorMessage.asSharedFlow()
     }
 
-    private val webcamId = savedStateHandle.toRoute(Destination.WebcamDetails::class).webcamID
-    
+    private val webcamId = savedStateHandle.toRoute(Destination.WebcamDetails::class).webcamId
+
     private val webcamRepository by inject<WebcamRepository>()
     val prefUtils: PreferencesUtils by inject()
     val dateUtils: DateUtils by inject()
@@ -110,15 +110,6 @@ class ViewModelWebcamDetail(val savedStateHandle: SavedStateHandle) : ViewModel(
                 val fileName = "${sanitizedTitle}_${System.currentTimeMillis()}.$fileExtension"
 
                 try {
-//        val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-//        val uri = Uri.parse(urlSrc)
-//        val request = DownloadManager.Request(uri).apply {
-//            setTitle(webcam.title)
-//            setDescription("Downloading ${if (isVideo) "video" else "image"}...")
-//            setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
-//            setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-//        }
-//        downloadManager.enqueue(request)
                     WorkManager.getInstance(context).enqueue(
                         OneTimeWorkRequestBuilder<DownloadWorker>().apply {
                             setInputData(Data.Builder().apply {

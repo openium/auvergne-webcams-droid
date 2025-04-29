@@ -2,7 +2,6 @@ package fr.openium.auvergnewebcams.di
 
 import fr.openium.auvergnewebcams.ui.main.ViewModelMain
 import fr.openium.auvergnewebcams.ui.map.MapViewModel
-import fr.openium.auvergnewebcams.ui.mapSection.MapSectionViewModel
 import fr.openium.auvergnewebcams.ui.search.SearchViewModel
 import fr.openium.auvergnewebcams.ui.sectionDetail.ViewModelSectionDetail
 import fr.openium.auvergnewebcams.ui.settings.SettingsViewModel
@@ -30,11 +29,7 @@ object KoinModules {
     }
 
     val vmMap = module {
-        viewModel { MapViewModel() }
-    }
-
-    val vmMapSection = module {
-        viewModel { MapSectionViewModel() }
+        viewModel { MapViewModel(get()) }
     }
 
     val vmMain = module {

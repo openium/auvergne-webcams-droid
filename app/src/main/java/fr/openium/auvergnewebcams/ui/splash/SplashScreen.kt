@@ -11,35 +11,25 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.ui.splash.components.CloudWithAnimation
 import fr.openium.auvergnewebcams.ui.splash.components.SplashText
 import org.koin.androidx.compose.koinViewModel
-import timber.log.Timber
 
 
 @SuppressLint("UseOfNonLambdaOffsetOverload")
 @Composable
 fun SplashScreen(vm: ViewModelSplash = koinViewModel(), goToMain: () -> Unit) {
-
-    val context = LocalContext.current
-
-    DisposableEffect(Unit) {
-        val job = vm.updateData(context)
-            .subscribe({
-                goToMain()
-            }, { Timber.e(it) })
-
-        onDispose {
-            job.dispose()
+    LaunchedEffect(vm) {
+        vm.updateData {
+            goToMain()
         }
     }
 

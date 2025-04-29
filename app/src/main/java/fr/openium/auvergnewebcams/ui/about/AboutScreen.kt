@@ -1,4 +1,4 @@
-package fr.openium.auvergnewebcams.ui.about.components
+package fr.openium.auvergnewebcams.ui.about
 
 import android.webkit.WebChromeClient
 import android.webkit.WebView
