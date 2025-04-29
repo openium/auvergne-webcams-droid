@@ -1,4 +1,4 @@
-package fr.openium.auvergnewebcams.ui.main.components
+package fr.openium.auvergnewebcams.ui.main
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -35,7 +35,7 @@ import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.model.entity.Section
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.ui.core.AWTopBar
-import fr.openium.auvergnewebcams.ui.main.ViewModelMain
+import fr.openium.auvergnewebcams.ui.main.components.SectionItem
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import org.koin.androidx.compose.koinViewModel

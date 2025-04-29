@@ -1,4 +1,4 @@
-package fr.openium.auvergnewebcams.ui.map.components
+package fr.openium.auvergnewebcams.ui.map
 
 import android.Manifest
 import androidx.compose.foundation.background
@@ -51,7 +51,7 @@ import fr.openium.auvergnewebcams.ext.navigateToLocationSettings
 import fr.openium.auvergnewebcams.model.entity.SectionWithCameras
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.ui.core.AWTopBar
-import fr.openium.auvergnewebcams.ui.map.MapViewModel
+import fr.openium.auvergnewebcams.ui.map.components.MapWebcamAnnotation
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 import org.koin.androidx.compose.koinViewModel
 

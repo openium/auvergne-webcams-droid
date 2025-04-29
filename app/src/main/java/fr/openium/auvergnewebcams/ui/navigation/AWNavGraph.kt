@@ -9,8 +9,8 @@ import androidx.navigation.toRoute
 import fr.openium.auvergnewebcams.ext.navigateWithLifecycle
 import fr.openium.auvergnewebcams.ext.popBackStackWithLifecycle
 import fr.openium.auvergnewebcams.ui.about.AboutScreen
-import fr.openium.auvergnewebcams.ui.main.components.SectionsListScreen
-import fr.openium.auvergnewebcams.ui.map.components.MapScreen
+import fr.openium.auvergnewebcams.ui.main.SectionsListScreen
+import fr.openium.auvergnewebcams.ui.map.MapScreen
 import fr.openium.auvergnewebcams.ui.search.SearchScreen
 import fr.openium.auvergnewebcams.ui.sectionDetail.SectionDetailScreen
 import fr.openium.auvergnewebcams.ui.settings.SettingsScreen
