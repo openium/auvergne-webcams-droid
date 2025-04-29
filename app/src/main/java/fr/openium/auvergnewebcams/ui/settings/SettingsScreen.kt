@@ -71,7 +71,6 @@ fun SettingsScreen(
     val scrollState = rememberScrollState()
 
     val qualityHighEnabled by vm.isWebcamsHighQuality.collectAsState()
-    val isDelayRefreshActive by vm.isDelayRefreshActive.collectAsState()
     val refreshDelay by vm.refreshDelay.collectAsState()
 
     var showDelayDialog by remember { mutableStateOf(false) }
@@ -109,58 +108,6 @@ fun SettingsScreen(
                     color = colorResource(id = R.color.grey),
                     modifier = Modifier.padding(bottom = 10.dp)
                 )
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .pointerInteropFilter { event ->
-                            (event.action == MotionEvent.ACTION_HOVER_EXIT)
-                        }
-                        .clickable { vm.onDelayRefreshChanged(!isDelayRefreshActive, context) },
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(R.string.settings_global_refresh),
-                        style = AWAppTheme.typography.p1,
-                        color = Color.White,
-                        modifier = Modifier.weight(1f)
-                    )
-                    Switch(
-                        checked = isDelayRefreshActive,
-                        onCheckedChange = { vm.onDelayRefreshChanged(it, context) },
-                    )
-                }
-
-                if (isDelayRefreshActive) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 10.dp)
-                            .clickable
-                            { showDelayDialog = true },
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = stringResource(R.string.settings_global_refresh_delay),
-                            style = AWAppTheme.typography.p1,
-                            color = colorResource(id = R.color.selector_color_white_to_grey),
-                            modifier = Modifier.weight(1f)
-                        )
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(
-                                text = refreshDelay.toString(),
-                                style = AWAppTheme.typography.p1,
-                                color = colorResource(id = R.color.selector_color_white_to_grey)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Icon(
-                                painter = painterResource(R.drawable.ic_arrow_right_small),
-                                contentDescription = null,
-                                tint = Color.White
-                            )
-                        }
-                    }
-                }
 
                 Row(
                     modifier = Modifier

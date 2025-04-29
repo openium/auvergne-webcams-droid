@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import fr.openium.auvergnewebcams.ext.navigateToDestinationAndPopUpTo
 import fr.openium.auvergnewebcams.ext.navigateWithLifecycle
 import fr.openium.auvergnewebcams.ext.popBackStackWithLifecycle
 import fr.openium.auvergnewebcams.ui.about.AboutScreen
@@ -28,7 +29,7 @@ fun AWNavGraph(navHostController: NavHostController) {
 
         composable<Destination.Splash> {
             SplashScreen(
-                goToMain = { navHostController.navigateWithLifecycle(Destination.Main) }
+                goToMain = { navHostController.navigateToDestinationAndPopUpTo<Destination.Splash>(Destination.Main) }
             )
         }
 
