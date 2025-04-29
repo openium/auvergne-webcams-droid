@@ -48,7 +48,7 @@ fun AWNavGraph(navHostController: NavHostController) {
             SectionsListScreen(
                 goToWebcamDetail = { webcam ->
                     navHostController.navigateWithLifecycle(
-                        Destination.WebcamDetails(webcam.uid, webcam.type)
+                        Destination.WebcamDetails(webcam.uid)
                     )
                 },
                 goToSectionList = { section ->
@@ -94,7 +94,7 @@ fun AWNavGraph(navHostController: NavHostController) {
                 onNavigateBack = { navHostController.popBackStackWithLifecycle() },
                 goToWebcamDetail = { webcam ->
                     navHostController.navigateWithLifecycle(
-                        Destination.WebcamDetails(webcam.uid, webcam.type)
+                        Destination.WebcamDetails(webcam.uid)
                     )
                 },
                 onNavigateToMap = {
@@ -108,7 +108,7 @@ fun AWNavGraph(navHostController: NavHostController) {
                 onNavigateBack = { navHostController.popBackStackWithLifecycle() },
                 goToWebcamDetail = { webcam ->
                     navHostController.navigateWithLifecycle(
-                        Destination.WebcamDetails(webcam.uid, webcam.type)
+                        Destination.WebcamDetails(webcam.uid)
                     )
                 },
             )
