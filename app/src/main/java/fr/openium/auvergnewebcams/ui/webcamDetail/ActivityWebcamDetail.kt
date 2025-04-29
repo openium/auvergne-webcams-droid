@@ -29,7 +29,6 @@ class ActivityWebcamDetail : AbstractActivity() {
         findViewById<ComposeView>(R.id.composeView).setContent {
             AWTheme {
                 DetailScreen(
-                    webcamId = webcamId,
                     onNavigateBack = { finish() },
                 )
             }
