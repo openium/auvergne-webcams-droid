@@ -64,19 +64,3 @@ object AWAppTheme {
         @ReadOnlyComposable
         get() = LocalTypography.current
 }
-
-//@Immutable
-//private object MaterialRippleTheme : RippleTheme {
-//
-//    @Composable
-//    override fun defaultColor() = RippleTheme.defaultRippleColor(
-//        contentColor = LocalContentColor.current,
-//        lightTheme = MaterialTheme.colors.isLight
-//    )
-//
-//    @Composable
-//    override fun rippleAlpha() = RippleTheme.defaultRippleAlpha(
-//        contentColor = LocalContentColor.current,
-//        lightTheme = MaterialTheme.colors.isLight
-//    )
-//}

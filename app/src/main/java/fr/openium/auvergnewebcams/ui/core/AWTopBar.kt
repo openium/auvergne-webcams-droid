@@ -7,7 +7,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import fr.openium.auvergnewebcams.R
@@ -53,7 +52,7 @@ fun AWTopBar(
                     Icon(
                         painter = iconOpt,
                         contentDescription = iconDescriptionOpt,
-                        tint = Color.White
+                        tint = AWAppTheme.colors.white
                     )
                 }
             }
@@ -62,7 +61,7 @@ fun AWTopBar(
                     Icon(
                         painter = icon,
                         contentDescription = iconDescription,
-                        tint = Color.White
+                        tint = AWAppTheme.colors.white
                     )
                 }
 
@@ -72,7 +71,7 @@ fun AWTopBar(
             }
         },
         backgroundColor = AWAppTheme.colors.greyVeryDark,
-        contentColor = Color.White,
+        contentColor = AWAppTheme.colors.white,
         modifier = modifier
     )
 

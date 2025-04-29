@@ -16,6 +16,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -63,15 +65,14 @@ fun SectionDetailScreen(
 
         is ViewModelSectionDetail.State.Loaded -> {
             val loadedState = state as ViewModelSectionDetail.State.Loaded
-            val section = loadedState.section
-            val webcams = loadedState.webcams.sortedBy { it.order }
 
+            val webcams by remember(loadedState) { mutableStateOf(loadedState.webcams.sortedBy { it.order }) }
 
             Scaffold(
                 backgroundColor = AWAppTheme.colors.greyMedium,
                 topBar = {
                     AWTopBar(
-                        title = section.title ?: "",
+                        title = loadedState.section.title ?: "",
                         onNavigateBack = onNavigateBack,
                         onNavigateTo = onNavigateToMap,
                         onNavigateToOpt = { },
@@ -89,16 +90,15 @@ fun SectionDetailScreen(
                             .fillMaxSize()
                             .padding(paddingValues)
                             .navigationBarsPadding()
-
                     ) {
                         item {
                             SectionHeader(
-                                title = section.title ?: "",
+                                title = loadedState.section.title ?: "",
                                 webcamsCount = webcams.count(),
-                                image = ImageUtils.getImageResourceAssociatedToSection(context, section),
-                                goToSectionList = { },
-                                weatherIcon = section.weatherUid?.let { WeatherUtils.weatherImage(it) },
-                                weatherTemp = section.weatherTemp?.let { WeatherUtils.convertKelvinToCelsius(it) }
+                                image = ImageUtils.getImageResourceAssociatedToSection(context, loadedState.section),
+                                goToSectionList = null,
+                                weatherIcon = loadedState.section.weatherUid?.let { WeatherUtils.weatherImage(it) },
+                                weatherTemp = loadedState.section.weatherTemp?.let { WeatherUtils.convertKelvinToCelsius(it) }
                             )
                         }
                         items(items = webcams) { webcam ->

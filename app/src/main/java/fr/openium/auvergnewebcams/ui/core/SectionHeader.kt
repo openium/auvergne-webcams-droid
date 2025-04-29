@@ -36,16 +36,22 @@ fun SectionHeader(
     title: String,
     webcamsCount: Int,
     @DrawableRes image: Int,
-    goToSectionList: () -> Unit,
+    goToSectionList: (() -> Unit)?,
     weatherIcon: Int? = null,
     weatherTemp: Int? = null,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(
-                onClick = goToSectionList,
-            )
+            .let {
+                if (goToSectionList != null) {
+                    it.clickable(
+                        onClick = goToSectionList,
+                    )
+                } else {
+                    it
+                }
+            }
             .padding(horizontal = 24.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
