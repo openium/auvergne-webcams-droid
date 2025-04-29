@@ -3,22 +3,25 @@ package fr.openium.auvergnewebcams.di
 import fr.openium.auvergnewebcams.ui.sectionDetail.ViewModelSectionDetail
 import fr.openium.auvergnewebcams.ui.settings.SettingsViewModel
 import fr.openium.auvergnewebcams.ui.splash.ViewModelSplash
-import org.koin.androidx.viewmodel.dsl.viewModelOf
+import fr.openium.auvergnewebcams.ui.webcamDetail.ViewModelWebcamDetail
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 object KoinModules {
 
     val vmSplash = module {
-        viewModelOf(::ViewModelSplash)
+        viewModel { ViewModelSplash() }
     }
 
     val vmSettings = module {
-        viewModelOf(::SettingsViewModel)
+        viewModel { SettingsViewModel() }
     }
 
     val vmSection = module {
-        viewModelOf(::ViewModelSectionDetail)
+        viewModel { ViewModelSectionDetail() }
     }
 
-
+    val vmDetails = module {
+        viewModel { ViewModelWebcamDetail() }
+    }
 }

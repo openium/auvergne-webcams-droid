@@ -5,10 +5,10 @@ import fr.openium.auvergnewebcams.model.entity.Webcam
 import timber.log.Timber
 
 
-fun Webcam.getUrlForWebcam(canBeHD: Boolean, canBeVideo: Boolean): String =
-    when (type) {
+fun Webcam.getUrlForWebcam(canBeHD: Boolean): String {
+    return when (type) {
         WebcamType.VIEWSURF.jsonKey -> {
-            val format = if (canBeVideo) "%s/%s.mp4" else "%s/%s.jpg"
+            val format = if (isVideo) "%s/%s.mp4" else "%s/%s.jpg"
 
             // Load viewsurf
             val url = if (canBeHD && !mediaViewSurfHD.isNullOrEmpty()) {
@@ -32,6 +32,7 @@ fun Webcam.getUrlForWebcam(canBeHD: Boolean, canBeVideo: Boolean): String =
             if (canBeHD && !imageHD.isNullOrBlank()) imageHD ?: "" else imageLD ?: ""
         }
     }
+}
 
 val Webcam.lastUpdateDate: Long?
     get() = lastUpdate?.let {

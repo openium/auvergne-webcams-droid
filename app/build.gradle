@@ -1,31 +1,40 @@
-apply plugin: "com.android.application"
-apply plugin: "com.google.gms.google-services"
-apply plugin: "com.google.firebase.crashlytics"
-apply plugin: "kotlin-android"
-apply plugin: "kotlin-android-extensions"
-apply plugin: "kotlin-kapt"
-apply plugin: "com.google.android.libraries.mapsplatform.secrets-gradle-plugin"
-apply plugin: "fr.openium.version"
+plugins {
+    id "com.android.application"
+    id "com.google.gms.google-services"
+    id "com.google.firebase.crashlytics"
+    id "kotlin-android"
+    id "kotlin-kapt"
+    id "com.google.android.libraries.mapsplatform.secrets-gradle-plugin"
+    id "fr.openium.publish"
+    alias(libs.plugins.compose.compiler)
+}
+
 
 def keystorePropertiesFile = rootProject.file("private/keys/keystore.properties")
 def keystoreProperties = new Properties()
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
-    compileSdk 34
+    compileSdk 35
+
+    namespace "fr.openium.auvergnewebcams"
 
     defaultConfig {
         applicationId "fr.openium.auvergnewebcams"
         minSdkVersion 21
-        targetSdkVersion 34
+        targetSdkVersion 35
 
-        versionCode openiumVersion.versionCode
-        versionName openiumVersion.versionName
+        versionCode publish.versionCode
+        versionName publish.versionName
 
         ndk {
             abiFilters "arm64-v8a", "armeabi-v7a", "x86", "x86_64"
         }
     }
+    buildFeatures {
+        buildConfig = true
+    }
+
 
     signingConfigs {
         debug {
@@ -70,6 +79,11 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.3.2"
     }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
 }
 
 kapt { useBuildCache = true }
@@ -102,6 +116,7 @@ dependencies {
     implementation platform(libs.compose.bom)
     implementation libs.compose.material
     implementation libs.compose.ui
+    implementation libs.compose.foundation
     implementation libs.compose.ui.util
     implementation libs.compose.ui.tooling.preview
     debugImplementation libs.compose.ui.tooling
@@ -111,6 +126,7 @@ dependencies {
     implementation libs.accompanist.pager
     implementation libs.accompanist.swiperefresh
     implementation libs.accompanist.permissions
+    implementation libs.accompanist.systemui
 
     // Openium Tools
     implementation libs.openium.tools

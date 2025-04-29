@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.ViewModelProvider
 import coil.ImageLoader
 import fr.openium.auvergnewebcams.R
@@ -14,7 +15,6 @@ import fr.openium.auvergnewebcams.ui.theme.AWTheme
 import fr.openium.auvergnewebcams.ui.webcamDetail.ActivityWebcamDetail
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import fr.openium.kotlintools.ext.setTitle
-import kotlinx.android.synthetic.main.fragment_search.composeView
 import org.koin.android.ext.android.inject
 
 
@@ -38,7 +38,7 @@ class FragmentSearch : AbstractFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        composeView.setContent {
+        view.findViewById<ComposeView>(R.id.composeView).setContent {
             AWTheme {
                 val webcams by viewModelSearch.webcams.collectAsState()
                 SearchScreen(

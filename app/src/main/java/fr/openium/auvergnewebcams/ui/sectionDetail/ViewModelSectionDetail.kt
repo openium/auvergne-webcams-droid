@@ -1,9 +1,8 @@
 package fr.openium.auvergnewebcams.ui.sectionDetail
 
-import android.app.Application
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import coil.ImageLoader
-import fr.openium.auvergnewebcams.base.AbstractViewModel
 import fr.openium.auvergnewebcams.model.entity.Section
 import fr.openium.auvergnewebcams.model.entity.SectionWithCameras
 import fr.openium.auvergnewebcams.model.entity.Webcam
@@ -17,7 +16,7 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import timber.log.Timber
 
-class ViewModelSectionDetail(app: Application) : AbstractViewModel(app), KoinComponent {
+class ViewModelSectionDetail : ViewModel(), KoinComponent {
 
     private val _state = MutableStateFlow<State>(State.Loading)
     val state: StateFlow<State> = _state

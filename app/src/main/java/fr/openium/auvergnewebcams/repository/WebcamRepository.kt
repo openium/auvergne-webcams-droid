@@ -4,7 +4,7 @@ import fr.openium.auvergnewebcams.model.AWClient
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.utils.DateUtils
 import fr.openium.auvergnewebcams.utils.Optional
-import io.reactivex.Single
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 /**
@@ -15,8 +15,8 @@ class WebcamRepository(private val client: AWClient, private val dateUtils: Date
     fun getWebcam(webcamId: Long): Webcam? =
         client.database.webcamDao().getWebcam(webcamId)
 
-    fun getWebcamSingle(webcamId: Long): Single<Optional<Webcam>> =
-        client.database.webcamDao().getWebcamSingle(webcamId).map {
+    fun getWebcamFlow(webcamId: Long): Flow<Optional<Webcam>> =
+        client.database.webcamDao().getWebcamFlow(webcamId).map {
             Optional.of(it)
         }
 
@@ -24,12 +24,6 @@ class WebcamRepository(private val client: AWClient, private val dateUtils: Date
 
     fun update(webcam: Webcam): Int =
         client.database.webcamDao().update(webcam)
-
-    fun update(webcams: List<Webcam>): Int =
-        client.database.webcamDao().update(webcams)
-
-    fun insert(webcam: Webcam): Long =
-        client.database.webcamDao().insert(webcam)
 
     fun insert(webcams: List<Webcam>): List<Long> =
         client.database.webcamDao().insert(webcams)

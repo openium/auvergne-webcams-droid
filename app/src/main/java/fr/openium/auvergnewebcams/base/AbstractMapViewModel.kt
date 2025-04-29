@@ -1,6 +1,6 @@
 package fr.openium.auvergnewebcams.base
 
-import android.app.Application
+import androidx.lifecycle.ViewModel
 import fr.openium.auvergnewebcams.enums.MapStyle
 import fr.openium.auvergnewebcams.model.entity.SectionWithCameras
 import fr.openium.auvergnewebcams.repository.SectionRepository
@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-abstract class AbstractMapViewModel(app: Application) : AbstractViewModel(app), KoinComponent {
+abstract class AbstractMapViewModel : ViewModel(), KoinComponent {
     private val defaultMapStyle = MapStyle.ROADS
 
     private val _mapStyle: MutableStateFlow<MapStyle> = MutableStateFlow(defaultMapStyle)

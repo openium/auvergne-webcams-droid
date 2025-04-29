@@ -1,6 +1,7 @@
 package fr.openium.auvergnewebcams.model.entity
 
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 
 /**
@@ -27,4 +28,7 @@ data class Webcam(
     var latitude: Double? = null,
     var longitude: Double? = null,
     var mapImageName: String? = null,
-)
+) {
+    @Ignore
+    val isVideo: Boolean = type == "viewsurf" || type == "video"
+}

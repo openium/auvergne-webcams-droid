@@ -3,12 +3,12 @@ package fr.openium.auvergnewebcams.base
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.custom.OnBackPressedListener
 import fr.openium.auvergnewebcams.utils.DateUtils
 import fr.openium.auvergnewebcams.utils.PreferencesUtils
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.toolbar.toolbar
 import org.koin.android.ext.android.inject
 
 /**
@@ -28,7 +28,7 @@ abstract class AbstractActivity : AppCompatActivity() {
 
         setContentView(layoutId)
 
-        toolbar?.also { setSupportActionBar(it) }
+        findViewById<Toolbar>(R.id.toolbar)?.also { setSupportActionBar(it) }
         setHomeAsUp(showHomeAsUp)
     }
 

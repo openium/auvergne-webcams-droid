@@ -9,6 +9,7 @@ import android.view.View
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.ViewModelProvider
 import coil.ImageLoader
 import com.google.android.material.snackbar.Snackbar
@@ -28,7 +29,6 @@ import fr.openium.kotlintools.ext.applicationContext
 import fr.openium.kotlintools.ext.snackbar
 import fr.openium.kotlintools.ext.startActivity
 import io.reactivex.rxkotlin.addTo
-import kotlinx.android.synthetic.main.fragment_main.composeView
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 import java.net.SocketTimeoutException
@@ -59,7 +59,7 @@ class FragmentMain : AbstractFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        composeView.setContent {
+        view.findViewById<ComposeView>(R.id.composeView).setContent {
             AWTheme {
                 val sectionsList by viewModelMain.sections.collectAsState(initial = emptyList())
                 val refresh by viewModelMain.isRefreshing.observeAsState(false)

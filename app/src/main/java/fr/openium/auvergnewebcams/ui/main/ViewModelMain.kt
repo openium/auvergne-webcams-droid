@@ -1,9 +1,8 @@
 package fr.openium.auvergnewebcams.ui.main
 
-import android.app.Application
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import fr.openium.auvergnewebcams.base.AbstractViewModel
 import fr.openium.auvergnewebcams.repository.SectionRepository
 import fr.openium.rxtools.ext.fromIOToMain
 import io.reactivex.Completable
@@ -15,7 +14,7 @@ import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 
-class ViewModelMain(app: Application) : AbstractViewModel(app), KoinComponent {
+class ViewModelMain : ViewModel(), KoinComponent {
 
     private val sectionRepository by inject<SectionRepository>()
 
