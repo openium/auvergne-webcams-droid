@@ -1,7 +1,6 @@
 package fr.openium.auvergnewebcams.broadcast
 
 import android.Manifest
-import android.app.Activity
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -49,8 +48,6 @@ object AppNotifier {
         }
     }
 
-    private const val REQUEST_CODE_POST_NOTIFICATIONS = 1002
-
     private fun sendNotification(
         context: Context,
         idNotif: Int,
@@ -60,63 +57,55 @@ object AppNotifier {
         image: Bitmap? = null,
         fileUri: Uri? = null
     ) {
-        // Create the notification
-        val builder = NotificationCompat.Builder(context, NotificationUtils.CHANNEL_ID).apply {
-            setAutoCancel(true)
-            setContentTitle(title)
-            setContentText(description)
-            setOnlyAlertOnce(true)
-            setSmallIcon(R.mipmap.ic_notif)
 
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-                setGroup(null) // Unfortunately required to be display
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+            // Create the notification
+            val builder = NotificationCompat.Builder(context, NotificationUtils.CHANNEL_ID).apply {
+                setAutoCancel(true)
+                setContentTitle(title)
+                setContentText(description)
+                setOnlyAlertOnce(true)
+                setSmallIcon(R.mipmap.ic_notif)
+
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                    setGroup(null) // Unfortunately required to be display
+                }
+
+                priority = if (progress != null) {
+                    // Add progress only if it's download notification
+                    setProgress(100, progress, false)
+                    NotificationCompat.PRIORITY_LOW
+                } else {
+                    NotificationCompat.PRIORITY_DEFAULT
+                }
+
+                image?.let {
+                    setLargeIcon(it)
+                    setStyle(
+                        NotificationCompat.BigPictureStyle()
+                            .bigPicture(it)
+                    )
+                } ?: setStyle(NotificationCompat.BigTextStyle().bigText(description))
+
+                fileUri?.let {
+                    val galleryIntent = Intent(Intent.ACTION_VIEW, fileUri)
+                    val contentIntent = PendingIntent.getActivity(
+                        context.applicationContext,
+                        0,
+                        galleryIntent,
+                        PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+                    )
+
+                    setContentIntent(contentIntent)
+                }
             }
 
-            priority = if (progress != null) {
-                // Add progress only if it's download notification
-                setProgress(100, progress, false)
-                NotificationCompat.PRIORITY_LOW
-            } else {
-                NotificationCompat.PRIORITY_DEFAULT
-            }
+            NotificationUtils.initChannels(context)
 
-            image?.let {
-                setLargeIcon(it)
-                setStyle(
-                    NotificationCompat.BigPictureStyle()
-                        .bigPicture(it)
-                )
-            } ?: setStyle(NotificationCompat.BigTextStyle().bigText(description))
+            val notificationManager = NotificationManagerCompat.from(context)
 
-            fileUri?.let {
-                val galleryIntent = Intent(Intent.ACTION_VIEW, fileUri)
-                val contentIntent = PendingIntent.getActivity(
-                    context.applicationContext,
-                    0,
-                    galleryIntent,
-                    PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
-                )
-
-                setContentIntent(contentIntent)
-            }
+            notificationManager.notify(idNotif, builder.build())
         }
 
-        NotificationUtils.initChannels(context)
-        val notificationManager = NotificationManagerCompat.from(context)
-
-        // Notify
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            if (context is Activity) {
-                ActivityCompat.requestPermissions(
-                    context,
-                    arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-                    REQUEST_CODE_POST_NOTIFICATIONS
-                )
-            }
-            return
-        }
-
-
-        notificationManager.notify(idNotif, builder.build())
     }
 }

@@ -62,7 +62,7 @@ fun WebcamPicture(
     val urlForWebcam by remember(
         webcam.lastUpdate,
         canBeHD
-    ) { mutableStateOf(webcam.getUrlForWebcam(canBeHD = canBeHD, canBeVideo = false)) }
+    ) { mutableStateOf(webcam.getUrlForWebcam(canBeHD = canBeHD)) }
 
     val painter = rememberAsyncImagePainter(
         model = urlForWebcam,
