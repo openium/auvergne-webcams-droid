@@ -47,7 +47,7 @@ subprojects {
     tasks {
         withType(KotlinCompile).configureEach {
             kotlinOptions {
-                jvmTarget = JavaVersion.VERSION_17
+                jvmTarget = JavaVersion.VERSION_21
             }
         }
     }

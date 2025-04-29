@@ -5,6 +5,8 @@ import android.content.res.Configuration
 import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,13 +29,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
@@ -189,6 +195,8 @@ fun DetailScreen(
                                 )
                             } else {
 
+                                var scale by remember { mutableFloatStateOf(1f) }
+                                var offset by remember { mutableStateOf(Offset.Zero) }
                                 var boxSize by remember { mutableStateOf(IntSize.Zero) }
                                 Column(modifier = Modifier
                                     .fillMaxSize()
@@ -218,6 +226,39 @@ fun DetailScreen(
                                         .let {
                                             if (asyncImageState is AsyncImagePainter.State.Success) {
                                                 it
+                                                    .pointerInput(Unit) {
+                                                        kotlinx.coroutines.coroutineScope {
+                                                            launch {
+                                                                detectTapGestures(onDoubleTap = { tapOffset ->
+                                                                    val center = Offset(boxSize.width / 2f, boxSize.height / 2f)
+                                                                    if (scale == 1f) {
+                                                                        scale = 3f
+                                                                        offset = center - tapOffset
+                                                                    } else {
+                                                                        scale = 1f
+                                                                        offset = Offset.Zero
+                                                                    }
+                                                                })
+                                                            }
+                                                            launch {
+                                                                detectTransformGestures { _, pan, zoom, _ ->
+                                                                    scale = (scale * zoom).coerceIn(1f, 3f)
+                                                                    offset += pan
+                                                                    val maxX = (boxSize.width * (scale - 1)) / 2f
+                                                                    val maxY = (boxSize.height * (scale - 1)) / 2f
+                                                                    offset = Offset(
+                                                                        x = offset.x.coerceIn(-maxX, maxX), y = offset.y.coerceIn(-maxY, maxY)
+                                                                    )
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    .graphicsLayer {
+                                                        scaleX = scale
+                                                        scaleY = scale
+                                                        translationX = offset.x
+                                                        translationY = offset.y
+                                                    }
 
                                             } else {
                                                 it
