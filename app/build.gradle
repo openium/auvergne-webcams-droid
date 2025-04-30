@@ -8,7 +8,6 @@ plugins {
     id "fr.openium.publish"
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.serialization)
-
 }
 
 
@@ -196,8 +195,6 @@ dependencies {
     implementation libs.navigation.runtime.ktx
     implementation libs.navigation.fragment.compose
     implementation libs.androidx.activity.compose
-
-
 }
 
 secrets {
