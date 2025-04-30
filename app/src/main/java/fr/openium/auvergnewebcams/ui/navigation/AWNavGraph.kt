@@ -1,5 +1,7 @@
 package fr.openium.auvergnewebcams.ui.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
@@ -18,10 +20,10 @@ import fr.openium.auvergnewebcams.ui.splash.SplashScreen
 import fr.openium.auvergnewebcams.ui.webcamDetail.DetailScreen
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AWNavGraph(navHostController: NavHostController) {
     val context = LocalContext.current
-
 
     NavHost(
         navController = navHostController,
@@ -117,8 +119,6 @@ fun AWNavGraph(navHostController: NavHostController) {
                     navHostController.navigateWithLifecycle(Destination.WebcamDetails(webcamId = webcam.uid))
                 })
         }
-
-
 
         composable<Destination.WebcamDetails> {
             DetailScreen(

@@ -266,7 +266,6 @@ fun MapScreen(
     )
 }
 
-
 private suspend fun getCameraPositionBySection(
     mapView: MapView,
     sectionWithCameras: SectionWithCameras,
