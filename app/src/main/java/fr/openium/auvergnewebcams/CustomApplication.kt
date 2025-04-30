@@ -1,11 +1,8 @@
 package fr.openium.auvergnewebcams
 
 import android.app.Application
-import coil.ImageLoader
-import com.github.piasy.biv.BigImageViewer
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.mapbox.common.MapboxOptions
-import fr.openium.auvergnewebcams.custom.CoilImageLoader
 import fr.openium.auvergnewebcams.di.KoinModules
 import fr.openium.auvergnewebcams.di.Modules
 import fr.openium.auvergnewebcams.log.FirebaseCrashlyticsTree
@@ -20,11 +17,9 @@ import timber.log.Timber
 
 abstract class CustomApplication : Application() {
 
-    private val imageLoader by inject<ImageLoader>()
-
     override fun onCreate() {
         super.onCreate()
-        
+
         MapboxOptions.accessToken = BuildConfig.MAPBOX_ACCESS_TOKEN
 
         startKoin {
@@ -51,18 +46,11 @@ abstract class CustomApplication : Application() {
         }
 
         initTimber()
-        initBigImageViewer()
     }
 
     protected open fun initTimber() {
         val firebaseCrashlytics by inject<FirebaseCrashlytics>()
         Timber.plant(FirebaseCrashlyticsTree(firebaseCrashlytics))
-    }
-
-    private fun initBigImageViewer() {
-        BigImageViewer.initialize(
-            CoilImageLoader(applicationContext, imageLoader)
-        )
     }
 
     companion object {

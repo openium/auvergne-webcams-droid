@@ -17,7 +17,6 @@ okhttp-logging-interceptor = "4.10.0"
 maps = "19.1.0"
 room = "2.7.0"
 coil = "2.2.2"
-big-image-viewer = "1.8.1"
 coroutines = "1.8.0"
 timber = "5.0.1"
 junit = "4.13.2"
@@ -90,8 +89,6 @@ room-rxjava2 = { module = "androidx.room:room-rxjava2", version.ref = "room" }
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 coil-video = { module = "io.coil-kt:coil-video", version.ref = "coil" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
-
-big-image-viewer = { module = "com.github.piasy:BigImageViewer", version.ref = "big-image-viewer" }
 
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }

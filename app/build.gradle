@@ -160,9 +160,6 @@ dependencies {
     implementation libs.coil.video
     implementation libs.coil.compose
 
-    // Big Image Viewer
-    implementation libs.big.image.viewer
-
     // Coroutines
     implementation libs.coroutines.core
     implementation libs.coroutines.android
