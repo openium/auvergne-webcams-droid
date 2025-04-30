@@ -13,7 +13,7 @@ class ViewModelSplash : ViewModel(), KoinComponent {
     private val sectionRepository by inject<SectionRepository>()
 
     companion object {
-        const val MINIMUM_SECONDS_TO_WAIT = 2 * 1000L
+        const val MINIMUM_SECONDS_TO_WAIT = 500L
     }
 
     // Update all the data the app needs
