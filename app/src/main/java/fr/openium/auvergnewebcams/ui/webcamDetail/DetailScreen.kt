@@ -15,8 +15,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.CircularProgressIndicator
@@ -31,7 +29,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,6 +36,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -127,67 +125,55 @@ fun DetailScreen(
             Scaffold(
                 backgroundColor = AWAppTheme.colors.greyVeryDark, scaffoldState = scaffoldState, topBar = {
                     if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-                        Box(
+                        AWTopBar(
+                            title = (state as? ViewModelWebcamDetail.State.Loaded)?.webcam?.title ?: "",
+                            onNavigateBack = onNavigateBack,
+                            onNavigateTo = { menuExpanded = true },
+                            icon = painterResource(id = R.drawable.ic_more),
+                            iconDescription = stringResource(id = R.string.map_title),
+                            isOptionalButton = true,
+                            iconOpt = painterResource(id = R.drawable.ic_refresh),
+                            iconDescriptionOpt = stringResource(id = R.string.detail_refresh_menu),
+                            onNavigateToOpt = {
+                                viewModel.loadWebcam()
+                            },
+                            dropdownMenu = {
+                                DropdownMenu(
+                                    expanded = menuExpanded,
+                                    onDismissRequest = { menuExpanded = false },
+                                    modifier = Modifier.background(AWAppTheme.colors.greyMedium)
+                                ) {
+                                    DropdownMenuItem(onClick = {
+                                        menuExpanded = false
+                                        viewModel.shareWebcam(
+                                            context,
+                                        )
+                                    }) {
+                                        Text(
+                                            text = stringResource(id = R.string.detail_share_menu),
+                                            color = AWAppTheme.colors.white,
+                                            style = AWAppTheme.typography.p1
+                                        )
+                                    }
+                                    DropdownMenuItem(onClick = {
+                                        menuExpanded = false
+                                        rememberPermissionState?.launchPermissionRequest() ?: kotlin.run {
+                                            viewModel.saveWebcam(context)
+                                        }
+
+                                    }) {
+                                        Text(
+                                            text = stringResource(id = R.string.detail_save_menu),
+                                            color = AWAppTheme.colors.white,
+                                            style = AWAppTheme.typography.p1
+                                        )
+                                    }
+                                }
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .statusBarsPadding()
-                        ) {
-                            Column {
-
-                                AWTopBar(
-                                    title = (state as? ViewModelWebcamDetail.State.Loaded)?.webcam?.title ?: "",
-                                    onNavigateBack = onNavigateBack,
-                                    onNavigateTo = { menuExpanded = true },
-                                    icon = painterResource(id = R.drawable.ic_more),
-                                    iconDescription = stringResource(id = R.string.map_title),
-                                    isOptionalButton = true,
-                                    iconOpt = painterResource(id = R.drawable.ic_refresh),
-                                    iconDescriptionOpt = stringResource(id = R.string.detail_refresh_menu),
-                                    onNavigateToOpt = {
-                                        viewModel.loadWebcam()
-                                    },
-                                    dropdownMenu = {
-                                        DropdownMenu(
-                                            expanded = menuExpanded,
-                                            onDismissRequest = { menuExpanded = false },
-                                            modifier = Modifier.background(AWAppTheme.colors.greyMedium)
-                                        ) {
-                                            DropdownMenuItem(onClick = {
-                                                menuExpanded = false
-                                                viewModel.shareWebcam(
-                                                    context,
-                                                )
-                                            }) {
-                                                Text(
-                                                    text = stringResource(id = R.string.detail_share_menu),
-                                                    color = AWAppTheme.colors.white,
-                                                    style = AWAppTheme.typography.p1
-                                                )
-                                            }
-                                            DropdownMenuItem(onClick = {
-                                                menuExpanded = false
-                                                rememberPermissionState?.launchPermissionRequest() ?: kotlin.run {
-                                                    viewModel.saveWebcam(context)
-                                                }
-
-                                            }) {
-                                                Text(
-                                                    text = stringResource(id = R.string.detail_save_menu),
-                                                    color = AWAppTheme.colors.white,
-                                                    style = AWAppTheme.typography.p1
-                                                )
-                                            }
-                                        }
-                                    },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(56.dp)
-                                )
-                                key(webcam.lastUpdate) {
-                                    LastUpdateText(lastUpdate = webcam.lastUpdate, dateUtils = viewModel.dateUtils)
-                                }
-                            }
-                        }
+                        )
                     }
                 },
                 content = { paddingValues ->
@@ -195,8 +181,8 @@ fun DetailScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(paddingValues)
-                            .navigationBarsPadding()
                     ) {
+                        LastUpdateText(lastUpdate = webcam.lastUpdate, dateUtils = viewModel.dateUtils)
                         Box(modifier = Modifier.weight(1f)) {
                             if (webcam.isVideo) {
                                 WebcamVideo(
@@ -233,6 +219,7 @@ fun DetailScreen(
                                         .weight(1f)
                                         .onSizeChanged { boxSize = it }
                                         .background(AWAppTheme.colors.greyDark)
+                                        .clipToBounds()
                                         .let {
                                             if (asyncImageState is AsyncImagePainter.State.Success) {
                                                 it

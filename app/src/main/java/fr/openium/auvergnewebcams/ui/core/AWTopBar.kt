@@ -1,7 +1,6 @@
 package fr.openium.auvergnewebcams.ui.core
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.offset
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -10,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 
@@ -33,26 +31,14 @@ fun AWTopBar(
 ) {
     TopAppBar(
         title = {
-            if (!isNavBack) {
-                Text(
-                    text = title,
-                    color = AWAppTheme.colors.white,
-                    style = AWAppTheme.typography.topBarTitle,
-                    modifier = Modifier.offset(
-                        x = (-48).dp
-                    )
-                )
-            } else {
-                Text(
-                    text = title,
-                    color = AWAppTheme.colors.white,
-                    style = AWAppTheme.typography.topBarTitle,
-                )
-            }
-
+            Text(
+                text = title,
+                color = AWAppTheme.colors.white,
+                style = AWAppTheme.typography.topBarTitle,
+            )
         },
-        navigationIcon = {
-            if (isNavBack) {
+        navigationIcon = if (isNavBack) {
+            {
                 IconButton(onClick = {
                     onNavigateBack()
                 }) {
@@ -63,6 +49,8 @@ fun AWTopBar(
                     )
                 }
             }
+        } else {
+            null
         },
         actions = {
             if (isOptionalButton) {

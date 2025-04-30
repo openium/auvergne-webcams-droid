@@ -55,7 +55,7 @@ fun SectionDetailScreen(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(color = AWAppTheme.colors.white)
             }
         }
 

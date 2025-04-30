@@ -51,7 +51,7 @@
     <string name="settings_credits_openium">Openium</string>
     <string name="settings_send_new_webcam">Proposer une webcam</string>
     <string name="settings_notifications">Activer les notifications</string>
-    <string name="settings_notifications_dialog">Auvergne Webcams requiert la permissions des notifications pour le téléchargement des images/vidéos des webcams.</string>
+    <string name="settings_notifications_dialog">Auvergne Webcams requiert la permissions des notifications pour le téléchargement des images et vidéos.</string>
     <string name="settings_credits_note">Noter l\'application</string>
     <string name="settings_version_format">Version %1$s (%2$s)</string>
 

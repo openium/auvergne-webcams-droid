@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Icon
@@ -174,14 +175,17 @@ fun SettingsScreen(
                             vm.sendEmail(context)
                             showWebcamDialog = false
                         }) {
-                            Text(text = stringResource(id = R.string.generic_ok), style = AWAppTheme.typography.p1)
+                            Text(text = stringResource(id = R.string.generic_ok), style = AWAppTheme.typography.p1, color = AWAppTheme.colors.white)
                         }
                     },
                     dismissButton = {
                         TextButton(onClick = { showWebcamDialog = false }) {
-                            Text(text = stringResource(id = R.string.generic_cancel), style = AWAppTheme.typography.p1)
+                            Text(text = stringResource(id = R.string.generic_cancel), style = AWAppTheme.typography.p1, color = AWAppTheme.colors.white)
                         }
-                    }
+                    },
+                    contentColor = AWAppTheme.colors.white,
+                    backgroundColor = AWAppTheme.colors.greyVeryDark,
+                    shape = RoundedCornerShape(12.dp)
                 )
             }
         }
