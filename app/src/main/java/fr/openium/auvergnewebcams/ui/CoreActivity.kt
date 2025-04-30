@@ -3,6 +3,7 @@ package fr.openium.auvergnewebcams.ui
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.rememberNavController
 import fr.openium.auvergnewebcams.ui.navigation.AWNavGraph
 import fr.openium.auvergnewebcams.ui.theme.AWTheme
@@ -15,9 +16,7 @@ class CoreActivity : ComponentActivity() {
         AnalyticsUtils.appIsOpen(this)
         AnalyticsUtils.sendAllUserProperties(this)
 
-//        enableEdgeToEdge(
-//            statusBarStyle = SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT),
-//        )
+        enableEdgeToEdge()
 
         setContent {
             val navHostController = rememberNavController()

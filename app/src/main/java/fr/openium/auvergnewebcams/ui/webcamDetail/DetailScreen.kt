@@ -1,8 +1,11 @@
 package fr.openium.auvergnewebcams.ui.webcamDetail
 
 import android.Manifest
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Build
+import android.provider.Settings
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -59,6 +62,7 @@ import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.ext.getUrlForWebcam
 import fr.openium.auvergnewebcams.ext.launchSignalWebcamNotWorking
 import fr.openium.auvergnewebcams.ui.core.AWTopBar
+import fr.openium.auvergnewebcams.ui.core.ConfirmOpenSettingsDialog
 import fr.openium.auvergnewebcams.ui.core.WebcamVideo
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
@@ -68,6 +72,7 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun DetailScreen(
@@ -78,12 +83,15 @@ fun DetailScreen(
     LaunchedEffect(viewModel) { viewModel.loadWebcam() }
 
     var menuExpanded by remember { mutableStateOf(false) }
+    var showOpenSettingsDialog by remember { mutableStateOf(false) }
+
     val state by viewModel.state.collectAsState()
 
     val scaffoldState = rememberScaffoldState()
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val configuration = LocalConfiguration.current
+
 
     LaunchedEffect(viewModel) {
         viewModel.errorMessage.collectLatest {
@@ -104,6 +112,8 @@ fun DetailScreen(
                 rememberPermissionState(Manifest.permission.POST_NOTIFICATIONS, {
                     if (it) {
                         viewModel.saveWebcam(context)
+                    } else {
+                        showOpenSettingsDialog = true
                     }
                 })
             } else {
@@ -159,6 +169,7 @@ fun DetailScreen(
                                                 rememberPermissionState?.launchPermissionRequest() ?: kotlin.run {
                                                     viewModel.saveWebcam(context)
                                                 }
+
                                             }) {
                                                 Text(
                                                     text = stringResource(id = R.string.detail_save_menu),
@@ -310,6 +321,19 @@ fun DetailScreen(
                             }
                         }
                     }
+                    if (showOpenSettingsDialog) {
+                        ConfirmOpenSettingsDialog(
+                            onDismiss = { showOpenSettingsDialog = false },
+                            onConfirm = {
+                                showOpenSettingsDialog = false
+                                context.startActivity(
+                                    Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                                        putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                                    }
+                                )
+                            }
+                        )
+                    }
                 }
             )
         }
@@ -376,3 +400,4 @@ fun WebcamNotWorkingFull(
         )
     }
 }
+
