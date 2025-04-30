@@ -10,6 +10,7 @@ import androidx.navigation.toRoute
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import coil.ImageLoader
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.ext.getUrlForWebcam
 import fr.openium.auvergnewebcams.model.entity.Webcam
@@ -33,6 +34,8 @@ import timber.log.Timber
 
 
 class ViewModelWebcamDetail(savedStateHandle: SavedStateHandle) : ViewModel(), KoinComponent {
+
+    val imageLoader by inject<ImageLoader>()
 
     private val _state by lazy { MutableStateFlow<State>(State.Loading) }
     val state: StateFlow<State> by lazy {

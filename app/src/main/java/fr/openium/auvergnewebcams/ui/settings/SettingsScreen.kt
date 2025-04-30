@@ -1,14 +1,13 @@
 package fr.openium.auvergnewebcams.ui.settings
 
 
-import android.content.Context
 import android.content.Intent
-import android.net.Uri
+import android.provider.Settings
 import android.view.MotionEvent
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,6 +20,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Card
@@ -38,7 +38,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -47,7 +46,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.core.net.toUri
-import com.chargemap.compose.numberpicker.NumberPicker
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.ext.getAppVersion
 import fr.openium.auvergnewebcams.ui.core.AWTopBar
@@ -71,10 +69,10 @@ fun SettingsScreen(
     val scrollState = rememberScrollState()
 
     val qualityHighEnabled by vm.isWebcamsHighQuality.collectAsState()
-    val refreshDelay by vm.refreshDelay.collectAsState()
 
-    var showDelayDialog by remember { mutableStateOf(false) }
     var showWebcamDialog by remember { mutableStateOf(false) }
+
+    var showOpenSettingsDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         backgroundColor = AWAppTheme.colors.greyVeryDark,
@@ -121,12 +119,30 @@ fun SettingsScreen(
                     Text(
                         text = stringResource(R.string.settings_global_quality_high),
                         style = AWAppTheme.typography.p1,
-                        color = Color.White,
+                        color = AWAppTheme.colors.white,
                         modifier = Modifier.weight(1f)
                     )
                     Switch(
                         checked = qualityHighEnabled,
                         onCheckedChange = { isChecked -> vm.onQualityChanged(isChecked, context) }
+                    )
+                }
+
+                SettingItem(textResId = R.string.settings_notifications) {
+                    showOpenSettingsDialog = true
+                }
+
+                if (showOpenSettingsDialog) {
+                    ConfirmOpenSettingsDialog(
+                        onDismiss = { showOpenSettingsDialog = false },
+                        onConfirm = {
+                            showOpenSettingsDialog = false
+                            context.startActivity(
+                                Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                                    putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                                }
+                            )
+                        }
                     )
                 }
 
@@ -185,7 +201,7 @@ fun SettingsScreen(
                     confirmButton = {
                         TextButton(onClick = {
                             AnalyticsUtils.suggestWebcamClicked(context)
-                            sendEmail(context)
+                            vm.sendEmail(context)
                             showWebcamDialog = false
                         }) {
                             Text(text = stringResource(id = R.string.generic_ok), style = AWAppTheme.typography.p1)
@@ -195,16 +211,6 @@ fun SettingsScreen(
                         TextButton(onClick = { showWebcamDialog = false }) {
                             Text(text = stringResource(id = R.string.generic_cancel), style = AWAppTheme.typography.p1)
                         }
-                    }
-                )
-            }
-
-            if (showDelayDialog) {
-                RefreshDelayPickerDialog(
-                    currentDelay = refreshDelay,
-                    onDismiss = { showDelayDialog = false },
-                    onConfirm = { newDelay ->
-                        vm.onRefreshDelayChanged(newDelay, context)
                     }
                 )
             }
@@ -235,76 +241,51 @@ fun SettingItem(textResId: Int, onClick: () -> Unit) {
         Icon(
             painter = painterResource(R.drawable.ic_arrow_right_small),
             contentDescription = null,
-            tint = Color.White
+            tint = AWAppTheme.colors.white
+
         )
     }
 }
 
-fun sendEmail(context: Context) {
-    val intentEmail = Intent(Intent.ACTION_SENDTO).apply {
-        data = Uri.parse("mailto:${context.getString(R.string.detail_signal_problem_email)}")
-        putExtra(
-            Intent.EXTRA_SUBJECT,
-            context.getString(R.string.settings_send_new_webcam_email_title)
-        )
-        putExtra(
-            Intent.EXTRA_TEXT,
-            context.getString(R.string.settings_send_new_webcam_email_message)
-        )
-    }
-    val chooser = Intent.createChooser(intentEmail, context.getString(R.string.generic_chooser))
-    if (chooser.resolveActivity(context.packageManager) != null) {
-        context.startActivity(chooser)
-    } else {
-        Toast.makeText(
-            context,
-            context.getString(R.string.generic_no_email_app),
-            Toast.LENGTH_SHORT
-        ).show()
-    }
-}
 
 @Composable
-fun RefreshDelayPickerDialog(
-    currentDelay: Int,
+private fun ConfirmOpenSettingsDialog(
     onDismiss: () -> Unit,
-    onConfirm: (Int) -> Unit
+    onConfirm: () -> Unit
 ) {
-    var selectedDelay by remember { mutableStateOf(currentDelay) }
-
-    Dialog(onDismissRequest = onDismiss) {
-        Card {
-            Column(modifier = Modifier.padding(16.dp)) {
-                NumberPicker(
-                    value = selectedDelay,
-                    range = 1..120,
-                    onValueChange = { selectedDelay = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    textStyle = AWAppTheme.typography.p1
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
+    Box(modifier = Modifier.background(color = AWAppTheme.colors.greyVeryDark)) {
+        Dialog(onDismissRequest = onDismiss) {
+            Card(
+                shape = RoundedCornerShape(12.dp),
+                backgroundColor = AWAppTheme.colors.greyVeryDark,
+                contentColor = AWAppTheme.colors.white,
+                elevation = 8.dp
+            ) {
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp)
                 ) {
-                    TextButton(onClick = onDismiss) {
-                        Text(text = stringResource(id = R.string.generic_cancel), style = AWAppTheme.typography.p1)
-                    }
-                    Spacer(modifier = Modifier.width(8.dp))
-                    TextButton(onClick = {
-                        onConfirm(selectedDelay)
-                        onDismiss()
-                    }) {
-                        Text(text = stringResource(id = R.string.generic_ok), style = AWAppTheme.typography.p1)
+                    Text(
+                        text = stringResource(R.string.settings_notifications_dialog), style = AWAppTheme.typography.p3,
+                    )
+                    Spacer(Modifier.height(16.dp))
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        TextButton(onClick = onDismiss) {
+                            Text(text = stringResource(R.string.generic_cancel), color = AWAppTheme.colors.white, style = AWAppTheme.typography.p3)
+                        }
+                        Spacer(Modifier.width(8.dp))
+                        TextButton(onClick = onConfirm) {
+                            Text(text = stringResource(R.string.generic_ok), color = AWAppTheme.colors.white, style = AWAppTheme.typography.p3)
+                        }
                     }
                 }
             }
         }
     }
 }
-
 
 
 

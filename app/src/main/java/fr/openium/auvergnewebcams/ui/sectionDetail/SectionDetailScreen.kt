@@ -14,7 +14,6 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,7 +39,6 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun SectionDetailScreen(
     vm: ViewModelSectionDetail = koinViewModel(),
-    sectionId: Long,
     goToWebcamDetail: (Webcam) -> Unit,
     onNavigateBack: () -> Unit,
     onNavigateToMap: (sectionId: Long, sectionTitle: String?) -> Unit,
@@ -48,9 +46,6 @@ fun SectionDetailScreen(
 
     val context = LocalContext.current
 
-    LaunchedEffect(sectionId) {
-        vm.loadSectionAndWebcams(sectionId)
-    }
     val state by vm.state.collectAsState()
 
     when (val currentState = state) {
@@ -73,7 +68,7 @@ fun SectionDetailScreen(
                     AWTopBar(
                         title = currentState.section.title ?: "",
                         onNavigateBack = onNavigateBack,
-                        onNavigateTo = { onNavigateToMap(sectionId, currentState.section.title) },
+                        onNavigateTo = { onNavigateToMap(vm.sectionId, currentState.section.title) },
                         onNavigateToOpt = { },
                         icon = painterResource(id = R.drawable.map_icon_3),
                         iconDescription = stringResource(id = R.string.map_title),

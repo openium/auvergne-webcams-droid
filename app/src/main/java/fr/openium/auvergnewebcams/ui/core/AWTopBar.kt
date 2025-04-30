@@ -37,7 +37,7 @@ fun AWTopBar(
                 Text(
                     text = title,
                     color = AWAppTheme.colors.white,
-                    style = AWAppTheme.typography.p1,
+                    style = AWAppTheme.typography.topBarTitle,
                     modifier = Modifier.offset(
                         x = (-48).dp
                     )
@@ -46,7 +46,7 @@ fun AWTopBar(
                 Text(
                     text = title,
                     color = AWAppTheme.colors.white,
-                    style = AWAppTheme.typography.p1,
+                    style = AWAppTheme.typography.topBarTitle,
                 )
             }
 

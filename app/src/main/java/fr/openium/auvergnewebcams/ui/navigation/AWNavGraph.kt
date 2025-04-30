@@ -5,7 +5,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
 import fr.openium.auvergnewebcams.ext.navigateToDestinationAndPopUpTo
 import fr.openium.auvergnewebcams.ext.navigateWithLifecycle
 import fr.openium.auvergnewebcams.ext.popBackStackWithLifecycle
@@ -22,6 +21,8 @@ import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 @Composable
 fun AWNavGraph(navHostController: NavHostController) {
     val context = LocalContext.current
+
+
     NavHost(
         navController = navHostController,
         startDestination = Destination.Splash,
@@ -81,7 +82,6 @@ fun AWNavGraph(navHostController: NavHostController) {
 
         composable<Destination.SectionDetails> {
             SectionDetailScreen(
-                sectionId = it.savedStateHandle.toRoute(Destination.SectionDetails::class).sectionId,
                 onNavigateBack = { navHostController.popBackStackWithLifecycle() },
                 goToWebcamDetail = { webcam ->
                     AnalyticsUtils.webcamDetailsClicked(context = context, webcamTitle = webcam.title ?: "")

@@ -37,7 +37,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -270,7 +269,8 @@ fun DetailScreen(
                                                 .data(webcam.getUrlForWebcam(canBeHD = viewModel.prefUtils.isWebcamsHighQuality))
                                                 .memoryCachePolicy(CachePolicy.DISABLED).build(),
                                             contentDescription = webcam.title,
-                                            contentScale = if (asyncImageState is AsyncImagePainter.State.Success) ContentScale.Fit else ContentScale.Inside,
+                                            imageLoader = viewModel.imageLoader,
+                                            contentScale = if (asyncImageState is AsyncImagePainter.State.Error) ContentScale.Inside else ContentScale.Fit,
                                             error = painterResource(R.drawable.ic_broken_camera),
                                             onLoading = {
                                                 asyncImageState = it
@@ -285,7 +285,7 @@ fun DetailScreen(
                                         )
 
                                         if (asyncImageState is AsyncImagePainter.State.Loading) {
-                                            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                                            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center), color = AWAppTheme.colors.white)
                                         }
                                     }
 
@@ -362,7 +362,7 @@ fun WebcamNotWorkingFull(
         Text(
             text = stringResource(id = R.string.detail_not_working_title),
             style = MaterialTheme.typography.body1,
-            color = Color.White,
+            color = AWAppTheme.colors.white,
             modifier = Modifier.padding(top = 50.dp),
             textAlign = TextAlign.Center
         )

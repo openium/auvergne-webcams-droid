@@ -81,7 +81,9 @@ fun WebcamVideo(
             }, modifier = Modifier.fillMaxSize()
         )
         if (isVideoLoading) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center), color = AWAppTheme.colors.white
+            )
         }
     }
 }

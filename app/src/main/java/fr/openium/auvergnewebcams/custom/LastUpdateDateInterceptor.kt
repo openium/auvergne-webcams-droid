@@ -10,16 +10,10 @@ class LastUpdateDateInterceptor(private val webcamRepository: WebcamRepository) 
     override fun intercept(chain: Interceptor.Chain): Response {
         return runBlocking {
             val response = chain.proceed(chain.request())
-            val lastModified = response.header("Last-Modified")
+            val lastModified = response.headers["last-modified"]
 
-            lastModified?.let {
-                val url = chain.request().url.toString()
-                val argsSplit = url.split("/")
-
-                // Remove file extension for incoming search
-                val urlMedia = argsSplit.lastOrNull()?.replace(".jpg", "") ?: ""
-
-                webcamRepository.updateLastUpdateDate(lastModified, urlMedia)
+            if (lastModified != null) {
+                webcamRepository.updateLastUpdateDate(lastModified, chain.request().url.toString())
             }
             response
         }

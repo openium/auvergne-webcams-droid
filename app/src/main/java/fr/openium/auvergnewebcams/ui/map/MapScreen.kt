@@ -198,7 +198,9 @@ fun MapScreen(
                             .padding(paddingValues)
                             .fillMaxSize()
                     ) {
-                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                        CircularProgressIndicator(
+                            modifier = Modifier.align(Alignment.Center), color = AWAppTheme.colors.white
+                        )
                     }
                 }
 

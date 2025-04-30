@@ -86,7 +86,7 @@ fun AboutScreen(
 
                     Text(
                         text = "Auvergne Webcams",
-                        color = Color.White,
+                        color = AWAppTheme.colors.white,
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier
@@ -135,7 +135,9 @@ fun AboutScreen(
                             .fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        CircularProgressIndicator()
+                        CircularProgressIndicator(
+                            color = AWAppTheme.colors.white
+                        )
                     }
                 }
             }

@@ -51,7 +51,7 @@ fun SectionsListScreen(
     goToSettings: () -> Unit
 ) {
 
-    val sections by vm.sections.collectAsState(initial = emptyList())
+    val sections by vm.sections.collectAsState()
     val isRefreshing by vm.isRefreshing.observeAsState(false)
     val canBeHD = vm.prefUtils.isWebcamsHighQuality
 
@@ -97,8 +97,8 @@ fun SectionsListScreen(
                     .background(color = AWAppTheme.colors.greyMedium)
             ) {
                 LazyColumn(
+                    contentPadding = PaddingValues(bottom = 16.dp),
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(bottom = 16.dp)
                 ) {
                     item {
                         Row(

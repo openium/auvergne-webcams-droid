@@ -9,10 +9,16 @@ import fr.openium.auvergnewebcams.ui.theme.AWTheme
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 
 class CoreActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AnalyticsUtils.appIsOpen(this)
         AnalyticsUtils.sendAllUserProperties(this)
+
+//        enableEdgeToEdge(
+//            statusBarStyle = SystemBarStyle.light(Color.TRANSPARENT, Color.TRANSPARENT),
+//        )
+
         setContent {
             val navHostController = rememberNavController()
             AWTheme {

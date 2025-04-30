@@ -21,7 +21,7 @@ object KoinModules {
     }
 
     val vmSection = module {
-        viewModel { ViewModelSectionDetail() }
+        viewModel { ViewModelSectionDetail(get()) }
     }
 
     val vmDetails = module {
