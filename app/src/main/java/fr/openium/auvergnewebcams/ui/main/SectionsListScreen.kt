@@ -70,7 +70,6 @@ fun SectionsListScreen(
         {
             AWTopBar(
                 title = stringResource(R.string.app_name),
-                onNavigateBack = {},
                 onNavigateTo = {
                     AnalyticsUtils.settingsClicked(context)
                     goToSettings()

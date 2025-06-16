@@ -23,7 +23,6 @@ import fr.openium.auvergnewebcams.ui.splash.components.CloudWithAnimation
 import fr.openium.auvergnewebcams.ui.splash.components.SplashText
 import org.koin.androidx.compose.koinViewModel
 
-
 @SuppressLint("UseOfNonLambdaOffsetOverload")
 @Composable
 fun SplashScreen(vm: ViewModelSplash = koinViewModel(), goToMain: () -> Unit) {

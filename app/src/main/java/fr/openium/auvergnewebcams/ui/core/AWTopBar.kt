@@ -16,9 +16,9 @@ import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 @Composable
 fun AWTopBar(
     title: String,
-    onNavigateBack: () -> Unit,
-    onNavigateTo: () -> Unit,
-    onNavigateToOpt: () -> Unit,
+    onNavigateBack: () -> Unit = {},
+    onNavigateTo: () -> Unit = {},
+    onNavigateToOpt: () -> Unit = {},
     modifier: Modifier = Modifier,
     icon: Painter = painterResource(id = R.drawable.ic_close),
     iconDescription: String = "",

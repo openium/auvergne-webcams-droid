@@ -69,7 +69,6 @@ fun SectionDetailScreen(
                         title = currentState.section.title ?: "",
                         onNavigateBack = onNavigateBack,
                         onNavigateTo = { onNavigateToMap(vm.sectionId, currentState.section.title) },
-                        onNavigateToOpt = { },
                         icon = painterResource(id = R.drawable.map_icon_3),
                         iconDescription = stringResource(id = R.string.map_title),
                         isOptionalButton = false,

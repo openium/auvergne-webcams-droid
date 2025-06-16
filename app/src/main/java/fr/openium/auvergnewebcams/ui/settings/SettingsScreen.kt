@@ -1,6 +1,5 @@
 package fr.openium.auvergnewebcams.ui.settings
 
-
 import android.view.MotionEvent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -46,7 +45,6 @@ import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
 import org.koin.androidx.compose.koinViewModel
 
-
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SettingsScreen(
@@ -70,8 +68,6 @@ fun SettingsScreen(
             AWTopBar(
                 title = stringResource(R.string.settings_title),
                 onNavigateBack = onNavigateBack,
-                onNavigateTo = { },
-                onNavigateToOpt = { },
                 isPrimaryButton = false,
                 isOptionalButton = false,
                 modifier = Modifier
@@ -190,7 +186,6 @@ fun SettingsScreen(
             }
         }
     )
-
 }
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -220,8 +215,3 @@ fun SettingItem(textResId: Int, onClick: () -> Unit) {
         )
     }
 }
-
-
-
-
-

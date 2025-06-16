@@ -114,7 +114,6 @@ fun MapScreen(
                 },
                 onNavigateBack = onNavigateBack,
                 onNavigateTo = { menuExpanded = true },
-                onNavigateToOpt = { },
                 icon = painterResource(id = R.drawable.ic_settings),
                 iconDescription = stringResource(id = R.string.map_title),
                 isOptionalButton = false,
@@ -260,7 +259,6 @@ fun MapScreen(
                         }
                     }
                 }
-
             }
         }
     )

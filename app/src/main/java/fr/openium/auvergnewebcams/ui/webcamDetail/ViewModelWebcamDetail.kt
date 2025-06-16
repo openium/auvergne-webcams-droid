@@ -32,7 +32,6 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import timber.log.Timber
 
-
 class ViewModelWebcamDetail(savedStateHandle: SavedStateHandle) : ViewModel(), KoinComponent {
 
     val imageLoader by inject<ImageLoader>()

@@ -52,8 +52,6 @@ fun AboutScreen(
             AWTopBar(
                 title = stringResource(R.string.settings_credits_about),
                 onNavigateBack = onNavigateBack,
-                onNavigateTo = { },
-                onNavigateToOpt = { },
                 isPrimaryButton = false,
                 isOptionalButton = false,
                 modifier = Modifier

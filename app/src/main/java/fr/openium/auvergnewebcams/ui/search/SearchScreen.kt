@@ -64,8 +64,6 @@ fun SearchScreen(
             AWTopBar(
                 title = stringResource(R.string.search_title),
                 onNavigateBack = onNavigateBack,
-                onNavigateTo = { },
-                onNavigateToOpt = { },
                 isPrimaryButton = false,
                 isOptionalButton = false,
                 modifier = Modifier
