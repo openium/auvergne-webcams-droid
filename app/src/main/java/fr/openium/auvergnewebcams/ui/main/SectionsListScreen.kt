@@ -88,11 +88,12 @@ fun SectionsListScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         CircularProgressIndicator(
-                            modifier    = Modifier.size(64.dp),
-                            color       = AWAppTheme.colors.white,
+                            modifier = Modifier.size(64.dp),
+                            color = AWAppTheme.colors.white,
                             strokeWidth = 6.dp
                         )
-                    }                }
+                    }
+                }
 
                 is ViewModelMain.State.Loaded -> {
                     val sections = state.sections
