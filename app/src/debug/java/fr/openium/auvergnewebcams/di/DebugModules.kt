@@ -1,13 +1,8 @@
 package fr.openium.auvergnewebcams.di
 
-import android.content.Context
-import com.google.gson.ExclusionStrategy
-import com.google.gson.FieldAttributes
-import com.google.gson.GsonBuilder
 import fr.openium.auvergnewebcams.model.AWClient
 import fr.openium.auvergnewebcams.rest.AWApi
 import fr.openium.auvergnewebcams.rest.MockApi
-import fr.openium.auvergnewebcams.rest.model.SectionList
 import io.reactivex.schedulers.Schedulers
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
@@ -16,10 +11,8 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.mock.Calls
 import retrofit2.mock.MockRetrofit
 import retrofit2.mock.NetworkBehavior
-import java.io.InputStreamReader
 import java.util.concurrent.TimeUnit
 
 /**
@@ -49,41 +42,21 @@ object DebugModules {
 
         single {
             if (mock) {
-                val networkBehaviour = NetworkBehavior.create()
-                networkBehaviour.setDelay(0, TimeUnit.MILLISECONDS)
-                networkBehaviour.setFailurePercent(0)
-                networkBehaviour.setVariancePercent(0)
-                val apiMock = object : MockApi() {
-
-                    override suspend fun getSections(): Result<SectionList> {
-                        val thisValue = get<Context>().assets.open("aw-config.json")
-                        val reader = InputStreamReader(thisValue)
-
-                        val sObjectMapper = GsonBuilder().setExclusionStrategies(object : ExclusionStrategy {
-                            override fun shouldSkipClass(clazz: Class<*>?): Boolean {
-                                return false
-                            }
-
-                            override fun shouldSkipField(f: FieldAttributes): Boolean {
-                                return f.declaredClass == SectionList::class.java
-                            }
-                        }).serializeNulls().create()
-
-                        val listLoaded = sObjectMapper.fromJson(reader, SectionList::class.java) as SectionList
-
-                        return delegate.returning(Calls.response(Result.success(listLoaded))).getSections()
-                    }
+                val behaviour = NetworkBehavior.create().apply {
+                    setDelay(0, TimeUnit.MILLISECONDS)
+                    setFailurePercent(0)
+                    setVariancePercent(0)
                 }
 
-                apiMock.delegate = MockRetrofit.Builder(
-                    Retrofit.Builder()
-                        .baseUrl(get<HttpUrl>())
-                        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .build()
-                ).networkBehavior(networkBehaviour).build().create(AWApi::class.java)
-                apiMock
+                val retrofit = get<Retrofit>()
 
+                val mockRetrofit = MockRetrofit.Builder(retrofit)
+                    .networkBehavior(behaviour)
+                    .build()
+
+                val delegate = mockRetrofit.create(AWApi::class.java)
+
+                MockApi(delegate, get())
             } else {
                 get<Retrofit>().create(AWApi::class.java)
             }

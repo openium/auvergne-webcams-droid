@@ -16,7 +16,6 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,8 +59,6 @@ fun MapScreen(
     goToWebcamDetail: (Webcam) -> Unit,
     vm: MapViewModel = koinViewModel(),
 ) {
-    val mapStyle by vm.mapStyle.collectAsState()
-    val canBeHD = vm.prefUtils.isWebcamsHighQuality
 
     val context = LocalContext.current
     var menuExpanded by remember { mutableStateOf(false) }
@@ -201,6 +198,10 @@ fun MapScreen(
                 }
 
                 is MapViewModel.State.Loaded -> {
+
+                    val mapStyle = state.mapStyle
+                    val canBeHD = state.canBeHD
+
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()

@@ -9,9 +9,11 @@ import fr.openium.auvergnewebcams.model.entity.SectionWithCameras
 import fr.openium.auvergnewebcams.repository.SectionRepository
 import fr.openium.auvergnewebcams.ui.navigation.Destination
 import fr.openium.auvergnewebcams.utils.PreferencesUtils
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -35,12 +37,28 @@ class MapViewModel(savedStateHandle: SavedStateHandle) : ViewModel(), KoinCompon
 
     init {
         viewModelScope.launch {
-            val sections: List<SectionWithCameras> = if (sectionId == null) {
-                sectionRepository.watchSectionsWithCameras().first()
-            } else {
-                listOf(sectionRepository.getSectionWithCameras(sectionId))
+            val sectionsFlow: Flow<List<SectionWithCameras>> =
+                if (sectionId == null)
+                    sectionRepository.watchSectionsWithCameras()
+                else
+                    flowOf(listOf(sectionRepository.getSectionWithCameras(sectionId)))
+
+            val canBeHDFlow: Flow<Boolean> =
+                flowOf(prefUtils.isWebcamsHighQuality)
+
+            combine(
+                _mapStyle,
+                canBeHDFlow,
+                sectionsFlow
+            ) { style, canHd, sections ->
+                State.Loaded(
+                    sections = sections,
+                    mapStyle = style,
+                    canBeHD = canHd
+                )
+            }.collect { newState ->
+                _state.value = newState
             }
-            _state.emit(State.Loaded(sections))
         }
     }
 
@@ -49,8 +67,12 @@ class MapViewModel(savedStateHandle: SavedStateHandle) : ViewModel(), KoinCompon
     }
 
     sealed interface State {
-        data object Loading : State
-        data class Loaded(val sections: List<SectionWithCameras>) : State
+        object Loading : State
+        data class Loaded(
+            val sections: List<SectionWithCameras>,
+            val mapStyle: MapStyle,
+            val canBeHD: Boolean
+        ) : State
     }
 
     companion object {

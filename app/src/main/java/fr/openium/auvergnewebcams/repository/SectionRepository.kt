@@ -14,8 +14,8 @@ import fr.openium.auvergnewebcams.rest.AWApi
 import fr.openium.auvergnewebcams.rest.AWWeatherApi
 import fr.openium.auvergnewebcams.rest.model.SectionList
 import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
-import fr.openium.auvergnewebcams.utils.LogUtils
 import kotlinx.coroutines.flow.Flow
+import retrofit2.HttpException
 import timber.log.Timber
 import java.io.InputStreamReader
 import java.util.concurrent.CancellationException
@@ -33,22 +33,20 @@ class SectionRepository(
 
     // WS
 
-    suspend fun fetch(): SectionList? =
-        try {
-            val sectionsList = api.getSections().getOrThrow()
-            insertSectionsAndWebcams(sectionsList)
-            sectionsList
-        } catch (e: CancellationException) {
-            throw e
-        } catch (e: Exception) {
-            LogUtils.showSingleErrorLog("Fetch sections", e)
-            loadFromJson(context)
-            null
-        }
+    suspend fun fetch(): Result<SectionList> = runCatching {
+        val resp = api.getSections()
 
-    private suspend fun updateSectionsWeather(sections: List<Section>) = sections.forEach { section ->
-        configureWeather(section)
+        if (resp.isSuccessful) {
+            resp.body() ?: error("Response body is null")
+        } else {
+            throw HttpException(resp)
+        }
     }
+
+
+    private suspend fun updateSectionsWeather(sections: List<Section>): List<Result<Unit>> =
+        sections.map { section -> configureWeather(section) }
+
 
 // Local
 
@@ -122,26 +120,30 @@ class SectionRepository(
     private suspend fun deleteAllNotInUIDs(ids: List<Long>) =
         client.database.sectionDao().deleteAllNotInUids(ids)
 
-    private suspend fun configureWeather(section: Section) {
-        if (section.latitude != 0.0 && section.longitude != 0.0) {
-            try {
-                val res = weatherApi.queryByGeographicCoordinates(
-                    section.latitude,
-                    section.longitude,
-                    BuildConfig.OPEN_WEATHER_API_KEY,
-                )
-                section.weatherUid = res.weather?.get(0)?.id
-                section.weatherTemp = res.main?.temp
+    private suspend fun configureWeather(section: Section): Result<Unit> = runCatching {
 
-                update(section)
-
-                Timber.d("Success updating weather for " + section.title)
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                Timber.e(e, "Exception when getting weather for " + section.title)
-            }
+        if (section.latitude == 0.0 || section.longitude == 0.0) {
+            error("Invalid coordinates for ${section.title}")
         }
+
+        val response = weatherApi.queryByGeographicCoordinates(
+            section.latitude,
+            section.longitude,
+            BuildConfig.OPEN_WEATHER_API_KEY
+        )
+
+        if (!response.isSuccessful) {
+            error("HTTP ${response.code()} ${response.message()}")
+        }
+
+        val body = response.body() ?: error("Empty body")
+        section.weatherUid = body.weather?.firstOrNull()?.id
+        section.weatherTemp = body.main?.temp
+        update(section)
+        Timber.d("Success updating weather for ${section.title}")
+    }.onFailure { e ->
+        if (e is CancellationException) throw e
+        Timber.e(e, "Failed to update weather for ${section.title}")
     }
 
     // If there is no access to the online content, just load the local one
