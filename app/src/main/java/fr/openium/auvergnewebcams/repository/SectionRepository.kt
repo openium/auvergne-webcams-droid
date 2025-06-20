@@ -14,6 +14,7 @@ import fr.openium.auvergnewebcams.rest.AWApi
 import fr.openium.auvergnewebcams.rest.AWWeatherApi
 import fr.openium.auvergnewebcams.rest.model.SectionList
 import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
+import fr.openium.auvergnewebcams.utils.LogUtils
 import kotlinx.coroutines.flow.Flow
 import retrofit2.HttpException
 import timber.log.Timber
@@ -37,8 +38,11 @@ class SectionRepository(
         val resp = api.getSections()
 
         if (resp.isSuccessful) {
-            resp.body() ?: error("Response body is null")
+            resp.body()?.also {
+                insertSectionsAndWebcams(it)
+            } ?: error("Response body is null")
         } else {
+            LogUtils.showSingleErrorLog("Fetch sections", HttpException(resp))
             throw HttpException(resp)
         }
     }

@@ -103,8 +103,6 @@ test-junit = { module = "androidx.test.ext:junit", version.ref = "test-junit" }
 
 exoplayer = { module = "com.google.android.exoplayer:exoplayer", version.ref = "exoplayer" }
 
-like-button = { module = "com.github.jd-alexander:LikeButton", version.ref = "like-button" }
-
 mapbox = { module = "com.mapbox.maps:android", version.ref = "mapbox" }
 mapbox-compose = { module = "com.mapbox.extension:maps-compose", version.ref = "mapbox" }
 

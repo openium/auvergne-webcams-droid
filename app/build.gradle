@@ -177,9 +177,6 @@ dependencies {
     // ExoPlayer
     implementation libs.exoplayer
 
-    // Like Button (Twitter)
-    implementation libs.like.button
-
     // Mapbox
     implementation libs.mapbox
     implementation libs.mapbox.compose
