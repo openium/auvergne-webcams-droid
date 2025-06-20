@@ -1,15 +1,17 @@
 package fr.openium.auvergnewebcams.ui.main
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import coil.ImageLoader
 import fr.openium.auvergnewebcams.model.entity.SectionWithCameras
 import fr.openium.auvergnewebcams.repository.SectionRepository
 import fr.openium.auvergnewebcams.utils.PreferencesUtils
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -18,34 +20,53 @@ import org.koin.core.component.inject
 class ViewModelMain : ViewModel(), KoinComponent {
 
     private val sectionRepository by inject<SectionRepository>()
-
-
     val imageLoader by inject<ImageLoader>()
+    private val prefUtils by inject<PreferencesUtils>()
 
-    val prefUtils: PreferencesUtils by inject()
+    private val sectionsFlow: Flow<List<SectionWithCameras>> =
+        sectionRepository.watchSectionsWithCameras()
 
-    private val _sections = MutableStateFlow<List<SectionWithCameras>>(emptyList())
-    val sections: StateFlow<List<SectionWithCameras>> = _sections.asStateFlow()
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+
+    private val canBeHDFlow: Flow<Boolean> =
+        flowOf(prefUtils.isWebcamsHighQuality)
+
+    private val _state = MutableStateFlow<State>(State.Loading)
+    val state: StateFlow<State> = _state.asStateFlow()
 
     init {
         viewModelScope.launch {
-            sectionRepository
-                .watchSectionsWithCameras()
-                .collect { list ->
-                    _sections.value = list
-                }
+            combine(
+                sectionsFlow,
+                isRefreshing,
+                canBeHDFlow
+            ) { sections, refreshing, canHd ->
+                State.Loaded(
+                    sections = sections,
+                    isRefreshing = refreshing,
+                    canBeHD = canHd
+                )
+            }.collect(_state::emit)
         }
     }
 
-    // Update all the data the app needs
-    val isRefreshing = MutableLiveData<Boolean>()
 
     fun updateData() {
         viewModelScope.launch {
-            isRefreshing.postValue(true)
+            _isRefreshing.value = true
             sectionRepository.fetch()
-            isRefreshing.postValue(false)
+            _isRefreshing.value = false
         }
+    }
+
+    sealed interface State {
+        object Loading : State
+        data class Loaded(
+            val sections: List<SectionWithCameras>,
+            val isRefreshing: Boolean,
+            val canBeHD: Boolean,
+        ) : State
     }
 
 }
