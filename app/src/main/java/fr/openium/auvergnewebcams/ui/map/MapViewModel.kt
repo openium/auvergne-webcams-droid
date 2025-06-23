@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import coil.ImageLoader
 import fr.openium.auvergnewebcams.enums.MapStyle
 import fr.openium.auvergnewebcams.model.entity.SectionWithCameras
 import fr.openium.auvergnewebcams.repository.SectionRepository
@@ -34,6 +35,8 @@ class MapViewModel(savedStateHandle: SavedStateHandle) : ViewModel(), KoinCompon
     val state by lazy {
         _state.asStateFlow()
     }
+
+    val imageLoader by inject<ImageLoader>()
 
     init {
         viewModelScope.launch {

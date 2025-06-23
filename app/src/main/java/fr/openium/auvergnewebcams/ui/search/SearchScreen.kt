@@ -56,7 +56,6 @@ fun SearchScreen(
         focusRequester.requestFocus()
     }
 
-
     Scaffold(
         backgroundColor = AWAppTheme.colors.greyVeryDark,
         topBar =

@@ -17,6 +17,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -64,7 +65,7 @@ fun MapScreen(
     var menuExpanded by remember { mutableStateOf(false) }
 
     var webcamPreviewUid by remember {
-        mutableStateOf<Long>(0)
+        mutableLongStateOf(0)
     }
 
     val mapViewportState = rememberMapViewportState {
@@ -91,15 +92,14 @@ fun MapScreen(
 
     val sectionState by vm.state.collectAsStateWithLifecycle()
 
-    if (!locationPermissionState.allPermissionsGranted) {
-        LaunchedEffect(key1 = Unit) {
+    LaunchedEffect(locationPermissionState.allPermissionsGranted) {
+        if (!locationPermissionState.allPermissionsGranted) {
             locationPermissionState.launchMultiplePermissionRequest()
-        }
-    } else {
-        LaunchedEffect(key1 = Unit) {
+        } else {
             context.navigateToLocationSettings()
         }
     }
+
     Scaffold(
         backgroundColor = AWAppTheme.colors.greyVeryDark,
         topBar = {
@@ -246,6 +246,7 @@ fun MapScreen(
                                         MapWebcamAnnotation(
                                             webcam = webcam,
                                             section = section,
+                                            imageLoader = vm.imageLoader,
                                             webcamPreviewUid = webcamPreviewUid,
                                             canBeHD = canBeHD,
                                             onWebcamClick = {

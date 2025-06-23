@@ -9,7 +9,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.ImageLoader
 import com.mapbox.geojson.Point
@@ -30,12 +29,12 @@ fun MapWebcamAnnotation(
     section: Section,
     webcamPreviewUid: Long,
     canBeHD: Boolean,
+    imageLoader: ImageLoader,
     onWebcamClick: () -> Unit,
     goToWebcamDetail: () -> Unit,
 ) {
-    val context = LocalContext.current
 
-    val imageLoader by remember { mutableStateOf(ImageLoader(context)) }
+    val imageLoader = imageLoader
 
     val webcamBackgroundColor by remember(section.mapColor) {
         mutableStateOf(section.mapColor)
