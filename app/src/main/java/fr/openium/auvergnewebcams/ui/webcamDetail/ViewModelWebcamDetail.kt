@@ -3,16 +3,20 @@ package fr.openium.auvergnewebcams.ui.webcamDetail
 import android.content.Context
 import android.content.Intent
 import androidx.annotation.StringRes
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import coil.ImageLoader
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.ext.getUrlForWebcam
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.repository.WebcamRepository
 import fr.openium.auvergnewebcams.service.DownloadWorker
+import fr.openium.auvergnewebcams.ui.navigation.Destination
 import fr.openium.auvergnewebcams.utils.DateUtils
 import fr.openium.auvergnewebcams.utils.PreferencesUtils
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -28,8 +32,9 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import timber.log.Timber
 
+class ViewModelWebcamDetail(savedStateHandle: SavedStateHandle) : ViewModel(), KoinComponent {
 
-class ViewModelWebcamDetail : ViewModel(), KoinComponent {
+    val imageLoader by inject<ImageLoader>()
 
     private val _state by lazy { MutableStateFlow<State>(State.Loading) }
     val state: StateFlow<State> by lazy {
@@ -43,11 +48,13 @@ class ViewModelWebcamDetail : ViewModel(), KoinComponent {
         _errorMessage.asSharedFlow()
     }
 
+    private val webcamId = savedStateHandle.toRoute(Destination.WebcamDetails::class).webcamId
+
     private val webcamRepository by inject<WebcamRepository>()
     val prefUtils: PreferencesUtils by inject()
     val dateUtils: DateUtils by inject()
 
-    fun loadWebcam(webcamId: Long) {
+    fun loadWebcam() {
         viewModelScope.launch {
             _state.value = State.Loading
             webcamRepository.getWebcamFlow(webcamId)
@@ -105,15 +112,6 @@ class ViewModelWebcamDetail : ViewModel(), KoinComponent {
                 val fileName = "${sanitizedTitle}_${System.currentTimeMillis()}.$fileExtension"
 
                 try {
-//        val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-//        val uri = Uri.parse(urlSrc)
-//        val request = DownloadManager.Request(uri).apply {
-//            setTitle(webcam.title)
-//            setDescription("Downloading ${if (isVideo) "video" else "image"}...")
-//            setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
-//            setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-//        }
-//        downloadManager.enqueue(request)
                     WorkManager.getInstance(context).enqueue(
                         OneTimeWorkRequestBuilder<DownloadWorker>().apply {
                             setInputData(Data.Builder().apply {

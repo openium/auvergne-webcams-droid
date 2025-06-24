@@ -22,6 +22,7 @@ val Circular = FontFamily(
 
 @Immutable
 data class AWTypography(
+    val topBarTitle: TextStyle,
     val h1: TextStyle,
     val p1: TextStyle,
     val p1Italic: TextStyle,
@@ -30,6 +31,12 @@ data class AWTypography(
 )
 
 val Typography = AWTypography(
+
+    topBarTitle = TextStyle(
+        fontSize = 20.sp,
+        fontFamily = Proxima,
+        fontWeight = FontWeight.Normal
+    ),
     h1 = TextStyle(
         fontSize = 18.sp,
         fontFamily = Proxima,
@@ -61,6 +68,7 @@ val Typography = AWTypography(
 
 val LocalTypography = staticCompositionLocalOf {
     AWTypography(
+        topBarTitle = TextStyle.Default,
         h1 = TextStyle.Default,
         p1 = TextStyle.Default,
         p1Italic = TextStyle.Default,

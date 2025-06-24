@@ -11,18 +11,12 @@ firebase-bom = "33.12.0"
 compose-bom = "2025.04.00"
 accompanist = "0.28.0"
 openium-tools = "1.0.14"
-openium-rx-tools = "1.0.5"
 koin = "4.0.3"
-rxjava = "2.2.21"
-rxbinding = "3.1.0"
-rxrelay = "2.1.1"
-rxpermissions = "0.10.2"
 retrofit = "2.9.0"
 okhttp-logging-interceptor = "4.10.0"
 maps = "19.1.0"
 room = "2.7.0"
 coil = "2.2.2"
-big-image-viewer = "1.8.1"
 coroutines = "1.8.0"
 timber = "5.0.1"
 junit = "4.13.2"
@@ -33,7 +27,11 @@ exoplayer = "2.19.1"
 like-button = "0.2.2"
 mapbox = "11.8.1"
 number-picker = "1.0.3"
-
+navigation-runtime-android = "2.9.0-rc01"
+serialization = "1.7.1"
+nav = "2.8.9"
+activity = "1.10.1"
+browser = "1.5.0"
 
 [libraries]
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk7", version.ref = "kotlin" }
@@ -68,18 +66,12 @@ accompanist-permissions = { module = "com.google.accompanist:accompanist-permiss
 accompanist-systemui = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 
 openium-tools = { module = "fr.openium:kotlin-tools", version.ref = "openium-tools" }
-openium-rx-tools = { module = "fr.openium:rx-tools", version.ref = "openium-rx-tools" }
 
 koin = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koin" }
 
-
-rxjava = { module = "io.reactivex.rxjava2:rxjava", version.ref = "rxjava" }
-rxbinding = { module = "com.jakewharton.rxbinding3:rxbinding", version.ref = "rxbinding" }
-rxbinding-appcompat = { module = "com.jakewharton.rxbinding3:rxbinding-appcompat", version.ref = "rxbinding" }
-rxrelay = { module = "com.jakewharton.rxrelay2:rxrelay", version.ref = "rxrelay" }
-rxpermissions = { module = "com.github.tbruyelle:rxpermissions", version.ref = "rxpermissions" }
+kotlin-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
@@ -98,8 +90,6 @@ coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 coil-video = { module = "io.coil-kt:coil-video", version.ref = "coil" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 
-big-image-viewer = { module = "com.github.piasy:BigImageViewer", version.ref = "big-image-viewer" }
-
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
 
@@ -113,12 +103,18 @@ test-junit = { module = "androidx.test.ext:junit", version.ref = "test-junit" }
 
 exoplayer = { module = "com.google.android.exoplayer:exoplayer", version.ref = "exoplayer" }
 
-like-button = { module = "com.github.jd-alexander:LikeButton", version.ref = "like-button" }
-
 mapbox = { module = "com.mapbox.maps:android", version.ref = "mapbox" }
 mapbox-compose = { module = "com.mapbox.extension:maps-compose", version.ref = "mapbox" }
 
 numberpicker = { module = "com.chargemap.compose:numberpicker", version.ref = "number-picker" }
+androidx-navigation-runtime-android = { group = "androidx.navigation", name = "navigation-runtime-android", version.ref = "navigation-runtime-android" }
+
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity" }
+navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "nav" }
+navigation-runtime-ktx = { module = "androidx.navigation:navigation-runtime-ktx", version.ref = "nav" }
+navigation-fragment-compose = { module = "androidx.navigation:navigation-fragment-compose", version.ref = "nav" }
+androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "browser" }
 
 [plugins]
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

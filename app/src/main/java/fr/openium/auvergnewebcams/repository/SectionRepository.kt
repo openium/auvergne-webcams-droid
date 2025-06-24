@@ -1,5 +1,8 @@
 package fr.openium.auvergnewebcams.repository
 
+import android.content.Context
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonParser
 import fr.openium.auvergnewebcams.BuildConfig
 import fr.openium.auvergnewebcams.enums.WebcamType
 import fr.openium.auvergnewebcams.ext.jsonKey
@@ -12,18 +15,17 @@ import fr.openium.auvergnewebcams.rest.AWWeatherApi
 import fr.openium.auvergnewebcams.rest.model.SectionList
 import fr.openium.auvergnewebcams.utils.LoadWebCamUtils
 import fr.openium.auvergnewebcams.utils.LogUtils
-import fr.openium.auvergnewebcams.utils.Optional
-import fr.openium.rxtools.ext.fromIOToMain
-import io.reactivex.Completable
-import io.reactivex.Single
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import retrofit2.HttpException
 import timber.log.Timber
+import java.io.InputStreamReader
+import java.util.concurrent.CancellationException
 
 /**
  * Created by Openium on 19/02/2019.
  */
 class SectionRepository(
+    private val context: Context,
     private val client: AWClient,
     private val api: AWApi,
     private val weatherApi: AWWeatherApi,
@@ -32,21 +34,27 @@ class SectionRepository(
 
     // WS
 
-    fun fetch(): Single<SectionList> =
-        api.getSections()
-            .doOnSuccess { sectionsList ->
-                insertSectionsAndWebcams(sectionsList)
-            }.doOnError {
-                LogUtils.showSingleErrorLog("Fetch sections", it)
-            }
+    suspend fun fetch(): Result<SectionList> = runCatching {
+        val resp = api.getSections()
 
-    fun updateSectionsWeather(sections: List<Section>) = sections.forEach { section ->
-        configureWeather(section)
+        if (resp.isSuccessful) {
+            resp.body()?.also {
+                insertSectionsAndWebcams(it)
+            } ?: error("Response body is null")
+        } else {
+            LogUtils.showSingleErrorLog("Fetch sections", HttpException(resp))
+            throw HttpException(resp)
+        }
     }
 
-    // Local
 
-    fun insertSectionsAndWebcams(sectionsList: SectionList) {
+    private suspend fun updateSectionsWeather(sections: List<Section>): List<Result<Unit>> =
+        sections.map { section -> configureWeather(section) }
+
+
+// Local
+
+    private suspend fun insertSectionsAndWebcams(sectionsList: SectionList) {
         Timber.d("Sections count ${sectionsList.sections.count()}")
 
         for (section in sectionsList.sections) {
@@ -98,55 +106,71 @@ class SectionRepository(
         updateSectionsWeather(sectionsList.sections)
     }
 
-    fun getSectionWithCameras(sectionId: Long): Flow<Optional<SectionWithCameras>> =
-        client.database.sectionDao().getSectionWithCamerasFlow(sectionId)
-            .map { section: SectionWithCameras ->
-                Optional.of(section)
-            }
+    suspend fun getSectionWithCameras(sectionId: Long): SectionWithCameras =
+        client.database.sectionDao().getSectionWithCameras(sectionId)
 
-    fun watchSectionWithCameras(sectionId: Long): Single<Optional<SectionWithCameras>> =
-        client.database.sectionDao().watchSectionWithCameras(sectionId).map {
-            Optional.of(it)
-        }
-
-    fun getSections(): List<Section> =
+    private suspend fun getSections(): List<Section> =
         client.database.sectionDao().getSections()
 
     fun watchSectionsWithCameras(): Flow<List<SectionWithCameras>> =
         client.database.sectionDao().watchSectionsWithCameras()
 
-    fun update(section: Section): Int =
+    private suspend fun update(section: Section): Int =
         client.database.sectionDao().update(section)
 
-    fun update(sections: List<Section>): Int =
-        client.database.sectionDao().update(sections)
-
-    private fun insert(sections: List<Section>): List<Long> =
+    private suspend fun insert(sections: List<Section>): List<Long> =
         client.database.sectionDao().insert(sections)
 
-    private fun deleteAllNotInUIDs(ids: List<Long>): Completable =
+    private suspend fun deleteAllNotInUIDs(ids: List<Long>) =
         client.database.sectionDao().deleteAllNotInUids(ids)
 
-    private fun configureWeather(section: Section) {
-        if (section.latitude != 0.0 && section.longitude != 0.0) {
-            weatherApi.queryByGeographicCoordinates(
-                section.latitude,
-                section.longitude,
-                BuildConfig.OPEN_WEATHER_API_KEY,
-            ).doOnSuccess { res ->
-                if (res.isSuccessful) {
-                    section.weatherUid = res?.body()?.weather?.get(0)?.id
-                    section.weatherTemp = res?.body()?.main?.temp
+    private suspend fun configureWeather(section: Section): Result<Unit> = runCatching {
 
-                    update(section)
-
-                    Timber.d("Success updating weather for " + section.title)
-                } else {
-                    Timber.e("HTTP " + res.code() + " when getting weather for " + section.title)
-                }
-            }.doOnError { error ->
-                Timber.e(error, "Exception when getting weather for " + section.title)
-            }.fromIOToMain().subscribe()
+        if (section.latitude == 0.0 || section.longitude == 0.0) {
+            error("Invalid coordinates for ${section.title}")
         }
+
+        val response = weatherApi.queryByGeographicCoordinates(
+            section.latitude,
+            section.longitude,
+            BuildConfig.OPEN_WEATHER_API_KEY
+        )
+
+        if (!response.isSuccessful) {
+            error("HTTP ${response.code()} ${response.message()}")
+        }
+
+        val body = response.body() ?: error("Empty body")
+        section.weatherUid = body.weather?.firstOrNull()?.id
+        section.weatherTemp = body.main?.temp
+        update(section)
+        Timber.d("Success updating weather for ${section.title}")
+    }.onFailure { e ->
+        if (e is CancellationException) throw e
+        Timber.e(e, "Failed to update weather for ${section.title}")
+    }
+
+    // If there is no access to the online content, just load the local one
+    private suspend fun loadFromJson(context: Context) {
+        Timber.d("Loading local.json")
+
+        // Get sections from DB
+        val sections = getSections()
+
+        if (sections.isEmpty()) {
+            getSectionsFromAssets(context)?.also {
+                insertSectionsAndWebcams(it)
+            }
+        } else {
+            updateSectionsWeather(sections)
+        }
+    }
+
+    // The function that load data from .json
+    private fun getSectionsFromAssets(context: Context): SectionList? {
+        val inputStream = context.assets.open("aw-config.json")
+        val gson = GsonBuilder().create()
+        val jsonReader = JsonParser.parseReader(InputStreamReader(inputStream))
+        return gson.fromJson(jsonReader, SectionList::class.java)
     }
 }

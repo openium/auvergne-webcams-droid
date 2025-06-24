@@ -10,7 +10,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -29,14 +28,14 @@ fun SplashText(modifier: Modifier = Modifier) {
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .padding(10.dp),
-            color = Color.White
+            color = AWAppTheme.colors.white
         )
 
         Spacer(modifier = Modifier.height(10.dp))
 
         CircularProgressIndicator(
             modifier = Modifier.size(40.dp),
-            color = Color.White
+            color = AWAppTheme.colors.white
         )
     }
 

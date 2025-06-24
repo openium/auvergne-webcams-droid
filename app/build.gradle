@@ -7,6 +7,7 @@ plugins {
     id "com.google.android.libraries.mapsplatform.secrets-gradle-plugin"
     id "fr.openium.publish"
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 
@@ -81,8 +82,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 }
 
@@ -119,6 +120,8 @@ dependencies {
     implementation libs.compose.foundation
     implementation libs.compose.ui.util
     implementation libs.compose.ui.tooling.preview
+    implementation libs.androidx.navigation.runtime.android
+    implementation libs.androidx.browser
     debugImplementation libs.compose.ui.tooling
     implementation libs.compose.runtime.livedata
 
@@ -130,19 +133,11 @@ dependencies {
 
     // Openium Tools
     implementation libs.openium.tools
-    implementation libs.openium.rx.tools
 
     // Koin
     implementation libs.koin
     implementation libs.koin.core
     implementation libs.koin.androidx.compose
-
-    // RxJava and related libraries
-    implementation libs.rxjava
-    implementation libs.rxbinding
-    implementation libs.rxbinding.appcompat
-    implementation libs.rxrelay
-    implementation libs.rxpermissions
 
     // Retrofit and OkHttp
     implementation libs.retrofit
@@ -165,9 +160,6 @@ dependencies {
     implementation libs.coil.video
     implementation libs.coil.compose
 
-    // Big Image Viewer
-    implementation libs.big.image.viewer
-
     // Coroutines
     implementation libs.coroutines.core
     implementation libs.coroutines.android
@@ -185,15 +177,18 @@ dependencies {
     // ExoPlayer
     implementation libs.exoplayer
 
-    // Like Button (Twitter)
-    implementation libs.like.button
-
     // Mapbox
     implementation libs.mapbox
     implementation libs.mapbox.compose
 
     //Number Picker
     implementation libs.numberpicker
+
+    implementation libs.kotlin.serialization
+    implementation libs.navigation.compose
+    implementation libs.navigation.runtime.ktx
+    implementation libs.navigation.fragment.compose
+    implementation libs.androidx.activity.compose
 }
 
 secrets {

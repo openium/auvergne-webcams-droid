@@ -1,5 +1,6 @@
 package fr.openium.auvergnewebcams.ui.sectionDetail
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,7 +14,6 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,44 +38,37 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SectionDetailScreen(
-    sectionId: Long,
+    vm: ViewModelSectionDetail = koinViewModel(),
     goToWebcamDetail: (Webcam) -> Unit,
     onNavigateBack: () -> Unit,
-    onNavigateToMap: () -> Unit,
-    vm: ViewModelSectionDetail = koinViewModel(),
+    onNavigateToMap: (sectionId: Long, sectionTitle: String?) -> Unit,
 ) {
 
     val context = LocalContext.current
 
-    LaunchedEffect(sectionId) {
-        vm.loadSectionAndWebcams(sectionId)
-    }
     val state by vm.state.collectAsState()
 
-    when (state) {
+    when (val currentState = state) {
 
         is ViewModelSectionDetail.State.Loading -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(color = AWAppTheme.colors.white)
             }
         }
 
         is ViewModelSectionDetail.State.Loaded -> {
-            val loadedState = state as ViewModelSectionDetail.State.Loaded
-
-            val webcams by remember(loadedState) { mutableStateOf(loadedState.webcams.sortedBy { it.order }) }
+            val webcams by remember(currentState) { mutableStateOf(currentState.webcams.sortedBy { it.order }) }
 
             Scaffold(
-                backgroundColor = AWAppTheme.colors.greyMedium,
+                backgroundColor = AWAppTheme.colors.greyVeryDark,
                 topBar = {
                     AWTopBar(
-                        title = loadedState.section.title ?: "",
+                        title = currentState.section.title ?: "",
                         onNavigateBack = onNavigateBack,
-                        onNavigateTo = onNavigateToMap,
-                        onNavigateToOpt = { },
+                        onNavigateTo = { onNavigateToMap(vm.sectionId, currentState.section.title) },
                         icon = painterResource(id = R.drawable.map_icon_3),
                         iconDescription = stringResource(id = R.string.map_title),
                         isOptionalButton = false,
@@ -90,15 +83,16 @@ fun SectionDetailScreen(
                             .fillMaxSize()
                             .padding(paddingValues)
                             .navigationBarsPadding()
+                            .background(color = AWAppTheme.colors.greyMedium)
                     ) {
                         item {
                             SectionHeader(
-                                title = loadedState.section.title ?: "",
+                                title = currentState.section.title ?: "",
                                 webcamsCount = webcams.count(),
-                                image = ImageUtils.getImageResourceAssociatedToSection(context, loadedState.section),
+                                image = ImageUtils.getImageResourceAssociatedToSection(context, currentState.section),
                                 goToSectionList = null,
-                                weatherIcon = loadedState.section.weatherUid?.let { WeatherUtils.weatherImage(it) },
-                                weatherTemp = loadedState.section.weatherTemp?.let { WeatherUtils.convertKelvinToCelsius(it) }
+                                weatherIcon = currentState.section.weatherUid?.let { WeatherUtils.weatherImage(it) },
+                                weatherTemp = currentState.section.weatherTemp?.let { WeatherUtils.convertKelvinToCelsius(it) }
                             )
                         }
                         items(items = webcams) { webcam ->

@@ -6,7 +6,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import fr.openium.auvergnewebcams.model.entity.Webcam
-import io.reactivex.Single
 import kotlinx.coroutines.flow.Flow
 
 
@@ -17,35 +16,32 @@ interface WebcamDao {
     fun watchAllWebcams(): Flow<List<Webcam>>
 
     @Query("SELECT * FROM Webcam WHERE uid == :webcamId LIMIT 1")
-    fun getWebcam(webcamId: Long): Webcam?
-
-    @Query("SELECT * FROM Webcam WHERE uid == :webcamId LIMIT 1")
-    fun getWebcamSingle(webcamId: Long): Single<Webcam?>
+    suspend fun getWebcam(webcamId: Long): Webcam?
 
     @Query("SELECT * FROM Webcam WHERE uid == :webcamId LIMIT 1")
     fun getWebcamFlow(webcamId: Long): Flow<Webcam?>
 
     @Query("SELECT * FROM Webcam WHERE imageLD LIKE '%' || :url || '%' OR imageHD LIKE '%' || :url || '%' OR mediaViewSurfLD LIKE '%' || :url || '%' OR mediaViewSurfHD LIKE '%' || :url || '%' ORDER BY uid ASC LIMIT 1")
-    fun getWebcamWithPartialUrl(url: String): Webcam?
+    suspend fun getWebcamWithPartialUrl(url: String): Webcam?
 
     // Update
 
     @Update
-    fun update(webcam: Webcam): Int
+    suspend fun update(webcam: Webcam): Int
 
     @Update
-    fun update(webcams: List<Webcam>): Int
+    suspend fun update(webcams: List<Webcam>): Int
 
     // Insert
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(webcam: Webcam): Long
+    suspend fun insert(webcam: Webcam): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(webcams: List<Webcam>): List<Long>
+    suspend fun insert(webcams: List<Webcam>): List<Long>
 
     // Delete
 
     @Query("DELETE FROM Webcam WHERE (uid NOT IN (:map)) AND sectionUid == :sectionUid")
-    fun deleteAllNoMoreInSection(map: List<Long>, sectionUid: Long)
+    suspend fun deleteAllNoMoreInSection(map: List<Long>, sectionUid: Long)
 }

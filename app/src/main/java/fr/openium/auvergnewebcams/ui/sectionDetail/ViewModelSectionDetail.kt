@@ -1,22 +1,25 @@
 package fr.openium.auvergnewebcams.ui.sectionDetail
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import coil.ImageLoader
 import fr.openium.auvergnewebcams.model.entity.Section
-import fr.openium.auvergnewebcams.model.entity.SectionWithCameras
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.repository.SectionRepository
-import fr.openium.auvergnewebcams.utils.Optional
+import fr.openium.auvergnewebcams.ui.map.MapViewModel.State
+import fr.openium.auvergnewebcams.ui.navigation.Destination
 import fr.openium.auvergnewebcams.utils.PreferencesUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import timber.log.Timber
 
-class ViewModelSectionDetail : ViewModel(), KoinComponent {
+class ViewModelSectionDetail(savedStateHandle: SavedStateHandle) : ViewModel(), KoinComponent {
+
+    val sectionId: Long = savedStateHandle.toRoute(Destination.SectionDetails::class).sectionId
 
     private val _state = MutableStateFlow<State>(State.Loading)
     val state: StateFlow<State> = _state
@@ -26,24 +29,18 @@ class ViewModelSectionDetail : ViewModel(), KoinComponent {
     val prefUtils: PreferencesUtils by inject()
     val imageLoader by inject<ImageLoader>()
 
-    fun loadSectionAndWebcams(sectionId: Long) {
+
+    init {
         viewModelScope.launch {
             _state.value = State.Loading
-            try {
-                sectionRepository.getSectionWithCameras(sectionId)
-                    .collect { sectionWithCamerasOptional: Optional<SectionWithCameras> ->
-                        val sectionWithCameras = sectionWithCamerasOptional.value
-                            ?: throw IllegalStateException("Section not found")
-                        _state.value = State.Loaded(sectionWithCameras.section, sectionWithCameras.webcams)
-                    }
-            } catch (e: Exception) {
-                Timber.e(e)
-            }
+            val sectionWithCameras = sectionRepository.getSectionWithCameras(sectionId)
+            _state.value = State.Loaded(sectionWithCameras.section, sectionWithCameras.webcams)
         }
     }
 
+
     sealed interface State {
-        object Loading : State
+        data object Loading : State
         data class Loaded(val section: Section, val webcams: List<Webcam>) : State
     }
 

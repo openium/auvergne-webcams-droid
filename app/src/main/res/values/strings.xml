@@ -49,8 +49,9 @@
     <string name="settings_credits_title">Auvergne webcams</string>
     <string name="settings_credits_about">À propos</string>
     <string name="settings_credits_openium">Openium</string>
-    <string name="settings_credits_pirates">Les Pirates</string>
     <string name="settings_send_new_webcam">Proposer une webcam</string>
+    <string name="settings_notifications">Activer les notifications</string>
+    <string name="settings_notifications_dialog">Auvergne Webcams requiert l\'autorisation d\'envoyer des notifications pour permettre le téléchargement des images et vidéos.</string>
     <string name="settings_credits_note">Noter l\'application</string>
     <string name="settings_version_format">Version %1$s (%2$s)</string>
 
@@ -62,7 +63,6 @@
 
     <!-- About -->
     <string name="url_openium">https://openium.fr</string>
-    <string name="url_pirates">http://agencelespirates.com/</string>
     <string name="url_note_format">market://details?id=%s</string>
 
     <!-- Search -->

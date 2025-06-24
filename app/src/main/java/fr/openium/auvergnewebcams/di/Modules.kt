@@ -11,7 +11,6 @@ import fr.openium.auvergnewebcams.BuildConfig
 import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.custom.CacheInterceptor
 import fr.openium.auvergnewebcams.custom.LastUpdateDateInterceptor
-import fr.openium.auvergnewebcams.event.ForegroundBackgroundListener
 import fr.openium.auvergnewebcams.model.AWClient
 import fr.openium.auvergnewebcams.repository.SectionRepository
 import fr.openium.auvergnewebcams.repository.WebcamRepository
@@ -45,10 +44,6 @@ object Modules {
     }
 
     val serviceModule = module {
-        single(named("foregroundListener")) {
-            ForegroundBackgroundListener(get())
-        }
-
         single {
             DateUtils(get())
         }
@@ -161,7 +156,7 @@ object Modules {
 
     val repositoryModule = module {
         single {
-            SectionRepository(get(), get(), get(named("WEATHER_HTTP_INIT")), get())
+            SectionRepository(get(), get(), get(), get(named("WEATHER_HTTP_INIT")), get())
         }
         single {
             WebcamRepository(get(), get())

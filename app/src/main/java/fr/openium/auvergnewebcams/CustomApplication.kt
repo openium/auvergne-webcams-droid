@@ -1,19 +1,14 @@
 package fr.openium.auvergnewebcams
 
 import android.app.Application
-import androidx.lifecycle.ProcessLifecycleOwner
-import coil.ImageLoader
-import com.github.piasy.biv.BigImageViewer
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import fr.openium.auvergnewebcams.custom.CoilImageLoader
+import com.mapbox.common.MapboxOptions
 import fr.openium.auvergnewebcams.di.KoinModules
 import fr.openium.auvergnewebcams.di.Modules
-import fr.openium.auvergnewebcams.event.ForegroundBackgroundListener
 import fr.openium.auvergnewebcams.log.FirebaseCrashlyticsTree
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
-import org.koin.core.qualifier.named
 import timber.log.Timber
 
 /**
@@ -22,10 +17,10 @@ import timber.log.Timber
 
 abstract class CustomApplication : Application() {
 
-    private val imageLoader by inject<ImageLoader>()
-
     override fun onCreate() {
         super.onCreate()
+
+        MapboxOptions.accessToken = BuildConfig.MAPBOX_ACCESS_TOKEN
 
         startKoin {
             androidContext(this@CustomApplication)
@@ -43,29 +38,19 @@ abstract class CustomApplication : Application() {
                     KoinModules.vmSettings,
                     KoinModules.vmSection,
                     KoinModules.vmDetails,
+                    KoinModules.vmMap,
+                    KoinModules.vmMain,
+                    KoinModules.vmSearch,
                 )
             )
         }
 
         initTimber()
-        initLifeCycleListener()
-        initBigImageViewer()
     }
 
     protected open fun initTimber() {
         val firebaseCrashlytics by inject<FirebaseCrashlytics>()
         Timber.plant(FirebaseCrashlyticsTree(firebaseCrashlytics))
-    }
-
-    private fun initLifeCycleListener() {
-        val foregroundListener by inject<ForegroundBackgroundListener>(named("foregroundListener"))
-        ProcessLifecycleOwner.get().lifecycle.addObserver(foregroundListener)
-    }
-
-    private fun initBigImageViewer() {
-        BigImageViewer.initialize(
-            CoilImageLoader(applicationContext, imageLoader)
-        )
     }
 
     companion object {

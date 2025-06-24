@@ -16,15 +16,17 @@ import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 @Composable
 fun AWTopBar(
     title: String,
-    onNavigateBack: () -> Unit,
-    onNavigateTo: () -> Unit,
-    onNavigateToOpt: () -> Unit,
+    onNavigateBack: () -> Unit = {},
+    onNavigateTo: () -> Unit = {},
+    onNavigateToOpt: () -> Unit = {},
     modifier: Modifier = Modifier,
     icon: Painter = painterResource(id = R.drawable.ic_close),
     iconDescription: String = "",
     iconOpt: Painter = painterResource(id = R.drawable.ic_close),
     iconDescriptionOpt: String = "",
+    isPrimaryButton: Boolean = true,
     isOptionalButton: Boolean = false,
+    isNavBack: Boolean = true,
     dropdownMenu: (@Composable () -> Unit)? = null
 ) {
     TopAppBar(
@@ -32,19 +34,23 @@ fun AWTopBar(
             Text(
                 text = title,
                 color = AWAppTheme.colors.white,
-                style = AWAppTheme.typography.p1
+                style = AWAppTheme.typography.topBarTitle,
             )
         },
-        navigationIcon = {
-            IconButton(onClick = {
-                onNavigateBack()
-            }) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_arrow_back),
-                    tint = AWAppTheme.colors.white,
-                    contentDescription = "Arrow"
-                )
+        navigationIcon = if (isNavBack) {
+            {
+                IconButton(onClick = {
+                    onNavigateBack()
+                }) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_arrow_back),
+                        tint = AWAppTheme.colors.white,
+                        contentDescription = "Arrow"
+                    )
+                }
             }
+        } else {
+            null
         },
         actions = {
             if (isOptionalButton) {
@@ -56,17 +62,19 @@ fun AWTopBar(
                     )
                 }
             }
-            Box {
-                IconButton(onClick = onNavigateTo) {
-                    Icon(
-                        painter = icon,
-                        contentDescription = iconDescription,
-                        tint = AWAppTheme.colors.white
-                    )
-                }
+            if (isPrimaryButton) {
+                Box {
+                    IconButton(onClick = onNavigateTo) {
+                        Icon(
+                            painter = icon,
+                            contentDescription = iconDescription,
+                            tint = AWAppTheme.colors.white
+                        )
+                    }
 
-                dropdownMenu?.let { menu ->
-                    menu()
+                    dropdownMenu?.let { menu ->
+                        menu()
+                    }
                 }
             }
         },

@@ -38,7 +38,7 @@ fun WebcamItem(
             WebcamPicture(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(AWAppTheme.colors.greyDark),
+                    .background(AWAppTheme.colors.greyMedium),
                 webcam = webcam,
                 canBeHD = canBeHD,
                 imageLoader = imageLoader,

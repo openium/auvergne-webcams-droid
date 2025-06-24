@@ -93,15 +93,14 @@ fun SectionItem(
                 goToWebcamDetail = {
                     goToWebcamDetail(webcam)
                 },
-
-                )
+            )
         }
     }
 
     Text(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 12.dp)
+            .padding(horizontal = 12.dp, vertical = 4.dp)
             .defaultMinSize(minHeight = 40.dp),
         text = currentTitle,
         color = AWAppTheme.colors.greyLight,

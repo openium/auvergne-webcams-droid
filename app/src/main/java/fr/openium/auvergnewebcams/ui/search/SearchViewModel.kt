@@ -2,8 +2,10 @@ package fr.openium.auvergnewebcams.ui.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import coil.ImageLoader
 import fr.openium.auvergnewebcams.model.entity.Webcam
 import fr.openium.auvergnewebcams.repository.WebcamRepository
+import fr.openium.auvergnewebcams.utils.PreferencesUtils
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -23,6 +25,9 @@ class SearchViewModel : ViewModel(), KoinComponent {
     private val currentSearch: StateFlow<String>
         get() = _currentSearch.asStateFlow()
     private val _currentSearch = MutableStateFlow("")
+    val imageLoader by inject<ImageLoader>()
+
+    val prefUtils: PreferencesUtils by inject()
 
     val webcams by lazy {
         currentSearch.debounce {

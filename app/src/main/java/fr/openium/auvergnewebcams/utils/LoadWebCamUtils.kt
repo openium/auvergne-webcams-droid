@@ -1,5 +1,7 @@
 package fr.openium.auvergnewebcams.utils
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -10,7 +12,7 @@ import java.net.URL
  */
 object LoadWebCamUtils {
 
-    fun getMediaViewSurf(urlBase: String?): String {
+    suspend fun getMediaViewSurf(urlBase: String?): String = withContext(Dispatchers.IO) {
         Timber.d("Loading ViewSurf url $urlBase")
 
         var media = ""
@@ -34,10 +36,10 @@ object LoadWebCamUtils {
                 Timber.e(e)
             }
         }
-        return media
+        media
     }
 
-    fun getMediaViewVideo(urlBase: String?): String {
+    suspend fun getMediaViewVideo(urlBase: String?): String = withContext(Dispatchers.IO) {
         Timber.d("Loading Video url $urlBase")
 
         var media = ""
@@ -59,6 +61,6 @@ object LoadWebCamUtils {
                 Timber.e(e)
             }
         }
-        return media
+        media
     }
 }

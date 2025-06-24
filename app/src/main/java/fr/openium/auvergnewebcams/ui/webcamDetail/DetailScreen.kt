@@ -1,17 +1,20 @@
 package fr.openium.auvergnewebcams.ui.webcamDetail
 
 import android.Manifest
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Build
+import android.provider.Settings
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.CircularProgressIndicator
@@ -26,14 +29,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalConfiguration
@@ -54,6 +60,7 @@ import fr.openium.auvergnewebcams.R
 import fr.openium.auvergnewebcams.ext.getUrlForWebcam
 import fr.openium.auvergnewebcams.ext.launchSignalWebcamNotWorking
 import fr.openium.auvergnewebcams.ui.core.AWTopBar
+import fr.openium.auvergnewebcams.ui.core.ConfirmOpenSettingsDialog
 import fr.openium.auvergnewebcams.ui.core.WebcamVideo
 import fr.openium.auvergnewebcams.ui.theme.AWAppTheme
 import fr.openium.auvergnewebcams.utils.AnalyticsUtils
@@ -63,21 +70,26 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun DetailScreen(
-    webcamId: Long, onNavigateBack: () -> Unit, viewModel: ViewModelWebcamDetail = koinViewModel()
+    onNavigateBack: () -> Unit,
+    viewModel: ViewModelWebcamDetail = koinViewModel()
 ) {
 
-    LaunchedEffect(webcamId) { viewModel.loadWebcam(webcamId) }
+    LaunchedEffect(viewModel) { viewModel.loadWebcam() }
 
     var menuExpanded by remember { mutableStateOf(false) }
+    var showOpenSettingsDialog by remember { mutableStateOf(false) }
+
     val state by viewModel.state.collectAsState()
 
     val scaffoldState = rememberScaffoldState()
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val configuration = LocalConfiguration.current
+
 
     LaunchedEffect(viewModel) {
         viewModel.errorMessage.collectLatest {
@@ -98,6 +110,8 @@ fun DetailScreen(
                 rememberPermissionState(Manifest.permission.POST_NOTIFICATIONS, {
                     if (it) {
                         viewModel.saveWebcam(context)
+                    } else {
+                        showOpenSettingsDialog = true
                     }
                 })
             } else {
@@ -111,66 +125,55 @@ fun DetailScreen(
             Scaffold(
                 backgroundColor = AWAppTheme.colors.greyVeryDark, scaffoldState = scaffoldState, topBar = {
                     if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-                        Box(
+                        AWTopBar(
+                            title = (state as? ViewModelWebcamDetail.State.Loaded)?.webcam?.title ?: "",
+                            onNavigateBack = onNavigateBack,
+                            onNavigateTo = { menuExpanded = true },
+                            icon = painterResource(id = R.drawable.ic_more),
+                            iconDescription = stringResource(id = R.string.map_title),
+                            isOptionalButton = true,
+                            iconOpt = painterResource(id = R.drawable.ic_refresh),
+                            iconDescriptionOpt = stringResource(id = R.string.detail_refresh_menu),
+                            onNavigateToOpt = {
+                                viewModel.loadWebcam()
+                            },
+                            dropdownMenu = {
+                                DropdownMenu(
+                                    expanded = menuExpanded,
+                                    onDismissRequest = { menuExpanded = false },
+                                    modifier = Modifier.background(AWAppTheme.colors.greyMedium)
+                                ) {
+                                    DropdownMenuItem(onClick = {
+                                        menuExpanded = false
+                                        viewModel.shareWebcam(
+                                            context,
+                                        )
+                                    }) {
+                                        Text(
+                                            text = stringResource(id = R.string.detail_share_menu),
+                                            color = AWAppTheme.colors.white,
+                                            style = AWAppTheme.typography.p1
+                                        )
+                                    }
+                                    DropdownMenuItem(onClick = {
+                                        menuExpanded = false
+                                        rememberPermissionState?.launchPermissionRequest() ?: kotlin.run {
+                                            viewModel.saveWebcam(context)
+                                        }
+
+                                    }) {
+                                        Text(
+                                            text = stringResource(id = R.string.detail_save_menu),
+                                            color = AWAppTheme.colors.white,
+                                            style = AWAppTheme.typography.p1
+                                        )
+                                    }
+                                }
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .statusBarsPadding()
-                        ) {
-                            Column {
-
-                                AWTopBar(
-                                    title = (state as? ViewModelWebcamDetail.State.Loaded)?.webcam?.title ?: "",
-                                    onNavigateBack = onNavigateBack,
-                                    onNavigateTo = { menuExpanded = true },
-                                    icon = painterResource(id = R.drawable.ic_more),
-                                    iconDescription = stringResource(id = R.string.map_title),
-                                    isOptionalButton = true,
-                                    iconOpt = painterResource(id = R.drawable.ic_refresh),
-                                    iconDescriptionOpt = stringResource(id = R.string.detail_refresh_menu),
-                                    onNavigateToOpt = {
-                                        viewModel.loadWebcam(webcamId)
-                                    },
-                                    dropdownMenu = {
-                                        DropdownMenu(
-                                            expanded = menuExpanded,
-                                            onDismissRequest = { menuExpanded = false },
-                                            modifier = Modifier.background(AWAppTheme.colors.greyMedium)
-                                        ) {
-                                            DropdownMenuItem(onClick = {
-                                                menuExpanded = false
-                                                viewModel.shareWebcam(
-                                                    context,
-                                                )
-                                            }) {
-                                                Text(
-                                                    text = stringResource(id = R.string.detail_share_menu),
-                                                    color = AWAppTheme.colors.white,
-                                                    style = AWAppTheme.typography.p1
-                                                )
-                                            }
-                                            DropdownMenuItem(onClick = {
-                                                menuExpanded = false
-                                                rememberPermissionState?.launchPermissionRequest() ?: kotlin.run {
-                                                    viewModel.saveWebcam(context)
-                                                }
-                                            }) {
-                                                Text(
-                                                    text = stringResource(id = R.string.detail_save_menu),
-                                                    color = AWAppTheme.colors.white,
-                                                    style = AWAppTheme.typography.p1
-                                                )
-                                            }
-                                        }
-                                    },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(56.dp)
-                                )
-                                key(webcam.lastUpdate) {
-                                    LastUpdateText(lastUpdate = webcam.lastUpdate, dateUtils = viewModel.dateUtils)
-                                }
-                            }
-                        }
+                        )
                     }
                 },
                 content = { paddingValues ->
@@ -178,8 +181,8 @@ fun DetailScreen(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(paddingValues)
-                            .navigationBarsPadding()
                     ) {
+                        LastUpdateText(lastUpdate = webcam.lastUpdate, dateUtils = viewModel.dateUtils)
                         Box(modifier = Modifier.weight(1f)) {
                             if (webcam.isVideo) {
                                 WebcamVideo(
@@ -188,6 +191,8 @@ fun DetailScreen(
                                 )
                             } else {
 
+                                var scale by remember { mutableFloatStateOf(1f) }
+                                var offset by remember { mutableStateOf(Offset.Zero) }
                                 var boxSize by remember { mutableStateOf(IntSize.Zero) }
                                 Column(modifier = Modifier
                                     .fillMaxSize()
@@ -214,9 +219,43 @@ fun DetailScreen(
                                         .weight(1f)
                                         .onSizeChanged { boxSize = it }
                                         .background(AWAppTheme.colors.greyDark)
+                                        .clipToBounds()
                                         .let {
                                             if (asyncImageState is AsyncImagePainter.State.Success) {
                                                 it
+                                                    .pointerInput(Unit) {
+                                                        kotlinx.coroutines.coroutineScope {
+                                                            launch {
+                                                                detectTapGestures(onDoubleTap = { tapOffset ->
+                                                                    val center = Offset(boxSize.width / 2f, boxSize.height / 2f)
+                                                                    if (scale == 1f) {
+                                                                        scale = 3f
+                                                                        offset = center - tapOffset
+                                                                    } else {
+                                                                        scale = 1f
+                                                                        offset = Offset.Zero
+                                                                    }
+                                                                })
+                                                            }
+                                                            launch {
+                                                                detectTransformGestures { _, pan, zoom, _ ->
+                                                                    scale = (scale * zoom).coerceIn(1f, 3f)
+                                                                    offset += pan
+                                                                    val maxX = (boxSize.width * (scale - 1)) / 2f
+                                                                    val maxY = (boxSize.height * (scale - 1)) / 2f
+                                                                    offset = Offset(
+                                                                        x = offset.x.coerceIn(-maxX, maxX), y = offset.y.coerceIn(-maxY, maxY)
+                                                                    )
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    .graphicsLayer {
+                                                        scaleX = scale
+                                                        scaleY = scale
+                                                        translationX = offset.x
+                                                        translationY = offset.y
+                                                    }
 
                                             } else {
                                                 it
@@ -228,7 +267,8 @@ fun DetailScreen(
                                                 .data(webcam.getUrlForWebcam(canBeHD = viewModel.prefUtils.isWebcamsHighQuality))
                                                 .memoryCachePolicy(CachePolicy.DISABLED).build(),
                                             contentDescription = webcam.title,
-                                            contentScale = if (asyncImageState is AsyncImagePainter.State.Success) ContentScale.Fit else ContentScale.Inside,
+                                            imageLoader = viewModel.imageLoader,
+                                            contentScale = if (asyncImageState is AsyncImagePainter.State.Error) ContentScale.Inside else ContentScale.Fit,
                                             error = painterResource(R.drawable.ic_broken_camera),
                                             onLoading = {
                                                 asyncImageState = it
@@ -243,7 +283,7 @@ fun DetailScreen(
                                         )
 
                                         if (asyncImageState is AsyncImagePainter.State.Loading) {
-                                            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                                            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center), color = AWAppTheme.colors.white)
                                         }
                                     }
 
@@ -267,6 +307,19 @@ fun DetailScreen(
                                 }
                             }
                         }
+                    }
+                    if (showOpenSettingsDialog) {
+                        ConfirmOpenSettingsDialog(
+                            onDismiss = { showOpenSettingsDialog = false },
+                            onConfirm = {
+                                showOpenSettingsDialog = false
+                                context.startActivity(
+                                    Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                                        putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                                    }
+                                )
+                            }
+                        )
                     }
                 }
             )
@@ -320,7 +373,7 @@ fun WebcamNotWorkingFull(
         Text(
             text = stringResource(id = R.string.detail_not_working_title),
             style = MaterialTheme.typography.body1,
-            color = Color.White,
+            color = AWAppTheme.colors.white,
             modifier = Modifier.padding(top = 50.dp),
             textAlign = TextAlign.Center
         )
@@ -334,3 +387,4 @@ fun WebcamNotWorkingFull(
         )
     }
 }
+
